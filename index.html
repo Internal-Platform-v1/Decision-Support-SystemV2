@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FedEx Tools - Main Menu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-left">
+                <div class="logo">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='40'%3E%3Ctext x='5' y='28' font-size='24' font-weight='bold' font-family='Arial'%3E%3Ctspan fill='%234B0082'%3EFed%3C/tspan%3E%3Ctspan fill='%23FF6600'%3EEx%3C/tspan%3E%3C/text%3E%3Ctext x='5' y='38' font-size='10' font-family='Arial' fill='%23666'%3EFreight%3C/text%3E%3C/svg%3E" alt="FedEx">
+                </div>
+                <nav class="nav-menu">
+                    <a href="#" class="nav-item active">Home</a>
+                    <a href="#" class="nav-item">Guide Library</a>
+                    <a href="#" class="nav-item">Client Directory</a>
+                    <a href="#" class="nav-item">Tools</a>
+                    <a href="#" class="nav-item">Links</a>
+                </nav>
+            </div>
+            <div class="navbar-right">
+                <div class="search-container">
+                    <input type="text" placeholder="Search guides, tools, topics..." class="search-input">
+                    <button class="search-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="6.5" cy="6.5" r="5.5" stroke="white" stroke-width="2"/>
+                            <line x1="10.5" y1="10.5" x2="15" y2="15" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="navbar-icons">
+                    <button class="icon-btn notification">
+                        <span class="notification-badge">1</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 2C6.69 2 4 4.69 4 8v5l-2 2v1h16v-1l-2-2v-5c0-3.31-2.69-6-6-6z" fill="white"/>
+                            <circle cx="10" cy="16" r="1" fill="white"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn user-btn">
+                        <div class="user-avatar">JN</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h1>Good day, <span class="user-name">Jennifer</span>!</h1>
+                <p class="welcome-subtitle">Your one-stop hub for Billing Dispute guides, tools, and resources.</p>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for guides, tools, topics..." class="search-input-main">
+                    <button class="search-btn-main">Search</button>
+                </div>
+            </div>
+            <div class="welcome-visual">
+                <!-- Decorative elements -->
+                <div class="visual-box box-1"></div>
+                <div class="visual-box box-2"></div>
+                <div class="visual-box box-3"></div>
+                <div class="visual-box box-4"></div>
+                <div class="visual-plant"></div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-content">
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Guides Available</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔧</div>
+                <div class="stat-content">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Tools & Resources</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-content">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Recently Viewed</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-content">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Favorites</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Access Section -->
+        <section class="quick-access-section">
+            <div class="section-header">
+                <h2>Quick Access</h2>
+                <a href="#" class="view-all">View All Guides →</a>
+            </div>
+            <div class="quick-access-grid">
+                <div class="quick-access-card">
+                    <div class="qa-icon billing-dispute">📋</div>
+                    <h3>Billing Dispute Guides</h3>
+                    <p>Step-by-step guides for billing dispute scenarios.</p>
+                    <a href="#" class="qa-link">→</a>
+                </div>
+                <div class="quick-access-card">
+                    <div class="qa-icon pricing">💰</div>
+                    <h3>Pricing General Guides</h3>
+                    <p>Pricing policies, rate quotes, and applications.</p>
+                    <a href="#" class="qa-link">→</a>
+                </div>
+                <div class="quick-access-card">
+                    <div class="qa-icon surcharges">📝</div>
+                    <h3>Surcharges Guide</h3>
+                    <p>Surcharge reference and guidelines.</p>
+                    <a href="#" class="qa-link">→</a>
+                </div>
+                <div class="quick-access-card">
+                    <div class="qa-icon account">👤</div>
+                    <h3>Account Handling Guide</h3>
+                    <p>Account setup, updates, and maintenance.</p>
+                    <a href="#" class="qa-link">→</a>
+                </div>
+                <div class="quick-access-card">
+                    <div class="qa-icon operational">📊</div>
+                    <h3>Other Operational Guides</h3>
+                    <p>Additional operational reference guides.</p>
+                    <a href="#" class="qa-link">→</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Most Used Guides Section -->
+        <div class="guides-activity-container">
+            <section class="most-used-section">
+                <div class="section-header">
+                    <h2>Most Used Guides</h2>
+                    <a href="#" class="view-all">View All →</a>
+                </div>
+                <div class="guides-list">
+                    <div class="guide-item">
+                        <div class="guide-number">01</div>
+                        <div class="guide-info">
+                            <h4>BD – General Guide</h4>
+                            <span class="guide-tag billing-dispute-tag">Billing Dispute</span>
+                        </div>
+                        <button class="star-btn">☆</button>
+                    </div>
+                    <div class="guide-item">
+                        <div class="guide-number">02</div>
+                        <div class="guide-info">
+                            <h4>Rate & Volume Quote (R&V)</h4>
+                            <span class="guide-tag pricing-tag">Pricing</span>
+                        </div>
+                        <button class="star-btn">☆</button>
+                    </div>
+                    <div class="guide-item">
+                        <div class="guide-number">03</div>
+                        <div class="guide-info">
+                            <h4>Weight Update per BOL Guide</h4>
+                            <span class="guide-tag billing-dispute-tag">Billing Dispute</span>
+                        </div>
+                        <button class="star-btn">☆</button>
+                    </div>
+                    <div class="guide-item">
+                        <div class="guide-number">04</div>
+                        <div class="guide-info">
+                            <h4>Reference Number Guide</h4>
+                            <span class="guide-tag billing-dispute-tag">Billing Dispute</span>
+                        </div>
+                        <button class="star-btn">☆</button>
+                    </div>
+                    <div class="guide-item">
+                        <div class="guide-number">05</div>
+                        <div class="guide-info">
+                            <h4>Fuel Guide</h4>
+                            <span class="guide-tag pricing-tag">Pricing</span>
+                        </div>
+                        <button class="star-btn">☆</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity Section -->
+            <section class="recent-activity-section">
+                <div class="section-header">
+                    <h2>Recent Activity</h2>
+                    <a href="#" class="view-all">View All →</a>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📋</div>
+                        <div class="activity-info">
+                            <h4>BD – General Guide</h4>
+                            <span class="activity-time">15 mins ago</span>
+                        </div>
+                        <span class="activity-arrow">›</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📋</div>
+                        <div class="activity-info">
+                            <h4>Rate & Volume Quote (R&V)</h4>
+                            <span class="activity-time">1 hour ago</span>
+                        </div>
+                        <span class="activity-arrow">›</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📋</div>
+                        <div class="activity-info">
+                            <h4>Weight Update per BOL Guide</h4>
+                            <span class="activity-time">2 hours ago</span>
+                        </div>
+                        <span class="activity-arrow">›</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📋</div>
+                        <div class="activity-info">
+                            <h4>Fuel Guide</h4>
+                            <span class="activity-time">yesterday</span>
+                        </div>
+                        <span class="activity-arrow">›</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📋</div>
+                        <div class="activity-info">
+                            <h4>Surcharge Guides</h4>
+                            <span class="activity-time">yesterday</span>
+                        </div>
+                        <span class="activity-arrow">›</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- CTA Banner -->
+        <section class="cta-banner">
+            <div class="banner-content">
+                <div class="banner-quote">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <path d="M10 20L8 28C8 30.2 9.8 32 12 32H20C22.2 32 24 30.2 24 28V20C24 16.68 21.32 14 18 14H12C9.8 14 8 15.8 8 18M28 20L26 28C26 30.2 27.8 32 30 32H38C40.2 32 42 30.2 42 28V20C42 16.68 39.32 14 36 14H30C27.8 14 26 15.8 26 18" fill="white" opacity="0.3"/>
+                    </svg>
+                    <h3>Guiding every decision. Delivering every time.</h3>
+                </div>
+                <button class="banner-btn">Explore All Guides →</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
