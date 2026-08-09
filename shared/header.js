@@ -1,5 +1,5 @@
 /* ============================================================
-   shared/header.js – dropdown + nav clicks + profile toggle
+   shared/header.js – dropdown with two items + smooth toggle
    ============================================================ */
 
 (function() {
@@ -26,6 +26,7 @@
     });
 
     /* ---- 2. Case Directory dropdown ---- */
+    var caseWrapper = document.querySelector('.nav-dropdown-wrapper');
     var caseBtn = document.getElementById('caseDirectoryBtn');
     var caseDropdown = document.getElementById('caseDropdown');
 
@@ -39,7 +40,7 @@
 
     if (caseBtn) {
         caseBtn.addEventListener('click', toggleDropdown);
-        // Also open on chevron click
+        // also open on chevron click
         var chevron = caseBtn.querySelector('.dropdown-chevron');
         if (chevron) {
             chevron.addEventListener('click', function(e) {
@@ -49,26 +50,24 @@
         }
     }
 
-    // Close dropdown when clicking outside
+    // Close dropdown when clicking outside the wrapper
     document.addEventListener('click', function(e) {
-        var target = e.target;
-        var isInside = target.closest('.brand-nav') && target.closest('.has-dropdown');
-        if (!isInside) {
+        if (caseWrapper && !caseWrapper.contains(e.target)) {
             if (caseDropdown) caseDropdown.classList.remove('open');
             if (caseBtn) caseBtn.classList.remove('open');
         }
     });
 
-    // Close dropdown when a link inside is clicked
+    // Handle clicks on dropdown items
     if (caseDropdown) {
         caseDropdown.querySelectorAll('a').forEach(function(link) {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                var navName = this.getAttribute('data-nav') || 'Case';
+                var label = this.textContent.trim();
                 if (window.showToast) {
-                    window.showToast('Opening ' + navName);
+                    window.showToast('Opening ' + label);
                 } else {
-                    console.log('Opening ' + navName);
+                    console.log('Opening ' + label);
                 }
                 // close dropdown
                 caseDropdown.classList.remove('open');
