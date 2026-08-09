@@ -166,6 +166,55 @@ button { cursor: pointer; }
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(41,32,94,.1);
 }
+
+/* Indigo card (PAUD Queue) */
+.indigo-card:after {
+  background: #c5c9ff;
+}
+.indigo-bg {
+  background: #eef0ff;
+  color: #4a56d6;
+}
+
+/* Footer badge inside the new card */
+.quick-footer {
+  font-size: 7px;
+  color: #6f7193;
+  margin-top: 6px;
+  padding: 2px 8px;
+  background: #f5f6fa;
+  border-radius: 4px;
+  display: inline-block;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Arrow button (keep position) */
+.arrow-btn {
+  position: absolute;
+  left: 15px;
+  bottom: 12px;
+  border: 0;
+  background: transparent;
+  color: #4f13b8;
+  font-size: 20px;
+  padding: 0;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 500px) {
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .quick-card:after {
     content: "";
     position: absolute;
