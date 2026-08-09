@@ -1,38 +1,75 @@
 <header class="topbar" id="sharedHeader">
   <div class="brand-area">
-    <a class="brand-link" href="../../index.html" aria-label="BD Tools Home">
+    <a
+      class="brand-link"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
+      aria-label="BD Tools Home"
+    >
       <img
         class="fedex-logo-image"
         src="../../assets/images/fedex-logo.png"
         alt="FedEx Freight"
       >
     </a>
-
-    <div class="brand-divider" aria-hidden="true"></div>
-
-    <div class="page-title" id="sharedPageTitle">BD Tools</div>
   </div>
 
   <nav class="main-nav" aria-label="Main navigation">
-    <button class="nav-item" type="button" data-nav="home" data-section="home">
-      Home
-    </button>
 
-    <button class="nav-item has-chevron" type="button" data-nav="guides" data-section="guides">
-      Guide Library
-    </button>
+    <a
+      class="nav-link"
+      data-nav="home"
+      data-section="home"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
+    >Home</a>
 
-    <button class="nav-item has-chevron" type="button" data-nav="cases" data-section="cases">
-      Case Directory
-    </button>
+    <div class="nav-dropdown" data-section="cases">
+      <button
+        class="nav-link dropdown-trigger"
+        type="button"
+        data-nav="cases"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        Case Directory
+        <span class="dropdown-chevron" aria-hidden="true">⌄</span>
+      </button>
 
-    <button class="nav-item has-chevron" type="button" data-nav="tools" data-section="tools">
-      Tools
-    </button>
+      <div class="nav-dropdown-menu" role="menu">
+        <a
+          href="#"
+          role="menuitem"
+          data-case-directory="legacy"
+        >Legacy</a>
 
-    <button class="nav-item" type="button" data-nav="links" data-section="links">
-      Links
-    </button>
+        <a
+          href="#"
+          role="menuitem"
+          data-case-directory="shine"
+        >Shine</a>
+      </div>
+    </div>
+
+    <a
+      class="nav-link"
+      data-nav="ebs"
+      data-section="tools"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/ebs-response-template.html"
+    >EBS Response</a>
+
+    <a
+      class="nav-link"
+      data-nav="fbc"
+      data-section="tools"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/fbc-comments-guide.html"
+    >FBC Comments</a>
+
+    <a
+      class="nav-link"
+      data-nav="links"
+      data-section="links"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/links.html"
+    >Links</a>
+
   </nav>
 
   <div class="header-actions">

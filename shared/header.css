@@ -12,7 +12,6 @@
   --header-line:#e8e8f0;
 }
 
-/* Header */
 .topbar{
   width:100%;
   height:62px;
@@ -26,12 +25,10 @@
   box-shadow:0 1px 0 rgba(36,28,92,.035);
 }
 
-/* Brand */
 .brand-area{
   height:100%;
   display:flex;
   align-items:center;
-  gap:18px;
   flex:0 0 auto;
   white-space:nowrap;
 }
@@ -59,60 +56,51 @@
   object-position:left center;
 }
 
-.brand-divider{
-  width:1px;
-  height:25px;
-  background:var(--header-line);
-}
-
-.page-title{
-  color:var(--header-ink);
-  font-size:11px;
-  line-height:1;
-  font-weight:700;
-  letter-spacing:-.02em;
-}
-
-/* Navigation */
+/* Navigation now sits directly beside the logo. */
 .main-nav{
   height:100%;
   display:flex;
   align-items:center;
   align-self:stretch;
-  gap:25px;
-  margin-left:68px;
+  gap:24px;
+  margin-left:28px;
 }
 
-.nav-item{
+.nav-link{
   height:100%;
   position:relative;
+  display:flex;
+  align-items:center;
   border:0;
   background:transparent;
   color:var(--header-text);
-  padding:0 1px;
+  padding:0;
+  text-decoration:none;
+  font-family:inherit;
   font-size:8px;
   font-weight:500;
   line-height:1;
   white-space:nowrap;
+  cursor:pointer;
   transition:color .16s ease;
 }
 
-.nav-item:hover{
+.nav-link:hover{
   color:var(--header-purple-bright);
 }
 
-.nav-item:focus-visible{
+.nav-link:focus-visible{
   outline:2px solid rgba(107,32,208,.28);
-  outline-offset:-3px;
+  outline-offset:4px;
   border-radius:4px;
 }
 
-.nav-item.active{
+.nav-link.active{
   color:var(--header-purple-bright);
   font-weight:600;
 }
 
-.nav-item.active::before{
+.nav-link.active::before{
   content:"";
   position:absolute;
   left:0;
@@ -123,16 +111,83 @@
   border-radius:3px;
 }
 
-.nav-item.has-chevron::after{
-  content:"⌄";
-  display:inline-block;
-  margin-left:4px;
-  color:#777994;
-  font-size:8px;
-  transform:translateY(-1px);
+/* Case Directory dropdown */
+.nav-dropdown{
+  height:100%;
+  position:relative;
+  display:flex;
+  align-items:center;
 }
 
-/* Right-side controls */
+.dropdown-trigger{
+  gap:4px;
+}
+
+.dropdown-chevron{
+  color:#777994;
+  font-size:8px;
+  line-height:1;
+  transform:translateY(-1px);
+  transition:transform .16s ease;
+}
+
+.nav-dropdown.open .dropdown-chevron{
+  transform:rotate(180deg) translateY(1px);
+}
+
+.nav-dropdown-menu{
+  position:absolute;
+  left:-10px;
+  top:calc(100% - 3px);
+  width:132px;
+  padding:6px;
+  background:#fff;
+  border:1px solid #e5e5ef;
+  border-radius:8px;
+  box-shadow:0 12px 28px rgba(31,25,87,.14);
+  display:none;
+  z-index:1100;
+}
+
+.nav-dropdown.open .nav-dropdown-menu{
+  display:block;
+  animation:caseMenuIn .13s ease-out;
+}
+
+@keyframes caseMenuIn{
+  from{
+    opacity:0;
+    transform:translateY(-3px);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+.nav-dropdown-menu a{
+  display:flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 8px;
+  border-radius:5px;
+  color:#303258;
+  text-decoration:none;
+  font-size:8px;
+  font-weight:500;
+}
+
+.nav-dropdown-menu a:hover{
+  background:#f5f1ff;
+  color:#5420aa;
+}
+
+.nav-dropdown-menu a:focus-visible{
+  outline:2px solid rgba(107,32,208,.25);
+  outline-offset:-1px;
+}
+
+/* Header actions */
 .header-actions{
   margin-left:auto;
   height:100%;
@@ -152,10 +207,7 @@
   border:1px solid #dedfec;
   border-radius:6px;
   background:#fff;
-  transition:
-    border-color .16s ease,
-    box-shadow .16s ease,
-    width .18s ease;
+  transition:border-color .16s ease, box-shadow .16s ease, width .18s ease;
 }
 
 .global-search:focus-within{
@@ -201,7 +253,7 @@
   transform:rotate(45deg);
 }
 
-/* Notification */
+/* Notifications */
 .icon-btn{
   width:22px;
   height:28px;
@@ -266,7 +318,7 @@
   line-height:1;
 }
 
-/* Avatar */
+/* Profile */
 .avatar-btn{
   width:28px;
   height:28px;
@@ -389,14 +441,10 @@
   color:#85869d;
 }
 
-.profile-menu button:hover .profile-menu-icon{
-  color:currentColor;
-}
-
-/* Smaller desktop widths */
+/* Responsive */
 @media(max-width:1050px){
   .main-nav{
-    margin-left:35px;
+    margin-left:20px;
     gap:17px;
   }
 
@@ -405,7 +453,6 @@
   }
 }
 
-/* Preserve the project's desktop composition */
 @media(max-width:800px){
   .topbar{
     min-width:760px;
