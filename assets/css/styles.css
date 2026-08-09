@@ -9,7 +9,7 @@
     --line: #e7e8f3;
     --shadow: 0 5px 20px rgba(48,38,111,.08);
 }
-/* ===== UPDATED TO POPPINS ===== */
+/* ===== POPPINS FONT ===== */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
 html, body {
@@ -53,18 +53,19 @@ button { cursor: pointer; }
     width: 360px;
 }
 .hero h1 {
-    font-size: 26px;
+    font-size: 36px;          /* increased from 26px */
     line-height: 1.15;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     font-weight: 800;
     letter-spacing: -.7px;
 }
 .hero h1 span { color: var(--orange); }
 .hero p {
-    font-size: 12px;
-    line-height: 1.45;
+    font-size: 15px;          /* increased from 12px */
+    line-height: 1.5;
     color: #3d3f65;
     margin: 0 0 16px;
+    letter-spacing: 0.01em;
 }
 .hero-search {
     height: 34px;
