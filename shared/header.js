@@ -1,16 +1,17 @@
 /* ============================================================
-   shared/header.js – dropdown with two items + smooth toggle
+   shared/header.js – with refined animation coordination
    ============================================================ */
 
 (function() {
     'use strict';
 
-    /* ---- 1. Profile toggle (unchanged) ---- */
+    /* ---- 1. Profile toggle ---- */
     var profileBtn = document.getElementById('profileBtn');
     var profileChevron = document.getElementById('profileChevron');
     var profileMenu = document.getElementById('profileMenu');
 
-    function toggleProfile() {
+    function toggleProfile(e) {
+        e.stopPropagation();
         if (profileMenu) {
             profileMenu.classList.toggle('open');
         }
@@ -33,14 +34,26 @@
     function toggleDropdown(e) {
         e.stopPropagation();
         if (caseDropdown) {
-            caseDropdown.classList.toggle('open');
-            if (caseBtn) caseBtn.classList.toggle('open');
+            var isOpen = caseDropdown.classList.contains('open');
+            if (isOpen) {
+                caseDropdown.classList.remove('open');
+                if (caseBtn) caseBtn.classList.remove('open');
+            } else {
+                // close any other open dropdowns first
+                document.querySelectorAll('.dropdown-panel.open').forEach(function(d) {
+                    if (d !== caseDropdown) d.classList.remove('open');
+                });
+                document.querySelectorAll('.nav-item.has-dropdown.open').forEach(function(d) {
+                    if (d !== caseBtn) d.classList.remove('open');
+                });
+                caseDropdown.classList.add('open');
+                if (caseBtn) caseBtn.classList.add('open');
+            }
         }
     }
 
     if (caseBtn) {
         caseBtn.addEventListener('click', toggleDropdown);
-        // also open on chevron click
         var chevron = caseBtn.querySelector('.dropdown-chevron');
         if (chevron) {
             chevron.addEventListener('click', function(e) {
@@ -50,7 +63,7 @@
         }
     }
 
-    // Close dropdown when clicking outside the wrapper
+    // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
         if (caseWrapper && !caseWrapper.contains(e.target)) {
             if (caseDropdown) caseDropdown.classList.remove('open');
@@ -58,7 +71,7 @@
         }
     });
 
-    // Handle clicks on dropdown items
+    // Handle dropdown item clicks
     if (caseDropdown) {
         caseDropdown.querySelectorAll('a').forEach(function(link) {
             link.addEventListener('click', function(e) {
@@ -69,19 +82,17 @@
                 } else {
                     console.log('Opening ' + label);
                 }
-                // close dropdown
                 caseDropdown.classList.remove('open');
                 if (caseBtn) caseBtn.classList.remove('open');
             });
         });
     }
 
-    /* ---- 3. Main nav clicks (Home, EBS Response, FBC Comments, Links) ---- */
+    /* ---- 3. Main nav clicks ---- */
     var allNavItems = document.querySelectorAll('.nav-item:not(.has-dropdown)');
 
     allNavItems.forEach(function(item) {
         item.addEventListener('click', function() {
-            // remove active from all nav items
             document.querySelectorAll('.nav-item').forEach(function(n) {
                 n.classList.remove('active');
             });
@@ -96,7 +107,7 @@
         });
     });
 
-    /* ---- 4. Global search (bind to main script's performSearch) ---- */
+    /* ---- 4. Global search ---- */
     var globalSearchInput = document.getElementById('globalSearch');
     if (globalSearchInput) {
         globalSearchInput.addEventListener('keydown', function(e) {
