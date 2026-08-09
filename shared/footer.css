@@ -1,89 +1,52 @@
-/* =========================================================
-   BD TOOLS — SHARED FOOTER
-   shared/footer.css
-   ========================================================= */
-
-.footer-banner{
-  width:100%;
-  height:66px;
-  margin:0;
-  background:linear-gradient(110deg,#42119d,#4d0ba9 48%,#3b078d);
-  position:relative;
-  overflow:hidden;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  padding:0 5.5%;
-  border-radius:0;
+/* shared/footer.css */
+.footer-banner {
+    height: 66px;
+    margin: 0;
+    background: linear-gradient(110deg, #42119d, #4d0ba9 48%, #3b078d);
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 5.5%;
+    border-radius: 0;
+    width: 100%;
 }
-
-.quote-mark{
-  font-family:Georgia,serif;
-  font-size:62px;
-  font-weight:bold;
-  line-height:1;
-  opacity:.9;
-  margin-right:10px;
-  margin-top:-8px;
-  z-index:2;
+.quote-mark {
+    font-family: Georgia, serif;
+    font-size: 62px;
+    font-weight: bold;
+    line-height: 1;
+    opacity: .9;
+    margin-right: 10px;
+    margin-top: -8px;
 }
-
-.quote-copy{
-  font-size:9px;
-  line-height:1.45;
-  z-index:2;
+.quote-copy { font-size: 9px; line-height: 1.45; z-index: 2; }
+.quote-copy strong { font-weight: 600; }
+.footer-banner button {
+    margin-left: auto;
+    border: 1px solid rgba(255,255,255,.3);
+    background: rgba(255,255,255,.03);
+    color: #fff;
+    border-radius: 6px;
+    height: 29px;
+    padding: 0 14px;
+    font-size: 8px;
+    font-weight: 700;
+    z-index: 3;
+    cursor: pointer;
 }
-
-.quote-copy strong{
-  font-weight:600;
+.footer-banner button span { font-size: 13px; margin-left: 7px; }
+.wave {
+    position: absolute; height: 55px; width: 55%;
+    border-top: 1px solid rgba(255,111,27,.75);
+    border-radius: 50%;
+    left: 25%; bottom: -33px;
+    transform: rotate(-4deg);
 }
-
-.footer-banner button{
-  margin-left:auto;
-  border:1px solid rgba(255,255,255,.3);
-  background:rgba(255,255,255,.03);
-  color:#fff;
-  border-radius:6px;
-  height:29px;
-  padding:0 14px;
-  font-size:8px;
-  font-weight:700;
-  z-index:3;
-  transition:background .15s ease, border-color .15s ease;
-}
-
-.footer-banner button:hover{
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.45);
-}
-
-.footer-banner button span{
-  font-size:13px;
-  margin-left:7px;
-}
-
-.wave{
-  position:absolute;
-  height:55px;
-  width:55%;
-  border-top:1px solid rgba(255,111,27,.75);
-  border-radius:50%;
-  left:25%;
-  bottom:-33px;
-  transform:rotate(-4deg);
-  pointer-events:none;
-}
-
-.wave-two{
-  left:36%;
-  bottom:-24px;
-  border-top-color:rgba(255,255,255,.24);
-  transform:rotate(-5deg);
-  width:48%;
-}
-
-@media(max-width:800px){
-  .footer-banner{
-    min-width:760px;
-  }
+.wave-two {
+    left: 36%; bottom: -24px;
+    border-top-color: rgba(255,255,255,.24);
+    transform: rotate(-5deg);
+    width: 48%;
 }
