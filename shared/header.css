@@ -1,5 +1,5 @@
 /* ============================================================
-   shared/header.css – updated for brand-area nav
+   shared/header.css – enhanced dropdown with animation
    ============================================================ */
 
 /* ---- topbar container ---- */
@@ -17,16 +17,14 @@
     box-shadow: none;
 }
 
-/* ---- brand area: logo + divider + new nav ---- */
+/* ---- brand area: logo + divider + nav ---- */
 .brand-area {
     display: flex;
     align-items: center;
     gap: 18px;
     white-space: nowrap;
     flex: 0 1 auto;
-    /* shrink only if needed */
     min-width: 0;
-    /* allow flex shrinking */;
 }
 
 .fedex-logo-image {
@@ -46,7 +44,7 @@
     flex: 0 0 auto;
 }
 
-/* ---- new inline navigation ---- */
+/* ---- inline navigation ---- */
 .brand-nav {
     display: flex;
     align-items: center;
@@ -89,31 +87,45 @@
 .nav-item.has-dropdown .dropdown-chevron {
     font-size: 8px;
     color: #6d6e91;
-    transition: transform 0.2s;
+    transition: transform 0.25s ease;
 }
 
 .nav-item.has-dropdown.open .dropdown-chevron {
     transform: rotate(180deg);
 }
 
-/* ---- dropdown panel for Case Directory ---- */
+/* ---- dropdown wrapper + panel ---- */
+.nav-dropdown-wrapper {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
 .dropdown-panel {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 2px);
     left: 0;
-    margin-top: 0;
     background: #fff;
     border: 1px solid #e7e8f3;
     border-radius: 8px;
     box-shadow: 0 12px 30px rgba(31, 25, 87, 0.12);
     padding: 6px 0;
-    min-width: 160px;
-    display: none;
+    min-width: 180px;
     z-index: 100;
+
+    /* ---- smooth animation ---- */
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+    transform-origin: top left;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .dropdown-panel.open {
-    display: block;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
 
 .dropdown-panel a {
@@ -122,7 +134,7 @@
     font-size: 9px;
     color: #343565;
     text-decoration: none;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
 }
 
 .dropdown-panel a:hover {
