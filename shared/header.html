@@ -1,14 +1,13 @@
-<header class="topbar shared-header">
+<header class="topbar">
+
   <div class="brand-area">
     <a
-      class="brand-link"
       href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
       aria-label="FedEx Freight Home"
     >
       <img
-        id="fedexHeaderLogo"
         class="fedex-logo-image"
-        src=""
+        src="fedex-logo.png"
         alt="FedEx Freight"
       >
     </a>
@@ -17,53 +16,53 @@
   <nav class="main-nav" aria-label="Main navigation">
 
     <a
-      class="nav-item"
+      class="nav-item active"
       data-nav="home"
       href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
-    >Home</a>
+    >
+      Home
+    </a>
 
-    <div class="case-directory-wrap">
-      <button
-        class="nav-item case-directory-trigger"
-        id="caseDirectoryTrigger"
-        type="button"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        Case Directory <span class="case-chevron">⌄</span>
-      </button>
-
-      <div
-        class="case-directory-menu"
-        id="caseDirectoryMenu"
-        aria-hidden="true"
-      >
-        <a href="#" data-case-directory="legacy">Legacy</a>
-        <a href="#" data-case-directory="shine">Shine</a>
-      </div>
-    </div>
+    <button
+      class="nav-item has-chevron"
+      data-nav="cases"
+      id="caseDirectoryBtn"
+      type="button"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      Case Directory
+      <span class="nav-chevron">⌄</span>
+    </button>
 
     <a
       class="nav-item"
       data-nav="ebs"
       href="https://internal-platform-v1.github.io/Decision-Support-System/ebs-response-template.html"
-    >EBS Response</a>
+    >
+      EBS Response
+    </a>
 
     <a
       class="nav-item"
       data-nav="fbc"
       href="https://internal-platform-v1.github.io/Decision-Support-System/fbc-comments-guide.html"
-    >FBC Comments</a>
+    >
+      FBC Comments
+    </a>
 
     <a
       class="nav-item"
       data-nav="links"
       href="https://internal-platform-v1.github.io/Decision-Support-System/links.html"
-    >Links</a>
+    >
+      Links
+    </a>
 
   </nav>
 
   <div class="header-actions">
+
     <div class="global-search">
       <input
         id="globalSearch"
@@ -76,9 +75,8 @@
 
     <button
       class="icon-btn notification-btn"
-      id="notificationBtn"
-      type="button"
       aria-label="Notifications"
+      type="button"
     >
       <span class="bell-icon"></span>
       <b class="notification-dot">3</b>
@@ -87,29 +85,32 @@
     <button
       class="avatar-btn"
       id="profileBtn"
-      type="button"
       aria-label="Open profile"
-      aria-expanded="false"
-    >JD</button>
+      type="button"
+    >
+      JD
+    </button>
 
     <button
       class="tiny-chevron"
       id="profileChevron"
-      type="button"
       aria-label="Open profile menu"
-      aria-expanded="false"
-    >⌄</button>
-
-    <div
-      class="profile-menu"
-      id="profileMenu"
-      aria-hidden="true"
+      type="button"
     >
+      ⌄
+    </button>
+
+    <div class="profile-menu" id="profileMenu">
+
       <div class="profile-name">Jennifer</div>
       <div class="profile-role">BD Tools User</div>
-      <button type="button" data-profile-action="profile">Profile</button>
-      <button type="button" data-profile-action="settings">Settings</button>
-      <button type="button" data-profile-action="logout">Logout</button>
+
+      <button type="button">Profile</button>
+      <button type="button">Settings</button>
+      <button type="button">Logout</button>
+
     </div>
+
   </div>
+
 </header>
