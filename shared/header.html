@@ -1,18 +1,34 @@
+<!-- ============================================================
+     shared/header.html – updated with new nav items in brand area
+     ============================================================ -->
 <header class="topbar">
     <div class="brand-area">
         <img class="fedex-logo-image" src="assets/images/fedex-logo.png" alt="FedEx Freight">
         <div class="brand-divider"></div>
-        <div class="page-title">BD Tools — Main Menu</div>
+
+        <!-- NEW: navigation moved right next to the logo -->
+        <nav class="brand-nav" aria-label="Main navigation">
+            <button class="nav-item active" data-nav="home">Home</button>
+
+            <button class="nav-item has-dropdown" data-nav="cases" id="caseDirectoryBtn">
+                Case Directory
+                <span class="dropdown-chevron">⌄</span>
+            </button>
+            <!-- dropdown panel for Case Directory -->
+            <div class="dropdown-panel" id="caseDropdown">
+                <a href="#" data-nav="case1">Case Type A</a>
+                <a href="#" data-nav="case2">Case Type B</a>
+                <a href="#" data-nav="case3">Case Type C</a>
+                <a href="#" data-nav="case4">Case Type D</a>
+            </div>
+
+            <button class="nav-item" data-nav="ebs">EBS Response</button>
+            <button class="nav-item" data-nav="fbc">FBC Comments</button>
+            <button class="nav-item" data-nav="links">Links</button>
+        </nav>
     </div>
 
-    <nav class="main-nav" aria-label="Main navigation">
-        <button class="nav-item active" data-nav="home">Home</button>
-        <button class="nav-item has-chevron" data-nav="guides">Guide Library</button>
-        <button class="nav-item has-chevron" data-nav="cases">Case Directory</button>
-        <button class="nav-item has-chevron" data-nav="tools">Tools</button>
-        <button class="nav-item" data-nav="links">Links</button>
-    </nav>
-
+    <!-- right-hand actions (unchanged) -->
     <div class="header-actions">
         <div class="global-search">
             <input id="globalSearch" type="text" placeholder="Search guides, tools, topics..." autocomplete="off">
