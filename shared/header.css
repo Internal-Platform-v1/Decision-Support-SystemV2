@@ -1,4 +1,8 @@
-/* shared/header.css */
+/* ============================================================
+   shared/header.css – updated for brand-area nav
+   ============================================================ */
+
+/* ---- topbar container ---- */
 .topbar {
     height: 58px;
     display: flex;
@@ -12,7 +16,19 @@
     border-radius: 0;
     box-shadow: none;
 }
-.brand-area { display: flex; align-items: center; gap: 18px; white-space: nowrap; }
+
+/* ---- brand area: logo + divider + new nav ---- */
+.brand-area {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    /* shrink only if needed */
+    min-width: 0;
+    /* allow flex shrinking */;
+}
+
 .fedex-logo-image {
     display: block;
     width: 76px;
@@ -22,48 +38,108 @@
     object-position: left center;
     flex: 0 0 auto;
 }
-.brand-divider { width: 1px; height: 24px; background: #e8e8f0; }
-.page-title { font-size: 12px; font-weight: 700; }
 
-.main-nav {
-    display: flex;
-    align-self: stretch;
-    align-items: center;
-    gap: 26px;
-    margin-left: 82px;
+.brand-divider {
+    width: 1px;
+    height: 24px;
+    background: #e8e8f0;
+    flex: 0 0 auto;
 }
+
+/* ---- new inline navigation ---- */
+.brand-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+    position: relative;
+}
+
 .nav-item {
     height: 100%;
     border: 0;
     background: transparent;
     color: #343565;
     font-size: 10px;
+    font-weight: 500;
     position: relative;
-    padding: 0 1px;
+    padding: 0 2px;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.01em;
 }
-.nav-item.active { color: #5620bd; }
-.nav-item.active:after {
+
+.nav-item.active {
+    color: #5620bd;
+}
+
+.nav-item.active::after {
     content: "";
     position: absolute;
-    bottom: 0; left: 0; right: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     height: 2px;
     background: #6b25df;
     border-radius: 2px;
 }
-.nav-item.has-chevron:after {
-    content: "⌄";
-    position: static;
-    margin-left: 5px;
+
+.nav-item.has-dropdown .dropdown-chevron {
+    font-size: 8px;
     color: #6d6e91;
+    transition: transform 0.2s;
 }
+
+.nav-item.has-dropdown.open .dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+/* ---- dropdown panel for Case Directory ---- */
+.dropdown-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0;
+    background: #fff;
+    border: 1px solid #e7e8f3;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(31, 25, 87, 0.12);
+    padding: 6px 0;
+    min-width: 160px;
+    display: none;
+    z-index: 100;
+}
+
+.dropdown-panel.open {
+    display: block;
+}
+
+.dropdown-panel a {
+    display: block;
+    padding: 8px 18px;
+    font-size: 9px;
+    color: #343565;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.dropdown-panel a:hover {
+    background: #f5f1ff;
+    color: #5620bd;
+}
+
+/* ---- right-hand actions (unchanged) ---- */
 .header-actions {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 11px;
     position: relative;
+    flex: 0 0 auto;
 }
+
 .global-search {
     height: 33px;
     width: 190px;
@@ -74,74 +150,166 @@
     padding: 0 10px;
     background: #fff;
 }
+
 .global-search input {
-    border: 0; outline: 0; width: 100%;
-    font-size: 9px; color: #333;
+    border: 0;
+    outline: 0;
+    width: 100%;
+    font-size: 9px;
+    color: #333;
 }
+
 .search-icon {
-    width: 13px; height: 13px;
+    width: 13px;
+    height: 13px;
     border: 2px solid #9ea0b8;
     border-radius: 50%;
     display: inline-block;
     position: relative;
     flex: none;
 }
-.search-icon:after {
+
+.search-icon::after {
     content: "";
     position: absolute;
-    width: 5px; height: 2px;
+    width: 5px;
+    height: 2px;
     background: #9ea0b8;
-    right: -4px; bottom: -2px;
+    right: -4px;
+    bottom: -2px;
     transform: rotate(45deg);
     border-radius: 2px;
 }
-.icon-btn { border: 0; background: transparent; padding: 3px; position: relative; cursor: pointer; }
+
+.icon-btn {
+    border: 0;
+    background: transparent;
+    padding: 3px;
+    position: relative;
+    cursor: pointer;
+}
+
 .bell-icon {
-    display: block; width: 16px; height: 17px;
+    display: block;
+    width: 16px;
+    height: 17px;
     border: 1.8px solid #55577c;
     border-radius: 9px 9px 4px 4px;
     position: relative;
 }
-.bell-icon:after {
-    content: ""; position: absolute;
-    width: 5px; height: 2px;
+
+.bell-icon::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 2px;
     background: #55577c;
-    left: 4px; bottom: -4px;
+    left: 4px;
+    bottom: -4px;
     border-radius: 2px;
 }
+
 .notification-dot {
-    position: absolute; top: -2px; right: -3px;
-    background: #ff4c20; color: #fff;
-    border-radius: 10px; min-width: 12px; height: 12px;
-    font-size: 7px; display: grid; place-items: center;
+    position: absolute;
+    top: -2px;
+    right: -3px;
+    background: #ff4c20;
+    color: #fff;
+    border-radius: 10px;
+    min-width: 12px;
+    height: 12px;
+    font-size: 7px;
+    display: grid;
+    place-items: center;
     border: 1px solid #fff;
 }
+
 .avatar-btn {
-    border: 0; width: 31px; height: 31px;
+    border: 0;
+    width: 31px;
+    height: 31px;
     border-radius: 50%;
     background: #4d14b8;
-    color: #fff; font-weight: 700; font-size: 10px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 10px;
     cursor: pointer;
 }
+
 .tiny-chevron {
-    border: 0; background: transparent;
-    color: #666987; font-size: 14px; padding: 0;
+    border: 0;
+    background: transparent;
+    color: #666987;
+    font-size: 14px;
+    padding: 0;
     cursor: pointer;
 }
+
 .profile-menu {
-    position: absolute; right: 0; top: 44px; width: 145px;
-    padding: 9px; background: #fff;
-    border: 1px solid #e7e8f3; border-radius: 8px;
-    box-shadow: 0 12px 30px rgba(31,25,87,.15);
+    position: absolute;
+    right: 0;
+    top: 44px;
+    width: 145px;
+    padding: 9px;
+    background: #fff;
+    border: 1px solid #e7e8f3;
+    border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(31, 25, 87, 0.15);
     display: none;
 }
-.profile-menu.open { display: block; }
-.profile-menu .profile-name { font-size: 11px; font-weight: 800; }
-.profile-menu .profile-role { font-size: 8px; color: #999; margin: 2px 0 8px; }
+
+.profile-menu.open {
+    display: block;
+}
+
+.profile-menu .profile-name {
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.profile-menu .profile-role {
+    font-size: 8px;
+    color: #999;
+    margin: 2px 0 8px;
+}
+
 .profile-menu button {
-    display: block; border: 0; background: transparent;
-    width: 100%; text-align: left;
-    padding: 7px; font-size: 9px; border-radius: 5px;
+    display: block;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    padding: 7px;
+    font-size: 9px;
+    border-radius: 5px;
     cursor: pointer;
 }
-.profile-menu button:hover { background: #f5f1ff; }
+
+.profile-menu button:hover {
+    background: #f5f1ff;
+}
+
+/* ---- responsive tweaks ---- */
+@media (max-width: 1050px) {
+    .topbar {
+        padding: 0 20px;
+    }
+    .brand-nav {
+        gap: 14px;
+    }
+    .global-search {
+        width: 155px;
+    }
+}
+
+@media (max-width: 800px) {
+    .brand-nav {
+        gap: 10px;
+    }
+    .nav-item {
+        font-size: 9px;
+    }
+    .global-search {
+        width: 120px;
+    }
+}
