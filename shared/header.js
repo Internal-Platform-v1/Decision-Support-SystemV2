@@ -1,13 +1,21 @@
-// shared/header.js
+/* ============================================================
+   shared/header.js – dropdown + nav clicks + profile toggle
+   ============================================================ */
+
 (function() {
-    // Profile toggle
-    const profileBtn = document.getElementById('profileBtn');
-    const profileChevron = document.getElementById('profileChevron');
-    const profileMenu = document.getElementById('profileMenu');
+    'use strict';
+
+    /* ---- 1. Profile toggle (unchanged) ---- */
+    var profileBtn = document.getElementById('profileBtn');
+    var profileChevron = document.getElementById('profileChevron');
+    var profileMenu = document.getElementById('profileMenu');
 
     function toggleProfile() {
-        profileMenu.classList.toggle('open');
+        if (profileMenu) {
+            profileMenu.classList.toggle('open');
+        }
     }
+
     if (profileBtn) profileBtn.addEventListener('click', toggleProfile);
     if (profileChevron) profileChevron.addEventListener('click', toggleProfile);
 
@@ -17,24 +25,80 @@
         }
     });
 
-    // Navigation items
-    document.querySelectorAll('.nav-item').forEach(function(item) {
+    /* ---- 2. Case Directory dropdown ---- */
+    var caseBtn = document.getElementById('caseDirectoryBtn');
+    var caseDropdown = document.getElementById('caseDropdown');
+
+    function toggleDropdown(e) {
+        e.stopPropagation();
+        if (caseDropdown) {
+            caseDropdown.classList.toggle('open');
+            if (caseBtn) caseBtn.classList.toggle('open');
+        }
+    }
+
+    if (caseBtn) {
+        caseBtn.addEventListener('click', toggleDropdown);
+        // Also open on chevron click
+        var chevron = caseBtn.querySelector('.dropdown-chevron');
+        if (chevron) {
+            chevron.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown(e);
+            });
+        }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        var target = e.target;
+        var isInside = target.closest('.brand-nav') && target.closest('.has-dropdown');
+        if (!isInside) {
+            if (caseDropdown) caseDropdown.classList.remove('open');
+            if (caseBtn) caseBtn.classList.remove('open');
+        }
+    });
+
+    // Close dropdown when a link inside is clicked
+    if (caseDropdown) {
+        caseDropdown.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var navName = this.getAttribute('data-nav') || 'Case';
+                if (window.showToast) {
+                    window.showToast('Opening ' + navName);
+                } else {
+                    console.log('Opening ' + navName);
+                }
+                // close dropdown
+                caseDropdown.classList.remove('open');
+                if (caseBtn) caseBtn.classList.remove('open');
+            });
+        });
+    }
+
+    /* ---- 3. Main nav clicks (Home, EBS Response, FBC Comments, Links) ---- */
+    var allNavItems = document.querySelectorAll('.nav-item:not(.has-dropdown)');
+
+    allNavItems.forEach(function(item) {
         item.addEventListener('click', function() {
+            // remove active from all nav items
             document.querySelectorAll('.nav-item').forEach(function(n) {
                 n.classList.remove('active');
             });
-            item.classList.add('active');
-            // Show toast is defined in main script – we'll call a global function if available
+            this.classList.add('active');
+
+            var label = this.textContent.trim().replace(/[⌄]/g, '').trim();
             if (window.showToast) {
-                window.showToast(item.textContent.trim() + ' selected');
+                window.showToast(label + ' selected');
             } else {
-                console.log(item.textContent.trim() + ' selected');
+                console.log(label + ' selected');
             }
         });
     });
 
-    // Global search (bind to main script's performSearch)
-    const globalSearchInput = document.getElementById('globalSearch');
+    /* ---- 4. Global search (bind to main script's performSearch) ---- */
+    var globalSearchInput = document.getElementById('globalSearch');
     if (globalSearchInput) {
         globalSearchInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -46,4 +110,5 @@
             }
         });
     }
+
 })();
