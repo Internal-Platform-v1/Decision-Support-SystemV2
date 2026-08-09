@@ -1,670 +1,147 @@
-/* =========================================================
-   SHARED HEADER
-   Based directly on the original styles(4).css
-   ========================================================= */
-
-* {
-  box-sizing: border-box;
-}
-
-
-/* =========================================================
-   HEADER
-   Original reference:
-   height: 62px
-   padding: 0 20px
-   ========================================================= */
-
+/* shared/header.css */
 .topbar {
-  width: 100%;
-  height: 62px;
-
-  display: flex;
-  align-items: center;
-
-  padding: 0 20px;
-
-  border: 0;
-  border-bottom: 0;
-  border-radius: 0;
-
-  background: #fff;
-
-  position: relative;
-  z-index: 20;
-
-  box-shadow: none;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    border-bottom: 1px solid #e9e9f2;
+    background: #fff;
+    position: relative;
+    z-index: 20;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
 }
-
-
-/* =========================================================
-   BRAND / LOGO
-   ========================================================= */
-
-.brand-area {
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-
-  gap: 18px;
-
-  white-space: nowrap;
-
-  flex: 0 0 auto;
-}
-
-
-/*
-   The original header now contains only the logo.
-   The old brand-divider and page-title were removed.
-*/
-
-.brand-area > a {
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-
-  text-decoration: none;
-}
-
-
-/*
-   FedEx Freight logo image
-   Based on original styles(4).css lines 771–779.
-*/
-
+.brand-area { display: flex; align-items: center; gap: 18px; white-space: nowrap; }
 .fedex-logo-image {
-  display: block;
-
-  width: 76px;
-  height: auto;
-
-  max-height: 43px;
-
-  object-fit: contain;
-  object-position: left center;
-
-  flex: 0 0 auto;
+    display: block;
+    width: 76px;
+    height: auto;
+    max-height: 43px;
+    object-fit: contain;
+    object-position: left center;
+    flex: 0 0 auto;
 }
-
-
-/* =========================================================
-   MAIN NAVIGATION
-   ========================================================= */
+.brand-divider { width: 1px; height: 24px; background: #e8e8f0; }
+.page-title { font-size: 12px; font-weight: 700; }
 
 .main-nav {
-  height: 100%;
-
-  display: flex;
-  align-self: stretch;
-  align-items: center;
-
-  gap: 25px;
-
-  /*
-     Original reference value.
-     Because BD Tools — Main Menu was removed,
-     this now spaces the navigation from the logo.
-  */
-  margin-left: 68px;
-
-  white-space: nowrap;
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    gap: 26px;
+    margin-left: 82px;
 }
-
-
-/* =========================================================
-   NAV ITEMS
-   Works for BOTH <a> and <button>
-   ========================================================= */
-
 .nav-item {
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-
-  border: 0;
-  background: transparent;
-
-  color: #343565;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  font-size: 8px;
-  font-weight: 500;
-
-  line-height: 1;
-
-  position: relative;
-
-  padding: 0 1px;
-
-  text-decoration: none;
-
-  white-space: nowrap;
-
-  cursor: pointer;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    color: #343565;
+    font-size: 10px;
+    position: relative;
+    padding: 0 1px;
+    cursor: pointer;
 }
-
-
-/*
-   Remove the browser's default anchor styling.
-*/
-
-.nav-item:visited {
-  color: #343565;
-  text-decoration: none;
+.nav-item.active { color: #5620bd; }
+.nav-item.active:after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: #6b25df;
+    border-radius: 2px;
 }
-
-
-/*
-   Hover
-*/
-
-.nav-item:hover {
-  color: #5620bd;
-  text-decoration: none;
+.nav-item.has-chevron:after {
+    content: "⌄";
+    position: static;
+    margin-left: 5px;
+    color: #6d6e91;
 }
-
-
-/*
-   Active navigation item
-*/
-
-.nav-item.active {
-  color: #5620bd;
-}
-
-
-/*
-   Active underline
-   Matches original reference:
-   height: 2px
-   bottom: 11px
-*/
-
-.nav-item.active::after {
-  content: "";
-
-  position: absolute;
-
-  bottom: 11px;
-
-  left: 0;
-  right: 0;
-
-  height: 2px;
-
-  background: #6b25df;
-
-  border-radius: 2px;
-}
-
-
-/* =========================================================
-   CASE DIRECTORY
-   ========================================================= */
-
-.case-directory-wrap {
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-
-  position: relative;
-}
-
-
-/*
-   Case Directory button
-*/
-
-.case-directory-wrap .nav-item {
-  gap: 4px;
-}
-
-
-/*
-   Our header.html contains:
-
-   <span class="nav-chevron">⌄</span>
-
-   Therefore we do NOT use the original
-   .nav-item.has-chevron::after chevron.
-*/
-
-.nav-item.has-chevron::after {
-  content: none;
-}
-
-
-/*
-   Chevron in Case Directory
-*/
-
-.nav-chevron {
-  color: #6d6e91;
-
-  font-size: 8px;
-
-  line-height: 1;
-
-  margin-left: 1px;
-
-  transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   CASE DIRECTORY DROPDOWN
-   ========================================================= */
-
-.case-directory-menu {
-  position: absolute;
-
-  left: -8px;
-
-  top: calc(100% - 1px);
-
-  width: 125px;
-
-  padding: 5px;
-
-  background: #fff;
-
-  border: 1px solid #e7e8f3;
-
-  border-radius: 7px;
-
-  box-shadow:
-    0 10px 25px rgba(31, 25, 87, 0.14);
-
-  display: none;
-
-  z-index: 300;
-}
-
-
-.case-directory-wrap.open .case-directory-menu {
-  display: block;
-}
-
-
-.case-directory-menu a {
-  min-height: 26px;
-
-  display: flex;
-  align-items: center;
-
-  padding: 0 8px;
-
-  border-radius: 5px;
-
-  color: #343565;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  font-size: 8px;
-  font-weight: 500;
-
-  text-decoration: none;
-}
-
-
-.case-directory-menu a:hover {
-  background: #f5f1ff;
-
-  color: #5620bd;
-}
-
-
-/* =========================================================
-   RIGHT SIDE HEADER ACTIONS
-   ========================================================= */
-
 .header-actions {
-  margin-left: auto;
-
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  position: relative;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    position: relative;
 }
-
-
-/* =========================================================
-   GLOBAL SEARCH
-   ========================================================= */
-
 .global-search {
-  width: 144px;
-  height: 29px;
-
-  border: 1px solid #dedfec;
-
-  border-radius: 6px;
-
-  display: flex;
-  align-items: center;
-
-  padding: 0 9px;
-
-  background: #fff;
+    height: 33px;
+    width: 190px;
+    border: 1px solid #dedfec;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    background: #fff;
 }
-
-
 .global-search input {
-  border: 0;
-  outline: 0;
-
-  width: 100%;
-  min-width: 0;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-
-  font-size: 7px;
-
-  color: #333;
-
-  background: transparent;
+    border: 0; outline: 0; width: 100%;
+    font-size: 9px; color: #333;
 }
-
-
-.global-search input::placeholder {
-  color: #9a9caf;
-}
-
-
-/* =========================================================
-   SEARCH ICON
-   ========================================================= */
-
 .search-icon {
-  width: 11px;
-  height: 11px;
-
-  border: 1.7px solid #9ea0b8;
-
-  border-radius: 50%;
-
-  display: inline-block;
-
-  position: relative;
-
-  flex: none;
+    width: 13px; height: 13px;
+    border: 2px solid #9ea0b8;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    flex: none;
 }
-
-
-.search-icon::after {
-  content: "";
-
-  position: absolute;
-
-  width: 5px;
-  height: 1.7px;
-
-  background: #9ea0b8;
-
-  right: -4px;
-  bottom: -2px;
-
-  transform: rotate(45deg);
-
-  border-radius: 2px;
+.search-icon:after {
+    content: "";
+    position: absolute;
+    width: 5px; height: 2px;
+    background: #9ea0b8;
+    right: -4px; bottom: -2px;
+    transform: rotate(45deg);
+    border-radius: 2px;
 }
-
-
-/* =========================================================
-   NOTIFICATION BUTTON
-   ========================================================= */
-
-.icon-btn {
-  border: 0;
-
-  background: transparent;
-
-  padding: 3px;
-
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-}
-
-
-/*
-   Bell
-*/
-
+.icon-btn { border: 0; background: transparent; padding: 3px; position: relative; cursor: pointer; }
 .bell-icon {
-  display: block;
-
-  width: 15px;
-  height: 16px;
-
-  border: 1.8px solid #55577c;
-
-  border-radius: 9px 9px 4px 4px;
-
-  position: relative;
+    display: block; width: 16px; height: 17px;
+    border: 1.8px solid #55577c;
+    border-radius: 9px 9px 4px 4px;
+    position: relative;
 }
-
-
-.bell-icon::after {
-  content: "";
-
-  position: absolute;
-
-  width: 5px;
-  height: 2px;
-
-  background: #55577c;
-
-  left: 4px;
-  bottom: -4px;
-
-  border-radius: 2px;
+.bell-icon:after {
+    content: ""; position: absolute;
+    width: 5px; height: 2px;
+    background: #55577c;
+    left: 4px; bottom: -4px;
+    border-radius: 2px;
 }
-
-
-/*
-   Notification badge
-*/
-
 .notification-dot {
-  position: absolute;
-
-  top: -1px;
-  right: -1px;
-
-  background: #ff4c20;
-
-  color: #fff;
-
-  border-radius: 10px;
-
-  min-width: 11px;
-  height: 11px;
-
-  padding: 0 2px;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  font-size: 6px;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid #fff;
-
-  line-height: 1;
+    position: absolute; top: -2px; right: -3px;
+    background: #ff4c20; color: #fff;
+    border-radius: 10px; min-width: 12px; height: 12px;
+    font-size: 7px; display: grid; place-items: center;
+    border: 1px solid #fff;
 }
-
-
-/* =========================================================
-   PROFILE AVATAR
-   ========================================================= */
-
 .avatar-btn {
-  border: 0;
-
-  width: 28px;
-  height: 28px;
-
-  border-radius: 50%;
-
-  background: #4d14b8;
-
-  color: #fff;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-
-  font-weight: 700;
-  font-size: 9px;
-
-  padding: 0;
-
-  display: grid;
-  place-items: center;
-
-  cursor: pointer;
+    border: 0; width: 31px; height: 31px;
+    border-radius: 50%;
+    background: #4d14b8;
+    color: #fff; font-weight: 700; font-size: 10px;
+    cursor: pointer;
 }
-
-
-/* =========================================================
-   PROFILE CHEVRON
-   ========================================================= */
-
 .tiny-chevron {
-  border: 0;
-
-  background: transparent;
-
-  color: #666987;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-
-  font-size: 11px;
-
-  line-height: 1;
-
-  padding: 0;
-
-  width: 12px;
-  height: 24px;
-
-  cursor: pointer;
+    border: 0; background: transparent;
+    color: #666987; font-size: 14px; padding: 0;
+    cursor: pointer;
 }
-
-
-/* =========================================================
-   PROFILE DROPDOWN
-   ========================================================= */
-
 .profile-menu {
-  position: absolute;
-
-  right: 0;
-  top: 49px;
-
-  width: 145px;
-
-  padding: 9px;
-
-  background: #fff;
-
-  border: 1px solid #e7e8f3;
-
-  border-radius: 8px;
-
-  box-shadow:
-    0 12px 30px rgba(31, 25, 87, 0.15);
-
-  display: none;
-
-  z-index: 300;
+    position: absolute; right: 0; top: 44px; width: 145px;
+    padding: 9px; background: #fff;
+    border: 1px solid #e7e8f3; border-radius: 8px;
+    box-shadow: 0 12px 30px rgba(31,25,87,.15);
+    display: none;
 }
-
-
-.profile-menu.open {
-  display: block;
-}
-
-
-.profile-menu .profile-name {
-  font-size: 11px;
-  font-weight: 800;
-}
-
-
-.profile-menu .profile-role {
-  font-size: 8px;
-
-  color: #999;
-
-  margin: 2px 0 8px;
-}
-
-
+.profile-menu.open { display: block; }
+.profile-menu .profile-name { font-size: 11px; font-weight: 800; }
+.profile-menu .profile-role { font-size: 8px; color: #999; margin: 2px 0 8px; }
 .profile-menu button {
-  display: block;
-
-  border: 0;
-
-  background: transparent;
-
-  width: 100%;
-
-  text-align: left;
-
-  padding: 7px;
-
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-
-  font-size: 9px;
-
-  border-radius: 5px;
-
-  cursor: pointer;
+    display: block; border: 0; background: transparent;
+    width: 100%; text-align: left;
+    padding: 7px; font-size: 9px; border-radius: 5px;
+    cursor: pointer;
 }
-
-
-.profile-menu button:hover {
-  background: #f5f1ff;
-}
-
-
-/* =========================================================
-   RESPONSIVE RULES
-   These are ONLY the original header-related rules.
-   ========================================================= */
-
-@media (max-width: 1050px) {
-
-  .main-nav {
-    margin-left: 35px;
-    gap: 17px;
-  }
-
-  .topbar {
-    padding: 0 20px;
-  }
-
-}
-
-
-@media (max-width: 800px) {
-
-  .topbar {
-    min-width: 760px;
-  }
-
-  .global-search {
-    width: 155px;
-  }
-
-}
+.profile-menu button:hover { background: #f5f1ff; }
