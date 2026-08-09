@@ -1,46 +1,40 @@
 /* =========================================================
-   SHARED HEADER — STAGE 1
-   Based directly on the supplied original styles.css.
-   IMPORTANT: the .app-shell belongs to the page/body, not here.
+   SHARED HEADER
+   Extracted from the ORIGINAL supplied styles.css.
+   No redesign. No new sizing system.
    ========================================================= */
 
-.shared-header,
-.shared-header *{
-  box-sizing:border-box;
-}
-
-.shared-header{
+.topbar{
   width:100%;
   height:62px;
   display:flex;
   align-items:center;
   padding:0 20px;
-  background:#fff;
-  position:relative;
-  z-index:100;
   border:0;
   border-bottom:0;
   border-radius:0;
+  background:#fff;
+  position:relative;
+  z-index:20;
   box-shadow:none;
 }
 
-.shared-header .brand-area{
+.brand-area{
   height:100%;
   display:flex;
   align-items:center;
   gap:18px;
   white-space:nowrap;
-  flex:0 0 auto;
 }
 
-.shared-header .brand-link{
+.brand-link{
   display:flex;
   align-items:center;
   height:100%;
   text-decoration:none;
 }
 
-.shared-header .fedex-logo-image{
+.fedex-logo-image{
   display:block;
   width:76px;
   height:auto;
@@ -50,124 +44,104 @@
   flex:0 0 auto;
 }
 
-/* The navigation is intentionally close to the logo,
-   while preserving the original dashboard proportions. */
-.shared-header .main-nav{
+.main-nav{
   height:100%;
   display:flex;
-  align-items:center;
   align-self:stretch;
+  align-items:center;
   gap:25px;
   margin-left:68px;
   white-space:nowrap;
 }
 
-.shared-header .nav-item{
+.nav-item{
   height:100%;
   display:flex;
   align-items:center;
-  position:relative;
   border:0;
   background:transparent;
   color:#343565;
-  font-family:"Inter","Segoe UI",Arial,sans-serif;
   font-size:8px;
   font-weight:500;
-  line-height:1;
+  position:relative;
   padding:0 1px;
   text-decoration:none;
   white-space:nowrap;
   cursor:pointer;
 }
 
-.shared-header .nav-item:hover{
+.nav-item:hover{
   color:#5620bd;
 }
 
-.shared-header .nav-item:focus-visible{
-  outline:2px solid rgba(107,37,223,.25);
-  outline-offset:3px;
-  border-radius:3px;
-}
-
-.shared-header .nav-item.active{
+.nav-item.active{
   color:#5620bd;
-  font-weight:600;
 }
 
-.shared-header .nav-item.active::after{
+.nav-item.active:after{
   content:"";
   position:absolute;
+  bottom:11px;
   left:0;
   right:0;
-  bottom:11px;
   height:2px;
   background:#6b25df;
   border-radius:2px;
 }
 
-/* Case Directory dropdown */
-.shared-header .case-directory-wrap{
+.case-directory-wrap{
   height:100%;
   display:flex;
   align-items:center;
   position:relative;
 }
 
-.shared-header .case-directory-trigger{
+.case-directory-trigger{
   gap:4px;
 }
 
-.shared-header .nav-chevron{
+.nav-chevron{
   color:#6d6e91;
   font-size:8px;
   line-height:1;
-  transform:translateY(-1px);
-  transition:transform .15s ease;
 }
 
-.shared-header .case-directory-wrap.open .nav-chevron{
-  transform:rotate(180deg) translateY(1px);
-}
-
-.shared-header .case-directory-menu{
+.case-directory-menu{
   position:absolute;
-  left:-9px;
+  left:-8px;
   top:calc(100% - 1px);
   width:126px;
   padding:5px;
-  display:none;
   background:#fff;
   border:1px solid #e7e7ef;
   border-radius:7px;
   box-shadow:0 10px 25px rgba(31,25,87,.14);
-  z-index:300;
+  display:none;
+  z-index:100;
 }
 
-.shared-header .case-directory-wrap.open .case-directory-menu{
+.case-directory-wrap.open .case-directory-menu{
   display:block;
 }
 
-.shared-header .case-directory-menu a{
-  min-height:25px;
+.case-directory-menu a{
   display:flex;
   align-items:center;
+  min-height:26px;
   padding:0 7px;
   border-radius:5px;
   color:#343565;
   text-decoration:none;
-  font-family:"Inter","Segoe UI",Arial,sans-serif;
   font-size:8px;
   font-weight:500;
 }
 
-.shared-header .case-directory-menu a:hover{
+.case-directory-menu a:hover{
   background:#f5f1ff;
   color:#5620bd;
 }
 
-/* Right controls — same scale as the supplied original CSS */
-.shared-header .header-actions{
+.header-actions{
   margin-left:auto;
   display:flex;
   align-items:center;
@@ -175,7 +149,7 @@
   position:relative;
 }
 
-.shared-header .global-search{
+.global-search{
   height:29px;
   width:144px;
   border:1px solid #dedfec;
@@ -186,30 +160,20 @@
   background:#fff;
 }
 
-.shared-header .global-search:focus-within{
-  border-color:#bca5e9;
-  box-shadow:0 0 0 3px rgba(107,32,208,.06);
-}
-
-.shared-header .global-search input{
+.global-search input{
   border:0;
   outline:0;
   width:100%;
   min-width:0;
-  font-family:"Inter","Segoe UI",Arial,sans-serif;
   font-size:7px;
   color:#333;
   background:transparent;
 }
 
-.shared-header .global-search input::placeholder{
-  color:#9a9caf;
-}
-
-.shared-header .search-icon{
+.search-icon{
   width:11px;
   height:11px;
-  border:1.7px solid #9ea0b8;
+  border:2px solid #9ea0b8;
   border-radius:50%;
   display:inline-block;
   position:relative;
@@ -217,11 +181,11 @@
   margin-right:7px;
 }
 
-.shared-header .search-icon::after{
+.search-icon:after{
   content:"";
   position:absolute;
   width:5px;
-  height:1.7px;
+  height:2px;
   background:#9ea0b8;
   right:-4px;
   bottom:-2px;
@@ -229,18 +193,16 @@
   border-radius:2px;
 }
 
-.shared-header .icon-btn{
+.icon-btn{
   border:0;
   background:transparent;
   padding:3px;
   position:relative;
   display:grid;
   place-items:center;
-  width:22px;
-  height:28px;
 }
 
-.shared-header .bell-icon{
+.bell-icon{
   display:block;
   width:15px;
   height:16px;
@@ -249,18 +211,7 @@
   position:relative;
 }
 
-.shared-header .bell-icon::before{
-  content:"";
-  position:absolute;
-  left:2px;
-  right:2px;
-  top:-3px;
-  height:4px;
-  border-top:1.3px solid #55577c;
-  border-radius:50%;
-}
-
-.shared-header .bell-icon::after{
+.bell-icon:after{
   content:"";
   position:absolute;
   width:5px;
@@ -271,24 +222,22 @@
   border-radius:2px;
 }
 
-.shared-header .notification-dot{
+.notification-dot{
   position:absolute;
-  top:0;
-  right:-1px;
+  top:-2px;
+  right:-3px;
   background:#ff4c20;
   color:#fff;
   border-radius:10px;
   min-width:11px;
   height:11px;
-  padding:0 2px;
   font-size:6px;
   display:grid;
   place-items:center;
   border:1px solid #fff;
-  line-height:1;
 }
 
-.shared-header .avatar-btn{
+.avatar-btn{
   border:0;
   width:28px;
   height:28px;
@@ -298,87 +247,75 @@
   font-weight:700;
   font-size:9px;
   padding:0;
-  display:grid;
-  place-items:center;
   cursor:pointer;
 }
 
-.shared-header .tiny-chevron{
+.tiny-chevron{
   border:0;
   background:transparent;
   color:#666987;
   font-size:11px;
-  line-height:1;
   padding:0;
-  width:12px;
-  height:24px;
   cursor:pointer;
 }
 
-/* Profile dropdown */
-.shared-header .profile-menu{
+.profile-menu{
   position:absolute;
   right:0;
   top:49px;
   width:145px;
   padding:9px;
   background:#fff;
-  border:1px solid #e7e7ef;
+  border:1px solid var(--line);
   border-radius:8px;
   box-shadow:0 12px 30px rgba(31,25,87,.15);
   display:none;
+  z-index:200;
 }
 
-.shared-header .profile-menu.open{
+.profile-menu.open{
   display:block;
 }
 
-.shared-header .profile-name{
+.profile-menu .profile-name{
   font-size:11px;
   font-weight:800;
-  color:#10134f;
 }
 
-.shared-header .profile-role{
+.profile-menu .profile-role{
   font-size:8px;
   color:#999;
   margin:2px 0 8px;
 }
 
-.shared-header .profile-menu button{
+.profile-menu button{
   display:block;
   border:0;
   background:transparent;
-  color:#343565;
   width:100%;
   text-align:left;
   padding:7px;
-  font-family:"Inter","Segoe UI",Arial,sans-serif;
   font-size:9px;
   border-radius:5px;
+  cursor:pointer;
 }
 
-.shared-header .profile-menu button:hover{
+.profile-menu button:hover{
   background:#f5f1ff;
-  color:#4d148c;
 }
 
-/* Do not let the shared header create a full-screen/mobile layout.
-   The original dashboard intentionally keeps a minimum desktop
-   composition below 800px. */
 @media(max-width:1050px){
-  .shared-header{
-    padding:0 20px;
-  }
-
-  .shared-header .main-nav{
+  .main-nav{
     margin-left:35px;
     gap:17px;
+  }
+  .topbar{
+    padding:0 20px;
   }
 }
 
 @media(max-width:800px){
-  .shared-header{
-    min-width:760px;
+  .main-nav{
+    margin-left:35px;
   }
 }
