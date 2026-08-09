@@ -144,18 +144,21 @@ button { cursor: pointer; }
     font-size: 8px; font-weight: 700;
 }
 .view-all span { font-size: 14px; margin-left: 4px; vertical-align: -1px; }
+
+/* ---- 6 cards in one row ---- */
 .quick-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
     margin-top: 13px;
 }
+
 .quick-card {
-    height: 204px;
+    height: 194px;
     border: 1px solid #e8e9f2;
     border-bottom: 2px solid #d9d7ef;
     border-radius: 9px;
-    padding: 18px 15px 12px;
+    padding: 14px 12px 10px;
     position: relative;
     background: #fff;
     box-shadow: 0 3px 11px rgba(41,32,94,.045);
@@ -167,94 +170,70 @@ button { cursor: pointer; }
     box-shadow: 0 8px 20px rgba(41,32,94,.1);
 }
 
-/* Indigo card (PAUD Queue) */
-.indigo-card:after {
-  background: #c5c9ff;
-}
-.indigo-bg {
-  background: #eef0ff;
-  color: #4a56d6;
-}
-
-/* Footer badge inside the new card */
-.quick-footer {
-  font-size: 7px;
-  color: #6f7193;
-  margin-top: 6px;
-  padding: 2px 8px;
-  background: #f5f6fa;
-  border-radius: 4px;
-  display: inline-block;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Arrow button (keep position) */
-.arrow-btn {
-  position: absolute;
-  left: 15px;
-  bottom: 12px;
-  border: 0;
-  background: transparent;
-  color: #4f13b8;
-  font-size: 20px;
-  padding: 0;
-}
-
-/* Responsive */
-@media (max-width: 800px) {
-  .quick-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 500px) {
-  .quick-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* bottom border colors */
 .quick-card:after {
     content: "";
     position: absolute;
     bottom: -2px; left: 15%; right: 15%;
     height: 2px; border-radius: 4px;
-    background: #d7c9ff;
 }
+.purple-card:after { background: #d7c9ff; }
 .orange-card:after { background: #ffd4bd; }
-.blue-card:after { background: #c9dcff; }
-.green-card:after { background: #d0f0d2; }
-.pink-card:after { background: #ffd0df; }
+.blue-card:after   { background: #c9dcff; }
+.green-card:after  { background: #d0f0d2; }
+.indigo-card:after { background: #c5c9ff; }
+.pink-card:after   { background: #ffd0df; }
+
+/* icon backgrounds */
 .quick-icon {
-    width: 54px; height: 54px;
+    width: 44px; height: 44px;
     border-radius: 50%;
     display: grid; place-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 .purple-bg { background: #f1eaff; color: #7131dc; }
 .orange-bg { background: #fff0e4; color: #ff6d17; }
-.blue-bg { background: #eaf0ff; color: #3865df; }
-.green-bg { background: #e8f7e7; color: #3e9346; }
-.pink-bg { background: #ffeaf0; color: #ec3970; }
+.blue-bg   { background: #eaf0ff; color: #3865df; }
+.green-bg  { background: #e8f7e7; color: #3e9346; }
+.indigo-bg { background: #eef0ff; color: #4a56d6; }
+.pink-bg   { background: #ffeaf0; color: #ec3970; }
+
+.quick-svg { width: 22px; height: 22px; }
+
 .quick-card h3 {
-    font-size: 13px;
-    line-height: 1.25;
-    margin: 0 0 10px;
+    font-size: 11px;
+    line-height: 1.2;
+    margin: 0 0 6px;
     letter-spacing: -.2px;
 }
 .quick-card p {
-    font-size: 9px;
-    line-height: 1.55;
+    font-size: 8px;
+    line-height: 1.4;
     color: #7a7c98;
     margin: 0;
 }
+
+/* arrow button */
 .arrow-btn {
     position: absolute;
-    left: 15px; bottom: 12px;
-    border: 0; background: transparent;
+    left: 12px;
+    bottom: 10px;
+    border: 0;
+    background: transparent;
     color: #4f13b8;
-    font-size: 20px; padding: 0;
+    font-size: 18px;
+    padding: 0;
+}
+
+/* ---- responsive ---- */
+@media (max-width: 1050px) {
+    .quick-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 700px) {
+    .quick-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 450px) {
+    .quick-grid { grid-template-columns: 1fr; }
 }
 
 /* ===== LOWER GRID ===== */
@@ -346,10 +325,9 @@ button { cursor: pointer; }
 }
 .stat-svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .star-svg { width: 24px; height: 24px; stroke-width: 1.7; }
-.quick-svg { width: 25px; height: 25px; stroke-width: 1.75; }
 .user-svg { width: 26px; height: 26px; }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE (global) ===== */
 @media (max-width: 1050px) {
     .main-nav { margin-left: 35px; gap: 17px; }
     .topbar { padding: 0 20px; }
