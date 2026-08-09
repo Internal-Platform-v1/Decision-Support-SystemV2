@@ -1,5 +1,5 @@
 /* =========================================================
-   SHARED HEADER JS
+   SHARED HEADER JS — STAGE 1
    ========================================================= */
 
 (function(){
@@ -13,25 +13,25 @@
     return;
   }
 
-  /*
-   * header.js lives in /shared/.
-   * Therefore:
-   *   shared/header.js
-   *   shared/header.html
-   *   assets/images/fedex-logo.png
-   *
-   * are all resolved from this file.
-   */
   const scriptElement = document.currentScript;
-
   const sharedBase = scriptElement
     ? new URL("./", scriptElement.src)
     : new URL("./", window.location.href);
 
   const headerUrl = new URL("header.html", sharedBase);
+
+  /*
+   * Supports the folder structure we are building:
+   *
+   * shared/header.js
+   * assets/images/fedex-logo.png
+   *
+   * The logo is resolved from the actual header.js location,
+   * so it does not depend on the current page URL.
+   */
   const logoUrl = new URL("../assets/images/fedex-logo.png", sharedBase);
 
-  function getCurrentPage(){
+  function currentPage(){
 
     const path = window.location.pathname.toLowerCase();
 
@@ -47,37 +47,42 @@
       return "links";
     }
 
-    if(path.includes("case-directory") || path.includes("/cases/")){
+    if(
+      path.includes("case-directory") ||
+      path.includes("/cases/")
+    ){
       return "cases";
     }
 
     return "home";
   }
 
-  function setActiveNavigation(){
+  function setActiveNav(){
 
-    const currentPage = getCurrentPage();
+    const page = currentPage();
 
-    document.querySelectorAll(".header-nav-link[data-nav]").forEach(function(link){
+    document
+      .querySelectorAll(".header-nav .nav-item[data-nav]")
+      .forEach(function(item){
 
-      link.classList.toggle(
-        "active",
-        link.dataset.nav === currentPage
-      );
+        item.classList.toggle(
+          "active",
+          item.dataset.nav === page
+        );
 
-    });
+      });
 
   }
 
   function closeCaseDirectory(){
 
-    const dropdown = document.getElementById("caseDirectoryDropdown");
+    const wrap = document.getElementById("caseDirectoryDropdown");
     const trigger = document.getElementById("caseDirectoryTrigger");
     const menu = document.getElementById("caseDirectoryMenu");
 
-    if(!dropdown) return;
+    if(!wrap) return;
 
-    dropdown.classList.remove("open");
+    wrap.classList.remove("open");
 
     if(trigger){
       trigger.setAttribute("aria-expanded","false");
@@ -91,15 +96,15 @@
 
   function toggleCaseDirectory(){
 
-    const dropdown = document.getElementById("caseDirectoryDropdown");
+    const wrap = document.querySelector(".case-directory-wrap");
     const trigger = document.getElementById("caseDirectoryTrigger");
     const menu = document.getElementById("caseDirectoryMenu");
 
-    if(!dropdown) return;
+    if(!wrap) return;
 
-    const open = !dropdown.classList.contains("open");
+    const open = !wrap.classList.contains("open");
 
-    dropdown.classList.toggle("open",open);
+    wrap.classList.toggle("open",open);
 
     if(trigger){
       trigger.setAttribute("aria-expanded",String(open));
@@ -113,9 +118,9 @@
 
   function closeProfile(){
 
-    const menu = document.getElementById("headerProfileMenu");
-    const button = document.getElementById("headerProfileButton");
-    const chevron = document.getElementById("headerProfileChevron");
+    const menu = document.getElementById("profileMenu");
+    const button = document.getElementById("profileBtn");
+    const chevron = document.getElementById("profileChevron");
 
     if(!menu) return;
 
@@ -134,9 +139,9 @@
 
   function toggleProfile(){
 
-    const menu = document.getElementById("headerProfileMenu");
-    const button = document.getElementById("headerProfileButton");
-    const chevron = document.getElementById("headerProfileChevron");
+    const menu = document.getElementById("profileMenu");
+    const button = document.getElementById("profileBtn");
+    const chevron = document.getElementById("profileChevron");
 
     if(!menu) return;
 
@@ -157,17 +162,16 @@
 
   function initializeHeader(){
 
-    /* Resolve the logo from /shared/header.js */
     const logo = document.getElementById("fedexHeaderLogo");
 
     if(logo){
       logo.src = logoUrl.href;
     }
 
-    setActiveNavigation();
+    setActiveNav();
 
-    /* Case Directory */
-    const caseTrigger = document.getElementById("caseDirectoryTrigger");
+    const caseTrigger =
+      document.getElementById("caseDirectoryTrigger");
 
     if(caseTrigger){
 
@@ -182,40 +186,40 @@
 
     }
 
-    document.querySelectorAll("[data-case-directory]").forEach(function(item){
+    document
+      .querySelectorAll("[data-case-directory]")
+      .forEach(function(item){
 
-      item.addEventListener("click",function(event){
+        item.addEventListener("click",function(event){
 
-        /*
-         * The final Legacy / Shine URLs will be inserted
-         * once their exact routes are confirmed.
-         */
-        if(item.getAttribute("href") === "#"){
-          event.preventDefault();
-        }
+          if(item.getAttribute("href") === "#"){
+            event.preventDefault();
+          }
 
-        closeCaseDirectory();
+          closeCaseDirectory();
 
-        document.dispatchEvent(
-          new CustomEvent("bdtools:case-directory",{
-            detail:{
-              type:item.dataset.caseDirectory,
-              label:item.textContent.trim()
-            }
-          })
-        );
+          document.dispatchEvent(
+            new CustomEvent("bdtools:case-directory",{
+              detail:{
+                type:item.dataset.caseDirectory,
+                label:item.textContent.trim()
+              }
+            })
+          );
+
+        });
 
       });
 
-    });
+    const profileBtn =
+      document.getElementById("profileBtn");
 
-    /* Profile */
-    const profileButton = document.getElementById("headerProfileButton");
-    const profileChevron = document.getElementById("headerProfileChevron");
+    const profileChevron =
+      document.getElementById("profileChevron");
 
-    if(profileButton){
+    if(profileBtn){
 
-      profileButton.addEventListener("click",function(event){
+      profileBtn.addEventListener("click",function(event){
 
         event.stopPropagation();
 
@@ -239,8 +243,8 @@
 
     }
 
-    /* Search */
-    const search = document.getElementById("headerSearch");
+    const search =
+      document.getElementById("globalSearch");
 
     if(search){
 
@@ -268,13 +272,12 @@
 
     }
 
-    /* Notifications */
-    const notificationButton =
-      document.getElementById("headerNotificationButton");
+    const notificationBtn =
+      document.getElementById("notificationBtn");
 
-    if(notificationButton){
+    if(notificationBtn){
 
-      notificationButton.addEventListener("click",function(){
+      notificationBtn.addEventListener("click",function(){
 
         document.dispatchEvent(
           new CustomEvent("bdtools:notifications")
@@ -284,7 +287,6 @@
 
     }
 
-    /* Profile actions */
     document
       .querySelectorAll("[data-profile-action]")
       .forEach(function(button){
@@ -309,27 +311,23 @@
 
       });
 
-    /* Close menus outside */
     document.addEventListener("click",function(event){
 
-      if(!event.target.closest("#caseDirectoryDropdown")){
+      if(!event.target.closest(".case-directory-wrap")){
         closeCaseDirectory();
       }
 
-      if(!event.target.closest(".header-tools")){
+      if(!event.target.closest(".header-actions")){
         closeProfile();
       }
 
     });
 
-    /* Escape */
     document.addEventListener("keydown",function(event){
 
       if(event.key === "Escape"){
-
         closeCaseDirectory();
         closeProfile();
-
       }
 
     });
@@ -347,13 +345,11 @@
   .then(function(response){
 
     if(!response.ok){
-
       throw new Error(
         "Unable to load shared/header.html (" +
         response.status +
         ")"
       );
-
     }
 
     return response.text();
@@ -373,9 +369,12 @@
     console.error("BD Tools header error:",error);
 
     placeholder.innerHTML =
-      '<div class="header-load-error">' +
-      'Unable to load the shared header.' +
-      '</div>';
+      '<div style="' +
+      'padding:12px;' +
+      'font:10px Arial,sans-serif;' +
+      'color:#b00020;' +
+      'background:#fff;' +
+      '">Unable to load the shared header.</div>';
 
     return false;
 

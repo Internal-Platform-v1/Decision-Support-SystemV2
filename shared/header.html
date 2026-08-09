@@ -1,175 +1,118 @@
-<!-- =========================================================
-     SHARED HEADER
-     ========================================================= -->
-<header class="site-header" id="sharedHeader">
-
-  <div class="header-inner">
-
-    <!-- FedEx Freight logo -->
+<header class="topbar shared-header" id="sharedHeader">
+  <div class="brand-area">
     <a
-      class="header-brand"
+      class="brand-link"
       href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
       aria-label="FedEx Freight Home"
     >
       <img
         id="fedexHeaderLogo"
-        class="fedex-header-logo"
+        class="fedex-logo-image"
         src=""
         alt="FedEx Freight"
       >
     </a>
-
-    <!-- ORIGINAL SITE NAVIGATION -->
-    <nav class="header-nav" aria-label="Main navigation">
-
-      <a
-        class="header-nav-link"
-        data-nav="home"
-        href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
-      >
-        Home
-      </a>
-
-      <div class="header-dropdown" id="caseDirectoryDropdown">
-
-        <button
-          class="header-nav-link header-dropdown-trigger"
-          id="caseDirectoryTrigger"
-          type="button"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <span>Case Directory</span>
-          <span class="header-chevron" aria-hidden="true">⌄</span>
-        </button>
-
-        <div
-          class="header-dropdown-menu"
-          id="caseDirectoryMenu"
-          aria-hidden="true"
-        >
-          <a
-            href="#"
-            data-case-directory="legacy"
-          >
-            Legacy
-          </a>
-
-          <a
-            href="#"
-            data-case-directory="shine"
-          >
-            Shine
-          </a>
-        </div>
-
-      </div>
-
-      <a
-        class="header-nav-link"
-        data-nav="ebs"
-        href="https://internal-platform-v1.github.io/Decision-Support-System/ebs-response-template.html"
-      >
-        EBS Response
-      </a>
-
-      <a
-        class="header-nav-link"
-        data-nav="fbc"
-        href="https://internal-platform-v1.github.io/Decision-Support-System/fbc-comments-guide.html"
-      >
-        FBC Comments
-      </a>
-
-      <a
-        class="header-nav-link"
-        data-nav="links"
-        href="https://internal-platform-v1.github.io/Decision-Support-System/links.html"
-      >
-        Links
-      </a>
-
-    </nav>
-
-    <!-- RIGHT SIDE CONTROLS -->
-    <div class="header-tools">
-
-      <div class="header-search">
-        <span class="header-search-icon" aria-hidden="true"></span>
-
-        <input
-          id="headerSearch"
-          type="search"
-          placeholder="Search guides, tools, topics..."
-          autocomplete="off"
-          aria-label="Search guides, tools, and topics"
-        >
-      </div>
-
-      <button
-        class="header-icon-button notification-button"
-        id="headerNotificationButton"
-        type="button"
-        aria-label="Notifications"
-      >
-        <span class="header-bell" aria-hidden="true"></span>
-        <span class="notification-badge">3</span>
-      </button>
-
-      <button
-        class="header-avatar"
-        id="headerProfileButton"
-        type="button"
-        aria-label="Open profile menu"
-        aria-expanded="false"
-      >
-        JD
-      </button>
-
-      <button
-        class="header-profile-chevron"
-        id="headerProfileChevron"
-        type="button"
-        aria-label="Open profile menu"
-        aria-expanded="false"
-      >
-        ⌄
-      </button>
-
-      <!-- Profile dropdown -->
-      <div
-        class="header-profile-menu"
-        id="headerProfileMenu"
-        aria-hidden="true"
-      >
-        <div class="profile-user">
-          <div class="profile-user-name" id="headerProfileName">Jennifer</div>
-          <div class="profile-user-role" id="headerProfileRole">BD Tools User</div>
-        </div>
-
-        <div class="profile-divider"></div>
-
-        <button type="button" data-profile-action="profile">
-          Profile
-        </button>
-
-        <button type="button" data-profile-action="settings">
-          Settings
-        </button>
-
-        <div class="profile-divider"></div>
-
-        <button
-          type="button"
-          class="profile-logout"
-          data-profile-action="logout"
-        >
-          Logout
-        </button>
-      </div>
-
-    </div>
-
   </div>
 
+  <nav class="main-nav" aria-label="Main navigation">
+
+    <a
+      class="nav-item"
+      data-nav="home"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/index-main.html"
+    >Home</a>
+
+    <div class="case-directory-wrap">
+      <button
+        class="nav-item case-directory-trigger"
+        id="caseDirectoryTrigger"
+        type="button"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        Case Directory
+        <span class="nav-chevron" aria-hidden="true">⌄</span>
+      </button>
+
+      <div
+        class="case-directory-menu"
+        id="caseDirectoryMenu"
+        aria-hidden="true"
+      >
+        <a href="#" data-case-directory="legacy">Legacy</a>
+        <a href="#" data-case-directory="shine">Shine</a>
+      </div>
+    </div>
+
+    <a
+      class="nav-item"
+      data-nav="ebs"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/ebs-response-template.html"
+    >EBS Response</a>
+
+    <a
+      class="nav-item"
+      data-nav="fbc"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/fbc-comments-guide.html"
+    >FBC Comments</a>
+
+    <a
+      class="nav-item"
+      data-nav="links"
+      href="https://internal-platform-v1.github.io/Decision-Support-System/links.html"
+    >Links</a>
+
+  </nav>
+
+  <div class="header-actions">
+    <div class="global-search">
+      <span class="search-icon" aria-hidden="true"></span>
+      <input
+        id="globalSearch"
+        type="text"
+        placeholder="Search guides, tools, topics..."
+        autocomplete="off"
+        aria-label="Search guides, tools, topics"
+      >
+    </div>
+
+    <button
+      class="icon-btn notification-btn"
+      id="notificationBtn"
+      type="button"
+      aria-label="Notifications"
+    >
+      <span class="bell-icon" aria-hidden="true"></span>
+      <b class="notification-dot">3</b>
+    </button>
+
+    <button
+      class="avatar-btn"
+      id="profileBtn"
+      type="button"
+      aria-label="Open profile"
+      aria-expanded="false"
+    >JD</button>
+
+    <button
+      class="tiny-chevron"
+      id="profileChevron"
+      type="button"
+      aria-label="Open profile menu"
+      aria-expanded="false"
+    >⌄</button>
+
+    <div
+      class="profile-menu"
+      id="profileMenu"
+      aria-hidden="true"
+    >
+      <div class="profile-name">Jennifer</div>
+      <div class="profile-role">BD Tools User</div>
+
+      <button type="button" data-profile-action="profile">Profile</button>
+      <button type="button" data-profile-action="settings">Settings</button>
+      <button type="button" data-profile-action="logout">Logout</button>
+    </div>
+  </div>
 </header>
