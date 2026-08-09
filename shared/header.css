@@ -1,350 +1,670 @@
 /* =========================================================
    SHARED HEADER
-   Extracted from the original index.html / styles.css.
-   Body/dashboard styling remains in styles.css.
+   Based directly on the original styles(4).css
    ========================================================= */
 
-.shared-header,
-.shared-header *{
-  box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
-.shared-header{
-  width:100%;
-  height:62px;
-  padding:0 20px;
-  border:0;
-  border-bottom:0;
-  border-radius:0;
-  background:#fff;
-  box-shadow:none;
-  display:flex;
-  align-items:center;
-  position:relative;
-  z-index:20;
+
+/* =========================================================
+   HEADER
+   Original reference:
+   height: 62px
+   padding: 0 20px
+   ========================================================= */
+
+.topbar {
+  width: 100%;
+  height: 62px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 20px;
+
+  border: 0;
+  border-bottom: 0;
+  border-radius: 0;
+
+  background: #fff;
+
+  position: relative;
+  z-index: 20;
+
+  box-shadow: none;
 }
 
-.shared-header .brand-area{
-  height:100%;
-  display:flex;
-  align-items:center;
-  gap:0;
-  white-space:nowrap;
-  flex:0 0 auto;
+
+/* =========================================================
+   BRAND / LOGO
+   ========================================================= */
+
+.brand-area {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  white-space: nowrap;
+
+  flex: 0 0 auto;
 }
 
-.shared-header .brand-link{
-  height:100%;
-  display:flex;
-  align-items:center;
-  text-decoration:none;
+
+/*
+   The original header now contains only the logo.
+   The old brand-divider and page-title were removed.
+*/
+
+.brand-area > a {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  text-decoration: none;
 }
 
-.shared-header .fedex-logo-image{
-  display:block;
-  width:76px;
-  height:auto;
-  max-height:43px;
-  object-fit:contain;
-  object-position:left center;
-  flex:0 0 auto;
+
+/*
+   FedEx Freight logo image
+   Based on original styles(4).css lines 771–779.
+*/
+
+.fedex-logo-image {
+  display: block;
+
+  width: 76px;
+  height: auto;
+
+  max-height: 43px;
+
+  object-fit: contain;
+  object-position: left center;
+
+  flex: 0 0 auto;
 }
 
-/* Navigation is now directly beside the logo.
-   The old "BD Tools — Main Menu" title is intentionally gone. */
-.shared-header .main-nav{
-  height:100%;
-  display:flex;
-  align-self:stretch;
-  align-items:center;
-  gap:25px;
-  margin-left:28px;
-  white-space:nowrap;
+
+/* =========================================================
+   MAIN NAVIGATION
+   ========================================================= */
+
+.main-nav {
+  height: 100%;
+
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+
+  gap: 25px;
+
+  /*
+     Original reference value.
+     Because BD Tools — Main Menu was removed,
+     this now spaces the navigation from the logo.
+  */
+  margin-left: 68px;
+
+  white-space: nowrap;
 }
 
-.shared-header .nav-item{
-  height:100%;
-  border:0;
-  background:transparent;
-  color:#343565;
-  font-size:8px;
-  font-weight:500;
-  position:relative;
-  padding:0 1px;
-  display:flex;
-  align-items:center;
-  text-decoration:none;
-  font-family:"Inter","Segoe UI",Arial,sans-serif;
-  line-height:1;
-  white-space:nowrap;
-  cursor:pointer;
+
+/* =========================================================
+   NAV ITEMS
+   Works for BOTH <a> and <button>
+   ========================================================= */
+
+.nav-item {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  border: 0;
+  background: transparent;
+
+  color: #343565;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 8px;
+  font-weight: 500;
+
+  line-height: 1;
+
+  position: relative;
+
+  padding: 0 1px;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  cursor: pointer;
 }
 
-.shared-header .nav-item:hover{
-  color:#5620bd;
+
+/*
+   Remove the browser's default anchor styling.
+*/
+
+.nav-item:visited {
+  color: #343565;
+  text-decoration: none;
 }
 
-.shared-header .nav-item:focus-visible{
-  outline:2px solid rgba(107,37,223,.25);
-  outline-offset:3px;
-  border-radius:3px;
+
+/*
+   Hover
+*/
+
+.nav-item:hover {
+  color: #5620bd;
+  text-decoration: none;
 }
 
-.shared-header .nav-item.active{
-  color:#5620bd;
+
+/*
+   Active navigation item
+*/
+
+.nav-item.active {
+  color: #5620bd;
 }
 
-.shared-header .nav-item.active:after{
-  content:"";
-  position:absolute;
-  bottom:11px;
-  left:0;
-  right:0;
-  height:2px;
-  background:#6b25df;
-  border-radius:2px;
+
+/*
+   Active underline
+   Matches original reference:
+   height: 2px
+   bottom: 11px
+*/
+
+.nav-item.active::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: 11px;
+
+  left: 0;
+  right: 0;
+
+  height: 2px;
+
+  background: #6b25df;
+
+  border-radius: 2px;
 }
 
-/* Case Directory */
-.shared-header .case-directory-wrap{
-  height:100%;
-  display:flex;
-  align-items:center;
-  position:relative;
+
+/* =========================================================
+   CASE DIRECTORY
+   ========================================================= */
+
+.case-directory-wrap {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  position: relative;
 }
 
-.shared-header .case-directory-trigger{
-  gap:4px;
+
+/*
+   Case Directory button
+*/
+
+.case-directory-wrap .nav-item {
+  gap: 4px;
 }
 
-.shared-header .case-chevron{
-  color:#6d6e91;
-  font-size:8px;
-  line-height:1;
-  transform:translateY(-1px);
+
+/*
+   Our header.html contains:
+
+   <span class="nav-chevron">⌄</span>
+
+   Therefore we do NOT use the original
+   .nav-item.has-chevron::after chevron.
+*/
+
+.nav-item.has-chevron::after {
+  content: none;
 }
 
-.shared-header .case-directory-menu{
-  position:absolute;
-  left:-8px;
-  top:calc(100% - 1px);
-  width:125px;
-  padding:5px;
-  background:#fff;
-  border:1px solid #e7e7ef;
-  border-radius:7px;
-  box-shadow:0 10px 25px rgba(31,25,87,.14);
-  display:none;
-  z-index:300;
+
+/*
+   Chevron in Case Directory
+*/
+
+.nav-chevron {
+  color: #6d6e91;
+
+  font-size: 8px;
+
+  line-height: 1;
+
+  margin-left: 1px;
+
+  transform: translateY(-1px);
 }
 
-.shared-header .case-directory-wrap.open .case-directory-menu{
-  display:block;
+
+/* =========================================================
+   CASE DIRECTORY DROPDOWN
+   ========================================================= */
+
+.case-directory-menu {
+  position: absolute;
+
+  left: -8px;
+
+  top: calc(100% - 1px);
+
+  width: 125px;
+
+  padding: 5px;
+
+  background: #fff;
+
+  border: 1px solid #e7e8f3;
+
+  border-radius: 7px;
+
+  box-shadow:
+    0 10px 25px rgba(31, 25, 87, 0.14);
+
+  display: none;
+
+  z-index: 300;
 }
 
-.shared-header .case-directory-menu a{
-  min-height:26px;
-  display:flex;
-  align-items:center;
-  padding:0 8px;
-  border-radius:5px;
-  color:#343565;
-  text-decoration:none;
-  font-size:8px;
-  font-weight:500;
+
+.case-directory-wrap.open .case-directory-menu {
+  display: block;
 }
 
-.shared-header .case-directory-menu a:hover{
-  background:#f5f1ff;
-  color:#5620bd;
+
+.case-directory-menu a {
+  min-height: 26px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 8px;
+
+  border-radius: 5px;
+
+  color: #343565;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 8px;
+  font-weight: 500;
+
+  text-decoration: none;
 }
 
-/* Right-side controls remain the same scale as the original. */
-.shared-header .header-actions{
-  margin-left:auto;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  position:relative;
+
+.case-directory-menu a:hover {
+  background: #f5f1ff;
+
+  color: #5620bd;
 }
 
-.shared-header .global-search{
-  width:144px;
-  height:29px;
-  border:1px solid #dedfec;
-  border-radius:6px;
-  display:flex;
-  align-items:center;
-  padding:0 9px;
-  background:#fff;
+
+/* =========================================================
+   RIGHT SIDE HEADER ACTIONS
+   ========================================================= */
+
+.header-actions {
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  position: relative;
 }
 
-.shared-header .global-search input{
-  border:0;
-  outline:0;
-  width:100%;
-  min-width:0;
-  font-size:7px;
-  color:#333;
-  background:transparent;
-  font-family:"Inter","Segoe UI",Arial,sans-serif;
+
+/* =========================================================
+   GLOBAL SEARCH
+   ========================================================= */
+
+.global-search {
+  width: 144px;
+  height: 29px;
+
+  border: 1px solid #dedfec;
+
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 9px;
+
+  background: #fff;
 }
 
-.shared-header .global-search input::placeholder{
-  color:#9a9caf;
+
+.global-search input {
+  border: 0;
+  outline: 0;
+
+  width: 100%;
+  min-width: 0;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+
+  font-size: 7px;
+
+  color: #333;
+
+  background: transparent;
 }
 
-.shared-header .search-icon{
-  width:11px;
-  height:11px;
-  border:1.7px solid #9ea0b8;
-  border-radius:50%;
-  display:inline-block;
-  position:relative;
-  flex:none;
-  margin-left:7px;
+
+.global-search input::placeholder {
+  color: #9a9caf;
 }
 
-.shared-header .search-icon:after{
-  content:"";
-  position:absolute;
-  width:5px;
-  height:1.7px;
-  background:#9ea0b8;
-  right:-4px;
-  bottom:-2px;
-  transform:rotate(45deg);
-  border-radius:2px;
+
+/* =========================================================
+   SEARCH ICON
+   ========================================================= */
+
+.search-icon {
+  width: 11px;
+  height: 11px;
+
+  border: 1.7px solid #9ea0b8;
+
+  border-radius: 50%;
+
+  display: inline-block;
+
+  position: relative;
+
+  flex: none;
 }
 
-.shared-header .icon-btn{
-  border:0;
-  background:transparent;
-  padding:3px;
-  position:relative;
-  width:22px;
-  height:28px;
-  display:grid;
-  place-items:center;
+
+.search-icon::after {
+  content: "";
+
+  position: absolute;
+
+  width: 5px;
+  height: 1.7px;
+
+  background: #9ea0b8;
+
+  right: -4px;
+  bottom: -2px;
+
+  transform: rotate(45deg);
+
+  border-radius: 2px;
 }
 
-.shared-header .bell-icon{
-  display:block;
-  width:15px;
-  height:16px;
-  border:1.8px solid #55577c;
-  border-radius:9px 9px 4px 4px;
-  position:relative;
+
+/* =========================================================
+   NOTIFICATION BUTTON
+   ========================================================= */
+
+.icon-btn {
+  border: 0;
+
+  background: transparent;
+
+  padding: 3px;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
 }
 
-.shared-header .bell-icon:after{
-  content:"";
-  position:absolute;
-  width:5px;
-  height:2px;
-  background:#55577c;
-  left:4px;
-  bottom:-4px;
-  border-radius:2px;
+
+/*
+   Bell
+*/
+
+.bell-icon {
+  display: block;
+
+  width: 15px;
+  height: 16px;
+
+  border: 1.8px solid #55577c;
+
+  border-radius: 9px 9px 4px 4px;
+
+  position: relative;
 }
 
-.shared-header .notification-dot{
-  position:absolute;
-  top:-1px;
-  right:-1px;
-  background:#ff4c20;
-  color:#fff;
-  border-radius:10px;
-  min-width:11px;
-  height:11px;
-  font-size:6px;
-  display:grid;
-  place-items:center;
-  border:1px solid #fff;
+
+.bell-icon::after {
+  content: "";
+
+  position: absolute;
+
+  width: 5px;
+  height: 2px;
+
+  background: #55577c;
+
+  left: 4px;
+  bottom: -4px;
+
+  border-radius: 2px;
 }
 
-.shared-header .avatar-btn{
-  border:0;
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:#4d14b8;
-  color:#fff;
-  font-weight:700;
-  font-size:9px;
-  padding:0;
-  display:grid;
-  place-items:center;
+
+/*
+   Notification badge
+*/
+
+.notification-dot {
+  position: absolute;
+
+  top: -1px;
+  right: -1px;
+
+  background: #ff4c20;
+
+  color: #fff;
+
+  border-radius: 10px;
+
+  min-width: 11px;
+  height: 11px;
+
+  padding: 0 2px;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 6px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #fff;
+
+  line-height: 1;
 }
 
-.shared-header .tiny-chevron{
-  border:0;
-  background:transparent;
-  color:#666987;
-  font-size:11px;
-  padding:0;
-  width:12px;
-  height:24px;
+
+/* =========================================================
+   PROFILE AVATAR
+   ========================================================= */
+
+.avatar-btn {
+  border: 0;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  background: #4d14b8;
+
+  color: #fff;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+
+  font-weight: 700;
+  font-size: 9px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
 }
 
-/* Profile menu */
-.shared-header .profile-menu{
-  position:absolute;
-  right:0;
-  top:49px;
-  width:145px;
-  padding:9px;
-  background:#fff;
-  border:1px solid #e7e7ef;
-  border-radius:8px;
-  box-shadow:0 12px 30px rgba(31,25,87,.15);
-  display:none;
+
+/* =========================================================
+   PROFILE CHEVRON
+   ========================================================= */
+
+.tiny-chevron {
+  border: 0;
+
+  background: transparent;
+
+  color: #666987;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+
+  font-size: 11px;
+
+  line-height: 1;
+
+  padding: 0;
+
+  width: 12px;
+  height: 24px;
+
+  cursor: pointer;
 }
 
-.shared-header .profile-menu.open{
-  display:block;
+
+/* =========================================================
+   PROFILE DROPDOWN
+   ========================================================= */
+
+.profile-menu {
+  position: absolute;
+
+  right: 0;
+  top: 49px;
+
+  width: 145px;
+
+  padding: 9px;
+
+  background: #fff;
+
+  border: 1px solid #e7e8f3;
+
+  border-radius: 8px;
+
+  box-shadow:
+    0 12px 30px rgba(31, 25, 87, 0.15);
+
+  display: none;
+
+  z-index: 300;
 }
 
-.shared-header .profile-menu .profile-name{
-  font-size:11px;
-  font-weight:800;
+
+.profile-menu.open {
+  display: block;
 }
 
-.shared-header .profile-menu .profile-role{
-  font-size:8px;
-  color:#999;
-  margin:2px 0 8px;
+
+.profile-menu .profile-name {
+  font-size: 11px;
+  font-weight: 800;
 }
 
-.shared-header .profile-menu button{
-  display:block;
-  border:0;
-  background:transparent;
-  width:100%;
-  text-align:left;
-  padding:7px;
-  font-size:9px;
-  border-radius:5px;
+
+.profile-menu .profile-role {
+  font-size: 8px;
+
+  color: #999;
+
+  margin: 2px 0 8px;
 }
 
-.shared-header .profile-menu button:hover{
-  background:#f5f1ff;
+
+.profile-menu button {
+  display: block;
+
+  border: 0;
+
+  background: transparent;
+
+  width: 100%;
+
+  text-align: left;
+
+  padding: 7px;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+
+  font-size: 9px;
+
+  border-radius: 5px;
+
+  cursor: pointer;
 }
 
-/* Preserve the original desktop composition. */
-@media(max-width:1050px){
-  .shared-header{
-    padding:0 20px;
+
+.profile-menu button:hover {
+  background: #f5f1ff;
+}
+
+
+/* =========================================================
+   RESPONSIVE RULES
+   These are ONLY the original header-related rules.
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+  .main-nav {
+    margin-left: 35px;
+    gap: 17px;
   }
 
-  .shared-header .main-nav{
-    margin-left:20px;
-    gap:17px;
+  .topbar {
+    padding: 0 20px;
   }
+
 }
 
-@media(max-width:800px){
-  .shared-header{
-    min-width:760px;
+
+@media (max-width: 800px) {
+
+  .topbar {
+    min-width: 760px;
   }
+
+  .global-search {
+    width: 155px;
+  }
+
 }
