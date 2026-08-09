@@ -1,25 +1,25 @@
 <!-- ============================================================
-     shared/header.html – updated with new nav items in brand area
+     shared/header.html – updated dropdown with two items + wrapper
      ============================================================ -->
 <header class="topbar">
     <div class="brand-area">
         <img class="fedex-logo-image" src="assets/images/fedex-logo.png" alt="FedEx Freight">
         <div class="brand-divider"></div>
 
-        <!-- NEW: navigation moved right next to the logo -->
+        <!-- new inline navigation -->
         <nav class="brand-nav" aria-label="Main navigation">
             <button class="nav-item active" data-nav="home">Home</button>
 
-            <button class="nav-item has-dropdown" data-nav="cases" id="caseDirectoryBtn">
-                Case Directory
-                <span class="dropdown-chevron">⌄</span>
-            </button>
-            <!-- dropdown panel for Case Directory -->
-            <div class="dropdown-panel" id="caseDropdown">
-                <a href="#" data-nav="case1">Case Type A</a>
-                <a href="#" data-nav="case2">Case Type B</a>
-                <a href="#" data-nav="case3">Case Type C</a>
-                <a href="#" data-nav="case4">Case Type D</a>
+            <!-- Case Directory with dropdown wrapper -->
+            <div class="nav-dropdown-wrapper">
+                <button class="nav-item has-dropdown" id="caseDirectoryBtn">
+                    Case Directory
+                    <span class="dropdown-chevron">⌄</span>
+                </button>
+                <div class="dropdown-panel" id="caseDropdown">
+                    <a href="#" data-nav="legacy">Legacy Case Directory</a>
+                    <a href="#" data-nav="shine">Shine Case Directory</a>
+                </div>
             </div>
 
             <button class="nav-item" data-nav="ebs">EBS Response</button>
