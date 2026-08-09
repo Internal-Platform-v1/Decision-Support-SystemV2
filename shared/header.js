@@ -1,8 +1,9 @@
 /* =========================================================
-   BD TOOLS — SHARED HEADER JS
+   SHARED HEADER JS
    ========================================================= */
 
 (function(){
+
   "use strict";
 
   const placeholder = document.getElementById("header-placeholder");
@@ -12,73 +13,130 @@
     return;
   }
 
+  /*
+   * header.js lives in /shared/.
+   * Therefore:
+   *   shared/header.js
+   *   shared/header.html
+   *   assets/images/fedex-logo.png
+   *
+   * are all resolved from this file.
+   */
   const scriptElement = document.currentScript;
+
   const sharedBase = scriptElement
     ? new URL("./", scriptElement.src)
     : new URL("./", window.location.href);
 
   const headerUrl = new URL("header.html", sharedBase);
+  const logoUrl = new URL("../assets/images/fedex-logo.png", sharedBase);
 
-  function getCurrentSection(){
+  function getCurrentPage(){
+
     const path = window.location.pathname.toLowerCase();
 
-    if(
-      path.includes("ebs-response-template") ||
-      path.includes("fbc-comments-guide")
-    ){
-      return "tools";
+    if(path.includes("ebs-response-template")){
+      return "ebs";
     }
 
-    if(path.includes("/guides/")){
-      return "guides";
+    if(path.includes("fbc-comments-guide")){
+      return "fbc";
     }
 
-    if(
-      path.includes("case-directory") ||
-      path.includes("/cases/")
-    ){
-      return "cases";
-    }
-
-    if(path.includes("links.html") || path.includes("/links/")){
+    if(path.includes("links.html")){
       return "links";
+    }
+
+    if(path.includes("case-directory") || path.includes("/cases/")){
+      return "cases";
     }
 
     return "home";
   }
 
-  function setActiveSection(section){
-    document.querySelectorAll("[data-section]").forEach(function(item){
-      item.classList.toggle(
+  function setActiveNavigation(){
+
+    const currentPage = getCurrentPage();
+
+    document.querySelectorAll(".header-nav-link[data-nav]").forEach(function(link){
+
+      link.classList.toggle(
         "active",
-        item.dataset.section === section
+        link.dataset.nav === currentPage
       );
+
     });
+
+  }
+
+  function closeCaseDirectory(){
+
+    const dropdown = document.getElementById("caseDirectoryDropdown");
+    const trigger = document.getElementById("caseDirectoryTrigger");
+    const menu = document.getElementById("caseDirectoryMenu");
+
+    if(!dropdown) return;
+
+    dropdown.classList.remove("open");
+
+    if(trigger){
+      trigger.setAttribute("aria-expanded","false");
+    }
+
+    if(menu){
+      menu.setAttribute("aria-hidden","true");
+    }
+
+  }
+
+  function toggleCaseDirectory(){
+
+    const dropdown = document.getElementById("caseDirectoryDropdown");
+    const trigger = document.getElementById("caseDirectoryTrigger");
+    const menu = document.getElementById("caseDirectoryMenu");
+
+    if(!dropdown) return;
+
+    const open = !dropdown.classList.contains("open");
+
+    dropdown.classList.toggle("open",open);
+
+    if(trigger){
+      trigger.setAttribute("aria-expanded",String(open));
+    }
+
+    if(menu){
+      menu.setAttribute("aria-hidden",String(!open));
+    }
+
   }
 
   function closeProfile(){
-    const menu = document.getElementById("profileMenu");
-    const profileBtn = document.getElementById("profileBtn");
-    const profileChevron = document.getElementById("profileChevron");
+
+    const menu = document.getElementById("headerProfileMenu");
+    const button = document.getElementById("headerProfileButton");
+    const chevron = document.getElementById("headerProfileChevron");
 
     if(!menu) return;
 
     menu.classList.remove("open");
     menu.setAttribute("aria-hidden","true");
 
-    if(profileBtn){
-      profileBtn.setAttribute("aria-expanded","false");
+    if(button){
+      button.setAttribute("aria-expanded","false");
     }
 
-    if(profileChevron){
-      profileChevron.setAttribute("aria-expanded","false");
+    if(chevron){
+      chevron.setAttribute("aria-expanded","false");
     }
+
   }
 
   function toggleProfile(){
-    const menu = document.getElementById("profileMenu");
-    const profileBtn = document.getElementById("profileBtn");
-    const profileChevron = document.getElementById("profileChevron");
+
+    const menu = document.getElementById("headerProfileMenu");
+    const button = document.getElementById("headerProfileButton");
+    const chevron = document.getElementById("headerProfileChevron");
 
     if(!menu) return;
 
@@ -87,223 +145,240 @@
     menu.classList.toggle("open",open);
     menu.setAttribute("aria-hidden",String(!open));
 
-    if(profileBtn){
-      profileBtn.setAttribute("aria-expanded",String(open));
+    if(button){
+      button.setAttribute("aria-expanded",String(open));
     }
 
-    if(profileChevron){
-      profileChevron.setAttribute("aria-expanded",String(open));
+    if(chevron){
+      chevron.setAttribute("aria-expanded",String(open));
     }
-  }
 
-  function closeCaseDirectory(){
-    const dropdown = document.querySelector(".nav-dropdown");
-
-    if(!dropdown) return;
-
-    dropdown.classList.remove("open");
-
-    const trigger = dropdown.querySelector(".dropdown-trigger");
-
-    if(trigger){
-      trigger.setAttribute("aria-expanded","false");
-    }
-  }
-
-  function toggleCaseDirectory(){
-    const dropdown = document.querySelector(".nav-dropdown");
-
-    if(!dropdown) return;
-
-    const open = !dropdown.classList.contains("open");
-
-    dropdown.classList.toggle("open",open);
-
-    const trigger = dropdown.querySelector(".dropdown-trigger");
-
-    if(trigger){
-      trigger.setAttribute("aria-expanded",String(open));
-    }
   }
 
   function initializeHeader(){
-    const logo = document.querySelector(".fedex-logo-image");
+
+    /* Resolve the logo from /shared/header.js */
+    const logo = document.getElementById("fedexHeaderLogo");
 
     if(logo){
-      logo.src = new URL("../../assets/images/fedex-logo.png", sharedBase).href;
+      logo.src = logoUrl.href;
     }
 
-    setActiveSection(getCurrentSection());
+    setActiveNavigation();
 
-    const profileBtn = document.getElementById("profileBtn");
-    const profileChevron = document.getElementById("profileChevron");
-    const profileMenu = document.getElementById("profileMenu");
-    const notificationBtn = document.getElementById("notificationBtn");
-
-    /* Case Directory dropdown */
-    const caseTrigger = document.querySelector(".dropdown-trigger");
+    /* Case Directory */
+    const caseTrigger = document.getElementById("caseDirectoryTrigger");
 
     if(caseTrigger){
+
       caseTrigger.addEventListener("click",function(event){
+
         event.stopPropagation();
+
         closeProfile();
         toggleCaseDirectory();
+
       });
+
     }
 
-    document.querySelectorAll("[data-case-directory]").forEach(function(link){
-      link.addEventListener("click",function(event){
+    document.querySelectorAll("[data-case-directory]").forEach(function(item){
+
+      item.addEventListener("click",function(event){
+
         /*
-          The actual Legacy/Shine URLs can be assigned here once
-          the final Case Directory routes are confirmed.
-        */
-        if(link.getAttribute("href") === "#"){
+         * The final Legacy / Shine URLs will be inserted
+         * once their exact routes are confirmed.
+         */
+        if(item.getAttribute("href") === "#"){
           event.preventDefault();
         }
 
         closeCaseDirectory();
 
-        document.dispatchEvent(new CustomEvent("bdtools:case-directory",{
-          detail:{
-            type:link.dataset.caseDirectory,
-            label:link.textContent.trim()
-          }
-        }));
+        document.dispatchEvent(
+          new CustomEvent("bdtools:case-directory",{
+            detail:{
+              type:item.dataset.caseDirectory,
+              label:item.textContent.trim()
+            }
+          })
+        );
+
       });
+
     });
 
-    /* Profile menu */
-    if(profileBtn){
-      profileBtn.addEventListener("click",function(event){
+    /* Profile */
+    const profileButton = document.getElementById("headerProfileButton");
+    const profileChevron = document.getElementById("headerProfileChevron");
+
+    if(profileButton){
+
+      profileButton.addEventListener("click",function(event){
+
         event.stopPropagation();
+
         closeCaseDirectory();
         toggleProfile();
+
       });
+
     }
 
     if(profileChevron){
+
       profileChevron.addEventListener("click",function(event){
+
         event.stopPropagation();
+
         closeCaseDirectory();
         toggleProfile();
+
       });
+
     }
 
-    /* Close dropdowns when clicking outside */
-    document.addEventListener("click",function(event){
-      if(!event.target.closest(".nav-dropdown")){
-        closeCaseDirectory();
-      }
-
-      if(!event.target.closest(".header-actions")){
-        closeProfile();
-      }
-    });
-
-    document.addEventListener("keydown",function(event){
-      if(event.key === "Escape"){
-        closeCaseDirectory();
-        closeProfile();
-      }
-    });
-
-    /* Navigation */
-    document.querySelectorAll(".nav-link[data-nav]").forEach(function(item){
-      item.addEventListener("click",function(){
-        const section = item.dataset.section || "";
-        const label = item.textContent.trim();
-
-        if(item.classList.contains("dropdown-trigger")){
-          return;
-        }
-
-        setActiveSection(section);
-
-        document.dispatchEvent(new CustomEvent("bdtools:navigation",{
-          detail:{
-            nav:item.dataset.nav || "",
-            section:section,
-            label:label
-          }
-        }));
-      });
-    });
-
     /* Search */
-    const globalSearch = document.getElementById("globalSearch");
+    const search = document.getElementById("headerSearch");
 
-    if(globalSearch){
-      globalSearch.addEventListener("keydown",function(event){
+    if(search){
+
+      search.addEventListener("keydown",function(event){
+
         if(event.key !== "Enter") return;
 
-        const value = event.target.value.trim();
+        const value = search.value.trim();
 
         if(typeof window.performSearch === "function"){
+
           window.performSearch(value);
+
         }else{
-          document.dispatchEvent(new CustomEvent("bdtools:search",{
-            detail:{value:value}
-          }));
+
+          document.dispatchEvent(
+            new CustomEvent("bdtools:search",{
+              detail:{value:value}
+            })
+          );
+
         }
+
       });
+
     }
 
     /* Notifications */
-    if(notificationBtn){
-      notificationBtn.addEventListener("click",function(){
-        document.dispatchEvent(new CustomEvent("bdtools:notifications"));
+    const notificationButton =
+      document.getElementById("headerNotificationButton");
+
+    if(notificationButton){
+
+      notificationButton.addEventListener("click",function(){
+
+        document.dispatchEvent(
+          new CustomEvent("bdtools:notifications")
+        );
+
       });
+
     }
 
     /* Profile actions */
-    if(profileMenu){
-      profileMenu
-        .querySelectorAll("[data-profile-action]")
-        .forEach(function(button){
-          button.addEventListener("click",function(){
-            const action = button.dataset.profileAction || "";
-            const label = button.textContent.trim();
+    document
+      .querySelectorAll("[data-profile-action]")
+      .forEach(function(button){
 
-            closeProfile();
+        button.addEventListener("click",function(){
 
-            document.dispatchEvent(new CustomEvent("bdtools:profile-action",{
+          const action =
+            button.dataset.profileAction || "";
+
+          closeProfile();
+
+          document.dispatchEvent(
+            new CustomEvent("bdtools:profile-action",{
               detail:{
                 action:action,
-                label:label
+                label:button.textContent.trim()
               }
-            }));
-          });
+            })
+          );
+
         });
-    }
 
-    window.dispatchEvent(new Event("bdtools:header-ready"));
-  }
+      });
 
-  window.BDHeaderReady = fetch(headerUrl,{cache:"no-cache"})
-    .then(function(response){
-      if(!response.ok){
-        throw new Error(
-          "Unable to load shared/header.html (" +
-          response.status +
-          ")"
-        );
+    /* Close menus outside */
+    document.addEventListener("click",function(event){
+
+      if(!event.target.closest("#caseDirectoryDropdown")){
+        closeCaseDirectory();
       }
 
-      return response.text();
-    })
-    .then(function(markup){
-      placeholder.innerHTML = markup;
-      initializeHeader();
-      return true;
-    })
-    .catch(function(error){
-      console.error("BD Tools header error:",error);
+      if(!event.target.closest(".header-tools")){
+        closeProfile();
+      }
 
-      placeholder.innerHTML =
-        '<div style="padding:15px;color:#b00020;font:12px Arial;">' +
-        'Unable to load the shared header.' +
-        '</div>';
-
-      return false;
     });
+
+    /* Escape */
+    document.addEventListener("keydown",function(event){
+
+      if(event.key === "Escape"){
+
+        closeCaseDirectory();
+        closeProfile();
+
+      }
+
+    });
+
+    window.dispatchEvent(
+      new Event("bdtools:header-ready")
+    );
+
+  }
+
+  window.BDHeaderReady = fetch(
+    headerUrl.href,
+    {cache:"no-cache"}
+  )
+  .then(function(response){
+
+    if(!response.ok){
+
+      throw new Error(
+        "Unable to load shared/header.html (" +
+        response.status +
+        ")"
+      );
+
+    }
+
+    return response.text();
+
+  })
+  .then(function(markup){
+
+    placeholder.innerHTML = markup;
+
+    initializeHeader();
+
+    return true;
+
+  })
+  .catch(function(error){
+
+    console.error("BD Tools header error:",error);
+
+    placeholder.innerHTML =
+      '<div class="header-load-error">' +
+      'Unable to load the shared header.' +
+      '</div>';
+
+    return false;
+
+  });
+
 })();
