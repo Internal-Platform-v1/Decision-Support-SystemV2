@@ -1,24 +1,43 @@
 <header class="topbar" id="sharedHeader">
   <div class="brand-area">
     <a class="brand-link" href="../../index.html" aria-label="BD Tools Home">
-      <img class="fedex-logo-image" src="../../assets/images/fedex-logo.png" alt="FedEx Freight">
+      <img
+        class="fedex-logo-image"
+        src="../../assets/images/fedex-logo.png"
+        alt="FedEx Freight"
+      >
     </a>
 
-    <div class="brand-divider"></div>
+    <div class="brand-divider" aria-hidden="true"></div>
 
     <div class="page-title" id="sharedPageTitle">BD Tools</div>
   </div>
 
   <nav class="main-nav" aria-label="Main navigation">
-    <button class="nav-item" data-nav="home" data-section="home" type="button">Home</button>
-    <button class="nav-item has-chevron" data-nav="guides" data-section="guides" type="button">Guide Library</button>
-    <button class="nav-item has-chevron" data-nav="cases" data-section="cases" type="button">Case Directory</button>
-    <button class="nav-item has-chevron" data-nav="tools" data-section="tools" type="button">Tools</button>
-    <button class="nav-item" data-nav="links" data-section="links" type="button">Links</button>
+    <button class="nav-item" type="button" data-nav="home" data-section="home">
+      Home
+    </button>
+
+    <button class="nav-item has-chevron" type="button" data-nav="guides" data-section="guides">
+      Guide Library
+    </button>
+
+    <button class="nav-item has-chevron" type="button" data-nav="cases" data-section="cases">
+      Case Directory
+    </button>
+
+    <button class="nav-item has-chevron" type="button" data-nav="tools" data-section="tools">
+      Tools
+    </button>
+
+    <button class="nav-item" type="button" data-nav="links" data-section="links">
+      Links
+    </button>
   </nav>
 
   <div class="header-actions">
-    <div class="global-search">
+    <div class="global-search" role="search">
+      <span class="search-icon" aria-hidden="true"></span>
       <input
         id="globalSearch"
         type="text"
@@ -26,15 +45,25 @@
         autocomplete="off"
         aria-label="Search guides, tools, and topics"
       >
-      <span class="search-icon" aria-hidden="true"></span>
     </div>
 
-    <button class="icon-btn notification-btn" type="button" aria-label="Notifications">
+    <button
+      class="icon-btn notification-btn"
+      id="notificationBtn"
+      type="button"
+      aria-label="Notifications"
+    >
       <span class="bell-icon" aria-hidden="true"></span>
-      <b class="notification-dot" aria-label="3 notifications">3</b>
+      <b class="notification-dot">3</b>
     </button>
 
-    <button class="avatar-btn" id="profileBtn" type="button" aria-label="Open profile">JD</button>
+    <button
+      class="avatar-btn"
+      id="profileBtn"
+      type="button"
+      aria-label="Open profile menu"
+      aria-expanded="false"
+    >JD</button>
 
     <button
       class="tiny-chevron"
@@ -44,13 +73,32 @@
       aria-expanded="false"
     >⌄</button>
 
-    <div class="profile-menu" id="profileMenu" aria-hidden="true">
+    <div
+      class="profile-menu"
+      id="profileMenu"
+      aria-hidden="true"
+    >
       <div class="profile-name" id="profileName">Jennifer</div>
       <div class="profile-role" id="profileRole">BD Tools User</div>
 
-      <button type="button" data-profile-action="profile">Profile</button>
-      <button type="button" data-profile-action="settings">Settings</button>
-      <button type="button" data-profile-action="logout">Logout</button>
+      <div class="profile-menu-divider"></div>
+
+      <button type="button" data-profile-action="profile">
+        <span class="profile-menu-icon">○</span>
+        Profile
+      </button>
+
+      <button type="button" data-profile-action="settings">
+        <span class="profile-menu-icon">⚙</span>
+        Settings
+      </button>
+
+      <div class="profile-menu-divider"></div>
+
+      <button class="logout-action" type="button" data-profile-action="logout">
+        <span class="profile-menu-icon">↪</span>
+        Logout
+      </button>
     </div>
   </div>
 </header>

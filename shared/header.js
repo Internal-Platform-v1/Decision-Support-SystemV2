@@ -1,14 +1,5 @@
 /* =========================================================
-   BD TOOLS — SHARED HEADER
-   shared/header.js
-
-   Responsibilities:
-   - Load header.html into #header-placeholder
-   - Resolve shared assets from the shared folder
-   - Highlight the current site section
-   - Handle profile dropdown
-   - Forward global-search requests to the page
-   - Expose simple header events to individual pages
+   BD TOOLS — SHARED HEADER JS
    ========================================================= */
 
 (function(){
@@ -28,34 +19,15 @@
 
   const headerUrl = new URL("header.html", sharedBase);
 
-  function resolvePageSection(){
+  function getCurrentSection(){
     const path = window.location.pathname.toLowerCase();
 
-    if(
-      path.endsWith("/index.html") &&
-      !path.includes("/guides/") &&
-      !path.includes("/tools/")
-    ){
-      return "home";
-    }
+    if(path.includes("/guides/")) return "guides";
+    if(path.includes("/case-directory/") || path.includes("/cases/")) return "cases";
+    if(path.includes("/tools/")) return "tools";
+    if(path.includes("/links/")) return "links";
 
-    if(path.includes("/guides/")){
-      return "guides";
-    }
-
-    if(path.includes("/case-directory/") || path.includes("/cases/")){
-      return "cases";
-    }
-
-    if(path.includes("/tools/")){
-      return "tools";
-    }
-
-    if(path.includes("/links/")){
-      return "links";
-    }
-
-    return "";
+    return "home";
   }
 
   function setActiveSection(section){
@@ -67,28 +39,34 @@
     });
   }
 
-  function toggleProfile(force){
+  function closeProfile(){
     const menu = document.getElementById("profileMenu");
-    const btn = document.getElementById("profileBtn");
-    const chevron = document.getElementById("profileChevron");
+    const profileBtn = document.getElementById("profileBtn");
+    const profileChevron = document.getElementById("profileChevron");
 
     if(!menu) return;
 
-    const shouldOpen =
-      typeof force === "boolean"
-        ? force
-        : !menu.classList.contains("open");
+    menu.classList.remove("open");
+    menu.setAttribute("aria-hidden","true");
 
-    menu.classList.toggle("open", shouldOpen);
-    menu.setAttribute("aria-hidden", String(!shouldOpen));
+    if(profileBtn) profileBtn.setAttribute("aria-expanded","false");
+    if(profileChevron) profileChevron.setAttribute("aria-expanded","false");
+  }
 
-    if(btn){
-      btn.setAttribute("aria-expanded", String(shouldOpen));
-    }
+  function toggleProfile(){
+    const menu = document.getElementById("profileMenu");
+    const profileBtn = document.getElementById("profileBtn");
+    const profileChevron = document.getElementById("profileChevron");
 
-    if(chevron){
-      chevron.setAttribute("aria-expanded", String(shouldOpen));
-    }
+    if(!menu) return;
+
+    const open = !menu.classList.contains("open");
+
+    menu.classList.toggle("open",open);
+    menu.setAttribute("aria-hidden",String(!open));
+
+    if(profileBtn) profileBtn.setAttribute("aria-expanded",String(open));
+    if(profileChevron) profileChevron.setAttribute("aria-expanded",String(open));
   }
 
   function initializeHeader(){
@@ -98,46 +76,47 @@
       logo.src = new URL("../../assets/images/fedex-logo.png", sharedBase).href;
     }
 
-    setActiveSection(resolvePageSection());
+    setActiveSection(getCurrentSection());
 
     const profileBtn = document.getElementById("profileBtn");
     const profileChevron = document.getElementById("profileChevron");
+    const notificationBtn = document.getElementById("notificationBtn");
     const profileMenu = document.getElementById("profileMenu");
 
     if(profileBtn){
-      profileBtn.addEventListener("click", function(event){
+      profileBtn.addEventListener("click",function(event){
         event.stopPropagation();
         toggleProfile();
       });
     }
 
     if(profileChevron){
-      profileChevron.addEventListener("click", function(event){
+      profileChevron.addEventListener("click",function(event){
         event.stopPropagation();
         toggleProfile();
       });
     }
 
-    document.addEventListener("click", function(event){
+    document.addEventListener("click",function(event){
       if(!event.target.closest(".header-actions")){
-        toggleProfile(false);
+        closeProfile();
       }
     });
 
-    document.addEventListener("keydown", function(event){
+    document.addEventListener("keydown",function(event){
       if(event.key === "Escape"){
-        toggleProfile(false);
+        closeProfile();
       }
     });
 
     document.querySelectorAll(".nav-item").forEach(function(item){
-      item.addEventListener("click", function(){
+      item.addEventListener("click",function(){
         const section = item.dataset.section || "";
         const label = item.textContent.trim();
 
         setActiveSection(section);
 
-        document.dispatchEvent(new CustomEvent("bdtools:navigation", {
+        document.dispatchEvent(new CustomEvent("bdtools:navigation",{
           detail:{
             nav:item.dataset.nav || "",
             section:section,
@@ -150,7 +129,7 @@
     const globalSearch = document.getElementById("globalSearch");
 
     if(globalSearch){
-      globalSearch.addEventListener("keydown", function(event){
+      globalSearch.addEventListener("keydown",function(event){
         if(event.key !== "Enter") return;
 
         const value = event.target.value.trim();
@@ -158,38 +137,49 @@
         if(typeof window.performSearch === "function"){
           window.performSearch(value);
         }else{
-          document.dispatchEvent(new CustomEvent("bdtools:search", {
+          document.dispatchEvent(new CustomEvent("bdtools:search",{
             detail:{value:value}
           }));
         }
       });
     }
 
-    if(profileMenu){
-      profileMenu.querySelectorAll("button[data-profile-action]").forEach(function(button){
-        button.addEventListener("click", function(){
-          const action = button.dataset.profileAction || "";
-
-          toggleProfile(false);
-
-          document.dispatchEvent(new CustomEvent("bdtools:profile-action", {
-            detail:{
-              action:action,
-              label:button.textContent.trim()
-            }
-          }));
-        });
+    if(notificationBtn){
+      notificationBtn.addEventListener("click",function(){
+        document.dispatchEvent(new CustomEvent("bdtools:notifications"));
       });
+    }
+
+    if(profileMenu){
+      profileMenu
+        .querySelectorAll("[data-profile-action]")
+        .forEach(function(button){
+          button.addEventListener("click",function(){
+            const action = button.dataset.profileAction || "";
+            const label = button.textContent.trim();
+
+            closeProfile();
+
+            document.dispatchEvent(new CustomEvent("bdtools:profile-action",{
+              detail:{
+                action:action,
+                label:label
+              }
+            }));
+          });
+        });
     }
 
     window.dispatchEvent(new Event("bdtools:header-ready"));
   }
 
-  window.BDHeaderReady = fetch(headerUrl, {cache:"no-cache"})
+  window.BDHeaderReady = fetch(headerUrl,{cache:"no-cache"})
     .then(function(response){
       if(!response.ok){
         throw new Error(
-          "Unable to load shared/header.html (" + response.status + ")"
+          "Unable to load shared/header.html (" +
+          response.status +
+          ")"
         );
       }
 
@@ -201,7 +191,7 @@
       return true;
     })
     .catch(function(error){
-      console.error("BD Tools header error:", error);
+      console.error("BD Tools header error:",error);
 
       placeholder.innerHTML =
         '<div style="padding:15px;color:#b00020;font:12px Arial;">' +
