@@ -1,138 +1,406 @@
+/* =========================================================
+   SHARED HEADER JS
+   ========================================================= */
+
 (function(){
+
   "use strict";
 
   const placeholder = document.getElementById("header-placeholder");
-  if(!placeholder) return;
 
-  const script = document.currentScript;
-  const sharedBase = script
-    ? new URL("./", script.src)
+  if(!placeholder){
+    console.warn("Shared header: #header-placeholder was not found.");
+    return;
+  }
+
+  const scriptElement = document.currentScript;
+
+  const sharedBase = scriptElement
+    ? new URL("./", scriptElement.src)
     : new URL("./", window.location.href);
 
   const headerUrl = new URL("header.html", sharedBase);
-  const logoUrl = new URL("../assets/images/fedex-logo.png", sharedBase);
 
-  function pageKey(){
-    const p=location.pathname.toLowerCase();
-    if(p.includes("ebs-response-template")) return "ebs";
-    if(p.includes("fbc-comments-guide")) return "fbc";
-    if(p.includes("links.html")) return "links";
-    if(p.includes("case-directory") || p.includes("/cases/")) return "cases";
+  /* Current structure:
+     /shared/header.js
+     /shared/header.html
+     /fedex-logo.png
+  */
+  const logoUrl = new URL("../fedex-logo.png", sharedBase);
+
+  function getCurrentPage(){
+
+    const path = window.location.pathname.toLowerCase();
+
+    if(path.includes("ebs-response-template")){
+      return "ebs";
+    }
+
+    if(path.includes("fbc-comments-guide")){
+      return "fbc";
+    }
+
+    if(path.includes("links.html")){
+      return "links";
+    }
+
+    if(
+      path.includes("case-directory") ||
+      path.includes("/cases/")
+    ){
+      return "cases";
+    }
+
     return "home";
   }
 
-  function setActive(){
-    const key=pageKey();
-    document.querySelectorAll(".nav-item[data-nav]").forEach(el=>{
-      el.classList.toggle("active",el.dataset.nav===key);
-    });
+  function setActiveNav(){
+
+    const current = getCurrentPage();
+
+    document
+      .querySelectorAll(".shared-header .nav-item[data-nav]")
+      .forEach(function(item){
+
+        item.classList.toggle(
+          "active",
+          item.dataset.nav === current
+        );
+
+      });
+
   }
 
-  function closeCase(){
-    const wrap=document.querySelector(".case-directory-wrap");
+  function closeCaseDirectory(){
+
+    const wrap = document.querySelector(
+      ".shared-header .case-directory-wrap"
+    );
+
+    const trigger = document.getElementById(
+      "caseDirectoryTrigger"
+    );
+
+    const menu = document.getElementById(
+      "caseDirectoryMenu"
+    );
+
     if(!wrap) return;
+
     wrap.classList.remove("open");
-    document.getElementById("caseDirectoryTrigger")?.setAttribute("aria-expanded","false");
-    document.getElementById("caseDirectoryMenu")?.setAttribute("aria-hidden","true");
+
+    if(trigger){
+      trigger.setAttribute("aria-expanded","false");
+    }
+
+    if(menu){
+      menu.setAttribute("aria-hidden","true");
+    }
+
   }
 
-  function toggleCase(){
-    const wrap=document.querySelector(".case-directory-wrap");
+  function toggleCaseDirectory(){
+
+    const wrap = document.querySelector(
+      ".shared-header .case-directory-wrap"
+    );
+
+    const trigger = document.getElementById(
+      "caseDirectoryTrigger"
+    );
+
+    const menu = document.getElementById(
+      "caseDirectoryMenu"
+    );
+
     if(!wrap) return;
-    const open=!wrap.classList.contains("open");
+
+    const open = !wrap.classList.contains("open");
+
     wrap.classList.toggle("open",open);
-    document.getElementById("caseDirectoryTrigger")?.setAttribute("aria-expanded",String(open));
-    document.getElementById("caseDirectoryMenu")?.setAttribute("aria-hidden",String(!open));
+
+    if(trigger){
+      trigger.setAttribute("aria-expanded",String(open));
+    }
+
+    if(menu){
+      menu.setAttribute("aria-hidden",String(!open));
+    }
+
   }
 
   function closeProfile(){
-    const menu=document.getElementById("profileMenu");
+
+    const menu = document.getElementById("profileMenu");
+    const button = document.getElementById("profileBtn");
+    const chevron = document.getElementById("profileChevron");
+
     if(!menu) return;
+
     menu.classList.remove("open");
     menu.setAttribute("aria-hidden","true");
-    document.getElementById("profileBtn")?.setAttribute("aria-expanded","false");
-    document.getElementById("profileChevron")?.setAttribute("aria-expanded","false");
+
+    if(button){
+      button.setAttribute("aria-expanded","false");
+    }
+
+    if(chevron){
+      chevron.setAttribute("aria-expanded","false");
+    }
+
   }
 
   function toggleProfile(){
-    const menu=document.getElementById("profileMenu");
+
+    const menu = document.getElementById("profileMenu");
+    const button = document.getElementById("profileBtn");
+    const chevron = document.getElementById("profileChevron");
+
     if(!menu) return;
-    const open=!menu.classList.contains("open");
+
+    const open = !menu.classList.contains("open");
+
     menu.classList.toggle("open",open);
     menu.setAttribute("aria-hidden",String(!open));
-    document.getElementById("profileBtn")?.setAttribute("aria-expanded",String(open));
-    document.getElementById("profileChevron")?.setAttribute("aria-expanded",String(open));
+
+    if(button){
+      button.setAttribute("aria-expanded",String(open));
+    }
+
+    if(chevron){
+      chevron.setAttribute("aria-expanded",String(open));
+    }
+
   }
 
-  fetch(headerUrl.href,{cache:"no-cache"})
-    .then(r=>{
-      if(!r.ok) throw new Error("header.html returned "+r.status);
-      return r.text();
-    })
-    .then(markup=>{
-      placeholder.innerHTML=markup;
+  function initializeHeader(){
 
-      const logo=document.getElementById("fedexHeaderLogo");
-      if(logo) logo.src=logoUrl.href;
+    const logo = document.getElementById("fedexHeaderLogo");
 
-      setActive();
+    if(logo){
+      logo.src = logoUrl.href;
+    }
 
-      document.getElementById("caseDirectoryTrigger")?.addEventListener("click",e=>{
-        e.stopPropagation(); closeProfile(); toggleCase();
+    setActiveNav();
+
+    const caseTrigger = document.getElementById(
+      "caseDirectoryTrigger"
+    );
+
+    if(caseTrigger){
+
+      caseTrigger.addEventListener("click",function(event){
+
+        event.stopPropagation();
+
+        closeProfile();
+        toggleCaseDirectory();
+
       });
 
-      document.getElementById("profileBtn")?.addEventListener("click",e=>{
-        e.stopPropagation(); closeCase(); toggleProfile();
-      });
+    }
 
-      document.getElementById("profileChevron")?.addEventListener("click",e=>{
-        e.stopPropagation(); closeCase(); toggleProfile();
-      });
+    document
+      .querySelectorAll("[data-case-directory]")
+      .forEach(function(item){
 
-      document.querySelectorAll("[data-case-directory]").forEach(a=>{
-        a.addEventListener("click",e=>{
-          if(a.getAttribute("href")==="#") e.preventDefault();
-          closeCase();
-          document.dispatchEvent(new CustomEvent("bdtools:case-directory",{
-            detail:{type:a.dataset.caseDirectory,label:a.textContent.trim()}
-          }));
+        item.addEventListener("click",function(event){
+
+          /*
+           * The exact Legacy and Shine URLs have not yet
+           * been supplied, so the dropdown currently emits
+           * an event without inventing a destination.
+           */
+          if(item.getAttribute("href") === "#"){
+            event.preventDefault();
+          }
+
+          closeCaseDirectory();
+
+          document.dispatchEvent(
+            new CustomEvent("bdtools:case-directory",{
+              detail:{
+                type:item.dataset.caseDirectory,
+                label:item.textContent.trim()
+              }
+            })
+          );
+
         });
+
       });
 
-      document.getElementById("globalSearch")?.addEventListener("keydown",e=>{
-        if(e.key!=="Enter") return;
-        const value=e.currentTarget.value.trim();
-        if(typeof window.performSearch==="function") window.performSearch(value);
-        else document.dispatchEvent(new CustomEvent("bdtools:search",{detail:{value}}));
+    const profileBtn =
+      document.getElementById("profileBtn");
+
+    const profileChevron =
+      document.getElementById("profileChevron");
+
+    if(profileBtn){
+
+      profileBtn.addEventListener("click",function(event){
+
+        event.stopPropagation();
+
+        closeCaseDirectory();
+        toggleProfile();
+
       });
 
-      document.getElementById("notificationBtn")?.addEventListener("click",()=>{
-        document.dispatchEvent(new CustomEvent("bdtools:notifications"));
+    }
+
+    if(profileChevron){
+
+      profileChevron.addEventListener("click",function(event){
+
+        event.stopPropagation();
+
+        closeCaseDirectory();
+        toggleProfile();
+
       });
 
-      document.querySelectorAll("[data-profile-action]").forEach(btn=>{
-        btn.addEventListener("click",()=>{
-          const action=btn.dataset.profileAction;
+    }
+
+    const search =
+      document.getElementById("globalSearch");
+
+    if(search){
+
+      search.addEventListener("keydown",function(event){
+
+        if(event.key !== "Enter") return;
+
+        const value = search.value.trim();
+
+        if(typeof window.performSearch === "function"){
+
+          window.performSearch(value);
+
+        }else{
+
+          document.dispatchEvent(
+            new CustomEvent("bdtools:search",{
+              detail:{value:value}
+            })
+          );
+
+        }
+
+      });
+
+    }
+
+    const notificationBtn =
+      document.getElementById("notificationBtn");
+
+    if(notificationBtn){
+
+      notificationBtn.addEventListener("click",function(){
+
+        document.dispatchEvent(
+          new CustomEvent("bdtools:notifications")
+        );
+
+      });
+
+    }
+
+    document
+      .querySelectorAll("[data-profile-action]")
+      .forEach(function(button){
+
+        button.addEventListener("click",function(){
+
+          const action =
+            button.dataset.profileAction || "";
+
           closeProfile();
-          document.dispatchEvent(new CustomEvent("bdtools:profile-action",{
-            detail:{action,label:btn.textContent.trim()}
-          }));
+
+          document.dispatchEvent(
+            new CustomEvent("bdtools:profile-action",{
+              detail:{
+                action:action,
+                label:button.textContent.trim()
+              }
+            })
+          );
+
         });
+
       });
 
-      document.addEventListener("click",e=>{
-        if(!e.target.closest(".case-directory-wrap")) closeCase();
-        if(!e.target.closest(".header-actions")) closeProfile();
-      });
+    document.addEventListener("click",function(event){
 
-      document.addEventListener("keydown",e=>{
-        if(e.key==="Escape"){ closeCase(); closeProfile(); }
-      });
+      if(!event.target.closest(
+        ".shared-header .case-directory-wrap"
+      )){
+        closeCaseDirectory();
+      }
 
-      window.dispatchEvent(new Event("bdtools:header-ready"));
-    })
-    .catch(err=>{
-      console.error("Shared header failed:",err);
-      placeholder.innerHTML="";
+      if(!event.target.closest(
+        ".shared-header .header-actions"
+      )){
+        closeProfile();
+      }
+
     });
+
+    document.addEventListener("keydown",function(event){
+
+      if(event.key === "Escape"){
+        closeCaseDirectory();
+        closeProfile();
+      }
+
+    });
+
+    window.dispatchEvent(
+      new Event("bdtools:header-ready")
+    );
+
+  }
+
+  window.BDHeaderReady = fetch(
+    headerUrl.href,
+    {cache:"no-cache"}
+  )
+  .then(function(response){
+
+    if(!response.ok){
+      throw new Error(
+        "Unable to load shared/header.html (" +
+        response.status +
+        ")"
+      );
+    }
+
+    return response.text();
+
+  })
+  .then(function(markup){
+
+    placeholder.innerHTML = markup;
+
+    initializeHeader();
+
+    return true;
+
+  })
+  .catch(function(error){
+
+    console.error("Shared header error:",error);
+
+    placeholder.innerHTML =
+      '<div style="' +
+      'padding:12px;' +
+      'font:10px Arial,sans-serif;' +
+      'color:#b00020;' +
+      'background:#fff;' +
+      '">Unable to load the shared header.</div>';
+
+    return false;
+
+  });
+
 })();

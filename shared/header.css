@@ -1,40 +1,46 @@
 /* =========================================================
    SHARED HEADER
-   Extracted from the ORIGINAL supplied styles.css.
-   No redesign. No new sizing system.
+   Extracted from the original index.html / styles.css.
+   Body/dashboard styling remains in styles.css.
    ========================================================= */
 
-.topbar{
+.shared-header,
+.shared-header *{
+  box-sizing:border-box;
+}
+
+.shared-header{
   width:100%;
   height:62px;
-  display:flex;
-  align-items:center;
   padding:0 20px;
   border:0;
   border-bottom:0;
   border-radius:0;
   background:#fff;
+  box-shadow:none;
+  display:flex;
+  align-items:center;
   position:relative;
   z-index:20;
-  box-shadow:none;
 }
 
-.brand-area{
+.shared-header .brand-area{
   height:100%;
   display:flex;
   align-items:center;
-  gap:18px;
+  gap:0;
   white-space:nowrap;
+  flex:0 0 auto;
 }
 
-.brand-link{
+.shared-header .brand-link{
+  height:100%;
   display:flex;
   align-items:center;
-  height:100%;
   text-decoration:none;
 }
 
-.fedex-logo-image{
+.shared-header .fedex-logo-image{
   display:block;
   width:76px;
   height:auto;
@@ -44,20 +50,20 @@
   flex:0 0 auto;
 }
 
-.main-nav{
+/* Navigation is now directly beside the logo.
+   The old "BD Tools — Main Menu" title is intentionally gone. */
+.shared-header .main-nav{
   height:100%;
   display:flex;
   align-self:stretch;
   align-items:center;
   gap:25px;
-  margin-left:68px;
+  margin-left:28px;
   white-space:nowrap;
 }
 
-.nav-item{
+.shared-header .nav-item{
   height:100%;
-  display:flex;
-  align-items:center;
   border:0;
   background:transparent;
   color:#343565;
@@ -65,20 +71,30 @@
   font-weight:500;
   position:relative;
   padding:0 1px;
+  display:flex;
+  align-items:center;
   text-decoration:none;
+  font-family:"Inter","Segoe UI",Arial,sans-serif;
+  line-height:1;
   white-space:nowrap;
   cursor:pointer;
 }
 
-.nav-item:hover{
+.shared-header .nav-item:hover{
   color:#5620bd;
 }
 
-.nav-item.active{
+.shared-header .nav-item:focus-visible{
+  outline:2px solid rgba(107,37,223,.25);
+  outline-offset:3px;
+  border-radius:3px;
+}
+
+.shared-header .nav-item.active{
   color:#5620bd;
 }
 
-.nav-item.active:after{
+.shared-header .nav-item.active:after{
   content:"";
   position:absolute;
   bottom:11px;
@@ -89,46 +105,48 @@
   border-radius:2px;
 }
 
-.case-directory-wrap{
+/* Case Directory */
+.shared-header .case-directory-wrap{
   height:100%;
   display:flex;
   align-items:center;
   position:relative;
 }
 
-.case-directory-trigger{
+.shared-header .case-directory-trigger{
   gap:4px;
 }
 
-.nav-chevron{
+.shared-header .case-chevron{
   color:#6d6e91;
   font-size:8px;
   line-height:1;
+  transform:translateY(-1px);
 }
 
-.case-directory-menu{
+.shared-header .case-directory-menu{
   position:absolute;
   left:-8px;
   top:calc(100% - 1px);
-  width:126px;
+  width:125px;
   padding:5px;
   background:#fff;
   border:1px solid #e7e7ef;
   border-radius:7px;
   box-shadow:0 10px 25px rgba(31,25,87,.14);
   display:none;
-  z-index:100;
+  z-index:300;
 }
 
-.case-directory-wrap.open .case-directory-menu{
+.shared-header .case-directory-wrap.open .case-directory-menu{
   display:block;
 }
 
-.case-directory-menu a{
+.shared-header .case-directory-menu a{
+  min-height:26px;
   display:flex;
   align-items:center;
-  min-height:26px;
-  padding:0 7px;
+  padding:0 8px;
   border-radius:5px;
   color:#343565;
   text-decoration:none;
@@ -136,12 +154,13 @@
   font-weight:500;
 }
 
-.case-directory-menu a:hover{
+.shared-header .case-directory-menu a:hover{
   background:#f5f1ff;
   color:#5620bd;
 }
 
-.header-actions{
+/* Right-side controls remain the same scale as the original. */
+.shared-header .header-actions{
   margin-left:auto;
   display:flex;
   align-items:center;
@@ -149,9 +168,9 @@
   position:relative;
 }
 
-.global-search{
-  height:29px;
+.shared-header .global-search{
   width:144px;
+  height:29px;
   border:1px solid #dedfec;
   border-radius:6px;
   display:flex;
@@ -160,7 +179,7 @@
   background:#fff;
 }
 
-.global-search input{
+.shared-header .global-search input{
   border:0;
   outline:0;
   width:100%;
@@ -168,24 +187,29 @@
   font-size:7px;
   color:#333;
   background:transparent;
+  font-family:"Inter","Segoe UI",Arial,sans-serif;
 }
 
-.search-icon{
+.shared-header .global-search input::placeholder{
+  color:#9a9caf;
+}
+
+.shared-header .search-icon{
   width:11px;
   height:11px;
-  border:2px solid #9ea0b8;
+  border:1.7px solid #9ea0b8;
   border-radius:50%;
   display:inline-block;
   position:relative;
   flex:none;
-  margin-right:7px;
+  margin-left:7px;
 }
 
-.search-icon:after{
+.shared-header .search-icon:after{
   content:"";
   position:absolute;
   width:5px;
-  height:2px;
+  height:1.7px;
   background:#9ea0b8;
   right:-4px;
   bottom:-2px;
@@ -193,16 +217,18 @@
   border-radius:2px;
 }
 
-.icon-btn{
+.shared-header .icon-btn{
   border:0;
   background:transparent;
   padding:3px;
   position:relative;
+  width:22px;
+  height:28px;
   display:grid;
   place-items:center;
 }
 
-.bell-icon{
+.shared-header .bell-icon{
   display:block;
   width:15px;
   height:16px;
@@ -211,7 +237,7 @@
   position:relative;
 }
 
-.bell-icon:after{
+.shared-header .bell-icon:after{
   content:"";
   position:absolute;
   width:5px;
@@ -222,10 +248,10 @@
   border-radius:2px;
 }
 
-.notification-dot{
+.shared-header .notification-dot{
   position:absolute;
-  top:-2px;
-  right:-3px;
+  top:-1px;
+  right:-1px;
   background:#ff4c20;
   color:#fff;
   border-radius:10px;
@@ -237,7 +263,7 @@
   border:1px solid #fff;
 }
 
-.avatar-btn{
+.shared-header .avatar-btn{
   border:0;
   width:28px;
   height:28px;
@@ -247,48 +273,50 @@
   font-weight:700;
   font-size:9px;
   padding:0;
-  cursor:pointer;
+  display:grid;
+  place-items:center;
 }
 
-.tiny-chevron{
+.shared-header .tiny-chevron{
   border:0;
   background:transparent;
   color:#666987;
   font-size:11px;
   padding:0;
-  cursor:pointer;
+  width:12px;
+  height:24px;
 }
 
-.profile-menu{
+/* Profile menu */
+.shared-header .profile-menu{
   position:absolute;
   right:0;
   top:49px;
   width:145px;
   padding:9px;
   background:#fff;
-  border:1px solid var(--line);
+  border:1px solid #e7e7ef;
   border-radius:8px;
   box-shadow:0 12px 30px rgba(31,25,87,.15);
   display:none;
-  z-index:200;
 }
 
-.profile-menu.open{
+.shared-header .profile-menu.open{
   display:block;
 }
 
-.profile-menu .profile-name{
+.shared-header .profile-menu .profile-name{
   font-size:11px;
   font-weight:800;
 }
 
-.profile-menu .profile-role{
+.shared-header .profile-menu .profile-role{
   font-size:8px;
   color:#999;
   margin:2px 0 8px;
 }
 
-.profile-menu button{
+.shared-header .profile-menu button{
   display:block;
   border:0;
   background:transparent;
@@ -297,25 +325,26 @@
   padding:7px;
   font-size:9px;
   border-radius:5px;
-  cursor:pointer;
 }
 
-.profile-menu button:hover{
+.shared-header .profile-menu button:hover{
   background:#f5f1ff;
 }
 
+/* Preserve the original desktop composition. */
 @media(max-width:1050px){
-  .main-nav{
-    margin-left:35px;
-    gap:17px;
-  }
-  .topbar{
+  .shared-header{
     padding:0 20px;
+  }
+
+  .shared-header .main-nav{
+    margin-left:20px;
+    gap:17px;
   }
 }
 
 @media(max-width:800px){
-  .main-nav{
-    margin-left:35px;
+  .shared-header{
+    min-width:760px;
   }
 }
