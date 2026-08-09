@@ -1,0 +1,56 @@
+<header class="topbar" id="sharedHeader">
+  <div class="brand-area">
+    <a class="brand-link" href="../../index.html" aria-label="BD Tools Home">
+      <img class="fedex-logo-image" src="../../assets/images/fedex-logo.png" alt="FedEx Freight">
+    </a>
+
+    <div class="brand-divider"></div>
+
+    <div class="page-title" id="sharedPageTitle">BD Tools</div>
+  </div>
+
+  <nav class="main-nav" aria-label="Main navigation">
+    <button class="nav-item" data-nav="home" data-section="home" type="button">Home</button>
+    <button class="nav-item has-chevron" data-nav="guides" data-section="guides" type="button">Guide Library</button>
+    <button class="nav-item has-chevron" data-nav="cases" data-section="cases" type="button">Case Directory</button>
+    <button class="nav-item has-chevron" data-nav="tools" data-section="tools" type="button">Tools</button>
+    <button class="nav-item" data-nav="links" data-section="links" type="button">Links</button>
+  </nav>
+
+  <div class="header-actions">
+    <div class="global-search">
+      <input
+        id="globalSearch"
+        type="text"
+        placeholder="Search guides, tools, topics..."
+        autocomplete="off"
+        aria-label="Search guides, tools, and topics"
+      >
+      <span class="search-icon" aria-hidden="true"></span>
+    </div>
+
+    <button class="icon-btn notification-btn" type="button" aria-label="Notifications">
+      <span class="bell-icon" aria-hidden="true"></span>
+      <b class="notification-dot" aria-label="3 notifications">3</b>
+    </button>
+
+    <button class="avatar-btn" id="profileBtn" type="button" aria-label="Open profile">JD</button>
+
+    <button
+      class="tiny-chevron"
+      id="profileChevron"
+      type="button"
+      aria-label="Open profile menu"
+      aria-expanded="false"
+    >⌄</button>
+
+    <div class="profile-menu" id="profileMenu" aria-hidden="true">
+      <div class="profile-name" id="profileName">Jennifer</div>
+      <div class="profile-role" id="profileRole">BD Tools User</div>
+
+      <button type="button" data-profile-action="profile">Profile</button>
+      <button type="button" data-profile-action="settings">Settings</button>
+      <button type="button" data-profile-action="logout">Logout</button>
+    </div>
+  </div>
+</header>
