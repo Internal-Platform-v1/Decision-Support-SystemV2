@@ -166,12 +166,26 @@ function renderLists(){
 renderLists();
 
 function openGuide(name){
-  /*
-    Guide routing will be connected when the final
-    GitHub guide folder structure is moved into place.
-  */
+
+  const guideRoutes = {
+
+    "Billing Dispute Guides":
+      "guides/Billing%20Dispute%20Guides/billing-dispute-guides.html"
+
+  };
+
+  const target =
+    guideRoutes[name];
+
+  if(target){
+
+    window.location.href = target;
+
+    return;
+  }
+
   showToast(`Opening ${name}`);
-  console.log("Guide selected:",name);
+  console.log("Guide selected:", name);
 }
 
 function openGuideLibrary(){
