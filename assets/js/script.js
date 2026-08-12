@@ -1,3 +1,61 @@
+/* ============================================================
+   CURRENT USER NAME
+   ============================================================ */
+
+function updateDashboardUserName(profile) {
+
+    const nameElement =
+        document.getElementById("currentUserName");
+
+    if (!nameElement) {
+        return;
+    }
+
+    const displayName =
+        profile?.displayName ||
+        window.currentUserProfile?.displayName;
+
+    if (displayName) {
+
+        nameElement.textContent =
+            displayName;
+
+    }
+
+}
+
+
+/*
+ * Header.js fires this after the current user's
+ * approved_users profile has been loaded.
+ */
+document.addEventListener(
+    "currentUserProfileLoaded",
+    function (event) {
+
+        updateDashboardUserName(
+            event.detail
+        );
+
+    }
+);
+
+
+/*
+ * Also check whether the profile has already
+ * been loaded before this script runs.
+ */
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        updateDashboardUserName(
+            window.currentUserProfile
+        );
+
+    }
+);
+
 /* =========================================================
    BD TOOLS — MAIN DASHBOARD JS
    ========================================================= */
