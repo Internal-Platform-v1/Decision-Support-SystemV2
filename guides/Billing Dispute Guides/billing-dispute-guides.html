@@ -1,1 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" class="page-protected">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!--
+    This page lives inside:
+    guides/Billing Dispute Guides/
+
+    The base tag lets the existing shared V2 header/footer continue
+    to use root-relative paths even though this page is nested.
+  -->
+  <base href="../../">
+
+  <title>Billing Dispute Guides | Decision Support System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+
+  <!-- Existing V2 shared/theme styles -->
+  <link rel="stylesheet" href="assets/css/guide-themes.css">
+  <link rel="stylesheet" href="assets/css/group-guides.css">
+
+  <!-- Existing V2 shared header/footer system -->
+  <script src="shared/include.js"></script>
+</head>
+
+<body class="theme-fedex">
+
+  <div class="group-page">
+
+    <!-- Shared V2 Header -->
+    <div id="header-placeholder"></div>
+
+    <main>
+
+      <!-- Simple page introduction -->
+      <section class="group-intro">
+        <div class="group-container">
+          <div class="intro-copy">
+            <div class="intro-kicker">
+              <i class="fa-solid fa-scale-balanced"></i>
+              Billing Dispute
+            </div>
+
+            <h1>Billing Dispute Guides</h1>
+
+            <p>
+              Select the guide that matches the billing concern and open
+              the appropriate workflow.
+            </p>
+          </div>
+
+          <div class="intro-count">
+            <strong>6</strong>
+            <span>Guides</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Guide library -->
+      <section class="guide-library">
+        <div class="group-container">
+
+          <div class="library-toolbar">
+            <div>
+              <h2>Guide Library</h2>
+              <p id="resultsText">Showing all 6 guides</p>
+            </div>
+
+            <label class="group-search" for="guideSearch">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input
+                id="guideSearch"
+                type="search"
+                placeholder="Search billing dispute guides..."
+                autocomplete="off"
+              >
+              <button
+                id="clearGuideSearch"
+                type="button"
+                aria-label="Clear search"
+                title="Clear search"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </label>
+          </div>
+
+          <div class="guide-grid" id="guideGrid">
+
+            <!-- 01 -->
+            <article
+              class="guide-card"
+              data-search="debtor update per bol billing dispute bol debtor billing general"
+            >
+              <div class="guide-card-icon">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+              </div>
+
+              <div class="guide-card-content">
+                <span class="guide-tag">Billing</span>
+
+                <h3>Debtor Update per BOL</h3>
+
+                <p>
+                  Follow BOL terms to determine the correct debtor and
+                  ensure accurate billing setup.
+                </p>
+
+                <a
+                  class="guide-open"
+                  href="guides/Billing Dispute Guides/BD GENERAL GUIDE.html"
+                >
+                  Open Guide
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+
+            <!-- 02 -->
+            <article
+              class="guide-card"
+              data-search="debtor update per loa rebill loa 3pl fpay collector billing"
+            >
+              <div class="guide-card-icon">
+                <i class="fa-solid fa-rotate"></i>
+              </div>
+
+              <div class="guide-card-content">
+                <span class="guide-tag">Rebill</span>
+
+                <h3>Debtor Update per LOA</h3>
+
+                <p>
+                  Use LOA to evaluate debtor update requests and determine
+                  the correct billing action.
+                </p>
+
+                <a
+                  class="guide-open"
+                  href="guides/Billing Dispute Guides/Rebill per LOA General Guide.html"
+                >
+                  Open Guide
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+
+            <!-- 03 -->
+            <article
+              class="guide-card"
+              data-search="debtor update reversal refusal rvsl billing reversal refusal rebill denial"
+            >
+              <div class="guide-card-icon">
+                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+              </div>
+
+              <div class="guide-card-content">
+                <span class="guide-tag">RVSL</span>
+
+                <h3>Debtor Update per Reversal/Refusal</h3>
+
+                <p>
+                  Evaluate reversal/refusal cases and determine the correct
+                  debtor and billing action.
+                </p>
+
+                <a
+                  class="guide-open"
+                  href="guides/Billing Dispute Guides/rvsl-guide.html"
+                >
+                  Open Guide
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+
+            <!-- 04 -->
+            <article
+              class="guide-card"
+              data-search="weight update per bol weight reweigh dispute pallet billing"
+            >
+              <div class="guide-card-icon">
+                <i class="fa-solid fa-weight-hanging"></i>
+              </div>
+
+              <div class="guide-card-content">
+                <span class="guide-tag">Weight</span>
+
+                <h3>Weight Update per BOL</h3>
+
+                <p>
+                  Evaluate BOL-based weight and pallet discrepancies to
+                  determine the correct action or routing.
+                </p>
+
+                <a
+                  class="guide-open"
+                  href="guides/Billing Dispute Guides/weight-update-per-bol-guide.html"
+                >
+                  Open Guide
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+
+            <!-- 05 -->
+            <article
+              class="guide-card"
+              data-search="service level type update bol service validation rating billing"
+            >
+              <div class="guide-card-icon">
+                <i class="fa-solid fa-truck-fast"></i>
+              </div>
+
+              <div class="guide-card-content">
+                <span class="guide-tag">Service</span>
+
+                <h3>Service Level/Type Update per BOL</h3>
+
+                <p>
+                  Evaluate service level disputes to confirm correct rating
+                  based on BOL and system data.
+                </p>
+
+                <a
+                  class="guide-open"
+                  href="guides/Billing Dispute Guides/service-level-type-guide.html"
+                >
+                  Open Guide
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+
+            <!-- 06 -->
+            <article
+              class="guide-card"
+              data-search="reference number update add edit delete demand invoice billing reference"
+            >
+              <div class="guide-card-icon">
+                <i class="fa-solid fa-hashtag"></i>
+              </div>
+
+              <div class="guide-card-content">
+                <span class="guide-tag">Reference</span>
+
+                <h3>Reference Number Update - Add/Edit/Delete</h3>
+
+                <p>
+                  Manage reference number updates and ensure correct
+                  correction processing and invoice handling.
+                </p>
+
+                <a
+                  class="guide-open"
+                  href="guides/Billing Dispute Guides/reference-number-guide.html"
+                >
+                  Open Guide
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+
+          </div>
+
+          <div class="no-results" id="noResults" hidden>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <h3>No matching guide</h3>
+            <p>Try another billing dispute keyword.</p>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Shared V2 Footer -->
+    <div id="footer-placeholder"></div>
+
+  </div>
+
+  <script src="assets/js/group-guides.js"></script>
+</body>
+</html>
