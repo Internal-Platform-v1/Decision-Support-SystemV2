@@ -15,12 +15,15 @@ function updateDashboardUserName(profile) {
         profile?.displayName ||
         window.currentUserProfile?.displayName;
 
-    if (displayName) {
+if (displayName) {
 
-        nameElement.textContent =
-            displayName;
+    const firstName =
+        displayName.trim().split(/\s+/)[0];
 
-    }
+    nameElement.textContent =
+        firstName;
+
+}
 
 }
 
