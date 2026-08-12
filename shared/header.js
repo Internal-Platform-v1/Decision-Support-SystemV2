@@ -1,451 +1,774 @@
 /* ============================================================
-   shared/header.js – V2 FIXED
+   shared/header.js – V2
    FedEx Freight Decision Support System
    ============================================================ */
 
 (function () {
-    "use strict";
+
+    'use strict';
+
 
     /* ========================================================
-       1. FIREBASE / CURRENT USER PROFILE
+       1. CURRENT USER PROFILE
        ======================================================== */
 
-    const FIREBASE_CONFIG = {
-        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-        authDomain: "bdgg-database.firebaseapp.com",
-        projectId: "bdgg-database",
-        storageBucket: "bdgg-database.appspot.com",
-        messagingSenderId: "43574975434",
-        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    };
-
-    function ensureFirebase() {
-        if (typeof firebase === "undefined") {
-            console.error("V2 Header: Firebase SDK is not loaded.");
-            return false;
-        }
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(FIREBASE_CONFIG);
-        }
-
-        return !!firebase.auth && !!firebase.firestore;
-    }
-
-    function updateDashboardUserName(displayName) {
-        const name = displayName || "User";
-
-        document.querySelectorAll("#currentUserName").forEach(function (el) {
-            el.textContent = name;
-        });
-    }
-
     function loadCurrentUserProfile() {
-        if (!ensureFirebase()) {
+
+        /*
+         * Firebase must already be loaded by index.html.
+         */
+        if (
+            typeof firebase === 'undefined' ||
+            !firebase.auth ||
+            !firebase.firestore
+        ) {
+            console.warn(
+                'V2 Header: Firebase is not available.'
+            );
             return;
         }
 
+
         firebase.auth().onAuthStateChanged(async function (user) {
+
+            /*
+             * No authenticated user.
+             */
             if (!user) {
-                window.currentUser = null;
+
                 window.currentUserProfile = null;
+
                 return;
             }
 
+
+            /*
+             * Make the Firebase user available globally.
+             */
             window.currentUser = user;
 
-            const email = String(user.email || "").trim().toLowerCase();
+
+            const email =
+                (user.email || '').trim().toLowerCase();
+
 
             if (!email) {
                 return;
             }
 
-            let displayName =
-                user.displayName ||
-                email.split("@")[0];
-
-            let role = "";
 
             try {
+
                 /*
-                 * IMPORTANT:
-                 * approved_users is searched by its email FIELD.
-                 * This matches the existing working V1 lookup.
+                 * Same approved_users lookup used by V1.
                  */
-                const snapshot = await firebase
-                    .firestore()
-                    .collection("approved_users")
-                    .where("email", "==", email)
-                    .limit(1)
-                    .get();
+               const docSnap = await firebase
+    .firestore()
+    .collection('approved_users')
+    .doc(email)
+    .get();
 
-                if (!snapshot.empty) {
-                    const data = snapshot.docs[0].data() || {};
+let displayName =
+    user.displayName ||
+    email.split('@')[0];
 
-                    if (data.name) {
-                        displayName = String(data.name)
-                            .replace(/\s+vndr$/i, "")
-                            .trim();
-                    }
+let role = '';
 
+if (docSnap.exists) {
+
+    const data =
+        docSnap.data() || {};
+
+    /*
+     * Get the actual name stored
+     * in approved_users.
+     */
+    if (data.name) {
+
+        displayName =
+            String(data.name)
+                .replace(/\s+vndr$/i, '')
+                .trim();
+
+    }
+
+    /*
+     * Get role if available.
+     */
+    if (data.role) {
+
+        role =
+            String(data.role).trim();
+
+    }
+}
+
+
+                    /*
+                     * Get role if available.
+                     */
                     if (data.role) {
-                        role = String(data.role).trim();
+
+                        role =
+                            String(data.role).trim();
+
                     }
+
                 }
+
+
+                /*
+                 * Store the profile globally.
+                 *
+                 * Other V2 pages/scripts can use:
+                 *
+                 * window.currentUserProfile.displayName
+                 */
+                window.currentUserProfile = {
+
+                    uid: user.uid,
+
+                    email: user.email,
+
+                    displayName: displayName,
+
+                    role: role
+
+                };
+
+
+                /*
+                 * Update the V2 header profile immediately.
+                 */
+                updateHeaderUserProfile(
+                    window.currentUserProfile
+                );
+
+
+                /*
+                 * Tell the rest of V2 that the user
+                 * profile is ready.
+                 */
+                document.dispatchEvent(
+                    new CustomEvent(
+                        'currentUserProfileLoaded',
+                        {
+                            detail:
+                                window.currentUserProfile
+                        }
+                    )
+                );
+
+
             } catch (error) {
+
                 console.error(
-                    "V2 Header: Unable to load approved_users profile.",
+                    'V2 Header: Unable to load user profile.',
                     error
                 );
+
+
+                /*
+                 * Even if approved_users fails,
+                 * still expose a usable profile.
+                 */
+                window.currentUserProfile = {
+
+                    uid: user.uid,
+
+                    email: user.email,
+
+                    displayName:
+                        user.displayName ||
+                        email.split('@')[0],
+
+                    role: ''
+
+                };
+
+
+                updateHeaderUserProfile(
+                    window.currentUserProfile
+                );
+
+
+                document.dispatchEvent(
+                    new CustomEvent(
+                        'currentUserProfileLoaded',
+                        {
+                            detail:
+                                window.currentUserProfile
+                        }
+                    )
+                );
+
             }
 
-            window.currentUserProfile = {
-                uid: user.uid,
-                email: user.email,
-                displayName: displayName,
-                role: role
-            };
-
-            updateHeaderUserProfile(window.currentUserProfile);
-
-            document.dispatchEvent(
-                new CustomEvent("currentUserProfileLoaded", {
-                    detail: window.currentUserProfile
-                })
-            );
         });
+
     }
+
 
     /* ========================================================
        2. UPDATE HEADER USER INFORMATION
        ======================================================== */
 
     function updateHeaderUserProfile(profile) {
+
         if (!profile) {
             return;
         }
 
-        const displayName = profile.displayName || "User";
 
-        const profileName = document.getElementById("profileName");
+        const displayName =
+            profile.displayName || 'User';
+
+
+        /*
+         * Profile dropdown name
+         */
+        const profileName =
+            document.getElementById('profileName');
+
+
         if (profileName) {
-            profileName.textContent = displayName;
+
+            profileName.textContent =
+                displayName;
+
         }
 
+
+        /*
+         * If the existing HTML uses
+         * .profile-name instead of #profileName,
+         * support that as well.
+         */
         const profileNameClass =
-            document.querySelector(".profile-menu .profile-name");
+            document.querySelector(
+                '.profile-menu .profile-name'
+            );
+
 
         if (profileNameClass) {
-            profileNameClass.textContent = displayName;
+
+            profileNameClass.textContent =
+                displayName;
+
         }
 
-        const initials = getUserInitials(displayName);
 
-        const profileBtn = document.getElementById("profileBtn");
+        /*
+         * Create initials for the avatar.
+         *
+         * Jennifer → JE
+         * John Smith → JS
+         */
+        const initials =
+            getUserInitials(displayName);
+
+
+        const profileBtn =
+            document.getElementById('profileBtn');
+
 
         if (profileBtn) {
-            profileBtn.textContent = initials;
+
+            profileBtn.textContent =
+                initials;
+
             profileBtn.setAttribute(
-                "aria-label",
-                "Open profile for " + displayName
+                'aria-label',
+                'Open profile for ' + displayName
             );
+
         }
 
-        updateDashboardUserName(displayName);
     }
 
+
+    /* ========================================================
+       3. USER INITIALS
+       ======================================================== */
+
     function getUserInitials(name) {
+
         if (!name) {
-            return "JD";
+            return 'JD';
         }
 
-        const cleanName = String(name)
-            .trim()
-            .replace(/\s+/g, " ");
 
-        const parts = cleanName.split(" ");
+        const cleanName =
+            String(name)
+                .trim()
+                .replace(/\s+/g, ' ');
+
+
+        const parts =
+            cleanName.split(' ');
+
 
         if (parts.length === 1) {
-            return parts[0].substring(0, 2).toUpperCase();
+
+            return parts[0]
+                .substring(0, 2)
+                .toUpperCase();
+
         }
+
 
         return (
             parts[0].charAt(0) +
             parts[parts.length - 1].charAt(0)
         ).toUpperCase();
+
     }
+
 
     /* ========================================================
-       3. PROFILE DROPDOWN
-       Uses event delegation so it works even when
-       header.html is injected after this script loads.
+       4. PROFILE TOGGLE
        ======================================================== */
 
-    function setProfileOpen(open) {
-        const menu = document.getElementById("profileMenu");
-        const button = document.getElementById("profileBtn");
-        const chevron = document.getElementById("profileChevron");
+    var profileBtn =
+        document.getElementById('profileBtn');
 
-        if (!menu) {
+    var profileChevron =
+        document.getElementById('profileChevron');
+
+    var profileMenu =
+        document.getElementById('profileMenu');
+
+
+    function toggleProfile(e) {
+
+        e.stopPropagation();
+
+
+        if (!profileMenu) {
             return;
         }
 
-        menu.classList.toggle("open", !!open);
 
-        if (button) {
-            button.setAttribute("aria-expanded", String(!!open));
+        profileMenu.classList.toggle('open');
+
+
+        var isOpen =
+            profileMenu.classList.contains('open');
+
+
+        if (profileBtn) {
+
+            profileBtn.setAttribute(
+                'aria-expanded',
+                String(isOpen)
+            );
+
         }
 
-        if (chevron) {
-            chevron.setAttribute("aria-expanded", String(!!open));
+
+        if (profileChevron) {
+
+            profileChevron.setAttribute(
+                'aria-expanded',
+                String(isOpen)
+            );
+
         }
+
     }
 
-    function toggleProfile(event) {
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
 
-        const menu = document.getElementById("profileMenu");
+    if (profileBtn) {
 
-        if (!menu) {
-            return;
-        }
+        profileBtn.addEventListener(
+            'click',
+            toggleProfile
+        );
 
-        setProfileOpen(!menu.classList.contains("open"));
     }
 
-    /* ========================================================
-       4. CASE DIRECTORY DROPDOWN
-       Matches the ACTUAL header.html:
-       .nav-dropdown-wrapper / #caseDropdown
-       ======================================================== */
 
-    function setCaseDropdownOpen(open) {
-        const menu = document.getElementById("caseDropdown");
-        const button = document.getElementById("caseDirectoryBtn");
+    if (profileChevron) {
 
-        if (!menu) {
-            return;
-        }
+        profileChevron.addEventListener(
+            'click',
+            toggleProfile
+        );
 
-        menu.classList.toggle("open", !!open);
-
-        if (button) {
-            button.classList.toggle("open", !!open);
-            button.setAttribute("aria-expanded", String(!!open));
-        }
     }
 
-    function toggleCaseDropdown(event) {
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
 
-        const menu = document.getElementById("caseDropdown");
+    document.addEventListener(
+        'click',
+        function (e) {
 
-        if (!menu) {
-            return;
-        }
+            if (
+                !e.target.closest(
+                    '.header-actions'
+                )
+            ) {
 
-        setCaseDropdownOpen(!menu.classList.contains("open"));
-    }
+                if (profileMenu) {
 
-    /* ========================================================
-       5. DYNAMIC HEADER EVENT HANDLING
-       ======================================================== */
+                    profileMenu.classList.remove(
+                        'open'
+                    );
 
-    document.addEventListener("click", function (event) {
-        const profileButton = event.target.closest("#profileBtn");
-        const profileChevron = event.target.closest("#profileChevron");
-        const profileMenu = event.target.closest("#profileMenu");
-
-        if (profileButton || profileChevron) {
-            toggleProfile(event);
-            return;
-        }
-
-        const caseButton = event.target.closest("#caseDirectoryBtn");
-
-        if (caseButton) {
-            toggleCaseDropdown(event);
-            return;
-        }
-
-        const caseLink = event.target.closest("#caseDropdown a");
-
-        if (caseLink) {
-            const href = caseLink.getAttribute("href");
-
-            if (!href || href === "#") {
-                event.preventDefault();
-            }
-
-            const label = caseLink.textContent.trim();
-
-            if (window.showToast) {
-                window.showToast("Opening " + label);
-            } else {
-                console.log("Opening " + label);
-            }
-
-            setCaseDropdownOpen(false);
-            return;
-        }
-
-        /*
-         * Profile menu buttons.
-         */
-        const menuButton = event.target.closest("#profileMenu button");
-
-        if (menuButton) {
-            event.stopPropagation();
-
-            const label = menuButton.textContent.trim().toLowerCase();
-
-            if (label.includes("logout")) {
-                if (ensureFirebase()) {
-                    firebase.auth()
-                        .signOut()
-                        .then(function () {
-                            window.location.href = "index.html";
-                        })
-                        .catch(function (error) {
-                            console.error(
-                                "Logout failed:",
-                                error
-                            );
-                        });
                 }
 
-                return;
+                if (profileBtn) {
+
+                    profileBtn.setAttribute(
+                        'aria-expanded',
+                        'false'
+                    );
+
+                }
+
+                if (profileChevron) {
+
+                    profileChevron.setAttribute(
+                        'aria-expanded',
+                        'false'
+                    );
+
+                }
+
             }
 
-            if (window.showToast) {
-                window.showToast(
-                    menuButton.textContent.trim() + " selected"
-                );
-            }
+        }
+    );
 
+
+    /* ========================================================
+       5. CASE DIRECTORY DROPDOWN
+       Matches V2 header.html
+       ======================================================== */
+
+    var caseWrapper =
+        document.querySelector(
+            '.case-directory-wrap'
+        );
+
+
+    var caseBtn =
+        document.getElementById(
+            'caseDirectoryBtn'
+        );
+
+
+    var caseDropdown =
+        document.getElementById(
+            'caseDirectoryMenu'
+        );
+
+
+    function toggleDropdown(e) {
+
+        e.stopPropagation();
+
+
+        if (!caseDropdown) {
             return;
         }
 
-        /*
-         * Close profile when clicking outside the header actions.
-         */
-        if (!event.target.closest(".header-actions")) {
-            setProfileOpen(false);
+
+        var isOpen =
+            caseDropdown.classList.contains(
+                'open'
+            );
+
+
+        if (isOpen) {
+
+            caseDropdown.classList.remove(
+                'open'
+            );
+
+
+            if (caseBtn) {
+
+                caseBtn.classList.remove(
+                    'open'
+                );
+
+                caseBtn.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
+
+            }
+
+        } else {
+
+            /*
+             * Close any other dropdown panels.
+             */
+            document
+                .querySelectorAll(
+                    '.dropdown-panel.open'
+                )
+                .forEach(function (d) {
+
+                    if (d !== caseDropdown) {
+
+                        d.classList.remove(
+                            'open'
+                        );
+
+                    }
+
+                });
+
+
+            caseDropdown.classList.add(
+                'open'
+            );
+
+
+            if (caseBtn) {
+
+                caseBtn.classList.add(
+                    'open'
+                );
+
+                caseBtn.setAttribute(
+                    'aria-expanded',
+                    'true'
+                );
+
+            }
+
         }
 
-        /*
-         * Close Case Directory when clicking outside it.
-         */
-        if (!event.target.closest(".nav-dropdown-wrapper")) {
-            setCaseDropdownOpen(false);
+    }
+
+
+    if (caseBtn) {
+
+        caseBtn.addEventListener(
+            'click',
+            toggleDropdown
+        );
+
+    }
+
+
+    /*
+     * Close Case Directory when clicking outside.
+     */
+    document.addEventListener(
+        'click',
+        function (e) {
+
+            if (
+                caseWrapper &&
+                !caseWrapper.contains(e.target)
+            ) {
+
+                if (caseDropdown) {
+
+                    caseDropdown.classList.remove(
+                        'open'
+                    );
+
+                }
+
+
+                if (caseBtn) {
+
+                    caseBtn.classList.remove(
+                        'open'
+                    );
+
+                    caseBtn.setAttribute(
+                        'aria-expanded',
+                        'false'
+                    );
+
+                }
+
+            }
+
         }
-    });
+    );
+
+
+    /*
+     * Handle Legacy / Shine dropdown items.
+     */
+    if (caseDropdown) {
+
+        caseDropdown
+            .querySelectorAll('a')
+            .forEach(function (link) {
+
+                link.addEventListener(
+                    'click',
+                    function (e) {
+
+                        /*
+                         * These are currently placeholders
+                         * until the actual Legacy and Shine
+                         * URLs are supplied.
+                         */
+                        if (
+                            this.getAttribute('href') === '#'
+                        ) {
+
+                            e.preventDefault();
+
+                        }
+
+
+                        var label =
+                            this.textContent
+                                .trim();
+
+
+                        if (window.showToast) {
+
+                            window.showToast(
+                                'Opening ' + label
+                            );
+
+                        } else {
+
+                            console.log(
+                                'Opening ' + label
+                            );
+
+                        }
+
+
+                        caseDropdown.classList.remove(
+                            'open'
+                        );
+
+
+                        if (caseBtn) {
+
+                            caseBtn.classList.remove(
+                                'open'
+                            );
+
+                            caseBtn.setAttribute(
+                                'aria-expanded',
+                                'false'
+                            );
+
+                        }
+
+                    }
+                );
+
+            });
+
+    }
+
 
     /* ========================================================
        6. MAIN NAVIGATION
-       Matches the ACTUAL header.html:
-       .brand-nav / .nav-item
        ======================================================== */
 
-    document.addEventListener("click", function (event) {
-        const navItem = event.target.closest(
-            ".brand-nav .nav-item"
+    var allNavItems =
+        document.querySelectorAll(
+            '.main-nav .nav-item'
         );
 
-        if (!navItem) {
-            return;
+
+    allNavItems.forEach(
+        function (item) {
+
+            /*
+             * Case Directory is handled separately.
+             */
+            if (
+                item.id === 'caseDirectoryBtn'
+            ) {
+
+                return;
+
+            }
+
+
+            item.addEventListener(
+                'click',
+                function () {
+
+                    document
+                        .querySelectorAll(
+                            '.main-nav .nav-item'
+                        )
+                        .forEach(
+                            function (nav) {
+
+                                nav.classList.remove(
+                                    'active'
+                                );
+
+                            }
+                        );
+
+
+                    this.classList.add(
+                        'active'
+                    );
+
+                }
+            );
+
         }
+    );
 
-        if (navItem.id === "caseDirectoryBtn") {
-            return;
-        }
-
-        document
-            .querySelectorAll(".brand-nav .nav-item")
-            .forEach(function (item) {
-                item.classList.remove("active");
-            });
-
-        navItem.classList.add("active");
-    });
 
     /* ========================================================
        7. GLOBAL SEARCH
-       Event delegation makes this safe with dynamic header.
        ======================================================== */
 
-    document.addEventListener("keydown", function (event) {
-        const searchInput = event.target.closest("#globalSearch");
+    var globalSearchInput =
+        document.getElementById(
+            'globalSearch'
+        );
 
-        if (!searchInput || event.key !== "Enter") {
-            return;
-        }
 
-        if (window.performSearch) {
-            window.performSearch(searchInput.value);
-        } else {
-            console.log("Search:", searchInput.value);
-        }
-    });
+    if (globalSearchInput) {
 
-    /* ========================================================
-       8. KEEP HEADER PROFILE IN SYNC WHEN HEADER IS INJECTED
-       ======================================================== */
+        globalSearchInput.addEventListener(
+            'keydown',
+            function (e) {
 
-    function refreshInjectedHeader() {
-        if (window.currentUserProfile) {
-            updateHeaderUserProfile(window.currentUserProfile);
-        }
-    }
+                if (e.key !== 'Enter') {
+                    return;
+                }
 
-    /*
-     * include.js injects header.html dynamically.
-     * MutationObserver catches that insertion without requiring
-     * a special custom event from include.js.
-     */
-    if (document.body) {
-        const observer = new MutationObserver(function () {
-            if (
-                document.getElementById("profileBtn") ||
-                document.getElementById("profileName") ||
-                document.getElementById("currentUserName")
-            ) {
-                refreshInjectedHeader();
+
+                if (window.performSearch) {
+
+                    window.performSearch(
+                        e.target.value
+                    );
+
+                } else {
+
+                    console.log(
+                        'Search:',
+                        e.target.value
+                    );
+
+                }
+
             }
-        });
+        );
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
     }
 
-    /*
-     * Also support an existing headerLoaded event if include.js
-     * already dispatches it.
-     */
-    document.addEventListener(
-        "headerLoaded",
-        refreshInjectedHeader
-    );
-
-    document.addEventListener(
-        "currentUserProfileLoaded",
-        function (event) {
-            updateHeaderUserProfile(event.detail);
-        }
-    );
 
     /* ========================================================
-       9. INITIALIZE
+       8. INITIALIZE USER PROFILE
        ======================================================== */
 
     loadCurrentUserProfile();
+
 
 })();
