@@ -62,40 +62,46 @@
                 /*
                  * Same approved_users lookup used by V1.
                  */
-                const snapshot = await firebase
-                    .firestore()
-                    .collection('approved_users')
-                    .where('email', '==', email)
-                    .limit(1)
-                    .get();
+               const docSnap = await firebase
+    .firestore()
+    .collection('approved_users')
+    .doc(email)
+    .get();
 
+let displayName =
+    user.displayName ||
+    email.split('@')[0];
 
-                let displayName =
-                    user.displayName ||
-                    email.split('@')[0];
+let role = '';
 
+if (docSnap.exists) {
 
-                let role = '';
+    const data =
+        docSnap.data() || {};
 
+    /*
+     * Get the actual name stored
+     * in approved_users.
+     */
+    if (data.name) {
 
-                if (!snapshot.empty) {
+        displayName =
+            String(data.name)
+                .replace(/\s+vndr$/i, '')
+                .trim();
 
-                    const data =
-                        snapshot.docs[0].data() || {};
+    }
 
+    /*
+     * Get role if available.
+     */
+    if (data.role) {
 
-                    /*
-                     * Get the actual name stored
-                     * in approved_users.
-                     */
-                    if (data.name) {
+        role =
+            String(data.role).trim();
 
-                        displayName =
-                            String(data.name)
-                                .replace(/\s+vndr$/i, '')
-                                .trim();
-
-                    }
+    }
+}
 
 
                     /*
