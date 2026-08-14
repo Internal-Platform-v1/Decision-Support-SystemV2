@@ -8,19 +8,34 @@
 
   const SEARCH_KEY = "guideSearch";
 
+  /* ============================================================
+     GROUP GUIDE SEARCH
+     ============================================================ */
+
   function initGroupSearch() {
     const input = document.getElementById("guideSearch");
-    const clearButton = document.getElementById("clearGuideSearch");
+
+    const clearButton =
+      document.getElementById("clearGuideSearch");
+
     const cards = Array.from(
-      document.querySelectorAll("#guideGrid .guide-card")
+      document.querySelectorAll(
+        "#guideGrid .guide-card"
+      )
     );
-    const resultsText = document.getElementById("resultsText");
-    const noResults = document.getElementById("noResults");
+
+    const resultsText =
+      document.getElementById("resultsText");
+
+    const noResults =
+      document.getElementById("noResults");
 
     if (!input || !cards.length) return;
 
     function applySearch() {
-      const term = input.value.trim().toLowerCase();
+      const term =
+        input.value.trim().toLowerCase();
+
       let visible = 0;
 
       cards.forEach(function (card) {
@@ -28,49 +43,77 @@
           card.dataset.search || ""
         ).toLowerCase();
 
-        const matches = !term || searchable.includes(term);
+        const matches =
+          !term ||
+          searchable.includes(term);
 
-        card.classList.toggle("is-hidden", !matches);
+        card.classList.toggle(
+          "is-hidden",
+          !matches
+        );
 
         if (matches) {
           visible += 1;
         }
       });
 
+      /* Show / hide clear button */
       if (clearButton) {
-        clearButton.style.display = term ? "grid" : "none";
+        clearButton.style.display =
+          term ? "grid" : "none";
       }
 
+      /* Results counter */
       if (resultsText) {
         resultsText.textContent = term
-          ? `Showing ${visible} matching guide${visible === 1 ? "" : "s"}`
+          ? `Showing ${visible} matching guide${
+              visible === 1 ? "" : "s"
+            }`
           : `Showing all ${cards.length} guides`;
       }
 
+      /* No results message */
       if (noResults) {
-        noResults.hidden = visible !== 0;
+        noResults.hidden =
+          visible !== 0;
       }
 
+      /* Save search for current browser session */
       try {
-        sessionStorage.setItem(SEARCH_KEY, input.value);
+        sessionStorage.setItem(
+          SEARCH_KEY,
+          input.value
+        );
       } catch (error) {
         /* Storage is optional. */
       }
     }
 
-    input.addEventListener("input", applySearch);
+    input.addEventListener(
+      "input",
+      applySearch
+    );
 
+    /* Clear search */
     if (clearButton) {
-      clearButton.addEventListener("click", function () {
-        input.value = "";
-        applySearch();
-        input.focus();
-      });
+      clearButton.addEventListener(
+        "click",
+        function () {
+          input.value = "";
+
+          applySearch();
+
+          input.focus();
+        }
+      );
     }
 
-    /* Restore a search only when the browser session already had one. */
+    /* Restore previous search */
     try {
-      const savedSearch = sessionStorage.getItem(SEARCH_KEY);
+      const savedSearch =
+        sessionStorage.getItem(
+          SEARCH_KEY
+        );
 
       if (savedSearch) {
         input.value = savedSearch;
@@ -83,10 +126,16 @@
   }
 
 
+  /* ============================================================
+     GUIDE HISTORY
+     ============================================================ */
+
   function getHistory() {
     try {
       return JSON.parse(
-        localStorage.getItem("guideHistory")
+        localStorage.getItem(
+          "guideHistory"
+        )
       ) || [];
     } catch (error) {
       return [];
@@ -102,10 +151,16 @@
   }
 
 
+  /* ============================================================
+     GUIDE USAGE COUNTS
+     ============================================================ */
+
   function getUsage() {
     try {
       return JSON.parse(
-        localStorage.getItem("guideUsageCounts")
+        localStorage.getItem(
+          "guideUsageCounts"
+        )
       ) || {};
     } catch (error) {
       return {};
@@ -121,20 +176,33 @@
   }
 
 
+  /* ============================================================
+     TRACK GUIDE OPENING
+     ============================================================ */
+
   function trackGuideOpening(link) {
-    const card = link.closest(".guide-card");
+    const card =
+      link.closest(".guide-card");
 
     if (!card) return;
 
     const title =
-      card.querySelector("h3")?.textContent.trim() ||
+      card.querySelector("h3")
+        ?.textContent
+        .trim() ||
       "Untitled Guide";
 
-    const url = link.getAttribute("href");
+    const url =
+      link.getAttribute("href");
 
     if (!url) return;
 
-    const history = getHistory();
+    /* ------------------------------
+       HISTORY
+       ------------------------------ */
+
+    const history =
+      getHistory();
 
     history.push({
       title: title,
@@ -142,13 +210,23 @@
       timestamp: Date.now()
     });
 
+    /* Keep maximum 100 history records */
     if (history.length > 100) {
-      history.splice(0, history.length - 100);
+      history.splice(
+        0,
+        history.length - 100
+      );
     }
 
     saveHistory(history);
 
-    const usage = getUsage();
+
+    /* ------------------------------
+       USAGE COUNT
+       ------------------------------ */
+
+    const usage =
+      getUsage();
 
     if (!usage[url]) {
       usage[url] = {
@@ -157,67 +235,215 @@
       };
     }
 
-    usage[url].title = title;
+    usage[url].title =
+      title;
+
     usage[url].count += 1;
 
     saveUsage(usage);
   }
 
 
+  /* ============================================================
+     GUIDE CARD INTERACTION
+     
+     IMPORTANT:
+     The ENTIRE guide card is clickable.
+     The arrow is only a visual/action indicator.
+     ============================================================ */
+
   function initGuideTracking() {
-    document.addEventListener("click", function (event) {
-      const link = event.target.closest(".guide-open");
 
-      if (!link) return;
+    /* --------------------------------
+       CLICK HANDLING
+       -------------------------------- */
 
-      trackGuideOpening(link);
-    });
+    document.addEventListener(
+      "click",
+      function (event) {
+
+        /* If the actual guide link was
+           clicked, track it normally. */
+        const link =
+          event.target.closest(
+            ".guide-open"
+          );
+
+        if (link) {
+          trackGuideOpening(link);
+          return;
+        }
+
+
+        /* --------------------------------
+           ENTIRE CARD IS CLICKABLE
+           -------------------------------- */
+
+        const card =
+          event.target.closest(
+            ".guide-card"
+          );
+
+        if (!card) return;
+
+
+        const targetLink =
+          card.querySelector(
+            ".guide-open"
+          );
+
+        if (!targetLink) return;
+
+
+        /*
+         * Clicking ANYWHERE inside the card
+         * opens the guide.
+         *
+         * This includes:
+         * - icon
+         * - title
+         * - description
+         * - empty card area
+         * - arrow
+         */
+        targetLink.click();
+      }
+    );
+
+
+    /* --------------------------------
+       KEYBOARD ACCESSIBILITY
+       -------------------------------- */
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key !== "Enter" &&
+          event.key !== " "
+        ) {
+          return;
+        }
+
+
+        const card =
+          event.target.closest(
+            ".guide-card"
+          );
+
+        if (!card) return;
+
+
+        /*
+         * If the user is already focused
+         * on the actual guide link, allow
+         * the browser's normal link action.
+         */
+        if (
+          event.target.closest(
+            ".guide-open"
+          )
+        ) {
+          return;
+        }
+
+
+        event.preventDefault();
+
+
+        const targetLink =
+          card.querySelector(
+            ".guide-open"
+          );
+
+        if (targetLink) {
+          targetLink.click();
+        }
+      }
+    );
   }
 
 
-  /*
-   * Shared V2 header global search.
-   * Reuses the group search instead of creating another search system.
-   */
-  window.performSearch = function (value) {
-    const input = document.getElementById("guideSearch");
+  /* ============================================================
+     SHARED HEADER GLOBAL SEARCH
+     
+     The header search can use the same
+     Billing Dispute guide search.
+     ============================================================ */
 
-    if (!input) return;
+  window.performSearch =
+    function (value) {
 
-    input.value = String(value || "");
-    input.dispatchEvent(new Event("input"));
+      const input =
+        document.getElementById(
+          "guideSearch"
+        );
 
-    const library =
-      document.querySelector(".guide-library");
+      if (!input) return;
 
-    if (library) {
-      library.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
 
-    setTimeout(function () {
-      input.focus({
-        preventScroll: true
-      });
-    }, 250);
-  };
+      input.value =
+        String(value || "");
 
+
+      input.dispatchEvent(
+        new Event("input")
+      );
+
+
+      const library =
+        document.querySelector(
+          ".guide-library"
+        );
+
+
+      if (library) {
+        library.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+
+      setTimeout(
+        function () {
+          input.focus({
+            preventScroll: true
+          });
+        },
+        250
+      );
+    };
+
+
+  /* ============================================================
+     INITIALIZATION
+     ============================================================ */
 
   function init() {
+
     initGroupSearch();
+
     initGuideTracking();
+
   }
 
 
-  if (document.readyState === "loading") {
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
     document.addEventListener(
       "DOMContentLoaded",
       init
     );
+
   } else {
+
     init();
+
   }
 
 })();
