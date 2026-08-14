@@ -1,14 +1,129 @@
 /* ============================================================
    GROUP GUIDES — BILLING DISPUTE PAGE
    ============================================================
-   IMPORTANT:
-   The main dashboard assets/css/styles.css is loaded FIRST.
-   This file contains ONLY Billing Dispute-specific content.
 
-   The shared shell, body font, header spacing, Quick Access card
-   system, colors, responsive breakpoints, and base typography are
-   inherited directly from styles.css.
+   SELF-CONTAINED STYLESHEET
+
+   IMPORTANT:
+   - DOES NOT depend on assets/css/styles.css
+   - DOES NOT depend on assets/css/guide-themes.css
+   - Main Dashboard styles.css is used ONLY as the visual
+     reference for typography, spacing, colors and cards.
+
+   Billing-specific styling:
+   - Hero
+   - Billing Dispute content
+   - Guide Library
+   - Guide search
+   - Guide cards
+
+   Shared page foundation reproduced here:
+   - body
+   - app shell
+   - page layout
+   - Quick Access-style cards
+   - typography
+   - footer positioning
    ============================================================ */
+
+
+/* ============================================================
+   FONT
+   ============================================================ */
+
+@import url(
+  "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+);
+
+
+/* ============================================================
+   GLOBAL RESET
+   ============================================================ */
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+  width:100%;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  color:#10134f;
+  background:#f3f3f8;
+}
+
+body{
+  overflow-x:auto;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+.app-shell{
+  width:calc(100% - 20px);
+  max-width:1260px;
+
+  min-height:calc(100vh - 20px);
+
+  margin:0 auto;
+
+  background:#fff;
+
+  border:0;
+  border-radius:7px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 2px 12px rgba(34,27,84,.06);
+
+  display:flex;
+  flex-direction:column;
+}
+
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+
+.app-shell main{
+  flex:1 0 auto;
+  width:100%;
+}
+
+.group-page{
+  width:100%;
+  flex:1 0 auto;
+  background:#fff;
+}
+
+
+/* ============================================================
+   FOOTER POSITIONING
+
+   The footer stays at the bottom when the page content is
+   shorter than the viewport.
+   ============================================================ */
+
+#footer-placeholder{
+  margin-top:auto;
+  flex-shrink:0;
+}
 
 
 /* ============================================================
@@ -17,29 +132,48 @@
 
 .group-hero{
   position:relative;
+
   height:292px;
   min-height:292px;
+
   overflow:hidden;
+
   isolation:isolate;
+
   background:#eee9fb;
 }
 
 .group-hero-image{
   position:absolute;
+
   inset:0;
+
   z-index:0;
 
-  background-image:url("../images/billing-dispute-hero.png");
+  background-image:
+    url("../images/billing-dispute-hero.png");
+
   background-repeat:no-repeat;
+
   background-position:center center;
+
   background-size:cover;
 }
 
+
+/* ============================================================
+   HERO SOFT OVERLAY
+   ============================================================ */
+
 .group-hero::after{
   content:"";
+
   position:absolute;
+
   inset:0;
+
   z-index:1;
+
   pointer-events:none;
 
   background:
@@ -52,13 +186,21 @@
     );
 }
 
+
+/* ============================================================
+   HERO CONTENT
+   ============================================================ */
+
 .group-hero-content{
   position:relative;
+
   z-index:2;
 
+  width:100%;
   height:100%;
 
   display:flex;
+
   align-items:center;
 
   padding-left:8.2%;
@@ -66,6 +208,7 @@
 
 .group-hero-copy{
   position:relative;
+
   z-index:3;
 
   width:430px;
@@ -79,7 +222,9 @@
 
 .intro-kicker{
   display:inline-flex;
+
   align-items:center;
+
   gap:8px;
 
   padding:7px 11px;
@@ -87,21 +232,32 @@
   border-radius:999px;
 
   background:rgba(241,234,255,.94);
+
   border:1px solid rgba(228,215,250,.95);
 
   color:#4d148c;
 
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
   font-size:10px;
+
   font-weight:800;
 
   letter-spacing:.04em;
+
   text-transform:uppercase;
 
-  box-shadow:0 4px 12px rgba(48,38,111,.04);
+  box-shadow:
+    0 4px 12px rgba(48,38,111,.04);
 }
 
 .intro-kicker i{
   color:#ff6600;
+
   font-size:11px;
 }
 
@@ -115,9 +271,14 @@
 
   color:#10134f;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:36px;
+
   line-height:1.15;
 
   font-weight:800;
@@ -125,18 +286,31 @@
   letter-spacing:-.7px;
 }
 
+
+/* ============================================================
+   HERO DESCRIPTION
+   ============================================================ */
+
 .group-hero-copy > p{
   width:430px;
+
   max-width:100%;
 
   margin:0 0 16px;
 
   color:#3d3f65;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:15px;
+
   line-height:1.5;
+
+  font-weight:400;
 
   letter-spacing:.01em;
 }
@@ -150,9 +324,11 @@
   position:relative;
 
   display:flex;
+
   align-items:center;
 
   width:330px;
+
   height:34px;
 
   margin-top:12px;
@@ -160,18 +336,24 @@
   background:#fff;
 
   border:1px solid #e0e0ed;
+
   border-radius:6px;
 
-  box-shadow:0 4px 12px rgba(75,45,153,.06);
+  box-shadow:
+    0 4px 12px rgba(75,45,153,.06);
+
+  overflow:hidden;
 }
 
 .hero-search > i{
   flex:0 0 auto;
 
   margin-left:11px;
+
   margin-right:8px;
 
   width:11px;
+
   height:11px;
 
   color:#9699b1;
@@ -183,6 +365,7 @@
   flex:1;
 
   width:100%;
+
   height:32px;
 
   min-width:0;
@@ -190,15 +373,22 @@
   padding:0;
 
   border:0;
+
   outline:0;
 
   background:transparent;
 
   color:#10134f;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:9px;
+
+  font-weight:400;
 }
 
 .hero-search input::placeholder{
@@ -207,13 +397,18 @@
 
 .hero-search-button{
   width:82px;
+
   height:34px;
 
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
   flex:0 0 82px;
+
+  border:0;
 
   border-radius:0 6px 6px 0;
 
@@ -221,13 +416,21 @@
 
   color:#fff;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:9px;
+
   font-weight:700;
 
   cursor:pointer;
 }
+
+
+/* Clear/search auxiliary button */
 
 .hero-search button{
   position:absolute;
@@ -235,12 +438,15 @@
   right:88px;
 
   width:25px;
+
   height:25px;
 
   display:none;
+
   place-items:center;
 
   border:0;
+
   border-radius:7px;
 
   background:#f1f1f7;
@@ -255,168 +461,493 @@
 
 /* ============================================================
    GUIDE LIBRARY
-   Main Dashboard .section / .section-heading / .view-all
-   provide the primary layout.
    ============================================================ */
 
 .guide-library{
+  width:100%;
+
+  padding:23px 5.6% 46px;
+
   background:#fff;
-  padding-bottom:46px;
 }
 
 
-/* Billing-only result text.
-   It does NOT replace the Dashboard heading system. */
+/* ============================================================
+   LIBRARY TOOLBAR
 
+   Mirrors Main Dashboard:
+   .section-heading
+   ============================================================ */
+
+.library-toolbar{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+
+  margin:0;
+}
+
+
+/* ============================================================
+   LIBRARY TITLE
+   ============================================================ */
+
+.library-title{
+  min-width:0;
+}
+
+.library-title h2{
+  display:flex;
+
+  align-items:center;
+
+  margin:0;
+
+  color:#10134f;
+
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size:14px;
+
+  line-height:1.2;
+
+  font-weight:800;
+}
+
+
+/* Dashboard heading bar */
+
+.library-title h2 .heading-bar{
+  display:inline-block;
+
+  width:3px;
+
+  height:19px;
+
+  flex:0 0 3px;
+
+  margin-right:10px;
+
+  background:#5f16cb;
+
+  border-radius:3px;
+
+  vertical-align:-5px;
+}
+
+
+/* ============================================================
+   RESULT TEXT
+   ============================================================ */
+
+#resultsText,
 .library-results{
   margin:5px 0 0;
 
   color:#777a99;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:8px;
+
   line-height:1.3;
+
+  font-weight:400;
 }
 
 
-/* Keep the Dashboard's exact card spacing after the
-   heading/result area. */
+/* ============================================================
+   VIEW ALL GUIDES
+   ============================================================ */
+
+.library-toolbar .view-all{
+  border:0;
+
+  padding:0;
+
+  margin:0;
+
+  background:transparent;
+
+  color:#5b17c5;
+
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size:8px;
+
+  line-height:1;
+
+  font-weight:700;
+
+  white-space:nowrap;
+
+  cursor:pointer;
+}
+
+.library-toolbar .view-all:hover{
+  color:#4f13b8;
+}
+
+.library-toolbar .view-all span{
+  font-size:14px;
+
+  margin-left:4px;
+
+  vertical-align:-1px;
+}
+
+
+/* ============================================================
+   GUIDE GRID
+
+   EXACT Dashboard Quick Access reference:
+   6 columns
+   10px gap
+   13px top spacing
+   ============================================================ */
 
 .guide-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(6,1fr);
+
+  gap:10px;
+
   margin-top:13px;
 }
 
 
 /* ============================================================
-   GUIDE CARDS
-   These intentionally inherit the Main Dashboard Quick Card
-   rules because the HTML uses BOTH classes:
-   .quick-card + .guide-card
+   GUIDE CARD
+
+   Dashboard Quick Access reference:
+   height:194px
+   border:1px solid #e8e9f2
+   bottom border:2px
+   radius:9px
+   padding:14px 12px 10px
    ============================================================ */
 
 .guide-card{
-  /* Main Dashboard owns:
-     height
-     border
-     border-radius
-     padding
-     shadow
-     hover
-     cursor
-  */
+  position:relative;
+
+  height:194px;
+
+  min-height:194px;
+
+  padding:14px 12px 10px;
+
+  border:1px solid #e8e9f2;
+
+  border-bottom:2px solid #d9d7ef;
+
+  border-radius:9px;
+
+  background:#fff;
+
+  box-shadow:
+    0 3px 11px rgba(41,32,94,.045);
+
+  transition:
+    .18s transform,
+    .18s box-shadow;
+
+  cursor:pointer;
 
   text-align:left;
 
+  overflow:hidden;
+
   opacity:1;
+
   transform:none;
 }
 
+.guide-card:hover{
+  transform:translateY(-2px);
 
-/* Do not allow the old group-card decoration to return. */
+  box-shadow:
+    0 8px 20px rgba(41,32,94,.1);
+}
+
+
+/* ============================================================
+   CARD BOTTOM ACCENT
+   ============================================================ */
+
+.guide-card::after{
+  content:"";
+
+  position:absolute;
+
+  bottom:-2px;
+
+  left:15%;
+
+  right:15%;
+
+  height:2px;
+
+  border-radius:4px;
+
+  pointer-events:none;
+}
+
+.guide-card.purple-card::after{
+  background:#d7c9ff;
+}
+
+.guide-card.orange-card::after{
+  background:#ffd4bd;
+}
+
+.guide-card.blue-card::after{
+  background:#c9dcff;
+}
+
+.guide-card.green-card::after{
+  background:#d0f0d2;
+}
+
+.guide-card.indigo-card::after{
+  background:#c5c9ff;
+}
+
+.guide-card.pink-card::after{
+  background:#ffd0df;
+}
+
+
+/* ============================================================
+   REMOVE ANY OLD CARD DECORATION
+   ============================================================ */
 
 .guide-card::before{
   content:none;
 }
 
 
-/* Main Dashboard owns ::after.
-   Do not redefine it here. */
-
-
 /* ============================================================
-   GUIDE CARD ICONS
-   Inherit exact .quick-icon / .quick-svg behavior from
-   styles.css.
+   CARD ICON
+
+   Dashboard reference:
+   44px × 44px
+   circular
+   12px bottom margin
    ============================================================ */
 
 .guide-card-icon{
-  position:relative;
-  z-index:1;
+  width:44px;
+
+  height:44px;
+
+  display:grid;
+
+  place-items:center;
 
   margin-bottom:12px;
+
+  border-radius:50%;
+
+  position:relative;
+
+  z-index:1;
+
+  flex:none;
 }
 
 
 /* ============================================================
-   GUIDE CARD TYPOGRAPHY
-   Exact Dashboard .quick-card h3 / p values.
+   EXACT DASHBOARD ICON COLORS
    ============================================================ */
 
+.purple-bg{
+  background:#f1eaff;
+
+  color:#7131dc;
+}
+
+.orange-bg{
+  background:#fff0e4;
+
+  color:#ff6d17;
+}
+
+.blue-bg{
+  background:#eaf0ff;
+
+  color:#3865df;
+}
+
+.green-bg{
+  background:#e8f7e7;
+
+  color:#3e9346;
+}
+
+.indigo-bg{
+  background:#eef0ff;
+
+  color:#4a56d6;
+}
+
+.pink-bg{
+  background:#ffeaf0;
+
+  color:#ec3970;
+}
+
+
 /* ============================================================
-   BILLING DISPUTE CARDS
-   Typography matched to Main Dashboard Quick Access
+   CARD SVG ICON
    ============================================================ */
 
-.guide-card h3 {
-    margin: 0;
+.ui-icon{
+  display:block;
 
-    font-family: "Inter", system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill:none;
 
-    font-size: 11px;
-    line-height: 1.15;
+  stroke:currentColor;
 
-    font-weight: 600;
+  stroke-width:1.8;
 
-    color: #0f172a;
+  stroke-linecap:round;
 
-    letter-spacing: -0.01em;
+  stroke-linejoin:round;
+
+  flex:none;
 }
 
-.guide-card p {
-    margin: 8px 0 0;
+.guide-card-icon .quick-svg{
+  width:22px;
 
-    font-family: "Inter", system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-    font-size: 8px;
-    line-height: 1.45;
-
-    font-weight: 400;
-
-    color: #64748b;
-
-    letter-spacing: 0;
-}
-
-.guide-card,
-.guide-card * {
-    font-family: "Inter", system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
+  height:22px;
 }
 
 
 /* ============================================================
-   GUIDE ARROW
-   Exact Dashboard .arrow-btn values.
+   CARD TITLE
+
+   EXACT Dashboard reference:
+   font-size:11px
+   line-height:1.2
+   margin-bottom:6px
+   letter-spacing:-.2px
+
+   IMPORTANT:
+   No Inter.
+   No #0f172a.
+   No #64748b.
+   ============================================================ */
+
+.guide-card h3{
+  margin:0 0 6px;
+
+  color:#10134f;
+
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size:11px;
+
+  line-height:1.2;
+
+  letter-spacing:-.2px;
+
+  font-weight:700;
+}
+
+
+/* ============================================================
+   CARD DESCRIPTION
+
+   EXACT Dashboard reference:
+   font-size:8px
+   line-height:1.4
+   color:#7a7c98
+   ============================================================ */
+
+.guide-card p{
+  margin:0;
+
+  color:#7a7c98;
+
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size:8px;
+
+  line-height:1.4;
+
+  font-weight:400;
+}
+
+
+/* ============================================================
+   ARROW
+
+   EXACT Dashboard reference
    ============================================================ */
 
 .guide-card .arrow-btn{
   position:absolute;
 
   left:12px;
+
   bottom:10px;
 
   border:0;
-
-  background:transparent;
-
-  color:#4f13b8;
-
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-
-  font-size:18px;
-
-  line-height:normal;
 
   padding:0;
 
   margin:0;
 
+  background:transparent;
+
+  color:#4f13b8;
+
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size:18px;
+
+  line-height:normal;
+
+  font-weight:400;
+
   cursor:pointer;
 
   z-index:3;
+}
+
+.guide-card .arrow-btn:hover{
+  color:#5915c8;
 }
 
 
@@ -435,11 +966,13 @@
 
 .no-results{
   margin-top:16px;
+
   padding:35px 20px;
 
   text-align:center;
 
   border:1px dashed #cbd5e1;
+
   border-radius:8px;
 
   background:#fafbfe;
@@ -447,6 +980,7 @@
 
 .no-results > i{
   font-size:22px;
+
   color:#94a3b8;
 }
 
@@ -455,9 +989,16 @@
 
   color:#10134f;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:15px;
+
+  line-height:1.2;
+
   font-weight:800;
 }
 
@@ -466,43 +1007,45 @@
 
   color:#777a99;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size:10px;
+
+  line-height:1.4;
+
+  font-weight:400;
+}
+
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.library-empty{
+  width:100%;
+
+  padding:35px 20px;
+
+  text-align:center;
+
+  color:#777a99;
+
+  font-family:
+    "Poppins",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
   font-size:10px;
 }
 
 
 /* ============================================================
-   VIEW ALL
-   Inherits exact Dashboard .view-all.
-   ============================================================ */
-
-.library-toolbar .view-all{
-  border:0;
-  background:transparent;
-
-  color:#5b17c5;
-
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-
-  font-size:8px;
-  font-weight:700;
-
-  padding:0;
-
-  cursor:pointer;
-}
-
-.library-toolbar .view-all span{
-  font-size:14px;
-  margin-left:4px;
-  vertical-align:-1px;
-}
-
-
-/* ============================================================
    RESPONSIVE
-   Follow the Main Dashboard Quick Access breakpoints.
    ============================================================ */
 
 @media (max-width:1050px){
@@ -513,25 +1056,38 @@
 
   .group-hero-copy{
     width:58%;
+
     max-width:500px;
   }
 
+  .guide-grid{
+    grid-template-columns:
+      repeat(3,1fr);
+  }
 }
+
 
 @media (max-width:800px){
 
+  .app-shell{
+    min-width:760px;
+  }
+
   .group-hero{
     height:330px;
+
     min-height:330px;
   }
 
   .group-hero-content{
     padding-left:7%;
+
     align-items:center;
   }
 
   .group-hero-copy{
     width:58%;
+
     max-width:500px;
   }
 
@@ -539,22 +1095,30 @@
     font-size:32px;
   }
 
+  .guide-grid{
+    grid-template-columns:
+      repeat(3,1fr);
+  }
 }
+
 
 @media (max-width:700px){
 
   .group-hero{
     height:360px;
+
     min-height:360px;
   }
 
   .group-hero-content{
     padding:28px 7%;
+
     align-items:flex-start;
   }
 
   .group-hero-copy{
     width:100%;
+
     max-width:520px;
   }
 
@@ -564,25 +1128,48 @@
 
   .group-hero-copy > p{
     width:100%;
+
     font-size:13px;
   }
 
   .hero-search{
     width:100%;
+
     max-width:330px;
   }
 
+  .guide-grid{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
 }
+
 
 @media (max-width:450px){
 
+  body{
+    padding:0;
+  }
+
+  .app-shell{
+    width:100%;
+
+    min-width:760px;
+
+    border:0;
+
+    border-radius:0;
+  }
+
   .group-hero{
     height:380px;
+
     min-height:380px;
   }
 
   .group-hero-content{
     padding-left:20px;
+
     padding-right:20px;
   }
 
@@ -598,4 +1185,7 @@
     width:100%;
   }
 
+  .guide-grid{
+    grid-template-columns:1fr;
+  }
 }
