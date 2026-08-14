@@ -858,3 +858,153 @@ body.theme-simple{
     transition:none;
   }
 }
+
+
+/* ============================================================
+   BILLING DISPUTE — QUICK ACCESS CARD LAYOUT
+   Matches the Main Dashboard Quick Access cards.
+   ============================================================ */
+
+.guide-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  margin-top:13px;
+}
+
+.guide-card{
+  height:194px;
+  min-height:194px;
+  padding:14px 12px 10px;
+  border:1px solid #e8e9f2;
+  border-bottom:2px solid #d9d7ef;
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 3px 11px rgba(41,32,94,.045);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+
+.guide-card:hover{
+  transform:translateY(-2px);
+  border-color:#e8e9f2;
+  box-shadow:0 8px 20px rgba(41,32,94,.10);
+}
+
+.guide-card::after{
+  width:auto;
+  height:2px;
+  left:15%;
+  right:15%;
+  bottom:-2px;
+  border-radius:4px;
+  background:#d7c9ff;
+  transition:none;
+}
+
+.guide-card:hover::after{
+  transform:none;
+}
+
+.guide-card.purple-card:hover::after{background:#d7c9ff;}
+.guide-card.orange-card:hover::after{background:#ffd4bd;}
+.guide-card.blue-card:hover::after{background:#c9dcff;}
+.guide-card.green-card:hover::after{background:#d0f0d2;}
+.guide-card.indigo-card:hover::after{background:#c5c9ff;}
+.guide-card.pink-card:hover::after{background:#ffd0df;}
+
+.guide-card.purple-card::after{background:#d7c9ff;}
+.guide-card.orange-card::after{background:#ffd4bd;}
+.guide-card.blue-card::after{background:#c9dcff;}
+.guide-card.green-card::after{background:#d0f0d2;}
+.guide-card.indigo-card::after{background:#c5c9ff;}
+.guide-card.pink-card::after{background:#ffd0df;}
+
+.guide-card-icon{
+  width:44px;
+  height:44px;
+  margin:0 0 12px;
+  border-radius:50%;
+  font-size:15px;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+
+.guide-card:hover .guide-card-icon{
+  transform:translateY(-1px);
+  box-shadow:none;
+}
+
+.guide-card-icon.purple-bg{background:#f1eaff;color:#7131dc;}
+.guide-card-icon.orange-bg{background:#fff0e4;color:#ff6d17;}
+.guide-card-icon.blue-bg{background:#eaf0ff;color:#3865df;}
+.guide-card-icon.green-bg{background:#e8f7e7;color:#3e9346;}
+.guide-card-icon.indigo-bg{background:#eef0ff;color:#4a56d6;}
+.guide-card-icon.pink-bg{background:#ffeaf0;color:#ec3970;}
+
+.guide-card-content{
+  min-width:0;
+}
+
+.guide-card h3{
+  margin:0 0 6px;
+  font-size:11px;
+  line-height:1.2;
+  letter-spacing:-.2px;
+  font-weight:800;
+}
+
+.guide-card p{
+  margin:0;
+  font-size:8px;
+  line-height:1.4;
+  color:#7a7c98;
+}
+
+.guide-open{
+  position:absolute;
+  left:12px;
+  bottom:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:auto;
+  height:auto;
+  margin:0;
+  padding:0;
+  color:#4f13b8;
+  font-size:18px;
+  line-height:1;
+  font-weight:400;
+  text-decoration:none;
+}
+
+.guide-open i{
+  color:inherit;
+  font-size:18px;
+  transition:transform .18s ease;
+}
+
+.guide-open:hover{
+  color:#4f13b8;
+}
+
+.guide-open:hover i{
+  transform:translateX(3px);
+}
+
+@media(max-width:1050px){
+  .guide-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:700px){
+  .guide-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:450px){
+  .guide-grid{
+    grid-template-columns:1fr;
+  }
+}
