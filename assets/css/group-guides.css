@@ -1,45 +1,30 @@
 /* ============================================================
    GROUP GUIDES — V2 MASTER STYLE
    ============================================================
-   This is the MASTER stylesheet for every guide-group page.
+   Shared visual system for every guide-group page.
 
-   Used by:
-   - Billing Dispute Guides
-   - Pricing General Guides
-   - Surcharges Guide
-   - Account Handling Guide
-   - PAUD Queue's Guide
-   - Other Operational Guides
-
-   IMPORTANT:
-   The group page uses the SAME application shell,
-   typography, spacing and visual language as index-main.html.
-
-   Header/footer are loaded separately from /shared/.
-   ============================================================ */
-
-
-/* ============================================================
-   1. GLOBAL
+   Designed to visually match index-main.html:
+   - same 1260px application shell
+   - same typography
+   - same spacing scale
+   - same FedEx colors
+   - same header/footer
+   - themed hero artwork
    ============================================================ */
 
 :root{
-    --purple:#4d148c;
-    --purple2:#6b20d0;
-    --orange:#ff6600;
+  --purple:#4d148c;
+  --purple2:#6b20d0;
+  --orange:#ff6600;
 
-    --ink:#10134f;
-    --muted:#777a99;
+  --ink:#10134f;
+  --muted:#777a99;
 
-    --line:#e7e8f3;
+  --line:#e7e8f3;
+  --card-shadow:0 5px 20px rgba(48,38,111,.08);
 
-    --shadow:
-        0 5px 20px rgba(48,38,111,.08);
-
-    --group-text:#182033;
-    --group-muted:#64748b;
-
-    --group-radius:18px;
+  --group-radius:17px;
+  --shell-width:1260px;
 }
 
 
@@ -48,190 +33,147 @@
    ============================================================ */
 
 *{
-    box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 html{
-    margin:0;
-    padding:0;
-    min-height:100%;
-    scroll-behavior:smooth;
+  margin:0;
+  padding:0;
+  min-height:100%;
+  scroll-behavior:smooth;
 }
 
 body{
-    margin:0;
-    min-height:100%;
-    width:100%;
-
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    color:var(--ink);
-
-    background:#f3f3f8;
-
-    overflow-x:auto;
-
-    padding:10px;
+  margin:0;
+  min-height:100vh;
+  width:100%;
+  font-family:"Poppins","Inter","Segoe UI",Arial,sans-serif;
+  color:var(--ink);
+  background:#f3f3f8;
+  overflow-x:hidden;
 }
 
 button,
 input{
-    font:inherit;
+  font:inherit;
 }
 
 button{
-    cursor:pointer;
+  cursor:pointer;
 }
 
 
 /* ============================================================
-   2. SAME V2 APPLICATION SHELL AS MAIN DASHBOARD
+   APPLICATION SHELL
    ============================================================ */
 
 .app-shell{
-    width:calc(100% - 20px);
-
-    max-width:1260px;
-
-    min-height:calc(100vh - 20px);
-
-    margin:0 auto;
-
-    background:#fff;
-
-    border:0;
-
-    border-radius:7px;
-
-    overflow:hidden;
-
-    box-shadow:
-        0 2px 12px rgba(34,27,84,.06);
-
-    display:flex;
-
-    flex-direction:column;
+  width:calc(100% - 20px);
+  max-width:var(--shell-width);
+  min-height:calc(100vh - 20px);
+  margin:10px auto;
+  background:#fff;
+  border-radius:7px;
+  overflow:hidden;
+  box-shadow:0 2px 12px rgba(34,27,84,.06);
+  display:flex;
+  flex-direction:column;
 }
-
-
-/*
-   The group page itself fills the shell.
-*/
 
 .group-page{
-    min-height:calc(100vh - 20px);
-
-    display:flex;
-
-    flex-direction:column;
-
-    /*
-       Initial page animation.
-    */
-
-    animation:
-        groupPageEnter .55s cubic-bezier(.22,.61,.36,1) both;
+  animation:groupPageEnter .55s cubic-bezier(.22,.61,.36,1) both;
 }
-
-
-/*
-   Main content expands between
-   header and footer.
-*/
 
 .group-page main{
-    flex:1;
-
-    width:100%;
-
-    background:#fff;
+  flex:1;
+  width:100%;
+  background:#fff;
 }
-
-
-/* ============================================================
-   PAGE OPEN ANIMATION
-   ============================================================ */
 
 @keyframes groupPageEnter{
-
-    from{
-        opacity:0;
-
-        transform:
-            translateY(10px);
-    }
-
-    to{
-        opacity:1;
-
-        transform:
-            translateY(0);
-    }
-
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 
 /* ============================================================
-   3. GROUP CONTAINER
+   SHARED CONTENT WIDTH
    ============================================================ */
 
 .group-container{
-
-    /*
-       This is deliberately aligned with the
-       internal dashboard content.
-
-       Dashboard sections use approximately
-       5.6% horizontal spacing.
-    */
-
-    width:calc(100% - 112px);
-
-    max-width:1120px;
-
-    margin-left:auto;
-
-    margin-right:auto;
+  width:calc(100% - 100px);
+  max-width:1160px;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 
 /* ============================================================
-   4. INTRO
+   GROUP HERO
    ============================================================ */
 
-.group-intro{
-
-    padding:
-
-        38px
-
-        0
-
-        22px;
+.group-hero{
+  position:relative;
+  min-height:340px;
+  overflow:hidden;
+  isolation:isolate;
+  background:#eee9fb;
 }
 
+.group-hero-image{
+  position:absolute;
+  inset:0;
+  z-index:0;
 
-.group-intro .group-container{
+  background-image:
+    url("../images/billing-dispute-hero.png");
 
-    display:flex;
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-size:cover;
 
-    align-items:flex-end;
-
-    justify-content:space-between;
-
-    gap:30px;
+  transform:scale(1.002);
 }
 
+.group-hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
 
-.intro-copy{
+  /*
+   * Keeps the left side readable without covering
+   * the artwork on the right.
+   */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(248,246,255,.78) 0%,
+      rgba(248,246,255,.54) 31%,
+      rgba(248,246,255,.08) 59%,
+      rgba(248,246,255,0) 75%
+    );
+}
 
-    max-width:820px;
+.group-hero-content{
+  position:relative;
+  z-index:2;
+  min-height:340px;
+  display:flex;
+  align-items:center;
+}
 
-    min-width:0;
+.group-hero-copy{
+  width:52%;
+  max-width:570px;
+  padding:24px 0 20px;
 }
 
 
@@ -240,88 +182,221 @@ button{
    ============================================================ */
 
 .intro-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(241,234,255,.94);
+  border:1px solid rgba(228,215,250,.95);
+  color:var(--purple);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  box-shadow:0 4px 12px rgba(48,38,111,.04);
 
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    padding:
-
-        7px
-
-        11px;
-
-    border-radius:999px;
-
-    background:#f1eaff;
-
-    border:1px solid #e4d7fa;
-
-    color:var(--purple);
-
-    font-size:10px;
-
-    font-weight:800;
-
-    letter-spacing:.04em;
-
-    text-transform:uppercase;
+  animation:heroKickerEnter .55s .05s both;
 }
 
-
 .intro-kicker i{
+  color:var(--orange);
+  font-size:11px;
+}
 
-    color:var(--orange);
-
-    font-size:11px;
+@keyframes heroKickerEnter{
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 
 /* ============================================================
-   GROUP TITLE
+   HERO TITLE
    ============================================================ */
 
-.group-intro h1{
+.group-hero h1{
+  margin:14px 0 8px;
+  color:var(--ink);
+  font-size:clamp(34px,3.6vw,48px);
+  line-height:1.06;
+  letter-spacing:-1.4px;
+  font-weight:800;
 
-    margin:
+  animation:heroTextEnter .65s .10s both;
+}
 
-        14px
+.group-hero-copy > p{
+  margin:0;
+  max-width:500px;
+  color:#646784;
+  font-size:14px;
+  line-height:1.65;
 
-        0
+  animation:heroTextEnter .65s .16s both;
+}
 
-        7px;
-
-    color:var(--ink);
-
-    font-size:
-
-        clamp(
-            32px,
-            3.3vw,
-            46px
-        );
-
-    line-height:1.08;
-
-    letter-spacing:-1.2px;
-
-    font-weight:800;
+@keyframes heroTextEnter{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 
-.group-intro p{
+/* ============================================================
+   HERO SEARCH
+   ============================================================ */
 
-    margin:0;
+.hero-search{
+  position:relative;
+  display:flex;
+  align-items:center;
 
-    max-width:720px;
+  width:100%;
+  max-width:475px;
+  height:45px;
+  margin-top:20px;
 
-    color:#646784;
+  background:#fff;
+  border:1px solid #e1e2ed;
+  border-radius:9px;
+  box-shadow:0 6px 20px rgba(48,38,111,.08);
 
-    font-size:13px;
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    border-color .2s ease;
 
-    line-height:1.65;
+  animation:heroSearchEnter .65s .22s both;
+}
+
+.hero-search:focus-within{
+  transform:translateY(-1px);
+  border-color:rgba(77,20,140,.28);
+  box-shadow:
+    0 8px 22px rgba(48,38,111,.10),
+    0 0 0 3px rgba(77,20,140,.06);
+}
+
+.hero-search > i{
+  flex:0 0 auto;
+  margin-left:13px;
+  color:#9699b1;
+  font-size:13px;
+}
+
+.hero-search input{
+  width:100%;
+  height:43px;
+  min-width:0;
+  padding:0 86px 0 11px;
+
+  border:0;
+  outline:0;
+  background:transparent;
+
+  color:var(--ink);
+  font-size:11px;
+}
+
+.hero-search input::placeholder{
+  color:#999bb0;
+}
+
+.hero-search-button{
+  position:absolute;
+  top:0;
+  right:0;
+
+  width:82px;
+  height:43px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:0 8px 8px 0;
+
+  background:var(--purple);
+  color:#fff;
+
+  font-size:10px;
+  font-weight:800;
+
+  pointer-events:none;
+}
+
+.hero-search button{
+  position:absolute;
+  right:88px;
+  width:25px;
+  height:25px;
+
+  display:none;
+  place-items:center;
+
+  border:0;
+  border-radius:7px;
+  background:#f1f1f7;
+  color:#777a99;
+}
+
+.hero-search button:hover{
+  background:#e6e5ef;
+}
+
+@keyframes heroSearchEnter{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+
+/* ============================================================
+   GUIDE LIBRARY
+   ============================================================ */
+
+.guide-library{
+  padding:34px 0 46px;
+  background:#fff;
+}
+
+.library-toolbar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:18px;
+}
+
+.library-title h2{
+  margin:0;
+  color:var(--ink);
+  font-size:20px;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:-.4px;
+}
+
+.library-title p{
+  margin:5px 0 0;
+  color:#777a99;
+  font-size:10px;
 }
 
 
@@ -330,965 +405,456 @@ button{
    ============================================================ */
 
 .intro-count{
+  flex:0 0 auto;
+  min-width:74px;
+  padding:10px 13px;
 
-    flex:
+  text-align:center;
 
-        0 0 auto;
+  background:#fff;
+  border:1px solid #e8e9f2;
+  border-radius:13px;
 
-    min-width:96px;
+  box-shadow:0 5px 20px rgba(48,38,111,.07);
 
-    padding:
-
-        15px
-
-        18px;
-
-    border-radius:16px;
-
-    text-align:center;
-
-    background:#fff;
-
-    border:1px solid #e8e9f2;
-
-    box-shadow:
-
-        0 5px 20px rgba(48,38,111,.08);
-
-    transition:
-
-        transform .2s ease,
-
-        box-shadow .2s ease;
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
 }
-
 
 .intro-count:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 10px 26px rgba(48,38,111,.11);
+  transform:translateY(-2px);
+  box-shadow:0 9px 24px rgba(48,38,111,.10);
 }
-
 
 .intro-count strong{
-
-    display:block;
-
-    color:var(--purple);
-
-    font-size:27px;
-
-    line-height:1;
+  display:block;
+  color:var(--purple);
+  font-size:25px;
+  line-height:1;
 }
-
 
 .intro-count span{
-
-    display:block;
-
-    margin-top:5px;
-
-    color:#777a99;
-
-    font-size:10px;
-
-    font-weight:700;
+  display:block;
+  margin-top:4px;
+  color:#777a99;
+  font-size:9px;
+  font-weight:700;
 }
 
 
 /* ============================================================
-   5. LIBRARY
-   ============================================================ */
-
-.guide-library{
-
-    padding:
-
-        5px
-
-        0
-
-        45px;
-}
-
-
-/* ============================================================
-   LIBRARY TOOLBAR
-   ============================================================ */
-
-.library-toolbar{
-
-    display:flex;
-
-    align-items:flex-end;
-
-    justify-content:space-between;
-
-    gap:25px;
-
-    margin-bottom:18px;
-}
-
-
-.library-toolbar h2{
-
-    margin:0;
-
-    color:var(--ink);
-
-    font-size:20px;
-
-    line-height:1.2;
-
-    font-weight:800;
-
-    letter-spacing:-.4px;
-}
-
-
-.library-toolbar p{
-
-    margin:
-
-        5px
-
-        0
-
-        0;
-
-    color:#777a99;
-
-    font-size:10px;
-}
-
-
-/* ============================================================
-   6. GROUP SEARCH
-   ============================================================ */
-
-.group-search{
-
-    position:relative;
-
-    display:flex;
-
-    align-items:center;
-
-    width:350px;
-
-    height:44px;
-
-    flex:0 0 auto;
-
-    background:#fff;
-
-    border:
-
-        1px solid
-
-        #e3e4ef;
-
-    border-radius:12px;
-
-    box-shadow:
-
-        0 4px 14px rgba(48,38,111,.055);
-
-    transition:
-
-        border-color .2s ease,
-
-        box-shadow .2s ease,
-
-        transform .2s ease;
-}
-
-
-.group-search:focus-within{
-
-    border-color:
-        rgba(77,20,140,.35);
-
-    box-shadow:
-
-        0 4px 14px rgba(48,38,111,.055),
-
-        0 0 0 3px rgba(77,20,140,.07);
-
-    transform:
-        translateY(-1px);
-}
-
-
-.group-search > i{
-
-    margin-left:14px;
-
-    color:#9b9db4;
-
-    font-size:12px;
-}
-
-
-.group-search input{
-
-    width:100%;
-
-    height:42px;
-
-    min-width:0;
-
-    padding:
-
-        0
-
-        12px;
-
-    border:0;
-
-    outline:0;
-
-    background:transparent;
-
-    color:var(--ink);
-
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    font-size:10px;
-}
-
-
-.group-search input::placeholder{
-
-    color:#9b9db4;
-}
-
-
-.group-search button{
-
-    position:absolute;
-
-    right:7px;
-
-    width:28px;
-
-    height:28px;
-
-    display:none;
-
-    place-items:center;
-
-    border:0;
-
-    border-radius:8px;
-
-    background:#f1f1f7;
-
-    color:#777a99;
-}
-
-
-/* ============================================================
-   7. GUIDE GRID
+   GUIDE GRID
    ============================================================ */
 
 .guide-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(
-            3,
-            minmax(0,1fr)
-        );
-
-    gap:14px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
 }
 
 
 /* ============================================================
-   8. GUIDE CARD
+   GUIDE CARD
    ============================================================ */
 
 .guide-card{
+  position:relative;
+  min-height:225px;
 
-    position:relative;
+  display:flex;
+  flex-direction:column;
 
-    min-height:230px;
+  padding:20px;
 
-    display:flex;
+  overflow:hidden;
 
-    flex-direction:column;
+  background:#fff;
+  border:1px solid #e6e7f0;
+  border-radius:17px;
 
-    padding:
+  box-shadow:0 4px 16px rgba(48,38,111,.055);
 
-        20px;
+  opacity:0;
+  transform:translateY(14px);
 
-    overflow:hidden;
+  animation:
+    guideCardEnter
+    .5s
+    cubic-bezier(.22,.61,.36,1)
+    forwards;
 
-    background:#fff;
-
-    border:
-
-        1px solid
-
-        #e6e7f0;
-
-    border-radius:17px;
-
-    box-shadow:
-
-        0 4px 16px rgba(48,38,111,.055);
-
-    opacity:0;
-
-    transform:
-        translateY(14px);
-
-    animation:
-
-        guideCardEnter
-        .5s
-        cubic-bezier(.22,.61,.36,1)
-        forwards;
-
-    transition:
-
-        transform .22s ease,
-
-        box-shadow .22s ease,
-
-        border-color .22s ease;
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
 }
 
-
-/*
-   Staggered entrance.
-*/
-
-.guide-card:nth-child(1){
-    animation-delay:.08s;
-}
-
-.guide-card:nth-child(2){
-    animation-delay:.14s;
-}
-
-.guide-card:nth-child(3){
-    animation-delay:.20s;
-}
-
-.guide-card:nth-child(4){
-    animation-delay:.26s;
-}
-
-.guide-card:nth-child(5){
-    animation-delay:.32s;
-}
-
-.guide-card:nth-child(6){
-    animation-delay:.38s;
-}
-
-.guide-card:nth-child(7){
-    animation-delay:.44s;
-}
-
-.guide-card:nth-child(8){
-    animation-delay:.50s;
-}
-
-.guide-card:nth-child(9){
-    animation-delay:.56s;
-}
-
+.guide-card:nth-child(1){animation-delay:.08s;}
+.guide-card:nth-child(2){animation-delay:.14s;}
+.guide-card:nth-child(3){animation-delay:.20s;}
+.guide-card:nth-child(4){animation-delay:.26s;}
+.guide-card:nth-child(5){animation-delay:.32s;}
+.guide-card:nth-child(6){animation-delay:.38s;}
 
 @keyframes guideCardEnter{
-
-    from{
-
-        opacity:0;
-
-        transform:
-            translateY(14px);
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:
-            translateY(0);
-    }
-
+  from{
+    opacity:0;
+    transform:translateY(14px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
-
 
 .guide-card:hover{
-
-    transform:
-        translateY(-4px);
-
-    border-color:
-
-        rgba(
-            77,
-            20,
-            140,
-            .18
-        );
-
-    box-shadow:
-
-        0 12px 28px
-        rgba(48,38,111,.11);
+  transform:translateY(-4px);
+  border-color:rgba(77,20,140,.18);
+  box-shadow:0 12px 28px rgba(48,38,111,.11);
 }
 
 
-/* ============================================================
-   DECORATIVE CARD CIRCLE
-   ============================================================ */
+/* Decorative circle */
 
 .guide-card::after{
+  content:"";
+  position:absolute;
 
-    content:"";
+  width:145px;
+  height:145px;
 
-    position:absolute;
+  right:-72px;
+  top:-72px;
 
-    width:145px;
+  border-radius:50%;
 
-    height:145px;
+  background:rgba(77,20,140,.045);
 
-    right:-72px;
+  pointer-events:none;
 
-    top:-72px;
-
-    border-radius:50%;
-
-    background:
-        rgba(
-            77,
-            20,
-            140,
-            .045
-        );
-
-    pointer-events:none;
-
-    transition:
-        transform .35s ease,
-
-        background .35s ease;
+  transition:
+    transform .35s ease,
+    background .35s ease;
 }
 
-
 .guide-card:hover::after{
-
-    transform:
-        scale(1.15);
-
-    background:
-        rgba(
-            77,
-            20,
-            140,
-            .065
-        );
+  transform:scale(1.15);
+  background:rgba(77,20,140,.065);
 }
 
 
 /* ============================================================
-   9. GUIDE ICON
+   CARD ICON
    ============================================================ */
 
 .guide-card-icon{
+  position:relative;
+  z-index:1;
 
-    position:relative;
+  width:42px;
+  height:42px;
 
-    z-index:1;
+  display:grid;
+  place-items:center;
 
-    width:42px;
+  flex:0 0 auto;
 
-    height:42px;
+  border-radius:13px;
 
-    display:grid;
+  background:#f1eaff;
+  color:var(--purple);
 
-    place-items:center;
+  font-size:16px;
 
-    flex:0 0 auto;
-
-    border-radius:13px;
-
-    background:#f1eaff;
-
-    color:var(--purple);
-
-    font-size:16px;
-
-    transition:
-
-        transform .22s ease,
-
-        box-shadow .22s ease;
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease;
 }
 
-
-.guide-card:hover
-.guide-card-icon{
-
-    transform:
-        translateY(-2px)
-        scale(1.04);
-
-    box-shadow:
-        0 5px 12px
-        rgba(77,20,140,.10);
+.guide-card:hover .guide-card-icon{
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 5px 12px rgba(77,20,140,.10);
 }
 
 
 /* ============================================================
-   10. CARD CONTENT
+   CARD CONTENT
    ============================================================ */
 
 .guide-card-content{
+  position:relative;
+  z-index:1;
 
-    position:relative;
-
-    z-index:1;
-
-    display:flex;
-
-    flex-direction:column;
-
-    flex:1;
+  display:flex;
+  flex-direction:column;
+  flex:1;
 }
-
-
-/* ============================================================
-   TAG
-   ============================================================ */
 
 .guide-tag{
+  align-self:flex-start;
 
-    align-self:flex-start;
+  margin-top:13px;
+  padding:5px 8px;
 
-    margin-top:13px;
+  border-radius:6px;
 
-    padding:
+  background:#f7f8fb;
+  border:1px solid #e1e4ed;
 
-        5px
+  color:#657089;
 
-        8px;
-
-    border-radius:6px;
-
-    background:#f7f8fb;
-
-    border:
-
-        1px solid
-
-        #e1e4ed;
-
-    color:#657089;
-
-    font-size:8px;
-
-    line-height:1;
-
-    font-weight:800;
-
-    letter-spacing:.04em;
-
-    text-transform:uppercase;
+  font-size:8px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
 }
-
-
-/* ============================================================
-   CARD TITLE
-   ============================================================ */
 
 .guide-card h3{
+  margin:10px 0 6px;
 
-    margin:
+  color:#151936;
 
-        10px
-
-        0
-
-        6px;
-
-    color:#151936;
-
-    font-size:15px;
-
-    line-height:1.28;
-
-    letter-spacing:-.25px;
-
-    font-weight:800;
+  font-size:15px;
+  line-height:1.28;
+  letter-spacing:-.25px;
+  font-weight:800;
 }
-
-
-/* ============================================================
-   CARD DESCRIPTION
-   ============================================================ */
 
 .guide-card p{
+  margin:0;
 
-    margin:0;
+  color:#737791;
 
-    color:#737791;
-
-    font-size:10px;
-
-    line-height:1.55;
+  font-size:10px;
+  line-height:1.55;
 }
-
-
-/* ============================================================
-   OPEN GUIDE
-   ============================================================ */
 
 .guide-open{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
 
-    display:inline-flex;
+  align-self:flex-start;
 
-    align-items:center;
+  margin-top:auto;
+  padding-top:16px;
 
-    gap:7px;
+  color:var(--purple);
 
-    align-self:flex-start;
+  font-size:10px;
+  font-weight:800;
+  text-decoration:none;
 
-    margin-top:auto;
-
-    padding-top:16px;
-
-    color:var(--purple);
-
-    font-size:10px;
-
-    font-weight:800;
-
-    text-decoration:none;
-
-    transition:
-        color .2s ease;
+  transition:color .2s ease;
 }
-
 
 .guide-open i{
+  color:var(--orange);
+  font-size:12px;
 
-    color:var(--orange);
-
-    font-size:12px;
-
-    transition:
-        transform .2s ease;
+  transition:transform .2s ease;
 }
-
 
 .guide-open:hover{
-
-    color:var(--purple2);
+  color:var(--purple2);
 }
-
 
 .guide-open:hover i{
-
-    transform:
-        translateX(4px);
+  transform:translateX(4px);
 }
-
-
-/* ============================================================
-   HIDDEN CARDS
-   ============================================================ */
 
 .guide-card.is-hidden{
-
-    display:none;
+  display:none;
 }
 
 
 /* ============================================================
-   11. NO RESULTS
+   NO RESULTS
    ============================================================ */
 
 .no-results{
+  margin-top:16px;
+  padding:35px 20px;
 
-    margin-top:16px;
+  text-align:center;
 
-    padding:35px 20px;
+  border:1px dashed #cbd5e1;
+  border-radius:16px;
 
-    text-align:center;
+  background:#fafbfe;
 
-    border:
-        1px dashed
-
-        #cbd5e1;
-
-    border-radius:16px;
-
-    background:#fafbfe;
-
-    animation:
-        fadeIn .25s ease both;
+  animation:fadeIn .25s ease both;
 }
-
 
 .no-results > i{
-
-    font-size:22px;
-
-    color:#94a3b8;
+  font-size:22px;
+  color:#94a3b8;
 }
-
 
 .no-results h3{
-
-    margin:
-
-        10px
-
-        0
-
-        4px;
-
-    font-size:15px;
+  margin:10px 0 4px;
+  font-size:15px;
 }
-
 
 .no-results p{
-
-    margin:0;
-
-    color:#777a99;
-
-    font-size:10px;
+  margin:0;
+  color:#777a99;
+  font-size:10px;
 }
-
-
-/* ============================================================
-   12. GENERIC FADE
-   ============================================================ */
 
 @keyframes fadeIn{
-
-    from{
-        opacity:0;
-    }
-
-    to{
-        opacity:1;
-    }
-
+  from{opacity:0;}
+  to{opacity:1;}
 }
 
 
 /* ============================================================
-   13. THEME BRIDGE
+   THEME BRIDGE
    ============================================================ */
 
 body.theme-fedex{
-
-    --purple:#4d148c;
-    --purple2:#6b20d0;
-    --orange:#ff6600;
+  --purple:#4d148c;
+  --purple2:#6b20d0;
+  --orange:#ff6600;
 }
-
 
 body.theme-atlas{
-
-    --purple:#0e5361;
-    --purple2:#176f80;
-    --orange:#c9c936;
+  --purple:#0e5361;
+  --purple2:#176f80;
+  --orange:#c9c936;
 }
-
 
 body.theme-basic{
-
-    --purple:#374151;
-    --purple2:#4b5563;
-    --orange:#6b7280;
+  --purple:#374151;
+  --purple2:#4b5563;
+  --orange:#6b7280;
 }
 
-
 body.theme-simple{
-
-    --purple:#2563eb;
-    --purple2:#3b82f6;
-    --orange:#3b82f6;
+  --purple:#2563eb;
+  --purple2:#3b82f6;
+  --orange:#3b82f6;
 }
 
 
 /* ============================================================
-   14. TABLET
+   TABLET
    ============================================================ */
 
 @media(max-width:1050px){
 
-    .group-container{
+  .group-container{
+    width:calc(100% - 70px);
+  }
 
-        width:
-            calc(100% - 80px);
-    }
+  .group-hero-copy{
+    width:58%;
+  }
 
-    .guide-grid{
-
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0,1fr)
-            );
-    }
-
-    .group-intro h1{
-
-        font-size:38px;
-    }
-
+  .guide-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
 }
 
 
 /* ============================================================
-   15. MOBILE
+   MOBILE
    ============================================================ */
 
 @media(max-width:800px){
 
-    body{
+  body{
+    padding:0;
+  }
 
-        padding:0;
-    }
+  .app-shell{
+    width:100%;
+    min-height:100vh;
+    margin:0;
+    border-radius:0;
+    box-shadow:none;
+  }
 
-    .app-shell{
+  .group-container{
+    width:calc(100% - 40px);
+  }
 
-        width:100%;
+  .group-hero{
+    min-height:390px;
+  }
 
-        min-width:760px;
+  .group-hero-content{
+    min-height:390px;
+    align-items:flex-start;
+    padding-top:34px;
+  }
 
-        min-height:100vh;
+  .group-hero-copy{
+    width:100%;
+    max-width:520px;
+  }
 
-        margin:0;
+  .group-hero::after{
+    background:
+      linear-gradient(
+        180deg,
+        rgba(248,246,255,.88) 0%,
+        rgba(248,246,255,.70) 42%,
+        rgba(248,246,255,.12) 100%
+      );
+  }
 
-        border-radius:0;
+  .group-hero-image{
+    background-position:center center;
+  }
 
-        box-shadow:none;
-    }
+  .group-hero h1{
+    font-size:36px;
+  }
 
-    .group-container{
+  .library-toolbar{
+    align-items:flex-start;
+  }
 
-        width:
-            calc(100% - 50px);
-    }
-
-    .group-intro .group-container{
-
-        align-items:flex-start;
-
-        flex-direction:column;
-    }
-
-    .library-toolbar{
-
-        align-items:stretch;
-
-        flex-direction:column;
-    }
-
-    .group-search{
-
-        width:100%;
-    }
-
-    .guide-grid{
-
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0,1fr)
-            );
-    }
-
+  .guide-grid{
+    grid-template-columns:1fr;
+  }
 }
 
 
 /* ============================================================
-   16. SMALL MOBILE
-   ============================================================ */
-
-@media(max-width:600px){
-
-    .group-container{
-
-        width:
-            calc(100% - 32px);
-    }
-
-    .group-intro{
-
-        padding-top:28px;
-    }
-
-    .group-intro h1{
-
-        font-size:32px;
-    }
-
-    .guide-grid{
-
-        grid-template-columns:1fr;
-    }
-
-    .guide-card{
-
-        min-height:225px;
-    }
-
-}
-
-
-/* ============================================================
-   17. REDUCED MOTION
+   REDUCED MOTION
    ============================================================ */
 
 @media(prefers-reduced-motion:reduce){
 
-    html{
+  html{
+    scroll-behavior:auto;
+  }
 
-        scroll-behavior:auto;
-    }
+  .group-page,
+  .guide-card,
+  .intro-kicker,
+  .group-hero h1,
+  .group-hero-copy > p,
+  .hero-search,
+  .no-results{
+    animation:none;
+  }
 
-    .group-page,
-    .guide-card,
-    .no-results{
+  .guide-card{
+    opacity:1;
+    transform:none;
+  }
 
-        animation:none;
-    }
-
-    .guide-card{
-
-        opacity:1;
-
-        transform:none;
-    }
-
-    .guide-card,
-    .guide-card::after,
-    .guide-card-icon,
-    .guide-open i,
-    .group-search,
-    .intro-count{
-
-        transition:none;
-    }
-
+  .guide-card,
+  .guide-card::after,
+  .guide-card-icon,
+  .guide-open i,
+  .hero-search,
+  .intro-count{
+    transition:none;
+  }
 }
