@@ -1,126 +1,24 @@
 /* ============================================================
-   GROUP GUIDES — V2 MASTER STYLE
+   GROUP GUIDES — BILLING DISPUTE PAGE
    ============================================================
-   Shared visual system for every guide-group page.
+   IMPORTANT:
+   The main dashboard assets/css/styles.css is loaded FIRST.
+   This file contains ONLY Billing Dispute-specific content.
 
-   Designed to visually match index-main.html:
-   - same 1260px application shell
-   - same typography
-   - same spacing scale
-   - same FedEx colors
-   - same header/footer
-   - themed hero artwork
+   The shared shell, body font, header spacing, Quick Access card
+   system, colors, responsive breakpoints, and base typography are
+   inherited directly from styles.css.
    ============================================================ */
-
-:root{
-  --purple:#4d148c;
-  --purple2:#6b20d0;
-  --orange:#ff6600;
-
-  --ink:#10134f;
-  --muted:#777a99;
-
-  --line:#e7e8f3;
-  --card-shadow:0 5px 20px rgba(48,38,111,.08);
-
-  --group-radius:17px;
-  --shell-width:1260px;
-}
 
 
 /* ============================================================
-   RESET
-   ============================================================ */
-
-*{
-  box-sizing:border-box;
-}
-
-html{
-  margin:0;
-  padding:0;
-  min-height:100%;
-  scroll-behavior:smooth;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  width:100%;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-  color:var(--ink);
-  background:#f3f3f8;
-  overflow-x:hidden;
-}
-
-button,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-
-/* ============================================================
-   APPLICATION SHELL
-   ============================================================ */
-
-.app-shell{
-  width:calc(100% - 20px);
-  max-width:var(--shell-width);
-  min-height:calc(100vh - 20px);
-  margin:10px auto;
-  background:#fff;
-  border-radius:7px;
-  overflow:hidden;
-  box-shadow:0 2px 12px rgba(34,27,84,.06);
-  display:flex;
-  flex-direction:column;
-}
-
-.group-page{
-  animation:groupPageEnter .55s cubic-bezier(.22,.61,.36,1) both;
-}
-
-.group-page main{
-  flex:1;
-  width:100%;
-  background:#fff;
-}
-
-@keyframes groupPageEnter{
-  from{
-    opacity:0;
-    transform:translateY(8px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-
-/* ============================================================
-   SHARED CONTENT WIDTH
-   ============================================================ */
-
-.group-container{
-  width:calc(100% - 100px);
-  max-width:1160px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-
-/* ============================================================
-   GROUP HERO
+   BILLING DISPUTE HERO
    ============================================================ */
 
 .group-hero{
   position:relative;
-  min-height:340px;
+  height:292px;
+  min-height:292px;
   overflow:hidden;
   isolation:isolate;
   background:#eee9fb;
@@ -131,14 +29,10 @@ button{
   inset:0;
   z-index:0;
 
-  background-image:
-    url("../images/billing-dispute-hero.png");
-
+  background-image:url("../images/billing-dispute-hero.png");
   background-repeat:no-repeat;
   background-position:center center;
   background-size:cover;
-
-  transform:scale(1.002);
 }
 
 .group-hero::after{
@@ -148,10 +42,6 @@ button{
   z-index:1;
   pointer-events:none;
 
-  /*
-   * Keeps the left side readable without covering
-   * the artwork on the right.
-   */
   background:
     linear-gradient(
       90deg,
@@ -165,54 +55,54 @@ button{
 .group-hero-content{
   position:relative;
   z-index:2;
-  min-height:340px;
+
+  height:100%;
+
   display:flex;
   align-items:center;
+
+  padding-left:8.2%;
 }
 
 .group-hero-copy{
-  width:52%;
-  max-width:570px;
-  padding:24px 0 20px;
+  position:relative;
+  z-index:3;
+
+  width:430px;
+  max-width:430px;
 }
 
 
 /* ============================================================
-   KICKER
+   HERO KICKER
    ============================================================ */
 
 .intro-kicker{
   display:inline-flex;
   align-items:center;
   gap:8px;
+
   padding:7px 11px;
+
   border-radius:999px;
+
   background:rgba(241,234,255,.94);
   border:1px solid rgba(228,215,250,.95);
-  color:var(--purple);
+
+  color:#4d148c;
+
   font-size:10px;
   font-weight:800;
+
   letter-spacing:.04em;
   text-transform:uppercase;
-  box-shadow:0 4px 12px rgba(48,38,111,.04);
 
-  animation:heroKickerEnter .55s .05s both;
+  box-shadow:0 4px 12px rgba(48,38,111,.04);
 }
 
 .intro-kicker i{
-  color:var(--orange);
+  color:#ff6600;
   font-size:11px;
-}
-
-@keyframes heroKickerEnter{
-  from{
-    opacity:0;
-    transform:translateY(8px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
 }
 
 
@@ -222,34 +112,33 @@ button{
 
 .group-hero h1{
   margin:14px 0 8px;
-  color:var(--ink);
-  font-size:clamp(34px,3.6vw,48px);
-  line-height:1.06;
-  letter-spacing:-1.4px;
+
+  color:#10134f;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  font-size:36px;
+  line-height:1.15;
+
   font-weight:800;
 
-  animation:heroTextEnter .65s .10s both;
+  letter-spacing:-.7px;
 }
 
 .group-hero-copy > p{
-  margin:0;
-  max-width:500px;
-  color:#646784;
-  font-size:14px;
-  line-height:1.65;
+  width:430px;
+  max-width:100%;
 
-  animation:heroTextEnter .65s .16s both;
-}
+  margin:0 0 16px;
 
-@keyframes heroTextEnter{
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  color:#3d3f65;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  font-size:15px;
+  line-height:1.5;
+
+  letter-spacing:.01em;
 }
 
 
@@ -259,54 +148,57 @@ button{
 
 .hero-search{
   position:relative;
+
   display:flex;
   align-items:center;
 
-  width:100%;
-  max-width:475px;
-  height:45px;
-  margin-top:20px;
+  width:330px;
+  height:34px;
+
+  margin-top:12px;
 
   background:#fff;
-  border:1px solid #e1e2ed;
-  border-radius:9px;
-  box-shadow:0 6px 20px rgba(48,38,111,.08);
 
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease,
-    border-color .2s ease;
+  border:1px solid #e0e0ed;
+  border-radius:6px;
 
-  animation:heroSearchEnter .65s .22s both;
-}
-
-.hero-search:focus-within{
-  transform:translateY(-1px);
-  border-color:rgba(77,20,140,.28);
-  box-shadow:
-    0 8px 22px rgba(48,38,111,.10),
-    0 0 0 3px rgba(77,20,140,.06);
+  box-shadow:0 4px 12px rgba(75,45,153,.06);
 }
 
 .hero-search > i{
   flex:0 0 auto;
-  margin-left:13px;
+
+  margin-left:11px;
+  margin-right:8px;
+
+  width:11px;
+  height:11px;
+
   color:#9699b1;
-  font-size:13px;
+
+  font-size:11px;
 }
 
 .hero-search input{
+  flex:1;
+
   width:100%;
-  height:43px;
+  height:32px;
+
   min-width:0;
-  padding:0 86px 0 11px;
+
+  padding:0;
 
   border:0;
   outline:0;
+
   background:transparent;
 
-  color:var(--ink);
-  font-size:11px;
+  color:#10134f;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  font-size:9px;
 }
 
 .hero-search input::placeholder{
@@ -314,31 +206,34 @@ button{
 }
 
 .hero-search-button{
-  position:absolute;
-  top:0;
-  right:0;
-
   width:82px;
-  height:43px;
+  height:34px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  border-radius:0 8px 8px 0;
+  flex:0 0 82px;
 
-  background:var(--purple);
+  border-radius:0 6px 6px 0;
+
+  background:#5915c8;
+
   color:#fff;
 
-  font-size:10px;
-  font-weight:800;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
 
-  pointer-events:none;
+  font-size:9px;
+  font-weight:700;
+
+  cursor:pointer;
 }
 
 .hero-search button{
   position:absolute;
+
   right:88px;
+
   width:25px;
   height:25px;
 
@@ -347,7 +242,9 @@ button{
 
   border:0;
   border-radius:7px;
+
   background:#f1f1f7;
+
   color:#777a99;
 }
 
@@ -355,315 +252,158 @@ button{
   background:#e6e5ef;
 }
 
-@keyframes heroSearchEnter{
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
 
 /* ============================================================
    GUIDE LIBRARY
+   Main Dashboard .section / .section-heading / .view-all
+   provide the primary layout.
    ============================================================ */
 
 .guide-library{
-  padding:34px 0 46px;
   background:#fff;
+  padding-bottom:46px;
 }
 
-.library-toolbar{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:24px;
-  margin-bottom:18px;
-}
 
-.library-title h2{
-  margin:0;
-  color:var(--ink);
-  font-size:20px;
-  line-height:1.2;
-  font-weight:800;
-  letter-spacing:-.4px;
-}
+/* Billing-only result text.
+   It does NOT replace the Dashboard heading system. */
 
-.library-title p{
+.library-results{
   margin:5px 0 0;
+
   color:#777a99;
-  font-size:10px;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  font-size:8px;
+  line-height:1.3;
 }
 
 
-/* ============================================================
-   GUIDE COUNT
-   ============================================================ */
-
-.intro-count{
-  flex:0 0 auto;
-  min-width:74px;
-  padding:10px 13px;
-
-  text-align:center;
-
-  background:#fff;
-  border:1px solid #e8e9f2;
-  border-radius:13px;
-
-  box-shadow:0 5px 20px rgba(48,38,111,.07);
-
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
-}
-
-.intro-count:hover{
-  transform:translateY(-2px);
-  box-shadow:0 9px 24px rgba(48,38,111,.10);
-}
-
-.intro-count strong{
-  display:block;
-  color:var(--purple);
-  font-size:25px;
-  line-height:1;
-}
-
-.intro-count span{
-  display:block;
-  margin-top:4px;
-  color:#777a99;
-  font-size:9px;
-  font-weight:700;
-}
-
-
-/* ============================================================
-   GUIDE GRID
-   ============================================================ */
+/* Keep the Dashboard's exact card spacing after the
+   heading/result area. */
 
 .guide-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
+  margin-top:13px;
 }
 
 
 /* ============================================================
-   GUIDE CARD
+   GUIDE CARDS
+   These intentionally inherit the Main Dashboard Quick Card
+   rules because the HTML uses BOTH classes:
+   .quick-card + .guide-card
    ============================================================ */
 
 .guide-card{
-  position:relative;
-  min-height:225px;
+  /* Main Dashboard owns:
+     height
+     border
+     border-radius
+     padding
+     shadow
+     hover
+     cursor
+  */
 
-  display:flex;
-  flex-direction:column;
+  text-align:left;
 
-  padding:20px;
-
-  overflow:hidden;
-
-  background:#fff;
-  border:1px solid #e6e7f0;
-  border-radius:17px;
-
-  box-shadow:0 4px 16px rgba(48,38,111,.055);
-
-  opacity:0;
-  transform:translateY(14px);
-
-  animation:
-    guideCardEnter
-    .5s
-    cubic-bezier(.22,.61,.36,1)
-    forwards;
-
-  transition:
-    transform .22s ease,
-    box-shadow .22s ease,
-    border-color .22s ease;
-}
-
-.guide-card:nth-child(1){animation-delay:.08s;}
-.guide-card:nth-child(2){animation-delay:.14s;}
-.guide-card:nth-child(3){animation-delay:.20s;}
-.guide-card:nth-child(4){animation-delay:.26s;}
-.guide-card:nth-child(5){animation-delay:.32s;}
-.guide-card:nth-child(6){animation-delay:.38s;}
-
-@keyframes guideCardEnter{
-  from{
-    opacity:0;
-    transform:translateY(14px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.guide-card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(77,20,140,.18);
-  box-shadow:0 12px 28px rgba(48,38,111,.11);
+  opacity:1;
+  transform:none;
 }
 
 
-/* Decorative circle */
+/* Do not allow the old group-card decoration to return. */
 
-.guide-card::after{
-  content:"";
-  position:absolute;
-
-  width:145px;
-  height:145px;
-
-  right:-72px;
-  top:-72px;
-
-  border-radius:50%;
-
-  background:rgba(77,20,140,.045);
-
-  pointer-events:none;
-
-  transition:
-    transform .35s ease,
-    background .35s ease;
+.guide-card::before{
+  content:none;
 }
 
-.guide-card:hover::after{
-  transform:scale(1.15);
-  background:rgba(77,20,140,.065);
-}
+
+/* Main Dashboard owns ::after.
+   Do not redefine it here. */
 
 
 /* ============================================================
-   CARD ICON
+   GUIDE CARD ICONS
+   Inherit exact .quick-icon / .quick-svg behavior from
+   styles.css.
    ============================================================ */
 
 .guide-card-icon{
   position:relative;
   z-index:1;
 
-  width:42px;
-  height:42px;
-
-  display:grid;
-  place-items:center;
-
-  flex:0 0 auto;
-
-  border-radius:13px;
-
-  background:#f1eaff;
-  color:var(--purple);
-
-  font-size:16px;
-
-  transition:
-    transform .22s ease,
-    box-shadow .22s ease;
-}
-
-.guide-card:hover .guide-card-icon{
-  transform:translateY(-2px) scale(1.04);
-  box-shadow:0 5px 12px rgba(77,20,140,.10);
+  margin-bottom:12px;
 }
 
 
 /* ============================================================
-   CARD CONTENT
+   GUIDE CARD TYPOGRAPHY
+   Exact Dashboard .quick-card h3 / p values.
    ============================================================ */
 
-.guide-card-content{
-  position:relative;
-  z-index:1;
-
-  display:flex;
-  flex-direction:column;
-  flex:1;
-}
-
-.guide-tag{
-  align-self:flex-start;
-
-  margin-top:13px;
-  padding:5px 8px;
-
-  border-radius:6px;
-
-  background:#f7f8fb;
-  border:1px solid #e1e4ed;
-
-  color:#657089;
-
-  font-size:8px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-
 .guide-card h3{
-  margin:10px 0 6px;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
 
-  color:#151936;
+  font-size:11px;
+  line-height:1.2;
 
-  font-size:15px;
-  line-height:1.28;
-  letter-spacing:-.25px;
+  margin:0 0 6px;
+
+  letter-spacing:-.2px;
+
   font-weight:800;
 }
 
 .guide-card p{
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  font-size:8px;
+  line-height:1.4;
+
+  color:#7a7c98;
+
+  margin:0;
+}
+
+
+/* ============================================================
+   GUIDE ARROW
+   Exact Dashboard .arrow-btn values.
+   ============================================================ */
+
+.guide-card .arrow-btn{
+  position:absolute;
+
+  left:12px;
+  bottom:10px;
+
+  border:0;
+
+  background:transparent;
+
+  color:#4f13b8;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
+  font-size:18px;
+
+  line-height:normal;
+
+  padding:0;
+
   margin:0;
 
-  color:#737791;
+  cursor:pointer;
 
-  font-size:10px;
-  line-height:1.55;
+  z-index:3;
 }
 
-.guide-open{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
 
-  align-self:flex-start;
-
-  margin-top:auto;
-  padding-top:16px;
-
-  color:var(--purple);
-
-  font-size:10px;
-  font-weight:800;
-  text-decoration:none;
-
-  transition:color .2s ease;
-}
-
-.guide-open i{
-  color:var(--orange);
-  font-size:12px;
-
-  transition:transform .2s ease;
-}
-
-.guide-open:hover{
-  color:var(--purple2);
-}
-
-.guide-open:hover i{
-  transform:translateX(4px);
-}
+/* ============================================================
+   SEARCH STATE
+   ============================================================ */
 
 .guide-card.is-hidden{
   display:none;
@@ -681,11 +421,9 @@ button{
   text-align:center;
 
   border:1px dashed #cbd5e1;
-  border-radius:16px;
+  border-radius:8px;
 
   background:#fafbfe;
-
-  animation:fadeIn .25s ease both;
 }
 
 .no-results > i{
@@ -695,628 +433,45 @@ button{
 
 .no-results h3{
   margin:10px 0 4px;
+
+  color:#10134f;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
   font-size:15px;
+  font-weight:800;
 }
 
 .no-results p{
   margin:0;
+
   color:#777a99;
+
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
   font-size:10px;
 }
 
-@keyframes fadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
 
 /* ============================================================
-   THEME BRIDGE
+   VIEW ALL
+   Inherits exact Dashboard .view-all.
    ============================================================ */
 
-body.theme-fedex{
-  --purple:#4d148c;
-  --purple2:#6b20d0;
-  --orange:#ff6600;
-}
-
-body.theme-atlas{
-  --purple:#0e5361;
-  --purple2:#176f80;
-  --orange:#c9c936;
-}
-
-body.theme-basic{
-  --purple:#374151;
-  --purple2:#4b5563;
-  --orange:#6b7280;
-}
-
-body.theme-simple{
-  --purple:#2563eb;
-  --purple2:#3b82f6;
-  --orange:#3b82f6;
-}
-
-
-/* ============================================================
-   TABLET
-   ============================================================ */
-
-@media(max-width:1050px){
-
-  .group-container{
-    width:calc(100% - 70px);
-  }
-
-  .group-hero-copy{
-    width:58%;
-  }
-
-  .guide-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-}
-
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
-
-@media(max-width:800px){
-
-  body{
-    padding:0;
-  }
-
-  .app-shell{
-    width:100%;
-    min-height:100vh;
-    margin:0;
-    border-radius:0;
-    box-shadow:none;
-  }
-
-  .group-container{
-    width:calc(100% - 40px);
-  }
-
-  .group-hero{
-    min-height:390px;
-  }
-
-  .group-hero-content{
-    min-height:390px;
-    align-items:flex-start;
-    padding-top:34px;
-  }
-
-  .group-hero-copy{
-    width:100%;
-    max-width:520px;
-  }
-
-  .group-hero::after{
-    background:
-      linear-gradient(
-        180deg,
-        rgba(248,246,255,.88) 0%,
-        rgba(248,246,255,.70) 42%,
-        rgba(248,246,255,.12) 100%
-      );
-  }
-
-  .group-hero-image{
-    background-position:center center;
-  }
-
-  .group-hero h1{
-    font-size:36px;
-  }
-
-  .library-toolbar{
-    align-items:flex-start;
-  }
-
-  .guide-grid{
-    grid-template-columns:1fr;
-  }
-}
-
-
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
-
-@media(prefers-reduced-motion:reduce){
-
-  html{
-    scroll-behavior:auto;
-  }
-
-  .group-page,
-  .guide-card,
-  .intro-kicker,
-  .group-hero h1,
-  .group-hero-copy > p,
-  .hero-search,
-  .no-results{
-    animation:none;
-  }
-
-  .guide-card{
-    opacity:1;
-    transform:none;
-  }
-
-  .guide-card,
-  .guide-card::after,
-  .guide-card-icon,
-  .guide-open i,
-  .hero-search,
-  .intro-count{
-    transition:none;
-  }
-}
-
-
-/* ============================================================
-   BILLING DISPUTE — MAIN DASHBOARD QUICK ACCESS CARDS
-   EXACT MATCH TO MAIN DASHBOARD QUICK ACCESS
-   ============================================================ */
-
-.guide-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:10px;
-  margin-top:13px;
-}
-
-
-/* ============================================================
-   QUICK CARD
-   Exact styles from main dashboard .quick-card
-   ============================================================ */
-
-.guide-card{
-  height:194px;
-  min-height:194px;
-
-  border:1px solid #e8e9f2;
-  border-bottom:2px solid #d9d7ef;
-
-  border-radius:9px;
-
-  padding:14px 12px 10px;
-
-  position:relative;
-
-  display:block;
-
-  overflow:hidden;
-
-  background:#fff;
-
-  box-shadow:
-    0 3px 11px rgba(41,32,94,.045);
-
-  transition:
-    .18s transform,
-    .18s box-shadow;
-
-  cursor:pointer;
-
-  opacity:1;
-  transform:none;
-  animation:none;
-}
-
-
-/* Exact Main Dashboard hover */
-.guide-card:hover{
-  transform:translateY(-2px);
-
-  box-shadow:
-    0 8px 20px rgba(41,32,94,.1);
-}
-
-
-/* ============================================================
-   REMOVE OLD BILLING CARD DECORATIVE CIRCLE
-   This is important.
-   ============================================================ */
-
-.guide-card::after{
-  content:"";
-
-  position:absolute;
-
-  top:auto;
-  right:auto;
-
-  width:auto;
-  height:2px;
-
-  bottom:-2px;
-
-  left:15%;
-  right:15%;
-
-  border-radius:4px;
-
-  background:transparent;
-
-  pointer-events:none;
-
-  transform:none;
-
-  transition:none;
-}
-
-
-/* ============================================================
-   EXACT MAIN DASHBOARD BOTTOM ACCENT COLORS
-   ============================================================ */
-
-.guide-card.purple-card::after{
-  background:#d7c9ff;
-}
-
-.guide-card.orange-card::after{
-  background:#ffd4bd;
-}
-
-.guide-card.blue-card::after{
-  background:#c9dcff;
-}
-
-.guide-card.green-card::after{
-  background:#d0f0d2;
-}
-
-.guide-card.indigo-card::after{
-  background:#c5c9ff;
-}
-
-.guide-card.pink-card::after{
-  background:#ffd0df;
-}
-
-
-/* ============================================================
-   CARD ICON
-   Exact Main Dashboard .quick-icon
-   ============================================================ */
-
-.guide-card-icon{
-  width:44px;
-  height:44px;
-
-  border-radius:50%;
-
-  display:grid;
-  place-items:center;
-
-  margin-bottom:12px;
-
-  flex:0 0 auto;
-
-  position:relative;
-  z-index:1;
-
-  padding:0;
-  margin-top:0;
-
-  line-height:1;
-
-  font-size:inherit;
-
-  transform:none;
-
-  box-shadow:none;
-
-  transition:none;
-}
-
-
-/* Icon colors */
-
-.guide-card-icon.purple-bg{
-  background:#f1eaff;
-  color:#7131dc;
-}
-
-.guide-card-icon.orange-bg{
-  background:#fff0e4;
-  color:#ff6d17;
-}
-
-.guide-card-icon.blue-bg{
-  background:#eaf0ff;
-  color:#3865df;
-}
-
-.guide-card-icon.green-bg{
-  background:#e8f7e7;
-  color:#3e9346;
-}
-
-.guide-card-icon.indigo-bg{
-  background:#eef0ff;
-  color:#4a56d6;
-}
-
-.guide-card-icon.pink-bg{
-  background:#ffeaf0;
-  color:#ec3970;
-}
-
-
-/* ============================================================
-   FONT AWESOME ICON
-   Explicitly center it inside the circle.
-   ============================================================ */
-
-.guide-card-icon .quick-svg{
-  width:22px;
-  height:22px;
-
-  display:grid;
-  place-items:center;
-
-  margin:0;
-  padding:0;
-
-  line-height:1;
-
-  flex:0 0 22px;
-}
-
-
-/* Prevent old hover behavior */
-.guide-card:hover .guide-card-icon{
-  transform:none;
-  box-shadow:none;
-}
-
-
-/* ============================================================
-   CARD CONTENT
-   Exact Main Dashboard typography
-   ============================================================ */
-
-.guide-card-content{
-  display:block;
-
-  min-width:0;
-
-  flex:none;
-
-  position:static;
-
-  z-index:auto;
-}
-
-
-/* Title */
-
-.guide-card h3{
-  font-size:11px;
-
-  line-height:1.2;
-
-  margin:0 0 6px;
-
-  letter-spacing:-.2px;
-
-  font-weight:800;
-
-  color:var(--ink);
-}
-
-
-/* Description */
-
-.guide-card p{
-  font-size:8px;
-
-  line-height:1.4;
-
-  color:#7a7c98;
-
-  margin:0;
-}
-
-
-/* ============================================================
-   ARROW
-   Exact Main Dashboard .arrow-btn
-   ============================================================ */
-
-.guide-card .arrow-btn{
-  position:absolute;
-
-  left:12px;
-  bottom:10px;
-
-  border:0;
-
-  background:transparent;
-
-  color:#4f13b8;
-
-  font-size:18px;
-
-  line-height:1;
-
-  padding:0;
-
-  margin:0;
-
-  width:auto;
-  height:auto;
-
-  display:block;
-
-  cursor:pointer;
-
-  z-index:3;
-}
-
-
-/* ============================================================
-   GUIDE OPEN LINK
-   Keep this for existing guide tracking/routing.
-   ============================================================ */
-
-.guide-card .guide-open{
-  color:#4f13b8;
-
-  text-decoration:none;
-
-  border:0;
-  background:transparent;
-}
-
-
-/* The Font Awesome arrow */
-.guide-card .guide-open i{
-  color:inherit;
-
-  font-size:18px;
-
-  line-height:1;
-
-  margin:0;
-
-  padding:0;
-
-  transition:none;
-}
-
-
-/* No separate link hover color */
-.guide-card .guide-open:hover{
-  color:#4f13b8;
-}
-
-
-/* ============================================================
-   HIDDEN SEARCH RESULTS
-   ============================================================ */
-
-.guide-card.is-hidden{
-  display:none;
-}
-
-
-/* ============================================================
-   RESPONSIVE
-   EXACT SAME BREAKPOINTS AS MAIN DASHBOARD
-   ============================================================ */
-
-@media (max-width:1050px){
-
-  .guide-grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-}
-
-
-@media (max-width:700px){
-
-  .guide-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-}
-
-
-@media (max-width:450px){
-
-  .guide-grid{
-    grid-template-columns:1fr;
-  }
-
-}
-
-
-/* ============================================================
-   BILLING DISPUTE — FINAL MAIN DASHBOARD SYNC
-
-   The Main Dashboard Quick Access section is the visual source
-   of truth for this guide library:
-   - same Poppins typography
-   - same section heading
-   - same 6-column grid
-   - same card size / padding / border / shadow
-   - same bottom accent
-   - same circular icon
-   - same title / description typography
-   - same arrow position
-   ============================================================ */
-
-/* Match the Main Dashboard .section */
-.guide-library{
-  padding:23px 0 46px;
-  background:#fff;
-}
-
-/* Match the Main Dashboard .section horizontal padding */
-.guide-library > .group-container{
-  width:auto;
-  max-width:none;
-  margin:0;
-  padding-left:5.6%;
-  padding-right:5.6%;
-}
-
-/* Match .section-heading */
-.library-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-  margin-bottom:0;
-}
-
-/* Match .section-heading h2 */
-.library-title h2{
-  display:flex;
-  align-items:center;
-  margin:0;
-  color:#10134f;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-  font-size:14px;
-  line-height:1.2;
-  font-weight:800;
-  letter-spacing:0;
-}
-
-/* Match .heading-bar */
-.library-title .heading-bar{
-  display:inline-block;
-  width:3px;
-  height:19px;
-  background:#5f16cb;
-  border-radius:3px;
-  margin-right:10px;
-  vertical-align:-5px;
-  flex:0 0 3px;
-}
-
-/* Match .view-all */
 .library-toolbar .view-all{
   border:0;
   background:transparent;
+
   color:#5b17c5;
+
   font-family:"Poppins","Segoe UI",Arial,sans-serif;
+
   font-size:8px;
   font-weight:700;
+
   padding:0;
-  margin:0;
-  line-height:1.2;
+
+  cursor:pointer;
 }
 
 .library-toolbar .view-all span{
@@ -1325,201 +480,103 @@ body.theme-simple{
   vertical-align:-1px;
 }
 
-/* Match the Dashboard subtitle scale */
-.library-title p{
-  margin:5px 0 0;
-  color:#777a99;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-  font-size:8px;
-  line-height:1.3;
-}
 
-/* Match .quick-grid */
-.guide-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:10px;
-  margin-top:13px;
-}
+/* ============================================================
+   RESPONSIVE
+   Follow the Main Dashboard Quick Access breakpoints.
+   ============================================================ */
 
-/* Match .quick-card */
-.guide-card{
-  height:194px;
-  min-height:194px;
-  border:1px solid #e8e9f2;
-  border-bottom:2px solid #d9d7ef;
-  border-radius:9px;
-  padding:14px 12px 10px;
-  position:relative;
-  display:block;
-  overflow:visible;
-  background:#fff;
-  box-shadow:0 3px 11px rgba(41,32,94,.045);
-  transition:.18s transform,.18s box-shadow;
-  cursor:pointer;
-  opacity:1;
-  transform:none;
-  animation:none;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-}
-
-.guide-card:hover{
-  transform:translateY(-2px);
-  border-color:#e8e9f2;
-  box-shadow:0 8px 20px rgba(41,32,94,.1);
-}
-
-/* Match .quick-card:after */
-.guide-card::after{
-  content:"";
-  position:absolute;
-  bottom:-2px;
-  left:15%;
-  right:15%;
-  width:auto;
-  height:2px;
-  border-radius:4px;
-  pointer-events:none;
-  background:transparent;
-  transform:none;
-  transition:none;
-}
-
-.guide-card.purple-card::after{background:#d7c9ff;}
-.guide-card.orange-card::after{background:#ffd4bd;}
-.guide-card.blue-card::after{background:#c9dcff;}
-.guide-card.green-card::after{background:#d0f0d2;}
-.guide-card.indigo-card::after{background:#c5c9ff;}
-.guide-card.pink-card::after{background:#ffd0df;}
-
-/* Match .quick-icon */
-.guide-card-icon{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  margin:0 0 12px 0;
-  flex:0 0 44px;
-  position:relative;
-  z-index:2;
-  padding:0;
-  line-height:1;
-  transform:none;
-  box-shadow:none;
-  transition:none;
-}
-
-.guide-card:hover .guide-card-icon{
-  transform:none;
-  box-shadow:none;
-}
-
-/* Exact Dashboard icon colors */
-.guide-card-icon.purple-bg{background:#f1eaff;color:#7131dc;}
-.guide-card-icon.orange-bg{background:#fff0e4;color:#ff6d17;}
-.guide-card-icon.blue-bg{background:#eaf0ff;color:#3865df;}
-.guide-card-icon.green-bg{background:#e8f7e7;color:#3e9346;}
-.guide-card-icon.indigo-bg{background:#eef0ff;color:#4a56d6;}
-.guide-card-icon.pink-bg{background:#ffeaf0;color:#ec3970;}
-
-.guide-card-icon i{
-  display:block;
-  margin:0;
-  padding:0;
-  font-size:16px;
-  line-height:1;
-  text-align:center;
-}
-
-/* Match .quick-card h3 */
-.guide-card-content{
-  display:block;
-  min-width:0;
-  position:static;
-  z-index:auto;
-}
-
-.guide-card h3{
-  margin:0 0 6px;
-  color:#10134f;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-  font-size:11px;
-  line-height:1.2;
-  font-weight:800;
-  letter-spacing:-.2px;
-}
-
-/* Match .quick-card p */
-.guide-card p{
-  margin:0;
-  color:#7a7c98;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-  font-size:8px;
-  line-height:1.4;
-  font-weight:400;
-}
-
-/* Category tags are not part of Quick Access cards */
-.guide-tag{
-  display:none !important;
-}
-
-/* Match .arrow-btn */
-.guide-card .arrow-btn{
-  position:absolute;
-  left:12px;
-  bottom:10px;
-  border:0;
-  background:transparent;
-  color:#4f13b8;
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
-  font-size:18px;
-  line-height:1;
-  padding:0;
-  margin:0;
-  width:auto;
-  height:auto;
-  display:block;
-  cursor:pointer;
-  z-index:3;
-}
-
-.guide-card .arrow-btn:focus-visible,
-.library-toolbar .view-all:focus-visible,
-.guide-card:focus-visible{
-  outline:2px solid #6b20d0;
-  outline-offset:2px;
-}
-
-/* Hidden search results remain compatible with group-guides.js */
-.guide-card.is-hidden{
-  display:none;
-}
-
-/* Match Quick Access responsive breakpoints */
 @media (max-width:1050px){
-  .guide-grid{
-    grid-template-columns:repeat(3,1fr);
+
+  .group-hero-content{
+    padding-left:7%;
   }
+
+  .group-hero-copy{
+    width:58%;
+    max-width:500px;
+  }
+
+}
+
+@media (max-width:800px){
+
+  .group-hero{
+    height:330px;
+    min-height:330px;
+  }
+
+  .group-hero-content{
+    padding-left:7%;
+    align-items:center;
+  }
+
+  .group-hero-copy{
+    width:58%;
+    max-width:500px;
+  }
+
+  .group-hero h1{
+    font-size:32px;
+  }
+
 }
 
 @media (max-width:700px){
-  .guide-grid{
-    grid-template-columns:repeat(2,1fr);
+
+  .group-hero{
+    height:360px;
+    min-height:360px;
   }
+
+  .group-hero-content{
+    padding:28px 7%;
+    align-items:flex-start;
+  }
+
+  .group-hero-copy{
+    width:100%;
+    max-width:520px;
+  }
+
+  .group-hero h1{
+    font-size:32px;
+  }
+
+  .group-hero-copy > p{
+    width:100%;
+    font-size:13px;
+  }
+
+  .hero-search{
+    width:100%;
+    max-width:330px;
+  }
+
 }
 
 @media (max-width:450px){
-  .guide-grid{
-    grid-template-columns:1fr;
-  }
-}
 
-/* Preserve the Main Dashboard content alignment on smaller screens */
-@media (max-width:800px){
-  .guide-library > .group-container{
-    padding-left:7%;
-    padding-right:7%;
+  .group-hero{
+    height:380px;
+    min-height:380px;
   }
+
+  .group-hero-content{
+    padding-left:20px;
+    padding-right:20px;
+  }
+
+  .group-hero-copy{
+    width:100%;
+  }
+
+  .group-hero h1{
+    font-size:28px;
+  }
+
+  .hero-search{
+    width:100%;
+  }
+
 }
