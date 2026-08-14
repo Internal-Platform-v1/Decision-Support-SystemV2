@@ -862,8 +862,7 @@ body.theme-simple{
 
 /* ============================================================
    BILLING DISPUTE — MAIN DASHBOARD QUICK ACCESS CARDS
-   Exact Quick Access card geometry/style from styles.css.
-   The guide-card class is retained for group-guide search/tracking.
+   EXACT MATCH TO MAIN DASHBOARD QUICK ACCESS
    ============================================================ */
 
 .guide-grid{
@@ -873,151 +872,371 @@ body.theme-simple{
   margin-top:13px;
 }
 
+
+/* ============================================================
+   QUICK CARD
+   Exact styles from main dashboard .quick-card
+   ============================================================ */
+
 .guide-card{
   height:194px;
-  min-height:0;
+  min-height:194px;
+
   border:1px solid #e8e9f2;
   border-bottom:2px solid #d9d7ef;
+
   border-radius:9px;
+
   padding:14px 12px 10px;
+
   position:relative;
+
   display:block;
-  overflow:visible;
+
+  overflow:hidden;
+
   background:#fff;
-  box-shadow:0 3px 11px rgba(41,32,94,.045);
-  transition:.18s transform,.18s box-shadow;
+
+  box-shadow:
+    0 3px 11px rgba(41,32,94,.045);
+
+  transition:
+    .18s transform,
+    .18s box-shadow;
+
   cursor:pointer;
+
   opacity:1;
   transform:none;
   animation:none;
 }
 
+
+/* Exact Main Dashboard hover */
 .guide-card:hover{
   transform:translateY(-2px);
-  border-color:#e8e9f2;
-  box-shadow:0 8px 20px rgba(41,32,94,.1);
+
+  box-shadow:
+    0 8px 20px rgba(41,32,94,.1);
 }
 
-/* Exact Main Dashboard bottom accent. */
-.guide-card:after{
+
+/* ============================================================
+   REMOVE OLD BILLING CARD DECORATIVE CIRCLE
+   This is important.
+   ============================================================ */
+
+.guide-card::after{
   content:"";
+
   position:absolute;
+
+  top:auto;
+  right:auto;
+
+  width:auto;
+  height:2px;
+
   bottom:-2px;
+
   left:15%;
   right:15%;
-  height:2px;
+
   border-radius:4px;
+
+  background:transparent;
+
   pointer-events:none;
-}
 
-.guide-card.purple-card:after{background:#d7c9ff;}
-.guide-card.orange-card:after{background:#ffd4bd;}
-.guide-card.blue-card:after{background:#c9dcff;}
-.guide-card.green-card:after{background:#d0f0d2;}
-.guide-card.indigo-card:after{background:#c5c9ff;}
-.guide-card.pink-card:after{background:#ffd0df;}
+  transform:none;
 
-/* Exact Main Dashboard icon geometry. */
-.guide-card-icon{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  margin-bottom:12px;
-  flex:0 0 auto;
-  position:relative;
-  z-index:1;
-  font-size:inherit;
   transition:none;
 }
 
-.guide-card-icon.purple-bg{background:#f1eaff;color:#7131dc;}
-.guide-card-icon.orange-bg{background:#fff0e4;color:#ff6d17;}
-.guide-card-icon.blue-bg{background:#eaf0ff;color:#3865df;}
-.guide-card-icon.green-bg{background:#e8f7e7;color:#3e9346;}
-.guide-card-icon.indigo-bg{background:#eef0ff;color:#4a56d6;}
-.guide-card-icon.pink-bg{background:#ffeaf0;color:#ec3970;}
 
+/* ============================================================
+   EXACT MAIN DASHBOARD BOTTOM ACCENT COLORS
+   ============================================================ */
+
+.guide-card.purple-card::after{
+  background:#d7c9ff;
+}
+
+.guide-card.orange-card::after{
+  background:#ffd4bd;
+}
+
+.guide-card.blue-card::after{
+  background:#c9dcff;
+}
+
+.guide-card.green-card::after{
+  background:#d0f0d2;
+}
+
+.guide-card.indigo-card::after{
+  background:#c5c9ff;
+}
+
+.guide-card.pink-card::after{
+  background:#ffd0df;
+}
+
+
+/* ============================================================
+   CARD ICON
+   Exact Main Dashboard .quick-icon
+   ============================================================ */
+
+.guide-card-icon{
+  width:44px;
+  height:44px;
+
+  border-radius:50%;
+
+  display:grid;
+  place-items:center;
+
+  margin-bottom:12px;
+
+  flex:0 0 auto;
+
+  position:relative;
+  z-index:1;
+
+  padding:0;
+  margin-top:0;
+
+  line-height:1;
+
+  font-size:inherit;
+
+  transform:none;
+
+  box-shadow:none;
+
+  transition:none;
+}
+
+
+/* Icon colors */
+
+.guide-card-icon.purple-bg{
+  background:#f1eaff;
+  color:#7131dc;
+}
+
+.guide-card-icon.orange-bg{
+  background:#fff0e4;
+  color:#ff6d17;
+}
+
+.guide-card-icon.blue-bg{
+  background:#eaf0ff;
+  color:#3865df;
+}
+
+.guide-card-icon.green-bg{
+  background:#e8f7e7;
+  color:#3e9346;
+}
+
+.guide-card-icon.indigo-bg{
+  background:#eef0ff;
+  color:#4a56d6;
+}
+
+.guide-card-icon.pink-bg{
+  background:#ffeaf0;
+  color:#ec3970;
+}
+
+
+/* ============================================================
+   FONT AWESOME ICON
+   Explicitly center it inside the circle.
+   ============================================================ */
+
+.guide-card-icon .quick-svg{
+  width:22px;
+  height:22px;
+
+  display:grid;
+  place-items:center;
+
+  margin:0;
+  padding:0;
+
+  line-height:1;
+
+  flex:0 0 22px;
+}
+
+
+/* Prevent old hover behavior */
 .guide-card:hover .guide-card-icon{
   transform:none;
   box-shadow:none;
 }
 
-.quick-svg{
-  width:22px;
-  height:22px;
-}
+
+/* ============================================================
+   CARD CONTENT
+   Exact Main Dashboard typography
+   ============================================================ */
 
 .guide-card-content{
   display:block;
+
   min-width:0;
+
   flex:none;
+
   position:static;
+
   z-index:auto;
 }
 
+
+/* Title */
+
 .guide-card h3{
   font-size:11px;
+
   line-height:1.2;
+
   margin:0 0 6px;
+
   letter-spacing:-.2px;
+
   font-weight:800;
+
   color:var(--ink);
 }
 
+
+/* Description */
+
 .guide-card p{
   font-size:8px;
+
   line-height:1.4;
+
   color:#7a7c98;
+
   margin:0;
 }
 
-/* The arrow is the same visual element as Main Dashboard .arrow-btn. */
+
+/* ============================================================
+   ARROW
+   Exact Main Dashboard .arrow-btn
+   ============================================================ */
+
 .guide-card .arrow-btn{
   position:absolute;
+
   left:12px;
   bottom:10px;
+
   border:0;
+
   background:transparent;
+
   color:#4f13b8;
+
   font-size:18px;
+
   line-height:1;
+
   padding:0;
+
+  margin:0;
+
   width:auto;
   height:auto;
+
   display:block;
+
   cursor:pointer;
+
   z-index:3;
 }
 
+
+/* ============================================================
+   GUIDE OPEN LINK
+   Keep this for existing guide tracking/routing.
+   ============================================================ */
+
 .guide-card .guide-open{
   color:#4f13b8;
+
   text-decoration:none;
+
+  border:0;
+  background:transparent;
 }
 
+
+/* The Font Awesome arrow */
 .guide-card .guide-open i{
   color:inherit;
+
   font-size:18px;
+
+  line-height:1;
+
+  margin:0;
+
+  padding:0;
+
   transition:none;
 }
 
+
+/* No separate link hover color */
 .guide-card .guide-open:hover{
   color:#4f13b8;
 }
+
+
+/* ============================================================
+   HIDDEN SEARCH RESULTS
+   ============================================================ */
 
 .guide-card.is-hidden{
   display:none;
 }
 
+
+/* ============================================================
+   RESPONSIVE
+   EXACT SAME BREAKPOINTS AS MAIN DASHBOARD
+   ============================================================ */
+
 @media (max-width:1050px){
-  .guide-grid{grid-template-columns:repeat(3,1fr);}
+
+  .guide-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
 }
+
 
 @media (max-width:700px){
-  .guide-grid{grid-template-columns:repeat(2,1fr);}
+
+  .guide-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
 }
 
+
 @media (max-width:450px){
-  .guide-grid{grid-template-columns:1fr;}
+
+  .guide-grid{
+    grid-template-columns:1fr;
+  }
+
 }
