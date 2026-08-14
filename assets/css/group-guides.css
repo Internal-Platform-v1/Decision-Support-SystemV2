@@ -48,6 +48,9 @@ body{
   min-height:100vh;
   width:100%;
   font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  color:var(--ink);
+  background:#f3f3f8;
+  overflow-x:hidden;
 }
 
 button,
@@ -373,102 +376,27 @@ button{
   background:#fff;
 }
 
-/* ============================================================
-   GUIDE LIBRARY HEADER
-   MATCHES MAIN DASHBOARD QUICK ACCESS
-   ============================================================ */
-
 .library-toolbar{
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:space-between;
-
   gap:24px;
-
-  margin-bottom:13px;
+  margin-bottom:18px;
 }
-
-
-.library-title{
-  min-width:0;
-}
-
 
 .library-title h2{
-  display:flex;
-  align-items:center;
-
   margin:0;
-
   color:var(--ink);
-
-  font-size:14px;
+  font-size:20px;
   line-height:1.2;
-
   font-weight:800;
-
-  letter-spacing:0;
+  letter-spacing:-.4px;
 }
-
 
 .library-title p{
   margin:5px 0 0;
-
   color:#777a99;
-
-  font-size:8px;
-
-  line-height:1.3;
-}
-
-
-/* Exact Main Dashboard heading bar */
-
-.library-title .heading-bar{
-  display:inline-block;
-
-  width:3px;
-  height:19px;
-
-  flex:0 0 3px;
-
-  background:#5f16cb;
-
-  border-radius:3px;
-
-  margin-right:10px;
-
-  vertical-align:middle;
-}
-
-
-/* Exact Main Dashboard View All */
-
-.library-toolbar .view-all{
-  border:0;
-
-  background:transparent;
-
-  color:#5b17c5;
-
-  font-size:8px;
-
-  font-weight:700;
-
-  padding:0;
-
-  cursor:pointer;
-
-  white-space:nowrap;
-}
-
-
-.library-toolbar .view-all span{
-  font-size:14px;
-
-  margin-left:4px;
-
-  vertical-align:-1px;
+  font-size:10px;
 }
 
 
@@ -965,7 +893,7 @@ body.theme-simple{
 
   display:block;
 
-  overflow:visible;
+  overflow:hidden;
 
   background:#fff;
 
@@ -1311,4 +1239,287 @@ body.theme-simple{
     grid-template-columns:1fr;
   }
 
+}
+
+
+/* ============================================================
+   BILLING DISPUTE — FINAL MAIN DASHBOARD SYNC
+
+   The Main Dashboard Quick Access section is the visual source
+   of truth for this guide library:
+   - same Poppins typography
+   - same section heading
+   - same 6-column grid
+   - same card size / padding / border / shadow
+   - same bottom accent
+   - same circular icon
+   - same title / description typography
+   - same arrow position
+   ============================================================ */
+
+/* Match the Main Dashboard .section */
+.guide-library{
+  padding:23px 0 46px;
+  background:#fff;
+}
+
+/* Match the Main Dashboard .section horizontal padding */
+.guide-library > .group-container{
+  width:auto;
+  max-width:none;
+  margin:0;
+  padding-left:5.6%;
+  padding-right:5.6%;
+}
+
+/* Match .section-heading */
+.library-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:0;
+}
+
+/* Match .section-heading h2 */
+.library-title h2{
+  display:flex;
+  align-items:center;
+  margin:0;
+  color:#10134f;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-size:14px;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:0;
+}
+
+/* Match .heading-bar */
+.library-title .heading-bar{
+  display:inline-block;
+  width:3px;
+  height:19px;
+  background:#5f16cb;
+  border-radius:3px;
+  margin-right:10px;
+  vertical-align:-5px;
+  flex:0 0 3px;
+}
+
+/* Match .view-all */
+.library-toolbar .view-all{
+  border:0;
+  background:transparent;
+  color:#5b17c5;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-size:8px;
+  font-weight:700;
+  padding:0;
+  margin:0;
+  line-height:1.2;
+}
+
+.library-toolbar .view-all span{
+  font-size:14px;
+  margin-left:4px;
+  vertical-align:-1px;
+}
+
+/* Match the Dashboard subtitle scale */
+.library-title p{
+  margin:5px 0 0;
+  color:#777a99;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-size:8px;
+  line-height:1.3;
+}
+
+/* Match .quick-grid */
+.guide-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:10px;
+  margin-top:13px;
+}
+
+/* Match .quick-card */
+.guide-card{
+  height:194px;
+  min-height:194px;
+  border:1px solid #e8e9f2;
+  border-bottom:2px solid #d9d7ef;
+  border-radius:9px;
+  padding:14px 12px 10px;
+  position:relative;
+  display:block;
+  overflow:visible;
+  background:#fff;
+  box-shadow:0 3px 11px rgba(41,32,94,.045);
+  transition:.18s transform,.18s box-shadow;
+  cursor:pointer;
+  opacity:1;
+  transform:none;
+  animation:none;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+}
+
+.guide-card:hover{
+  transform:translateY(-2px);
+  border-color:#e8e9f2;
+  box-shadow:0 8px 20px rgba(41,32,94,.1);
+}
+
+/* Match .quick-card:after */
+.guide-card::after{
+  content:"";
+  position:absolute;
+  bottom:-2px;
+  left:15%;
+  right:15%;
+  width:auto;
+  height:2px;
+  border-radius:4px;
+  pointer-events:none;
+  background:transparent;
+  transform:none;
+  transition:none;
+}
+
+.guide-card.purple-card::after{background:#d7c9ff;}
+.guide-card.orange-card::after{background:#ffd4bd;}
+.guide-card.blue-card::after{background:#c9dcff;}
+.guide-card.green-card::after{background:#d0f0d2;}
+.guide-card.indigo-card::after{background:#c5c9ff;}
+.guide-card.pink-card::after{background:#ffd0df;}
+
+/* Match .quick-icon */
+.guide-card-icon{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  margin:0 0 12px 0;
+  flex:0 0 44px;
+  position:relative;
+  z-index:2;
+  padding:0;
+  line-height:1;
+  transform:none;
+  box-shadow:none;
+  transition:none;
+}
+
+.guide-card:hover .guide-card-icon{
+  transform:none;
+  box-shadow:none;
+}
+
+/* Exact Dashboard icon colors */
+.guide-card-icon.purple-bg{background:#f1eaff;color:#7131dc;}
+.guide-card-icon.orange-bg{background:#fff0e4;color:#ff6d17;}
+.guide-card-icon.blue-bg{background:#eaf0ff;color:#3865df;}
+.guide-card-icon.green-bg{background:#e8f7e7;color:#3e9346;}
+.guide-card-icon.indigo-bg{background:#eef0ff;color:#4a56d6;}
+.guide-card-icon.pink-bg{background:#ffeaf0;color:#ec3970;}
+
+.guide-card-icon i{
+  display:block;
+  margin:0;
+  padding:0;
+  font-size:16px;
+  line-height:1;
+  text-align:center;
+}
+
+/* Match .quick-card h3 */
+.guide-card-content{
+  display:block;
+  min-width:0;
+  position:static;
+  z-index:auto;
+}
+
+.guide-card h3{
+  margin:0 0 6px;
+  color:#10134f;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-size:11px;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:-.2px;
+}
+
+/* Match .quick-card p */
+.guide-card p{
+  margin:0;
+  color:#7a7c98;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-size:8px;
+  line-height:1.4;
+  font-weight:400;
+}
+
+/* Category tags are not part of Quick Access cards */
+.guide-tag{
+  display:none !important;
+}
+
+/* Match .arrow-btn */
+.guide-card .arrow-btn{
+  position:absolute;
+  left:12px;
+  bottom:10px;
+  border:0;
+  background:transparent;
+  color:#4f13b8;
+  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+  font-size:18px;
+  line-height:1;
+  padding:0;
+  margin:0;
+  width:auto;
+  height:auto;
+  display:block;
+  cursor:pointer;
+  z-index:3;
+}
+
+.guide-card .arrow-btn:focus-visible,
+.library-toolbar .view-all:focus-visible,
+.guide-card:focus-visible{
+  outline:2px solid #6b20d0;
+  outline-offset:2px;
+}
+
+/* Hidden search results remain compatible with group-guides.js */
+.guide-card.is-hidden{
+  display:none;
+}
+
+/* Match Quick Access responsive breakpoints */
+@media (max-width:1050px){
+  .guide-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media (max-width:700px){
+  .guide-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media (max-width:450px){
+  .guide-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Preserve the Main Dashboard content alignment on smaller screens */
+@media (max-width:800px){
+  .guide-library > .group-container{
+    padding-left:7%;
+    padding-right:7%;
+  }
 }
