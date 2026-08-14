@@ -2,127 +2,149 @@
    GROUP GUIDES — BILLING DISPUTE PAGE
    ============================================================
 
-   SELF-CONTAINED STYLESHEET
+   SELF-CONTAINED
 
    IMPORTANT:
-   - DOES NOT depend on assets/css/styles.css
-   - DOES NOT depend on assets/css/guide-themes.css
-   - Main Dashboard styles.css is used ONLY as the visual
-     reference for typography, spacing, colors and cards.
+   - DO NOT load styles.css
+   - DO NOT load guide-themes.css
+   - This file contains everything needed by the
+     Billing Dispute group page.
 
-   Billing-specific styling:
-   - Hero
-   - Billing Dispute content
-   - Guide Library
-   - Guide search
-   - Guide cards
-
-   Shared page foundation reproduced here:
-   - body
-   - app shell
-   - page layout
-   - Quick Access-style cards
-   - typography
-   - footer positioning
+   Dashboard styles.css is used ONLY as the reference
+   for dimensions, typography, spacing, colors and cards.
    ============================================================ */
 
 
 /* ============================================================
-   FONT
+   POPPINS FONT
+   Exact font used by the Main Dashboard reference.
    ============================================================ */
 
 @import url(
-  "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
 );
+
+
+/* ============================================================
+   VARIABLES
+   Copied from Main Dashboard reference.
+   ============================================================ */
+
+:root {
+    --purple: #4d148c;
+    --purple2: #6b20d0;
+    --orange: #ff6600;
+
+    --ink: #10134f;
+    --muted: #777a99;
+
+    --line: #e7e8f3;
+
+    --shadow:
+        0 5px 20px rgba(48,38,111,.08);
+}
 
 
 /* ============================================================
    GLOBAL RESET
    ============================================================ */
 
-*{
-  box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
 html,
-body{
-  margin:0;
-  min-height:100%;
-  width:100%;
+body {
+    margin: 0;
 
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+    min-height: 100%;
+    width: 100%;
 
-  color:#10134f;
-  background:#f3f3f8;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    color: var(--ink);
+
+    background: #f3f3f8;
 }
 
-body{
-  overflow-x:auto;
+body {
+    overflow-x: auto;
+
+    padding: 10px;
 }
 
 button,
-input{
-  font:inherit;
+input {
+    font: inherit;
 }
 
-button{
-  cursor:pointer;
+button {
+    cursor: pointer;
 }
 
 
 /* ============================================================
    APP SHELL
+   Exact Main Dashboard reference.
    ============================================================ */
 
-.app-shell{
-  width:calc(100% - 20px);
-  max-width:1260px;
+.app-shell {
+    width: calc(100% - 20px);
 
-  min-height:calc(100vh - 20px);
+    max-width: 1260px;
 
-  margin:0 auto;
+    min-height: calc(100vh - 20px);
 
-  background:#fff;
+    margin: 0 auto;
 
-  border:0;
-  border-radius:7px;
+    background: #fff;
 
-  overflow:hidden;
+    border: 0;
 
-  box-shadow:
-    0 2px 12px rgba(34,27,84,.06);
+    border-radius: 7px;
 
-  display:flex;
-  flex-direction:column;
+    overflow: hidden;
+
+    box-shadow:
+        0 2px 12px rgba(34,27,84,.06);
+
+    display: flex;
+
+    flex-direction: column;
 }
 
 
 /* ============================================================
-   MAIN CONTENT
+   MAIN PAGE AREA
    ============================================================ */
 
-.app-shell main{
-  flex:1 0 auto;
-  width:100%;
+.app-shell main {
+    flex: 1 0 auto;
+
+    width: 100%;
 }
 
-.group-page{
-  width:100%;
-  flex:1 0 auto;
-  background:#fff;
+.group-page {
+    width: 100%;
+
+    flex: 1 0 auto;
+
+    background: #fff;
 }
 
 
 /* ============================================================
-   FOOTER POSITIONING
-
-   The footer stays at the bottom when the page content is
-   shorter than the viewport.
+   FOOTER POSITION
    ============================================================ */
 
-#footer-placeholder{
-  margin-top:auto;
-  flex-shrink:0;
+#footer-placeholder {
+    margin-top: auto;
+
+    flex-shrink: 0;
 }
 
 
@@ -130,60 +152,65 @@ button{
    BILLING DISPUTE HERO
    ============================================================ */
 
-.group-hero{
-  position:relative;
+.group-hero {
+    height: 292px;
 
-  height:292px;
-  min-height:292px;
+    min-height: 292px;
 
-  overflow:hidden;
+    position: relative;
 
-  isolation:isolate;
+    overflow: hidden;
 
-  background:#eee9fb;
+    isolation: isolate;
+
+    background:
+        #f8f7ff;
 }
 
-.group-hero-image{
-  position:absolute;
 
-  inset:0;
+/* Hero image */
 
-  z-index:0;
+.group-hero-image {
+    position: absolute;
 
-  background-image:
-    url("../images/billing-dispute-hero.png");
+    inset: 0;
 
-  background-repeat:no-repeat;
+    z-index: 0;
 
-  background-position:center center;
+    background-image:
+        url("../images/billing-dispute-hero.png");
 
-  background-size:cover;
+    background-repeat: no-repeat;
+
+    background-position: center center;
+
+    background-size: cover;
 }
 
 
 /* ============================================================
-   HERO SOFT OVERLAY
+   HERO OVERLAY
    ============================================================ */
 
-.group-hero::after{
-  content:"";
+.group-hero::after {
+    content: "";
 
-  position:absolute;
+    position: absolute;
 
-  inset:0;
+    inset: 0;
 
-  z-index:1;
+    z-index: 1;
 
-  pointer-events:none;
+    pointer-events: none;
 
-  background:
-    linear-gradient(
-      90deg,
-      rgba(248,246,255,.78) 0%,
-      rgba(248,246,255,.54) 31%,
-      rgba(248,246,255,.08) 59%,
-      rgba(248,246,255,0) 75%
-    );
+    background:
+        linear-gradient(
+            90deg,
+            rgba(248,246,255,.78) 0%,
+            rgba(248,246,255,.54) 31%,
+            rgba(248,246,255,.08) 59%,
+            rgba(248,246,255,0) 75%
+        );
 }
 
 
@@ -191,28 +218,28 @@ button{
    HERO CONTENT
    ============================================================ */
 
-.group-hero-content{
-  position:relative;
+.group-hero-content {
+    position: relative;
 
-  z-index:2;
+    z-index: 2;
 
-  width:100%;
-  height:100%;
+    height: 100%;
 
-  display:flex;
+    display: flex;
 
-  align-items:center;
+    align-items: center;
 
-  padding-left:8.2%;
+    padding-left: 8.2%;
 }
 
-.group-hero-copy{
-  position:relative;
+.group-hero-copy {
+    position: relative;
 
-  z-index:3;
+    z-index: 3;
 
-  width:430px;
-  max-width:430px;
+    width: 430px;
+
+    max-width: 430px;
 }
 
 
@@ -220,45 +247,47 @@ button{
    HERO KICKER
    ============================================================ */
 
-.intro-kicker{
-  display:inline-flex;
+.intro-kicker {
+    display: inline-flex;
 
-  align-items:center;
+    align-items: center;
 
-  gap:8px;
+    gap: 8px;
 
-  padding:7px 11px;
+    padding: 7px 11px;
 
-  border-radius:999px;
+    border-radius: 999px;
 
-  background:rgba(241,234,255,.94);
+    background:
+        rgba(241,234,255,.94);
 
-  border:1px solid rgba(228,215,250,.95);
+    border:
+        1px solid rgba(228,215,250,.95);
 
-  color:#4d148c;
+    color: var(--purple);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:10px;
+    font-size: 10px;
 
-  font-weight:800;
+    font-weight: 800;
 
-  letter-spacing:.04em;
+    letter-spacing: .04em;
 
-  text-transform:uppercase;
+    text-transform: uppercase;
 
-  box-shadow:
-    0 4px 12px rgba(48,38,111,.04);
+    box-shadow:
+        0 4px 12px rgba(48,38,111,.04);
 }
 
-.intro-kicker i{
-  color:#ff6600;
+.intro-kicker i {
+    color: var(--orange);
 
-  font-size:11px;
+    font-size: 11px;
 }
 
 
@@ -266,24 +295,24 @@ button{
    HERO TITLE
    ============================================================ */
 
-.group-hero h1{
-  margin:14px 0 8px;
+.group-hero h1 {
+    margin: 14px 0 10px;
 
-  color:#10134f;
+    color: var(--ink);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:36px;
+    font-size: 36px;
 
-  line-height:1.15;
+    line-height: 1.15;
 
-  font-weight:800;
+    font-weight: 800;
 
-  letter-spacing:-.7px;
+    letter-spacing: -.7px;
 }
 
 
@@ -291,204 +320,170 @@ button{
    HERO DESCRIPTION
    ============================================================ */
 
-.group-hero-copy > p{
-  width:430px;
+.group-hero-copy > p {
+    width: 430px;
 
-  max-width:100%;
+    max-width: 100%;
 
-  margin:0 0 16px;
+    margin: 0 0 16px;
 
-  color:#3d3f65;
+    color: #3d3f65;
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:15px;
+    font-size: 15px;
 
-  line-height:1.5;
+    line-height: 1.5;
 
-  font-weight:400;
+    font-weight: 400;
 
-  letter-spacing:.01em;
+    letter-spacing: .01em;
 }
 
 
 /* ============================================================
    HERO SEARCH
+   Based directly on Dashboard .hero-search.
    ============================================================ */
 
-.hero-search{
-  position:relative;
+.hero-search {
+    height: 34px;
 
-  display:flex;
+    width: 330px;
 
-  align-items:center;
+    background: #fff;
 
-  width:330px;
+    border:
+        1px solid #e0e0ed;
 
-  height:34px;
+    border-radius: 6px;
 
-  margin-top:12px;
+    display: flex;
 
-  background:#fff;
+    align-items: center;
 
-  border:1px solid #e0e0ed;
+    padding-left: 11px;
 
-  border-radius:6px;
+    box-shadow:
+        0 4px 12px rgba(75,45,153,.06);
 
-  box-shadow:
-    0 4px 12px rgba(75,45,153,.06);
-
-  overflow:hidden;
+    position: relative;
 }
 
-.hero-search > i{
-  flex:0 0 auto;
+.hero-search > i {
+    flex: 0 0 auto;
 
-  margin-left:11px;
+    width: 11px;
 
-  margin-right:8px;
+    height: 11px;
 
-  width:11px;
+    margin-right: 8px;
 
-  height:11px;
+    color: #9699b1;
 
-  color:#9699b1;
-
-  font-size:11px;
+    font-size: 11px;
 }
 
-.hero-search input{
-  flex:1;
+.hero-search input {
+    border: 0;
 
-  width:100%;
+    outline: 0;
 
-  height:32px;
+    flex: 1;
 
-  min-width:0;
+    min-width: 0;
 
-  padding:0;
+    width: 100%;
 
-  border:0;
+    height: 32px;
 
-  outline:0;
+    padding: 0;
 
-  background:transparent;
+    background: transparent;
 
-  color:#10134f;
+    color: var(--ink);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:9px;
-
-  font-weight:400;
+    font-size: 9px;
 }
 
-.hero-search input::placeholder{
-  color:#999bb0;
+.hero-search input::placeholder {
+    color: #999bb0;
 }
 
-.hero-search-button{
-  width:82px;
+.hero-search-button {
+    height: 34px;
 
-  height:34px;
+    width: 82px;
 
-  display:flex;
+    flex: 0 0 82px;
 
-  align-items:center;
+    display: flex;
 
-  justify-content:center;
+    align-items: center;
 
-  flex:0 0 82px;
+    justify-content: center;
 
-  border:0;
+    border: 0;
 
-  border-radius:0 6px 6px 0;
+    border-radius:
+        0 6px 6px 0;
 
-  background:#5915c8;
+    background: #5915c8;
 
-  color:#fff;
+    color: #fff;
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:9px;
+    font-size: 9px;
 
-  font-weight:700;
+    font-weight: 700;
 
-  cursor:pointer;
-}
-
-
-/* Clear/search auxiliary button */
-
-.hero-search button{
-  position:absolute;
-
-  right:88px;
-
-  width:25px;
-
-  height:25px;
-
-  display:none;
-
-  place-items:center;
-
-  border:0;
-
-  border-radius:7px;
-
-  background:#f1f1f7;
-
-  color:#777a99;
-}
-
-.hero-search button:hover{
-  background:#e6e5ef;
+    cursor: pointer;
 }
 
 
 /* ============================================================
    GUIDE LIBRARY
+   Dashboard equivalent of .section
    ============================================================ */
 
-.guide-library{
-  width:100%;
+.guide-library {
+    width: 100%;
 
-  padding:23px 5.6% 46px;
+    padding:
+        23px
+        5.6%
+        46px;
 
-  background:#fff;
+    background: #fff;
 }
 
 
 /* ============================================================
    LIBRARY TOOLBAR
-
-   Mirrors Main Dashboard:
-   .section-heading
+   Dashboard equivalent of .section-heading
    ============================================================ */
 
-.library-toolbar{
-  display:flex;
+.library-toolbar {
+    display: flex;
 
-  align-items:center;
+    align-items: center;
 
-  justify-content:space-between;
-
-  gap:20px;
-
-  margin:0;
+    justify-content: space-between;
 }
 
 
@@ -496,281 +491,255 @@ button{
    LIBRARY TITLE
    ============================================================ */
 
-.library-title{
-  min-width:0;
+.library-title {
+    min-width: 0;
 }
 
-.library-title h2{
-  display:flex;
+.library-title h2 {
+    font-size: 14px;
 
-  align-items:center;
+    margin: 0;
 
-  margin:0;
+    font-weight: 800;
 
-  color:#10134f;
+    color: var(--ink);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:14px;
-
-  line-height:1.2;
-
-  font-weight:800;
+    line-height: 1.2;
 }
 
 
-/* Dashboard heading bar */
+/* Dashboard .heading-bar */
 
-.library-title h2 .heading-bar{
-  display:inline-block;
+.library-title .heading-bar {
+    display: inline-block;
 
-  width:3px;
+    width: 3px;
 
-  height:19px;
+    height: 19px;
 
-  flex:0 0 3px;
+    background: #5f16cb;
 
-  margin-right:10px;
+    border-radius: 3px;
 
-  background:#5f16cb;
+    margin-right: 10px;
 
-  border-radius:3px;
-
-  vertical-align:-5px;
+    vertical-align: -5px;
 }
 
 
 /* ============================================================
-   RESULT TEXT
+   RESULTS TEXT
    ============================================================ */
 
 #resultsText,
-.library-results{
-  margin:5px 0 0;
+.library-results {
+    margin: 5px 0 0;
 
-  color:#777a99;
+    color: var(--muted);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:8px;
+    font-size: 8px;
 
-  line-height:1.3;
+    line-height: 1.3;
 
-  font-weight:400;
+    font-weight: 400;
 }
 
 
 /* ============================================================
-   VIEW ALL GUIDES
+   VIEW ALL
+   Exact Dashboard .view-all
    ============================================================ */
 
-.library-toolbar .view-all{
-  border:0;
+.library-toolbar .view-all {
+    border: 0;
 
-  padding:0;
+    background: transparent;
 
-  margin:0;
+    color: #5b17c5;
 
-  background:transparent;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  color:#5b17c5;
+    font-size: 8px;
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-weight: 700;
 
-  font-size:8px;
+    padding: 0;
 
-  line-height:1;
+    cursor: pointer;
 
-  font-weight:700;
-
-  white-space:nowrap;
-
-  cursor:pointer;
+    white-space: nowrap;
 }
 
-.library-toolbar .view-all:hover{
-  color:#4f13b8;
+.library-toolbar .view-all:hover {
+    color: #4f13b8;
 }
 
-.library-toolbar .view-all span{
-  font-size:14px;
+.library-toolbar .view-all span {
+    font-size: 14px;
 
-  margin-left:4px;
+    margin-left: 4px;
 
-  vertical-align:-1px;
+    vertical-align: -1px;
 }
 
 
 /* ============================================================
    GUIDE GRID
-
-   EXACT Dashboard Quick Access reference:
-   6 columns
-   10px gap
-   13px top spacing
+   Exact Dashboard .quick-grid
    ============================================================ */
 
-.guide-grid{
-  display:grid;
+.guide-grid {
+    display: grid;
 
-  grid-template-columns:
-    repeat(6,1fr);
+    grid-template-columns:
+        repeat(6, 1fr);
 
-  gap:10px;
+    gap: 10px;
 
-  margin-top:13px;
+    margin-top: 13px;
 }
 
 
 /* ============================================================
    GUIDE CARD
-
-   Dashboard Quick Access reference:
-   height:194px
-   border:1px solid #e8e9f2
-   bottom border:2px
-   radius:9px
-   padding:14px 12px 10px
+   Exact Dashboard .quick-card
    ============================================================ */
 
-.guide-card{
-  position:relative;
+.guide-card {
+    height: 194px;
 
-  height:194px;
+    border:
+        1px solid #e8e9f2;
 
-  min-height:194px;
+    border-bottom:
+        2px solid #d9d7ef;
 
-  padding:14px 12px 10px;
+    border-radius: 9px;
 
-  border:1px solid #e8e9f2;
+    padding:
+        14px
+        12px
+        10px;
 
-  border-bottom:2px solid #d9d7ef;
+    position: relative;
 
-  border-radius:9px;
+    background: #fff;
 
-  background:#fff;
+    box-shadow:
+        0 3px 11px rgba(41,32,94,.045);
 
-  box-shadow:
-    0 3px 11px rgba(41,32,94,.045);
+    transition:
+        .18s transform,
+        .18s box-shadow;
 
-  transition:
-    .18s transform,
-    .18s box-shadow;
+    cursor: pointer;
 
-  cursor:pointer;
+    text-align: left;
 
-  text-align:left;
-
-  overflow:hidden;
-
-  opacity:1;
-
-  transform:none;
+    overflow: hidden;
 }
 
-.guide-card:hover{
-  transform:translateY(-2px);
+.guide-card:hover {
+    transform:
+        translateY(-2px);
 
-  box-shadow:
-    0 8px 20px rgba(41,32,94,.1);
+    box-shadow:
+        0 8px 20px rgba(41,32,94,.1);
 }
 
 
 /* ============================================================
-   CARD BOTTOM ACCENT
+   CARD BOTTOM ACCENTS
+   Exact Dashboard values
    ============================================================ */
 
-.guide-card::after{
-  content:"";
+.guide-card::after {
+    content: "";
 
-  position:absolute;
+    position: absolute;
 
-  bottom:-2px;
+    bottom: -2px;
 
-  left:15%;
+    left: 15%;
 
-  right:15%;
+    right: 15%;
 
-  height:2px;
+    height: 2px;
 
-  border-radius:4px;
-
-  pointer-events:none;
+    border-radius: 4px;
 }
 
-.guide-card.purple-card::after{
-  background:#d7c9ff;
+.guide-card.purple-card::after {
+    background: #d7c9ff;
 }
 
-.guide-card.orange-card::after{
-  background:#ffd4bd;
+.guide-card.orange-card::after {
+    background: #ffd4bd;
 }
 
-.guide-card.blue-card::after{
-  background:#c9dcff;
+.guide-card.blue-card::after {
+    background: #c9dcff;
 }
 
-.guide-card.green-card::after{
-  background:#d0f0d2;
+.guide-card.green-card::after {
+    background: #d0f0d2;
 }
 
-.guide-card.indigo-card::after{
-  background:#c5c9ff;
+.guide-card.indigo-card::after {
+    background: #c5c9ff;
 }
 
-.guide-card.pink-card::after{
-  background:#ffd0df;
+.guide-card.pink-card::after {
+    background: #ffd0df;
 }
 
 
 /* ============================================================
-   REMOVE ANY OLD CARD DECORATION
+   REMOVE OLD GROUP CARD DECORATION
    ============================================================ */
 
-.guide-card::before{
-  content:none;
+.guide-card::before {
+    content: none;
 }
 
 
 /* ============================================================
    CARD ICON
-
-   Dashboard reference:
-   44px × 44px
-   circular
-   12px bottom margin
+   Exact Dashboard .quick-icon
    ============================================================ */
 
-.guide-card-icon{
-  width:44px;
+.guide-card-icon {
+    width: 44px;
 
-  height:44px;
+    height: 44px;
 
-  display:grid;
+    border-radius: 50%;
 
-  place-items:center;
+    display: grid;
 
-  margin-bottom:12px;
+    place-items: center;
 
-  border-radius:50%;
+    margin-bottom: 12px;
 
-  position:relative;
+    position: relative;
 
-  z-index:1;
-
-  flex:none;
+    z-index: 1;
 }
 
 
@@ -778,176 +747,167 @@ button{
    EXACT DASHBOARD ICON COLORS
    ============================================================ */
 
-.purple-bg{
-  background:#f1eaff;
+.purple-bg {
+    background: #f1eaff;
 
-  color:#7131dc;
+    color: #7131dc;
 }
 
-.orange-bg{
-  background:#fff0e4;
+.orange-bg {
+    background: #fff0e4;
 
-  color:#ff6d17;
+    color: #ff6d17;
 }
 
-.blue-bg{
-  background:#eaf0ff;
+.blue-bg {
+    background: #eaf0ff;
 
-  color:#3865df;
+    color: #3865df;
 }
 
-.green-bg{
-  background:#e8f7e7;
+.green-bg {
+    background: #e8f7e7;
 
-  color:#3e9346;
+    color: #3e9346;
 }
 
-.indigo-bg{
-  background:#eef0ff;
+.indigo-bg {
+    background: #eef0ff;
 
-  color:#4a56d6;
+    color: #4a56d6;
 }
 
-.pink-bg{
-  background:#ffeaf0;
+.pink-bg {
+    background: #ffeaf0;
 
-  color:#ec3970;
+    color: #ec3970;
 }
 
 
 /* ============================================================
-   CARD SVG ICON
+   CARD SVG
+   Exact Dashboard .quick-svg
    ============================================================ */
 
-.ui-icon{
-  display:block;
+.quick-svg {
+    width: 22px;
 
-  fill:none;
-
-  stroke:currentColor;
-
-  stroke-width:1.8;
-
-  stroke-linecap:round;
-
-  stroke-linejoin:round;
-
-  flex:none;
+    height: 22px;
 }
 
-.guide-card-icon .quick-svg{
-  width:22px;
+.ui-icon {
+    display: block;
 
-  height:22px;
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+
+    stroke-linejoin: round;
+
+    flex: none;
 }
 
 
 /* ============================================================
    CARD TITLE
+   Exact Dashboard .quick-card h3
 
-   EXACT Dashboard reference:
-   font-size:11px
-   line-height:1.2
-   margin-bottom:6px
-   letter-spacing:-.2px
-
-   IMPORTANT:
-   No Inter.
-   No #0f172a.
-   No #64748b.
+   NOTE:
+   Dashboard does NOT define a separate font-family or dark
+   override here. It inherits the global Poppins font and
+   --ink color.
    ============================================================ */
 
-.guide-card h3{
-  margin:0 0 6px;
+.guide-card h3 {
+    font-size: 11px;
 
-  color:#10134f;
+    line-height: 1.2;
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    margin: 0 0 6px;
 
-  font-size:11px;
+    letter-spacing: -.2px;
 
-  line-height:1.2;
+    color: var(--ink);
 
-  letter-spacing:-.2px;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-weight:700;
+    font-weight: 700;
 }
 
 
 /* ============================================================
    CARD DESCRIPTION
-
-   EXACT Dashboard reference:
-   font-size:8px
-   line-height:1.4
-   color:#7a7c98
+   Exact Dashboard .quick-card p
    ============================================================ */
 
-.guide-card p{
-  margin:0;
+.guide-card p {
+    font-size: 8px;
 
-  color:#7a7c98;
+    line-height: 1.4;
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    color: #7a7c98;
 
-  font-size:8px;
+    margin: 0;
 
-  line-height:1.4;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-weight:400;
+    font-weight: 400;
 }
 
 
 /* ============================================================
-   ARROW
-
-   EXACT Dashboard reference
+   CARD ARROW
+   Exact Dashboard .arrow-btn
    ============================================================ */
 
-.guide-card .arrow-btn{
-  position:absolute;
+.guide-card .arrow-btn {
+    position: absolute;
 
-  left:12px;
+    left: 12px;
 
-  bottom:10px;
+    bottom: 10px;
 
-  border:0;
+    border: 0;
 
-  padding:0;
+    background: transparent;
 
-  margin:0;
+    color: #4f13b8;
 
-  background:transparent;
+    font-size: 18px;
 
-  color:#4f13b8;
+    padding: 0;
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    margin: 0;
 
-  font-size:18px;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  line-height:normal;
+    font-weight: 400;
 
-  font-weight:400;
+    line-height: normal;
 
-  cursor:pointer;
+    cursor: pointer;
 
-  z-index:3;
+    z-index: 3;
 }
 
-.guide-card .arrow-btn:hover{
-  color:#5915c8;
+.guide-card .arrow-btn:hover {
+    color: #5915c8;
 }
 
 
@@ -955,8 +915,8 @@ button{
    SEARCH STATE
    ============================================================ */
 
-.guide-card.is-hidden{
-  display:none;
+.guide-card.is-hidden {
+    display: none;
 }
 
 
@@ -964,228 +924,203 @@ button{
    NO RESULTS
    ============================================================ */
 
-.no-results{
-  margin-top:16px;
+.no-results {
+    margin-top: 16px;
 
-  padding:35px 20px;
+    padding: 35px 20px;
 
-  text-align:center;
+    text-align: center;
 
-  border:1px dashed #cbd5e1;
+    border:
+        1px dashed #cbd5e1;
 
-  border-radius:8px;
+    border-radius: 8px;
 
-  background:#fafbfe;
+    background: #fafbfe;
 }
 
-.no-results > i{
-  font-size:22px;
+.no-results > i {
+    font-size: 22px;
 
-  color:#94a3b8;
+    color: #94a3b8;
 }
 
-.no-results h3{
-  margin:10px 0 4px;
+.no-results h3 {
+    margin: 10px 0 4px;
 
-  color:#10134f;
+    color: var(--ink);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:15px;
+    font-size: 15px;
 
-  line-height:1.2;
+    line-height: 1.2;
 
-  font-weight:800;
+    font-weight: 800;
 }
 
-.no-results p{
-  margin:0;
+.no-results p {
+    margin: 0;
 
-  color:#777a99;
+    color: var(--muted);
 
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  font-size:10px;
+    font-size: 10px;
 
-  line-height:1.4;
+    line-height: 1.4;
 
-  font-weight:400;
-}
-
-
-/* ============================================================
-   EMPTY STATE
-   ============================================================ */
-
-.library-empty{
-  width:100%;
-
-  padding:35px 20px;
-
-  text-align:center;
-
-  color:#777a99;
-
-  font-family:
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif;
-
-  font-size:10px;
+    font-weight: 400;
 }
 
 
 /* ============================================================
    RESPONSIVE
+   Exact Dashboard Quick Access breakpoints
    ============================================================ */
 
-@media (max-width:1050px){
+@media (max-width: 1050px) {
 
-  .group-hero-content{
-    padding-left:7%;
-  }
+    .guide-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
 
-  .group-hero-copy{
-    width:58%;
+    .group-hero-content {
+        padding-left: 7%;
+    }
 
-    max-width:500px;
-  }
+    .group-hero-copy {
+        width: 58%;
 
-  .guide-grid{
-    grid-template-columns:
-      repeat(3,1fr);
-  }
+        max-width: 500px;
+    }
 }
 
 
-@media (max-width:800px){
+@media (max-width: 800px) {
 
-  .app-shell{
-    min-width:760px;
-  }
+    .app-shell {
+        min-width: 760px;
+    }
 
-  .group-hero{
-    height:330px;
+    .group-hero {
+        height: 330px;
 
-    min-height:330px;
-  }
+        min-height: 330px;
+    }
 
-  .group-hero-content{
-    padding-left:7%;
+    .group-hero-content {
+        padding-left: 7%;
 
-    align-items:center;
-  }
+        align-items: center;
+    }
 
-  .group-hero-copy{
-    width:58%;
+    .group-hero-copy {
+        width: 58%;
 
-    max-width:500px;
-  }
+        max-width: 500px;
+    }
 
-  .group-hero h1{
-    font-size:32px;
-  }
-
-  .guide-grid{
-    grid-template-columns:
-      repeat(3,1fr);
-  }
+    .group-hero h1 {
+        font-size: 32px;
+    }
 }
 
 
-@media (max-width:700px){
+@media (max-width: 700px) {
 
-  .group-hero{
-    height:360px;
+    .guide-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
 
-    min-height:360px;
-  }
+    .group-hero {
+        height: 360px;
 
-  .group-hero-content{
-    padding:28px 7%;
+        min-height: 360px;
+    }
 
-    align-items:flex-start;
-  }
+    .group-hero-content {
+        padding:
+            28px 7%;
 
-  .group-hero-copy{
-    width:100%;
+        align-items: flex-start;
+    }
 
-    max-width:520px;
-  }
+    .group-hero-copy {
+        width: 100%;
 
-  .group-hero h1{
-    font-size:32px;
-  }
+        max-width: 520px;
+    }
 
-  .group-hero-copy > p{
-    width:100%;
+    .group-hero h1 {
+        font-size: 32px;
+    }
 
-    font-size:13px;
-  }
+    .group-hero-copy > p {
+        width: 100%;
 
-  .hero-search{
-    width:100%;
+        font-size: 13px;
+    }
 
-    max-width:330px;
-  }
+    .hero-search {
+        width: 100%;
 
-  .guide-grid{
-    grid-template-columns:
-      repeat(2,1fr);
-  }
+        max-width: 330px;
+    }
 }
 
 
-@media (max-width:450px){
+@media (max-width: 450px) {
 
-  body{
-    padding:0;
-  }
+    body {
+        padding: 0;
+    }
 
-  .app-shell{
-    width:100%;
+    .app-shell {
+        width: 100%;
 
-    min-width:760px;
+        min-width: 760px;
 
-    border:0;
+        border: 0;
 
-    border-radius:0;
-  }
+        border-radius: 0;
+    }
 
-  .group-hero{
-    height:380px;
+    .guide-grid {
+        grid-template-columns: 1fr;
+    }
 
-    min-height:380px;
-  }
+    .group-hero {
+        height: 380px;
 
-  .group-hero-content{
-    padding-left:20px;
+        min-height: 380px;
+    }
 
-    padding-right:20px;
-  }
+    .group-hero-content {
+        padding-left: 20px;
 
-  .group-hero-copy{
-    width:100%;
-  }
+        padding-right: 20px;
+    }
 
-  .group-hero h1{
-    font-size:28px;
-  }
+    .group-hero-copy {
+        width: 100%;
+    }
 
-  .hero-search{
-    width:100%;
-  }
+    .group-hero h1 {
+        font-size: 28px;
+    }
 
-  .guide-grid{
-    grid-template-columns:1fr;
-  }
+    .hero-search {
+        width: 100%;
+    }
 }
