@@ -4,13 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!--
-    This page lives inside:
-    guides/Billing Dispute Guides/
-
-    The base tag lets the existing shared V2 header/footer continue
-    to use root-relative paths even though this page is nested.
-  -->
   <base href="../../">
 
   <title>Billing Dispute Guides | Decision Support System</title>
@@ -27,11 +20,9 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
   >
 
-  <!-- Existing V2 shared/theme styles -->
   <link rel="stylesheet" href="assets/css/guide-themes.css">
   <link rel="stylesheet" href="assets/css/group-guides.css">
 
-  <!-- Existing V2 shared header/footer system -->
   <script src="shared/include.js"></script>
 </head>
 
@@ -39,15 +30,21 @@
 
   <div class="app-shell group-page">
 
-    <!-- Shared V2 Header -->
     <div id="header-placeholder"></div>
 
     <main>
 
-      <!-- Simple page introduction -->
-      <section class="group-intro">
-        <div class="group-container">
-          <div class="intro-copy">
+      <!-- ======================================================
+           BILLING DISPUTE HERO
+           ====================================================== -->
+      <section class="group-hero billing-dispute-hero">
+
+        <div class="group-hero-image" aria-hidden="true"></div>
+
+        <div class="group-hero-content group-container">
+
+          <div class="group-hero-copy">
+
             <div class="intro-kicker">
               <i class="fa-solid fa-scale-balanced"></i>
               Billing Dispute
@@ -56,36 +53,20 @@
             <h1>Billing Dispute Guides</h1>
 
             <p>
-              Select the guide that matches the billing concern and open
-              the appropriate workflow.
+              Select the guide that matches the billing concern and
+              open the appropriate workflow.
             </p>
-          </div>
 
-          <div class="intro-count">
-            <strong>6</strong>
-            <span>Guides</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Guide library -->
-      <section class="guide-library">
-        <div class="group-container">
-
-          <div class="library-toolbar">
-            <div>
-              <h2>Guide Library</h2>
-              <p id="resultsText">Showing all 6 guides</p>
-            </div>
-
-            <label class="group-search" for="guideSearch">
+            <label class="hero-search" for="guideSearch">
               <i class="fa-solid fa-magnifying-glass"></i>
+
               <input
                 id="guideSearch"
                 type="search"
                 placeholder="Search billing dispute guides..."
                 autocomplete="off"
               >
+
               <button
                 id="clearGuideSearch"
                 type="button"
@@ -94,8 +75,37 @@
               >
                 <i class="fa-solid fa-xmark"></i>
               </button>
+
+              <span class="hero-search-button">Search</span>
             </label>
+
           </div>
+
+        </div>
+      </section>
+
+
+      <!-- ======================================================
+           GUIDE LIBRARY
+           ====================================================== -->
+      <section class="guide-library">
+
+        <div class="group-container">
+
+          <div class="library-toolbar">
+
+            <div class="library-title">
+              <h2>Guide Library</h2>
+              <p id="resultsText">Showing all 6 guides</p>
+            </div>
+
+            <div class="intro-count" aria-label="6 guides available">
+              <strong>6</strong>
+              <span>Guides</span>
+            </div>
+
+          </div>
+
 
           <div class="guide-grid" id="guideGrid">
 
@@ -109,6 +119,7 @@
               </div>
 
               <div class="guide-card-content">
+
                 <span class="guide-tag">Billing</span>
 
                 <h3>Debtor Update per BOL</h3>
@@ -125,8 +136,10 @@
                   Open Guide
                   <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
               </div>
             </article>
+
 
             <!-- 02 -->
             <article
@@ -138,6 +151,7 @@
               </div>
 
               <div class="guide-card-content">
+
                 <span class="guide-tag">Rebill</span>
 
                 <h3>Debtor Update per LOA</h3>
@@ -154,8 +168,10 @@
                   Open Guide
                   <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
               </div>
             </article>
+
 
             <!-- 03 -->
             <article
@@ -167,6 +183,7 @@
               </div>
 
               <div class="guide-card-content">
+
                 <span class="guide-tag">RVSL</span>
 
                 <h3>Debtor Update per Reversal/Refusal</h3>
@@ -183,8 +200,10 @@
                   Open Guide
                   <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
               </div>
             </article>
+
 
             <!-- 04 -->
             <article
@@ -196,6 +215,7 @@
               </div>
 
               <div class="guide-card-content">
+
                 <span class="guide-tag">Weight</span>
 
                 <h3>Weight Update per BOL</h3>
@@ -212,8 +232,10 @@
                   Open Guide
                   <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
               </div>
             </article>
+
 
             <!-- 05 -->
             <article
@@ -225,6 +247,7 @@
               </div>
 
               <div class="guide-card-content">
+
                 <span class="guide-tag">Service</span>
 
                 <h3>Service Level/Type Update per BOL</h3>
@@ -241,8 +264,10 @@
                   Open Guide
                   <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
               </div>
             </article>
+
 
             <!-- 06 -->
             <article
@@ -254,6 +279,7 @@
               </div>
 
               <div class="guide-card-content">
+
                 <span class="guide-tag">Reference</span>
 
                 <h3>Reference Number Update - Add/Edit/Delete</h3>
@@ -270,10 +296,12 @@
                   Open Guide
                   <i class="fa-solid fa-arrow-right"></i>
                 </a>
+
               </div>
             </article>
 
           </div>
+
 
           <div class="no-results" id="noResults" hidden>
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -286,11 +314,11 @@
 
     </main>
 
-    <!-- Shared V2 Footer -->
     <div id="footer-placeholder"></div>
 
   </div>
 
   <script src="assets/js/group-guides.js"></script>
+
 </body>
 </html>
