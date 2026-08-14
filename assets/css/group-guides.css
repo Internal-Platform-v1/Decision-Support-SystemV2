@@ -343,28 +343,47 @@
    Exact Dashboard .quick-card h3 / p values.
    ============================================================ */
 
-.guide-card h3{
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+/* ============================================================
+   BILLING DISPUTE CARDS
+   Typography matched to Main Dashboard Quick Access
+   ============================================================ */
 
-  font-size:11px;
-  line-height:1.2;
+.guide-card h3 {
+    margin: 0;
 
-  margin:0 0 6px;
+    font-family: "Inter", system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  letter-spacing:-.2px;
+    font-size: 11px;
+    line-height: 1.15;
 
-  font-weight:800;
+    font-weight: 600;
+
+    color: #0f172a;
+
+    letter-spacing: -0.01em;
 }
 
-.guide-card p{
-  font-family:"Poppins","Segoe UI",Arial,sans-serif;
+.guide-card p {
+    margin: 8px 0 0;
 
-  font-size:8px;
-  line-height:1.4;
+    font-family: "Inter", system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  color:#7a7c98;
+    font-size: 8px;
+    line-height: 1.45;
 
-  margin:0;
+    font-weight: 400;
+
+    color: #64748b;
+
+    letter-spacing: 0;
+}
+
+.guide-card,
+.guide-card * {
+    font-family: "Inter", system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 
