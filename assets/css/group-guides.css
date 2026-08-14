@@ -1,34 +1,44 @@
 /* ============================================================
-   GROUP GUIDES — BILLING DISPUTE PAGE
+   GROUP GUIDES — BILLING DISPUTE
    ============================================================
 
-   SELF-CONTAINED
+   SELF-CONTAINED BILLING DISPUTE STYLESHEET
 
    IMPORTANT:
    - DO NOT load styles.css
    - DO NOT load guide-themes.css
-   - This file contains everything needed by the
-     Billing Dispute group page.
+   - Main Dashboard styles.css is the DESIGN REFERENCE ONLY.
+   - Nothing in this file changes index-main.html or styles.css.
 
-   Dashboard styles.css is used ONLY as the reference
-   for dimensions, typography, spacing, colors and cards.
+   Dashboard reference:
+   .section
+   .section-heading
+   .heading-bar
+   .view-all
+   .quick-grid
+   .quick-card
+   .quick-icon
+   .quick-svg
+   .quick-card h3
+   .quick-card p
+   .arrow-btn
    ============================================================ */
 
 
 /* ============================================================
-   POPPINS FONT
-   Exact font used by the Main Dashboard reference.
+   GLOBAL
    ============================================================ */
 
+* {
+    box-sizing: border-box;
+}
+
+
+/* Same Poppins used by Main Dashboard */
 @import url(
     "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
 );
 
-
-/* ============================================================
-   VARIABLES
-   Copied from Main Dashboard reference.
-   ============================================================ */
 
 :root {
     --purple: #4d148c;
@@ -37,21 +47,12 @@
 
     --ink: #10134f;
     --muted: #777a99;
-
     --line: #e7e8f3;
 
     --shadow:
         0 5px 20px rgba(48,38,111,.08);
 }
 
-
-/* ============================================================
-   GLOBAL RESET
-   ============================================================ */
-
-* {
-    box-sizing: border-box;
-}
 
 html,
 body {
@@ -71,16 +72,19 @@ body {
     background: #f3f3f8;
 }
 
+
 body {
     overflow-x: auto;
 
     padding: 10px;
 }
 
+
 button,
 input {
     font: inherit;
 }
+
 
 button {
     cursor: pointer;
@@ -89,7 +93,7 @@ button {
 
 /* ============================================================
    APP SHELL
-   Exact Main Dashboard reference.
+   Exact Dashboard reference
    ============================================================ */
 
 .app-shell {
@@ -119,14 +123,15 @@ button {
 
 
 /* ============================================================
-   MAIN PAGE AREA
+   MAIN
    ============================================================ */
 
-.app-shell main {
+.app-shell > main {
     flex: 1 0 auto;
 
     width: 100%;
 }
+
 
 .group-page {
     width: 100%;
@@ -138,7 +143,7 @@ button {
 
 
 /* ============================================================
-   FOOTER POSITION
+   FOOTER
    ============================================================ */
 
 #footer-placeholder {
@@ -163,12 +168,9 @@ button {
 
     isolation: isolate;
 
-    background:
-        #f8f7ff;
+    background: #f8f7ff;
 }
 
-
-/* Hero image */
 
 .group-hero-image {
     position: absolute;
@@ -187,10 +189,6 @@ button {
     background-size: cover;
 }
 
-
-/* ============================================================
-   HERO OVERLAY
-   ============================================================ */
 
 .group-hero::after {
     content: "";
@@ -223,6 +221,8 @@ button {
 
     z-index: 2;
 
+    width: 100%;
+
     height: 100%;
 
     display: flex;
@@ -231,6 +231,7 @@ button {
 
     padding-left: 8.2%;
 }
+
 
 .group-hero-copy {
     position: relative;
@@ -258,11 +259,9 @@ button {
 
     border-radius: 999px;
 
-    background:
-        rgba(241,234,255,.94);
+    background: rgba(241,234,255,.94);
 
-    border:
-        1px solid rgba(228,215,250,.95);
+    border: 1px solid rgba(228,215,250,.95);
 
     color: var(--purple);
 
@@ -284,6 +283,7 @@ button {
         0 4px 12px rgba(48,38,111,.04);
 }
 
+
 .intro-kicker i {
     color: var(--orange);
 
@@ -293,6 +293,7 @@ button {
 
 /* ============================================================
    HERO TITLE
+   Same typography family as Dashboard
    ============================================================ */
 
 .group-hero h1 {
@@ -347,7 +348,6 @@ button {
 
 /* ============================================================
    HERO SEARCH
-   Based directly on Dashboard .hero-search.
    ============================================================ */
 
 .hero-search {
@@ -357,8 +357,7 @@ button {
 
     background: #fff;
 
-    border:
-        1px solid #e0e0ed;
+    border: 1px solid #e0e0ed;
 
     border-radius: 6px;
 
@@ -374,6 +373,7 @@ button {
     position: relative;
 }
 
+
 .hero-search > i {
     flex: 0 0 auto;
 
@@ -387,6 +387,7 @@ button {
 
     font-size: 11px;
 }
+
 
 .hero-search input {
     border: 0;
@@ -414,12 +415,17 @@ button {
         sans-serif;
 
     font-size: 9px;
+
+    font-weight: 400;
 }
+
 
 .hero-search input::placeholder {
     color: #999bb0;
 }
 
+
+/* Search button in Billing HTML is a span */
 .hero-search-button {
     height: 34px;
 
@@ -435,8 +441,7 @@ button {
 
     border: 0;
 
-    border-radius:
-        0 6px 6px 0;
+    border-radius: 0 6px 6px 0;
 
     background: #5915c8;
 
@@ -456,29 +461,65 @@ button {
 }
 
 
-/* ============================================================
-   GUIDE LIBRARY
-   Dashboard equivalent of .section
-   ============================================================ */
+/* Clear button */
+.hero-search button {
+    position: absolute;
 
-.guide-library {
-    width: 100%;
+    right: 88px;
 
-    padding:
-        23px
-        5.6%
-        46px;
+    width: 25px;
 
-    background: #fff;
+    height: 25px;
+
+    display: none;
+
+    place-items: center;
+
+    border: 0;
+
+    border-radius: 7px;
+
+    background: #f1f1f7;
+
+    color: #777a99;
+}
+
+
+.hero-search button:hover {
+    background: #e6e5ef;
 }
 
 
 /* ============================================================
-   LIBRARY TOOLBAR
-   Dashboard equivalent of .section-heading
+   SECTION
+   EXACT Main Dashboard reference
    ============================================================ */
 
-.library-toolbar {
+.section {
+    padding:
+        23px
+        5.6%
+        0;
+}
+
+
+/* ============================================================
+   GUIDE LIBRARY
+   ============================================================ */
+
+.guide-library {
+    background: #fff;
+
+    padding-bottom: 46px;
+}
+
+
+/* ============================================================
+   SECTION HEADING
+   EXACT Main Dashboard reference
+   ============================================================ */
+
+.section-heading {
     display: flex;
 
     align-items: center;
@@ -487,15 +528,7 @@ button {
 }
 
 
-/* ============================================================
-   LIBRARY TITLE
-   ============================================================ */
-
-.library-title {
-    min-width: 0;
-}
-
-.library-title h2 {
+.section-heading h2 {
     font-size: 14px;
 
     margin: 0;
@@ -509,14 +542,15 @@ button {
         "Segoe UI",
         Arial,
         sans-serif;
-
-    line-height: 1.2;
 }
 
 
-/* Dashboard .heading-bar */
+/* ============================================================
+   HEADING BAR
+   EXACT Main Dashboard reference
+   ============================================================ */
 
-.library-title .heading-bar {
+.heading-bar {
     display: inline-block;
 
     width: 3px;
@@ -534,35 +568,11 @@ button {
 
 
 /* ============================================================
-   RESULTS TEXT
-   ============================================================ */
-
-#resultsText,
-.library-results {
-    margin: 5px 0 0;
-
-    color: var(--muted);
-
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    font-size: 8px;
-
-    line-height: 1.3;
-
-    font-weight: 400;
-}
-
-
-/* ============================================================
    VIEW ALL
-   Exact Dashboard .view-all
+   EXACT Main Dashboard reference
    ============================================================ */
 
-.library-toolbar .view-all {
+.view-all {
     border: 0;
 
     background: transparent;
@@ -582,15 +592,10 @@ button {
     padding: 0;
 
     cursor: pointer;
-
-    white-space: nowrap;
 }
 
-.library-toolbar .view-all:hover {
-    color: #4f13b8;
-}
 
-.library-toolbar .view-all span {
+.view-all span {
     font-size: 14px;
 
     margin-left: 4px;
@@ -600,11 +605,34 @@ button {
 
 
 /* ============================================================
-   GUIDE GRID
-   Exact Dashboard .quick-grid
+   BILLING RESULTS TEXT
    ============================================================ */
 
-.guide-grid {
+.library-results {
+    margin: 5px 0 0;
+
+    color: #777a99;
+
+    font-family:
+        "Poppins",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 8px;
+
+    line-height: 1.3;
+
+    font-weight: 400;
+}
+
+
+/* ============================================================
+   QUICK GRID
+   EXACT Main Dashboard reference
+   ============================================================ */
+
+.quick-grid {
     display: grid;
 
     grid-template-columns:
@@ -616,12 +644,18 @@ button {
 }
 
 
+/* Billing keeps the same exact Quick Grid */
+.guide-grid {
+    margin-top: 13px;
+}
+
+
 /* ============================================================
-   GUIDE CARD
-   Exact Dashboard .quick-card
+   QUICK CARD
+   EXACT Main Dashboard reference
    ============================================================ */
 
-.guide-card {
+.quick-card {
     height: 194px;
 
     border:
@@ -649,13 +683,10 @@ button {
         .18s box-shadow;
 
     cursor: pointer;
-
-    text-align: left;
-
-    overflow: hidden;
 }
 
-.guide-card:hover {
+
+.quick-card:hover {
     transform:
         translateY(-2px);
 
@@ -665,11 +696,11 @@ button {
 
 
 /* ============================================================
-   CARD BOTTOM ACCENTS
-   Exact Dashboard values
+   CARD BOTTOM ACCENT
+   EXACT Main Dashboard reference
    ============================================================ */
 
-.guide-card::after {
+.quick-card::after {
     content: "";
 
     position: absolute;
@@ -685,46 +716,43 @@ button {
     border-radius: 4px;
 }
 
-.guide-card.purple-card::after {
+
+.purple-card::after {
     background: #d7c9ff;
 }
 
-.guide-card.orange-card::after {
+
+.orange-card::after {
     background: #ffd4bd;
 }
 
-.guide-card.blue-card::after {
+
+.blue-card::after {
     background: #c9dcff;
 }
 
-.guide-card.green-card::after {
+
+.green-card::after {
     background: #d0f0d2;
 }
 
-.guide-card.indigo-card::after {
+
+.indigo-card::after {
     background: #c5c9ff;
 }
 
-.guide-card.pink-card::after {
+
+.pink-card::after {
     background: #ffd0df;
 }
 
 
 /* ============================================================
-   REMOVE OLD GROUP CARD DECORATION
+   QUICK ICON
+   EXACT Main Dashboard reference
    ============================================================ */
 
-.guide-card::before {
-    content: none;
-}
-
-
-/* ============================================================
-   CARD ICON
-   Exact Dashboard .quick-icon
-   ============================================================ */
-
-.guide-card-icon {
+.quick-icon {
     width: 44px;
 
     height: 44px;
@@ -736,7 +764,11 @@ button {
     place-items: center;
 
     margin-bottom: 12px;
+}
 
+
+/* Billing-specific helper class must NOT alter Dashboard size */
+.guide-card-icon {
     position: relative;
 
     z-index: 1;
@@ -744,7 +776,8 @@ button {
 
 
 /* ============================================================
-   EXACT DASHBOARD ICON COLORS
+   ICON COLORS
+   EXACT Main Dashboard reference
    ============================================================ */
 
 .purple-bg {
@@ -753,11 +786,13 @@ button {
     color: #7131dc;
 }
 
+
 .orange-bg {
     background: #fff0e4;
 
     color: #ff6d17;
 }
+
 
 .blue-bg {
     background: #eaf0ff;
@@ -765,17 +800,20 @@ button {
     color: #3865df;
 }
 
+
 .green-bg {
     background: #e8f7e7;
 
     color: #3e9346;
 }
 
+
 .indigo-bg {
     background: #eef0ff;
 
     color: #4a56d6;
 }
+
 
 .pink-bg {
     background: #ffeaf0;
@@ -785,8 +823,8 @@ button {
 
 
 /* ============================================================
-   CARD SVG
-   Exact Dashboard .quick-svg
+   QUICK SVG
+   EXACT Main Dashboard reference
    ============================================================ */
 
 .quick-svg {
@@ -794,6 +832,7 @@ button {
 
     height: 22px;
 }
+
 
 .ui-icon {
     display: block;
@@ -813,16 +852,19 @@ button {
 
 
 /* ============================================================
-   CARD TITLE
-   Exact Dashboard .quick-card h3
+   QUICK CARD TITLE
+   EXACT Main Dashboard reference
 
-   NOTE:
-   Dashboard does NOT define a separate font-family or dark
-   override here. It inherits the global Poppins font and
-   --ink color.
+   IMPORTANT:
+   - Poppins
+   - 11px
+   - 1.2 line-height
+   - -.2px letter spacing
+   - NO Inter
+   - NO #0f172a
    ============================================================ */
 
-.guide-card h3 {
+.quick-card h3 {
     font-size: 11px;
 
     line-height: 1.2;
@@ -844,11 +886,11 @@ button {
 
 
 /* ============================================================
-   CARD DESCRIPTION
-   Exact Dashboard .quick-card p
+   QUICK CARD DESCRIPTION
+   EXACT Main Dashboard reference
    ============================================================ */
 
-.guide-card p {
+.quick-card p {
     font-size: 8px;
 
     line-height: 1.4;
@@ -868,11 +910,22 @@ button {
 
 
 /* ============================================================
-   CARD ARROW
-   Exact Dashboard .arrow-btn
+   BILLING CARD CLASS
+   IMPORTANT:
+   Do NOT override Quick Card typography.
    ============================================================ */
 
-.guide-card .arrow-btn {
+.guide-card {
+    text-align: left;
+}
+
+
+/* ============================================================
+   ARROW BUTTON
+   EXACT Main Dashboard reference
+   ============================================================ */
+
+.arrow-btn {
     position: absolute;
 
     left: 12px;
@@ -885,34 +938,38 @@ button {
 
     color: #4f13b8;
 
-    font-size: 18px;
-
-    padding: 0;
-
-    margin: 0;
-
     font-family:
         "Poppins",
         "Segoe UI",
         Arial,
         sans-serif;
 
-    font-weight: 400;
+    font-size: 18px;
 
     line-height: normal;
 
+    padding: 0;
+
+    margin: 0;
+
     cursor: pointer;
-
-    z-index: 3;
-}
-
-.guide-card .arrow-btn:hover {
-    color: #5915c8;
 }
 
 
 /* ============================================================
-   SEARCH STATE
+   MAKE THE WHOLE CARD THE CLICK TARGET
+
+   The JS handles the actual navigation.
+   This only ensures the visual affordance is consistent.
+   ============================================================ */
+
+.guide-card {
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   SEARCH FILTER STATE
    ============================================================ */
 
 .guide-card.is-hidden {
@@ -939,11 +996,13 @@ button {
     background: #fafbfe;
 }
 
+
 .no-results > i {
     font-size: 22px;
 
     color: #94a3b8;
 }
+
 
 .no-results h3 {
     margin: 10px 0 4px;
@@ -962,6 +1021,7 @@ button {
 
     font-weight: 800;
 }
+
 
 .no-results p {
     margin: 0;
@@ -984,12 +1044,12 @@ button {
 
 /* ============================================================
    RESPONSIVE
-   Exact Dashboard Quick Access breakpoints
+   Same Quick Access breakpoints as Dashboard
    ============================================================ */
 
 @media (max-width: 1050px) {
 
-    .guide-grid {
+    .quick-grid {
         grid-template-columns:
             repeat(3, 1fr);
     }
@@ -1038,7 +1098,7 @@ button {
 
 @media (max-width: 700px) {
 
-    .guide-grid {
+    .quick-grid {
         grid-template-columns:
             repeat(2, 1fr);
     }
@@ -1096,7 +1156,7 @@ button {
         border-radius: 0;
     }
 
-    .guide-grid {
+    .quick-grid {
         grid-template-columns: 1fr;
     }
 
