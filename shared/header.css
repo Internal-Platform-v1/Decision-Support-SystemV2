@@ -625,3 +625,62 @@
         transition: none !important;
     }
 }
+
+
+/* ============================================================
+   FINAL HEADER REFINEMENT
+   - Restore tighter/original navigation spacing.
+   - Avatar is now the only profile control; no chevron.
+   ============================================================ */
+
+/* Tighter original-style menu spacing */
+.brand-nav {
+    gap: 0;
+}
+
+.nav-item {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+/* Keep the existing lift effect, but make it feel compact. */
+.nav-item:hover {
+    transform: translateY(-2px);
+}
+
+.nav-item.active {
+    transform: translateY(-1px);
+}
+
+/* Avatar remains the profile trigger with no dropdown chevron. */
+.profile-area {
+    gap: 0;
+}
+
+.avatar-btn {
+    margin-right: 0;
+}
+
+/* The profile menu remains anchored cleanly to the avatar. */
+.profile-menu {
+    right: 0;
+}
+
+/* Prevent the removed chevron from affecting layout if old markup is cached. */
+.tiny-chevron {
+    display: none !important;
+}
+
+@media (max-width: 1120px) {
+    .nav-item {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+@media (max-width: 760px) {
+    .nav-item {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
