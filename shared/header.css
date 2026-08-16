@@ -62,9 +62,9 @@
     background: transparent;
     color: #343565;
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 700;
     position: relative;
-    padding: 0 2px;
+    padding: 0 5px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -75,32 +75,67 @@
 
 .nav-item:hover {
     color: #5620bd;
+    text-shadow: 0 0 8px rgba(107, 37, 223, 0.13);
+    transform: translateY(-2px);
 }
 
 .nav-item.active {
     color: #5620bd;
+    text-shadow: 0 0 8px rgba(107, 37, 223, 0.13);
+    transform: translateY(-1px);
 }
 
-/* ---- animated underline ---- */
+/* ---- navigation highlight ---- */
 .nav-underline {
+    display: none;
+}
+
+.nav-item {
+    border-radius: 7px;
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        box-shadow 0.3s ease,
+        text-shadow 0.3s ease,
+        transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-item::before {
+    content: "";
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: #6b25df;
-    border-radius: 2px;
-    transition: width 0.3s ease, left 0.3s ease;
+    inset: 9px 1px;
+    border-radius: 7px;
+    background: rgba(107, 37, 223, 0.055);
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+        opacity 0.25s ease,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
 }
 
-.nav-item:hover .nav-underline {
-    width: 100%;
-    left: 0;
+.nav-item:hover::before,
+.nav-item.active::before {
+    opacity: 1;
+    transform: scale(1);
 }
 
-.nav-item.active .nav-underline {
-    width: 100%;
-    left: 0;
+.nav-item:hover,
+.nav-item.active {
+    color: #5620bd;
+    text-shadow: 0 0 8px rgba(107, 37, 223, 0.13);
+    box-shadow: 0 3px 12px rgba(107, 37, 223, 0.06);
+}
+
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+    color: #6b25df;
+    filter: drop-shadow(0 0 4px rgba(107, 37, 223, 0.18));
+}
+
+.nav-item.has-dropdown:hover::before,
+.nav-item.has-dropdown.open::before {
+    background: rgba(107, 37, 223, 0.07);
 }
 
 /* ---- dropdown chevron ---- */
@@ -476,211 +511,23 @@
 
 @media (max-width: 800px) {
     .brand-nav { gap: 10px; }
-    .nav-item { font-size: 9px; }
+    .nav-item { font-size: 9px;
+        padding-left: 5px;
+        padding-right: 5px; }
     .global-search { width: 120px; }
     .global-search:focus-within { width: 140px; }
 }
 
-/* ============================================================
-   ORIGINAL STYLE — PREMIUM GLOW / HIGHLIGHT LAYER ONLY
-   ============================================================ */
-.topbar::after{content:"";position:absolute;left:0;bottom:-1px;width:0;height:2px;background:linear-gradient(90deg,transparent,#6b25df,#ff6600,transparent);opacity:.55;transition:width .7s cubic-bezier(.22,1,.36,1);pointer-events:none}
-.topbar:hover::after{width:100%}
-.nav-item{transition:color .25s ease,text-shadow .3s ease}
-.nav-item:hover,.nav-item.active{color:#5620bd;text-shadow:0 0 9px rgba(107,37,223,.16)}
-.nav-underline{box-shadow:0 0 0 rgba(107,37,223,0);transition:width .3s ease,left .3s ease,box-shadow .3s ease}
-.nav-item:hover .nav-underline{box-shadow:0 -1px 8px rgba(107,37,223,.32)}
-.nav-item.active .nav-underline{box-shadow:0 -1px 8px rgba(107,37,223,.25)}
-.nav-item.has-dropdown:hover .dropdown-chevron,.nav-item.has-dropdown.open .dropdown-chevron{color:#5620bd}
-.dropdown-panel a:hover{box-shadow:inset 2px 0 0 #6b25df}
-.dropdown-panel a:hover .dropdown-icon{filter:drop-shadow(0 2px 5px rgba(107,37,223,.18))}
-.global-search{transition:border-color .25s ease,box-shadow .3s ease,width .3s ease,transform .25s ease}
-.global-search:hover{border-color:#d2cee2;box-shadow:0 3px 12px rgba(77,20,140,.04)}
-.global-search:focus-within{box-shadow:0 0 0 3px rgba(107,37,223,.08),0 5px 16px rgba(77,20,140,.06)}
-.global-search:focus-within .search-icon{filter:drop-shadow(0 0 4px rgba(107,37,223,.22))}
-.icon-btn:hover{filter:drop-shadow(0 3px 7px rgba(86,32,189,.16))}
-.icon-btn:hover .bell-icon{filter:drop-shadow(0 0 4px rgba(107,37,223,.20))}
-.icon-btn:hover .notification-dot{box-shadow:0 0 7px rgba(255,76,32,.28)}
-.avatar-btn:hover{box-shadow:0 2px 14px rgba(77,20,184,.30),0 0 0 3px rgba(107,37,223,.07)}
-.tiny-chevron:hover{filter:drop-shadow(0 0 4px rgba(107,37,223,.18))}
-.profile-menu button:hover span{filter:drop-shadow(0 0 4px rgba(107,37,223,.15))}
-
-/* ============================================================
-   NAV HIGHLIGHT — replaces underline hover/active treatment
-   ============================================================ */
-.nav-item {
-    padding: 0 10px;
-    border-radius: 7px;
-    transition:
-        color .25s ease,
-        background-color .25s ease,
-        box-shadow .3s ease,
-        text-shadow .3s ease;
-}
-
-.nav-item::before {
-    content: "";
-    position: absolute;
-    inset: 9px 2px;
-    border-radius: 7px;
-    background: rgba(107,37,223,.055);
-    opacity: 0;
-    transform: scale(.96);
-    transition:
-        opacity .25s ease,
-        transform .3s cubic-bezier(.22,1,.36,1);
-    pointer-events: none;
-}
-
-.nav-item:hover::before,
-.nav-item.active::before {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.nav-item:hover,
-.nav-item.active {
-    color: #5620bd;
-    text-shadow: 0 0 8px rgba(107,37,223,.13);
-    box-shadow: 0 3px 12px rgba(107,37,223,.06);
-}
-
-/* Completely remove the previous underline visual. */
-.nav-underline,
-.nav-item:hover .nav-underline,
-.nav-item.active .nav-underline {
-    width: 0 !important;
-    left: 50% !important;
-    opacity: 0 !important;
-    box-shadow: none !important;
-    pointer-events: none;
-}
-
-/* Small icon highlight accompanies the color highlight. */
-.nav-item:hover .nav-icon,
-.nav-item.active .nav-icon {
-    color: #6b25df;
-    filter: drop-shadow(0 0 4px rgba(107,37,223,.18));
-}
-
-.nav-item.has-dropdown:hover::before,
-.nav-item.has-dropdown.open::before {
-    background: rgba(107,37,223,.07);
-}
-
-
-/* ============================================================
-   NAV MENU — BOLD + PREMIUM LIFT
-   Existing color-highlight effect remains unchanged.
-   ============================================================ */
-
-.nav-item {
-    font-weight: 700;
-
-    transition:
-        color .22s ease,
-        background .22s ease,
-        transform .28s cubic-bezier(.22, 1, .36, 1);
-}
-
-.nav-item:hover {
-    transform: translateY(-2px);
-}
-
-.nav-item.active {
-    transform: translateY(-1px);
-}
-
-/* Subtle text glow reinforces the hover state. */
-.nav-item:hover .nav-label {
-    text-shadow: 0 3px 10px rgba(77, 20, 140, .13);
-}
-
-.nav-item.active .nav-label {
-    text-shadow: 0 2px 8px rgba(77, 20, 140, .10);
-}
-
-/* Case Directory gets the same lift behavior. */
-.nav-item.has-dropdown:hover {
-    transform: translateY(-2px);
-}
-
-.nav-item.has-dropdown.open {
-    transform: translateY(-1px);
-}
-
-/* Keep the dropdown panel itself stationary. */
-.dropdown-panel {
-    transform-origin: top left;
-}
-
-/* Respect reduced-motion preferences. */
+/* ---- reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
     .nav-item,
     .nav-item:hover,
-    .nav-item.active,
-    .nav-item.has-dropdown:hover,
-    .nav-item.has-dropdown.open {
+    .nav-item.active {
         transform: none !important;
         transition: none !important;
     }
-}
 
-
-/* ============================================================
-   FINAL HEADER REFINEMENT
-   - Restore tighter/original navigation spacing.
-   - Avatar is now the only profile control; no chevron.
-   ============================================================ */
-
-/* Tighter original-style menu spacing */
-.brand-nav {
-    gap: 0;
-}
-
-.nav-item {
-    padding-left: 7px;
-    padding-right: 7px;
-}
-
-/* Keep the existing lift effect, but make it feel compact. */
-.nav-item:hover {
-    transform: translateY(-2px);
-}
-
-.nav-item.active {
-    transform: translateY(-1px);
-}
-
-/* Avatar remains the profile trigger with no dropdown chevron. */
-.profile-area {
-    gap: 0;
-}
-
-.avatar-btn {
-    margin-right: 0;
-}
-
-/* The profile menu remains anchored cleanly to the avatar. */
-.profile-menu {
-    right: 0;
-}
-
-/* Prevent the removed chevron from affecting layout if old markup is cached. */
-.tiny-chevron {
-    display: none !important;
-}
-
-@media (max-width: 1120px) {
-    .nav-item {
-        padding-left: 6px;
-        padding-right: 6px;
-    }
-}
-
-@media (max-width: 760px) {
-    .nav-item {
-        padding-left: 5px;
-        padding-right: 5px;
+    .nav-item::before {
+        transition: none !important;
     }
 }
