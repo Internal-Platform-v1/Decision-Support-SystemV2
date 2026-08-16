@@ -26,7 +26,6 @@
    .arrow-btn
    ============================================================ */
 
-
 /* ============================================================
    GLOBAL
    ============================================================ */
@@ -34,7 +33,6 @@
 * {
     box-sizing: border-box;
 }
-
 
 :root {
     --purple: #4d148c;
@@ -48,7 +46,6 @@
     --shadow:
         0 5px 20px rgba(48,38,111,.08);
 }
-
 
 html,
 body {
@@ -64,24 +61,20 @@ body {
     background: #f3f3f8;
 }
 
-
 body {
     overflow-x: auto;
 
     padding: 10px;
 }
 
-
 button,
 input {
     font: inherit;
 }
 
-
 button {
     cursor: pointer;
 }
-
 
 /* ============================================================
    APP SHELL
@@ -113,7 +106,6 @@ button {
     flex-direction: column;
 }
 
-
 /* ============================================================
    MAIN
    ============================================================ */
@@ -124,7 +116,6 @@ button {
     width: 100%;
 }
 
-
 .group-page {
     width: 100%;
 
@@ -132,7 +123,6 @@ button {
 
     background: #fff;
 }
-
 
 /* ============================================================
    FOOTER
@@ -144,13 +134,12 @@ button {
     flex-shrink: 0;
 }
 
-
 /* ============================================================
    BILLING DISPUTE HERO
    ============================================================ */
 
 .group-hero {
-    height: 330px;
+    height: 252px;
 
     min-height: 330px;
 
@@ -162,7 +151,6 @@ button {
 
     background: #f8f7ff;
 }
-
 
 .group-hero-image {
     position: absolute;
@@ -180,7 +168,6 @@ button {
 
     background-size: cover;
 }
-
 
 .group-hero::after {
     content: "";
@@ -203,7 +190,6 @@ button {
         );
 }
 
-
 /* ============================================================
    HERO CONTENT
    ============================================================ */
@@ -224,7 +210,6 @@ button {
     padding-left: 8.2%;
 }
 
-
 .group-hero-copy {
     position: relative;
 
@@ -234,7 +219,6 @@ button {
 
     max-width: 430px;
 }
-
 
 /* ============================================================
    HERO KICKER
@@ -271,13 +255,11 @@ button {
         0 4px 12px rgba(48,38,111,.04);
 }
 
-
 .intro-kicker i {
     color: var(--orange);
 
     font-size: 11px;
 }
-
 
 /* ============================================================
    HERO TITLE
@@ -299,7 +281,6 @@ button {
 
     letter-spacing: -.7px;
 }
-
 
 /* ============================================================
    HERO DESCRIPTION
@@ -324,7 +305,6 @@ button {
 
     letter-spacing: .01em;
 }
-
 
 /* ============================================================
    HERO SEARCH
@@ -353,7 +333,6 @@ button {
     position: relative;
 }
 
-
 .hero-search > i {
     flex: 0 0 auto;
 
@@ -367,7 +346,6 @@ button {
 
     font-size: 11px;
 }
-
 
 .hero-search input {
     border: 0;
@@ -395,11 +373,9 @@ button {
     font-weight: 400;
 }
 
-
 .hero-search input::placeholder {
     color: #999bb0;
 }
-
 
 /* Search button in Billing HTML is a span */
 .hero-search-button {
@@ -432,7 +408,6 @@ button {
     cursor: pointer;
 }
 
-
 /* Clear button */
 .hero-search button {
     position: absolute;
@@ -456,11 +431,9 @@ button {
     color: #777a99;
 }
 
-
 .hero-search button:hover {
     background: #e6e5ef;
 }
-
 
 /* ============================================================
    SECTION
@@ -471,100 +444,9 @@ button {
     padding: 10px 5.6% 0;
 }
 
-
 /* ============================================================
    GUIDE LIBRARY
    ============================================================ */
-
-/* ============================================================
-   BILLING DISPUTE GUIDE OVERVIEW — DESIGN ONLY
-   ============================================================ */
-
-.guide-overview-stats {
-    position: absolute;
-    left: 8.8%;
-    right: 8.8%;
-    bottom: 18px;
-    z-index: 4;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 13px;
-}
-
-.guide-stat-card {
-    min-width: 0;
-    height: 68px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 14px;
-    background: rgba(255, 255, 255, .97);
-    border: 1px solid #ececf4;
-    border-radius: 7px;
-    box-shadow: 0 4px 14px rgba(75, 45, 153, .08);
-    transition:
-        transform .25s cubic-bezier(.22, 1, .36, 1),
-        box-shadow .25s ease,
-        border-color .25s ease;
-}
-
-.guide-stat-card:hover {
-    transform: translateY(-2px);
-    border-color: #dfd8ef;
-    box-shadow: 0 8px 20px rgba(75, 45, 153, .12);
-}
-
-.guide-stat-icon {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
-    display: grid;
-    place-items: center;
-    border-radius: 10px;
-}
-
-.guide-stat-icon svg {
-    width: 19px;
-    height: 19px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.7;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.guide-stat-icon.purple { background: #f0e9ff; color: #6d2ce0; }
-.guide-stat-icon.orange { background: #fff0e4; color: #ff7218; }
-.guide-stat-icon.blue { background: #edf2ff; color: #3564e5; }
-.guide-stat-icon.yellow { background: #fff6de; color: #f1a919; }
-
-.guide-stat-copy {
-    min-width: 0;
-}
-
-.guide-stat-copy strong {
-    display: block;
-    font-size: 17px;
-    line-height: 18px;
-    font-weight: 700;
-    color: #292a4f;
-}
-
-.guide-stat-copy span {
-    display: block;
-    margin-top: 3px;
-    font-size: 8px;
-    line-height: 1.25;
-    font-weight: 500;
-    color: #757795;
-}
-
-.guide-library {
-    background: #fff;
-
-    padding-bottom: 46px;
-}
-
 
 /* ============================================================
    SECTION HEADING
@@ -579,7 +461,6 @@ button {
     justify-content: space-between;
 }
 
-
 .section-heading h2 {
     font-size: 14px;
 
@@ -591,7 +472,6 @@ button {
 
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
-
 
 /* ============================================================
    HEADING BAR
@@ -613,7 +493,6 @@ button {
 
     vertical-align: -5px;
 }
-
 
 /* ============================================================
    VIEW ALL
@@ -638,7 +517,6 @@ button {
     cursor: pointer;
 }
 
-
 .view-all span {
     font-size: 14px;
 
@@ -646,7 +524,6 @@ button {
 
     vertical-align: -1px;
 }
-
 
 /* ============================================================
    BILLING RESULTS TEXT
@@ -666,7 +543,6 @@ button {
     font-weight: 400;
 }
 
-
 /* ============================================================
    QUICK GRID
    EXACT Main Dashboard reference
@@ -683,12 +559,10 @@ button {
     margin-top: 13px;
 }
 
-
 /* Billing keeps the same exact Quick Grid */
 .guide-grid {
     margin-top: 13px;
 }
-
 
 /* ============================================================
    QUICK CARD
@@ -725,7 +599,6 @@ button {
     cursor: pointer;
 }
 
-
 .quick-card:hover {
     transform:
         translateY(-2px);
@@ -733,7 +606,6 @@ button {
     box-shadow:
         0 8px 20px rgba(41,32,94,.1);
 }
-
 
 /* ============================================================
    CARD BOTTOM ACCENT
@@ -756,36 +628,29 @@ button {
     border-radius: 4px;
 }
 
-
 .purple-card::after {
     background: #d7c9ff;
 }
-
 
 .orange-card::after {
     background: #ffd4bd;
 }
 
-
 .blue-card::after {
     background: #c9dcff;
 }
-
 
 .green-card::after {
     background: #d0f0d2;
 }
 
-
 .indigo-card::after {
     background: #c5c9ff;
 }
 
-
 .pink-card::after {
     background: #ffd0df;
 }
-
 
 /* ============================================================
    QUICK ICON
@@ -806,14 +671,12 @@ button {
     margin-bottom: 12px;
 }
 
-
 /* Billing-specific helper class must NOT alter Dashboard size */
 .guide-card-icon {
     position: relative;
 
     z-index: 1;
 }
-
 
 /* ============================================================
    ICON COLORS
@@ -826,13 +689,11 @@ button {
     color: #7131dc;
 }
 
-
 .orange-bg {
     background: #fff0e4;
 
     color: #ff6d17;
 }
-
 
 .blue-bg {
     background: #eaf0ff;
@@ -840,13 +701,11 @@ button {
     color: #3865df;
 }
 
-
 .green-bg {
     background: #e8f7e7;
 
     color: #3e9346;
 }
-
 
 .indigo-bg {
     background: #eef0ff;
@@ -854,13 +713,11 @@ button {
     color: #4a56d6;
 }
 
-
 .pink-bg {
     background: #ffeaf0;
 
     color: #ec3970;
 }
-
 
 /* ============================================================
    QUICK SVG
@@ -872,7 +729,6 @@ button {
 
     height: 22px;
 }
-
 
 .ui-icon {
     display: block;
@@ -889,7 +745,6 @@ button {
 
     flex: none;
 }
-
 
 /* ============================================================
    QUICK CARD TITLE
@@ -920,7 +775,6 @@ button {
     font-weight: 700;
 }
 
-
 /* ============================================================
    QUICK CARD DESCRIPTION
    EXACT Main Dashboard reference
@@ -940,7 +794,6 @@ button {
     font-weight: 400;
 }
 
-
 /* ============================================================
    BILLING CARD CLASS
    IMPORTANT:
@@ -951,7 +804,6 @@ button {
     text-align: left;
     cursor: pointer;
 }
-
 
 /* ============================================================
    ARROW BUTTON
@@ -984,7 +836,6 @@ button {
     cursor: pointer;
 }
 
-
 /* ============================================================
    SEARCH FILTER STATE
    ============================================================ */
@@ -992,7 +843,6 @@ button {
 .guide-card.is-hidden {
     display: none;
 }
-
 
 /* ============================================================
    NO RESULTS
@@ -1013,13 +863,11 @@ button {
     background: #fafbfe;
 }
 
-
 .no-results > i {
     font-size: 22px;
 
     color: #94a3b8;
 }
-
 
 .no-results h3 {
     margin: 10px 0 4px;
@@ -1035,7 +883,6 @@ button {
     font-weight: 800;
 }
 
-
 .no-results p {
     margin: 0;
 
@@ -1049,7 +896,6 @@ button {
 
     font-weight: 400;
 }
-
 
 /* ============================================================
    RESPONSIVE
@@ -1073,7 +919,6 @@ button {
         max-width: 500px;
     }
 }
-
 
 @media (max-width: 800px) {
 
@@ -1103,7 +948,6 @@ button {
         font-size: 32px;
     }
 }
-
 
 @media (max-width: 700px) {
 
@@ -1147,7 +991,6 @@ button {
         max-width: 330px;
     }
 }
-
 
 @media (max-width: 450px) {
 
@@ -1194,34 +1037,3 @@ button {
     }
 }
 
-/* BILLING DISPUTE GUIDE OVERVIEW — RESPONSIVE */
-@media (max-width: 1050px) {
-    .group-hero { height: 335px; }
-
-    .guide-overview-stats {
-        left: 7%;
-        right: 7%;
-    }
-}
-
-@media (max-width: 700px) {
-    .group-hero { height: 390px; }
-
-    .guide-overview-stats {
-        left: 6%;
-        right: 6%;
-        bottom: 18px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-}
-
-@media (max-width: 450px) {
-    .group-hero { height: 455px; }
-
-    .guide-overview-stats {
-        left: 5%;
-        right: 5%;
-        grid-template-columns: 1fr;
-    }
-}
