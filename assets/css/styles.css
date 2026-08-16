@@ -1,5 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 /* assets/css/styles.css – main content only */
 * { box-sizing: border-box; }
+/* ===== TYPOGRAPHY =====
+   Inter is used throughout the main dashboard.
+   400 = body / descriptions
+   500 = labels / navigation-style text
+   600 = section headings / card headings
+   700 = buttons / statistics
+   800 = hero heading
+*/
 :root {
     --purple: #4d148c;
     --purple2: #6b20d0;
@@ -9,14 +19,11 @@
     --line: #e7e8f3;
     --shadow: 0 5px 20px rgba(48,38,111,.08);
 }
-/* ===== POPPINS FONT ===== */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
-
 html, body {
     margin: 0;
     min-height: 100%;
     width: 100%;
-    font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
     color: var(--ink);
     background: #f3f3f8;
 }
@@ -60,7 +67,7 @@ button { cursor: pointer; }
     position: relative;
     overflow: hidden;
     padding: 58px 0 95px 8.2%;
-    background: #f8f7ff url("../images/hero-background.png") center 94%/cover no-repeat;
+    background: #f8f7ff url("../images/hero-background.png") center center/cover no-repeat;
 }
 
 .hero-copy {
