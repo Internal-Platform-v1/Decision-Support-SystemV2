@@ -56,32 +56,37 @@ button { cursor: pointer; }
 
 /* ===== HERO ===== */
 .hero {
-    height: 252px;
+    height: 330px;
     position: relative;
     overflow: hidden;
-    padding: 58px 0 20px 8.2%;
+    padding: 58px 0 95px 8.2%;
     background: #f8f7ff url("../images/hero-background.png") center center/cover no-repeat;
 }
+
 .hero-copy {
     position: relative;
     z-index: 3;
     width: 360px;
 }
+
 .hero h1 {
-    font-size: 36px;          /* increased from 26px */
+    font-size: 36px;
     line-height: 1.15;
     margin: 0 0 10px;
     font-weight: 800;
     letter-spacing: -.7px;
 }
+
 .hero h1 span { color: var(--orange); }
+
 .hero p {
-    font-size: 15px;          /* increased from 12px */
+    font-size: 15px;
     line-height: 1.5;
     color: #3d3f65;
     margin: 0 0 16px;
     letter-spacing: 0.01em;
 }
+
 .hero-search {
     height: 34px;
     width: 330px;
@@ -93,32 +98,50 @@ button { cursor: pointer; }
     padding-left: 11px;
     box-shadow: 0 4px 12px rgba(75,45,153,.06);
 }
+
 .hero-search input {
-    border: 0; outline: 0; flex: 1; min-width: 0;
+    border: 0;
+    outline: 0;
+    flex: 1;
+    min-width: 0;
     font-size: 9px;
 }
-.hero-search .search-icon { margin-right: 8px; width: 11px; height: 11px; }
-.hero-search button {
-    height: 34px; border: 0;
-    background: #5915c8; color: #fff;
-    font-size: 9px; font-weight: 700;
-    width: 82px; border-radius: 0 6px 6px 0;
+
+.hero-search .search-icon {
+    margin-right: 8px;
+    width: 11px;
+    height: 11px;
 }
+
+.hero-search button {
+    height: 34px;
+    border: 0;
+    background: #5915c8;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    width: 82px;
+    border-radius: 0 6px 6px 0;
+}
+
 .hero-art { display: none; }
 
-/* ===== STATS ===== */
+/* ===== STATS — INSIDE HERO ===== */
 .stats-row {
+    position: absolute;
+    left: 8.8%;
+    right: 8.8%;
+    bottom: 18px;
+    z-index: 4;
+
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 13px;
-    padding: 0 8.8%;
-    margin-top: -1px;
-    position: relative;
-    z-index: 4;
 }
+
 .stat-card {
     height: 68px;
-    background: #fff;
+    background: rgba(255,255,255,.97);
     border: 1px solid #ececf4;
     border-radius: 7px;
     box-shadow: var(--shadow);
@@ -127,17 +150,32 @@ button { cursor: pointer; }
     padding: 0 14px;
     gap: 12px;
 }
+
 .stat-icon {
-    width: 38px; height: 38px;
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
-    display: grid; place-items: center;
+    display: grid;
+    place-items: center;
 }
+
 .stat-icon.purple { background: #f0e9ff; color: #6d2ce0; }
 .stat-icon.orange { background: #fff0e4; color: #ff7218; }
 .stat-icon.blue { background: #edf2ff; color: #3564e5; }
 .stat-icon.yellow { background: #fff6de; color: #f1a919; }
-.stat-card strong { font-size: 17px; display: block; line-height: 18px; }
-.stat-card small { font-size: 8px; color: #757795; display: block; margin-top: 3px; }
+
+.stat-card strong {
+    font-size: 17px;
+    display: block;
+    line-height: 18px;
+}
+
+.stat-card small {
+    font-size: 8px;
+    color: #757795;
+    display: block;
+    margin-top: 3px;
+}
 
 /* ===== QUICK ACCESS ===== */
 .section { padding: 23px 5.6% 0; }
@@ -245,12 +283,44 @@ button { cursor: pointer; }
 /* ---- responsive ---- */
 @media (max-width: 1050px) {
     .quick-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .hero {
+        height: 335px;
+    }
+
+    .stats-row {
+        left: 7%;
+        right: 7%;
+    }
 }
 @media (max-width: 700px) {
     .quick-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .hero {
+        height: 390px;
+        padding-bottom: 170px;
+    }
+
+    .stats-row {
+        left: 6%;
+        right: 6%;
+        bottom: 18px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
 }
 @media (max-width: 450px) {
     .quick-grid { grid-template-columns: 1fr; }
+
+    .hero {
+        height: 455px;
+    }
+
+    .stats-row {
+        left: 5%;
+        right: 5%;
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ===== LOWER GRID ===== */
