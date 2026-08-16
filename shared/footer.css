@@ -1,55 +1,17 @@
-/* shared/footer.css */
-.footer-banner {
-    height: 66px;
-    margin: 0;
-    background: linear-gradient(110deg, #42119d, #4d0ba9 48%, #3b078d);
-    position: relative;
-    overflow: hidden;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    padding: 0 5.5%;
-    border-radius: 0;
-    width: 100%;
-}
-.quote-mark {
-    font-family: Georgia, serif;
-    font-size: 62px;
-    font-weight: bold;
-    line-height: 1;
-    opacity: .9;
-    margin-right: 10px;
-    margin-top: -8px;
-}
-.quote-copy { font-size: 9px; line-height: 1.45; z-index: 2; }
-.quote-copy strong { font-weight: 600; }
-.footer-banner button {
-    margin-left: auto;
-    border: 1px solid rgba(255,255,255,.3);
-    background: rgba(255,255,255,.03);
-    color: #fff;
-    border-radius: 6px;
-    height: 29px;
-    padding: 0 14px;
-    font-size: 8px;
-    font-weight: 700;
-    z-index: 3;
-    cursor: pointer;
-}
-.footer-banner button span { font-size: 13px; margin-left: 7px; }
-.wave {
-    position: absolute; height: 55px; width: 55%;
-    border-top: 1px solid rgba(255,111,27,.75);
-    border-radius: 50%;
-    left: 25%; bottom: -33px;
-    transform: rotate(-4deg);
-}
-.wave-two {
-    left: 36%; bottom: -24px;
-    border-top-color: rgba(255,255,255,.24);
-    transform: rotate(-5deg);
-    width: 48%;
-}
-
-/* V3 FOOTER VISUAL UPGRADE */
-.footer-banner{height:72px;background:linear-gradient(108deg,#32106f,#4d148c 45%,#3c087e);isolation:isolate}.footer-banner:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 50%,rgba(129,76,225,.2),transparent 32%),radial-gradient(circle at 76% 30%,rgba(255,102,0,.08),transparent 26%);pointer-events:none}.footer-content{position:relative;z-index:5;height:100%;padding:0 5.5%;display:flex;align-items:center}.quote-mark{font-size:55px;transition:transform .45s cubic-bezier(.34,1.56,.64,1),color .3s}.footer-banner:hover .quote-mark{transform:translateY(-2px) scale(1.03)}.footer-banner button{position:relative;overflow:hidden;border-radius:8px;transition:transform .35s cubic-bezier(.34,1.56,.64,1),background .25s,border-color .25s,box-shadow .3s}.footer-banner button:hover{transform:translateY(-1px);background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.45);box-shadow:0 6px 16px rgba(19,0,63,.2)}.footer-banner button span{display:inline-flex;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}.footer-banner button:hover span{transform:translateX(2px)}.wave{animation:footerWaveFloat 8s ease-in-out infinite}.wave-two{animation-delay:-2s;animation-duration:10s}.wave-three{animation-delay:-4s;animation-duration:11s}.footer-aura{position:absolute;width:130px;height:130px;border-radius:50%;filter:blur(20px);opacity:.12;pointer-events:none;animation:footerAuraFloat 7s ease-in-out infinite}.aura-one{left:9%;top:-82px;background:#a46cf4}.aura-two{right:18%;bottom:-100px;background:#ff7b2c;animation-delay:-3s}@keyframes footerWaveFloat{0%,100%{margin-left:0;opacity:.68}50%{margin-left:14px;opacity:.92}}@keyframes footerAuraFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(14px,4px) scale(1.08)}}@media(prefers-reduced-motion:reduce){.wave,.footer-aura{animation:none}}
+/* shared/footer.css — clean professional footer */
+.footer-banner{position:relative;width:100%;height:66px;overflow:hidden;background:linear-gradient(110deg,#42119d,#4d0ba9 48%,#3b078d);color:#fff;font-family:Inter,"Segoe UI",Arial,sans-serif;isolation:isolate}
+.footer-banner:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.025),transparent 40%,rgba(255,102,0,.035));pointer-events:none}
+.footer-content{position:relative;z-index:5;height:100%;padding:0 5.5%;display:flex;align-items:center;justify-content:flex-end}
+.footer-feedback{display:flex;align-items:center;gap:10px;max-width:650px;text-align:right}
+.feedback-label{font-size:8px;font-weight:700;letter-spacing:.02em;padding:4px 7px;border:1px solid rgba(255,255,255,.2);border-radius:5px;color:#fff;background:rgba(255,255,255,.05)}
+.feedback-message{font-size:8px;line-height:1.45;color:rgba(255,255,255,.78)}
+.footer-wave{position:absolute;height:55px;border-radius:50%;pointer-events:none;animation:footerWaveFloat 10s ease-in-out infinite}
+.footer-wave-one{width:55%;left:25%;bottom:-33px;border-top:1px solid rgba(255,111,27,.7);transform:rotate(-4deg)}
+.footer-wave-two{width:48%;left:36%;bottom:-24px;border-top:1px solid rgba(255,255,255,.2);transform:rotate(-5deg);animation-delay:-3s}
+.footer-wave-three{width:42%;left:43%;bottom:-30px;border-top:1px solid rgba(255,255,255,.12);transform:rotate(-4deg);animation-delay:-6s}
+.footer-aura{position:absolute;width:120px;height:120px;border-radius:50%;filter:blur(24px);opacity:.08;pointer-events:none;animation:footerAuraFloat 9s ease-in-out infinite}
+.aura-one{left:12%;top:-95px;background:#fff}.aura-two{right:16%;bottom:-100px;background:#ff6600;animation-delay:-4s}
+@keyframes footerWaveFloat{0%,100%{margin-left:0;opacity:.6}50%{margin-left:10px;opacity:.85}}
+@keyframes footerAuraFloat{0%,100%{transform:translateX(0)}50%{transform:translateX(12px)}}
+@media(max-width:700px){.footer-content{padding:0 18px}.footer-feedback{max-width:100%;gap:7px}.feedback-message{font-size:7px}.feedback-label{display:none}}
+@media(prefers-reduced-motion:reduce){.footer-wave,.footer-aura{animation:none}}
