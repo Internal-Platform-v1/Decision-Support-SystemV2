@@ -504,3 +504,66 @@
 .avatar-btn:hover{box-shadow:0 2px 14px rgba(77,20,184,.30),0 0 0 3px rgba(107,37,223,.07)}
 .tiny-chevron:hover{filter:drop-shadow(0 0 4px rgba(107,37,223,.18))}
 .profile-menu button:hover span{filter:drop-shadow(0 0 4px rgba(107,37,223,.15))}
+
+/* ============================================================
+   NAV HIGHLIGHT — replaces underline hover/active treatment
+   ============================================================ */
+.nav-item {
+    padding: 0 10px;
+    border-radius: 7px;
+    transition:
+        color .25s ease,
+        background-color .25s ease,
+        box-shadow .3s ease,
+        text-shadow .3s ease;
+}
+
+.nav-item::before {
+    content: "";
+    position: absolute;
+    inset: 9px 2px;
+    border-radius: 7px;
+    background: rgba(107,37,223,.055);
+    opacity: 0;
+    transform: scale(.96);
+    transition:
+        opacity .25s ease,
+        transform .3s cubic-bezier(.22,1,.36,1);
+    pointer-events: none;
+}
+
+.nav-item:hover::before,
+.nav-item.active::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: #5620bd;
+    text-shadow: 0 0 8px rgba(107,37,223,.13);
+    box-shadow: 0 3px 12px rgba(107,37,223,.06);
+}
+
+/* Completely remove the previous underline visual. */
+.nav-underline,
+.nav-item:hover .nav-underline,
+.nav-item.active .nav-underline {
+    width: 0 !important;
+    left: 50% !important;
+    opacity: 0 !important;
+    box-shadow: none !important;
+    pointer-events: none;
+}
+
+/* Small icon highlight accompanies the color highlight. */
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+    color: #6b25df;
+    filter: drop-shadow(0 0 4px rgba(107,37,223,.18));
+}
+
+.nav-item.has-dropdown:hover::before,
+.nav-item.has-dropdown.open::before {
+    background: rgba(107,37,223,.07);
+}
