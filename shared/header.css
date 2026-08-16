@@ -567,3 +567,61 @@
 .nav-item.has-dropdown.open::before {
     background: rgba(107,37,223,.07);
 }
+
+
+/* ============================================================
+   NAV MENU — BOLD + PREMIUM LIFT
+   Existing color-highlight effect remains unchanged.
+   ============================================================ */
+
+.nav-item {
+    font-weight: 700;
+
+    transition:
+        color .22s ease,
+        background .22s ease,
+        transform .28s cubic-bezier(.22, 1, .36, 1);
+}
+
+.nav-item:hover {
+    transform: translateY(-2px);
+}
+
+.nav-item.active {
+    transform: translateY(-1px);
+}
+
+/* Subtle text glow reinforces the hover state. */
+.nav-item:hover .nav-label {
+    text-shadow: 0 3px 10px rgba(77, 20, 140, .13);
+}
+
+.nav-item.active .nav-label {
+    text-shadow: 0 2px 8px rgba(77, 20, 140, .10);
+}
+
+/* Case Directory gets the same lift behavior. */
+.nav-item.has-dropdown:hover {
+    transform: translateY(-2px);
+}
+
+.nav-item.has-dropdown.open {
+    transform: translateY(-1px);
+}
+
+/* Keep the dropdown panel itself stationary. */
+.dropdown-panel {
+    transform-origin: top left;
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+    .nav-item,
+    .nav-item:hover,
+    .nav-item.active,
+    .nav-item.has-dropdown:hover,
+    .nav-item.has-dropdown.open {
+        transform: none !important;
+        transition: none !important;
+    }
+}
