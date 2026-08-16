@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 /* ============================================================
    GROUP GUIDES — BILLING DISPUTE
    ============================================================
@@ -34,12 +36,6 @@
 }
 
 
-/* Same Poppins used by Main Dashboard */
-@import url(
-    "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-);
-
-
 :root {
     --purple: #4d148c;
     --purple2: #6b20d0;
@@ -61,11 +57,7 @@ body {
     min-height: 100%;
     width: 100%;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     color: var(--ink);
 
@@ -158,9 +150,9 @@ button {
    ============================================================ */
 
 .group-hero {
-    height: 292px;
+    height: 330px;
 
-    min-height: 292px;
+    min-height: 330px;
 
     position: relative;
 
@@ -265,11 +257,7 @@ button {
 
     color: var(--purple);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 10px;
 
@@ -301,11 +289,7 @@ button {
 
     color: var(--ink);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 36px;
 
@@ -330,11 +314,7 @@ button {
 
     color: #3d3f65;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 15px;
 
@@ -408,11 +388,7 @@ button {
 
     color: var(--ink);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 9px;
 
@@ -447,11 +423,7 @@ button {
 
     color: #fff;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 9px;
 
@@ -496,10 +468,7 @@ button {
    ============================================================ */
 
 .section {
-    padding:
-        23px
-        5.6%
-        0;
+    padding: 10px 5.6% 0;
 }
 
 
@@ -537,11 +506,7 @@ button {
 
     color: var(--ink);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
 
@@ -579,11 +544,7 @@ button {
 
     color: #5b17c5;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 8px;
 
@@ -613,11 +574,7 @@ button {
 
     color: #777a99;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 8px;
 
@@ -856,7 +813,7 @@ button {
    EXACT Main Dashboard reference
 
    IMPORTANT:
-   - Poppins
+   - Inter
    - 11px
    - 1.2 line-height
    - -.2px letter spacing
@@ -875,11 +832,7 @@ button {
 
     color: var(--ink);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-weight: 700;
 }
@@ -899,11 +852,7 @@ button {
 
     margin: 0;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-weight: 400;
 }
@@ -917,6 +866,7 @@ button {
 
 .guide-card {
     text-align: left;
+    cursor: pointer;
 }
 
 
@@ -938,11 +888,7 @@ button {
 
     color: #4f13b8;
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 18px;
 
@@ -952,18 +898,6 @@ button {
 
     margin: 0;
 
-    cursor: pointer;
-}
-
-
-/* ============================================================
-   MAKE THE WHOLE CARD THE CLICK TARGET
-
-   The JS handles the actual navigation.
-   This only ensures the visual affordance is consistent.
-   ============================================================ */
-
-.guide-card {
     cursor: pointer;
 }
 
@@ -1009,11 +943,7 @@ button {
 
     color: var(--ink);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 15px;
 
@@ -1028,11 +958,7 @@ button {
 
     color: var(--muted);
 
-    font-family:
-        "Poppins",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
     font-size: 10px;
 
