@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <base href="../../">
+
+<title>PAUD Queue Guides | Decision Support System</title>
+  <link rel="stylesheet" href="assets/css/group-guides.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+
+  <script src="shared/include.js"></script>
+    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <script>
+        document.documentElement.classList.add("page-loading");
+        document.documentElement.setAttribute("aria-busy", "true");
+    </script>
+</head>
+
+<body>
+    <!-- GLOBAL PAGE LOADER -->
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="page-loader-inner">
+            <div class="page-loader-mark" aria-hidden="true">
+                <span class="page-loader-ring"></span>
+                <span class="page-loader-dot"></span>
+            </div>
+            <p class="page-loader-text">Loading BD Tools…</p>
+        </div>
+    </div>
+
+
+  <div class="app-shell">
+
+    <div id="header-placeholder"></div>
+
+<main>
+
+  <!-- ======================================================
+       OTHER GUIDES HERO
+       ====================================================== -->
+  <section class="group-hero other-guides-hero">
+
+    <div class="group-hero-image" aria-hidden="true"></div>
+
+    <div class="group-hero-content">
+
+      <div class="group-hero-copy">
+
+        <div class="intro-kicker">
+          <i class="fa-solid fa-layer-group"></i>
+          Other Guides
+        </div>
+
+        <h1>Other Guides</h1>
+
+        <p>
+          Select the guide that matches the case and open the
+          appropriate workflow.
+        </p>
+
+        <label class="hero-search" for="guideSearch">
+
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <input
+            id="guideSearch"
+            type="search"
+            placeholder="Search other guides..."
+            autocomplete="off"
+          >
+
+          <button
+            id="clearGuideSearch"
+            type="button"
+            aria-label="Clear search"
+            title="Clear search"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+
+          <span class="hero-search-button">Search</span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       GUIDE LIBRARY
+       ====================================================== -->
+  <section class="section guide-library">
+
+    <div class="section-heading library-toolbar">
+
+      <h2>
+        <span class="heading-bar"></span>
+        Guide Library
+      </h2>
+
+      <button
+        class="view-all"
+        type="button"
+        data-action="view-all-guides"
+      >
+        View All Guides <span>→</span>
+      </button>
+
+    </div>
+
+    <p class="library-results" id="resultsText">
+      Showing all 25 guides
+    </p>
+
+
+    <div class="quick-grid guide-grid" id="guideGrid">
+
+
+      <!-- ==================================================
+           01 — OVC GENERAL GUIDELINE
+           ================================================== -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/OVC GENERAL GUIDE.html"
+        data-search="ovc claim dispute handling claims"
+      >
+
+        <div class="quick-icon guide-card-icon purple-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3 5 6v5c0 4.5 2.8 7.8 7 10 4.2-2.2 7-5.5 7-10V6z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+
+        <h3>OVC — General Guideline</h3>
+
+        <p>
+          Official OVC guideline for handling customer claims
+          and disputes.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           02 — REWEIGH GENERAL GUIDE
+           ================================================== -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/Reweigh General Guide.html"
+        data-search="reweigh weight dispute correction"
+      >
+
+        <div class="quick-icon guide-card-icon orange-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 18h14"/>
+            <path d="M7 18a5 5 0 0 1 10 0"/>
+            <path d="M12 13v-3"/>
+            <path d="m12 10 2-2"/>
+          </svg>
+        </div>
+
+        <h3>Reweigh — General Guide</h3>
+
+        <p>
+          Decision guide for reweigh disputes and corrections.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           03 — CORRECTION CODE GUIDE
+           ================================================== -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/Correction Code Guide.html"
+        data-search="correction code decision tree corr code"
+      >
+
+        <div class="quick-icon guide-card-icon blue-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h12v16H6z"/>
+            <path d="M9 8h6M9 12h6M9 16h4"/>
+            <path d="m15 16 1.5 1.5L19 15"/>
+          </svg>
+        </div>
+
+        <h3>Correction Code Guide</h3>
+
+        <p>
+          Decision tree to determine the correct CORR CODE.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           04 — FEDEX DIRECT GUIDE
+           ================================================== -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/FedEx Direct Guide.html"
+        data-search="fedex direct dispute validation service"
+      >
+
+        <div class="quick-icon guide-card-icon green-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 15h13V6H3z"/>
+            <path d="M16 10h3l2 3v2h-5z"/>
+            <circle cx="7" cy="17" r="2"/>
+            <circle cx="18" cy="17" r="2"/>
+          </svg>
+        </div>
+
+        <h3>FedEx Direct Guide</h3>
+
+        <p>
+          Decision tree for FedEx Direct disputes and validation.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           05 — CLASS UPDATE GUIDE
+           ================================================== -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/class-update-guide.html"
+        data-search="class update correction request service"
+      >
+
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 5h14v14H5z"/>
+            <path d="M8 9h8M8 12h8M8 15h5"/>
+          </svg>
+        </div>
+
+        <h3>Class Update Guide</h3>
+
+        <p>
+          Decision tree for handling Class Update requests.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           06 — RATE & VOLUME QUOTE
+           ================================================== -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/rate-volume-guide.html"
+        data-search="rate volume quote ltl validation dispute pricing"
+      >
+
+        <div class="quick-icon guide-card-icon purple-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 19h16"/>
+            <path d="M6 16V9M10 16V6M14 16v-4M18 16V4"/>
+            <path d="M5 6h5"/>
+          </svg>
+        </div>
+
+        <h3>Rate & Volume Quote Guide</h3>
+
+        <p>
+          Decision tree for validating LTL and Volume Quotes.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           07 — SHAVE A DAY
+           ================================================== -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/shave-a-day-guide.html"
+        data-search="shad early delivery fee service upgrade economy priority"
+      >
+
+        <div class="quick-icon guide-card-icon orange-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="6" width="14" height="14" rx="2"/>
+            <path d="M8 4v4M16 4v4M5 10h14"/>
+            <path d="M12 13v3M12 13l2-1"/>
+          </svg>
+        </div>
+
+        <h3>Shave a Day Guide/Early Delivery Fee</h3>
+
+        <p>
+          Verify SHAD fees, LOA and service level details, delivery
+          status, and the correct service correction.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           08 — VERIFYING TRACKING NUMBER
+           ================================================== -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/information-validation-guide.html"
+        data-search="tracking number validation freight pro information delivery"
+      >
+
+        <div class="quick-icon guide-card-icon blue-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="10" cy="10" r="5"/>
+            <path d="m14 14 5 5"/>
+            <path d="M7 8h6M7 11h4"/>
+          </svg>
+        </div>
+
+        <h3>Verifying Tracking Number Guide</h3>
+
+        <p>
+          Guide for validating freight and tracking information.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           09 — MISSING DOCUMENTS
+           ================================================== -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/missing-docs-guide.html"
+        data-search="missing documents bol request documents"
+      >
+
+        <div class="quick-icon guide-card-icon green-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 3h8l4 4v14H6z"/>
+            <path d="M14 3v5h5M9 13h6M9 17h4"/>
+          </svg>
+        </div>
+
+        <h3>Missing Documents Guide</h3>
+
+        <p>
+          Guide for requesting missing BOL and supporting documents.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           10 — KEEP OR REMOVE PAYMENT
+           ================================================== -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/keep_or_remove_payment_guide_fixed.html"
+        data-search="keep remove payment loa correction pricing reweigh billing"
+      >
+
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16v10H4z"/>
+            <path d="M8 12h8"/>
+            <path d="M7 10h.01M17 14h.01"/>
+          </svg>
+        </div>
+
+        <h3>Keep or Remove Payment Guide</h3>
+
+        <p>
+          Determine whether to keep or remove payments based on
+          LOA, billing corrections, and pricing scenarios.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           11 — DEMAND INVOICE
+           ================================================== -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/demand-invoice-guide.html"
+        data-search="demand invoice pro posted queue resend duplicate billing"
+      >
+
+        <div class="quick-icon guide-card-icon purple-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 3h9l3 3v15H6z"/>
+            <path d="M15 3v4h4M9 12h6M9 16h4"/>
+          </svg>
+        </div>
+
+        <h3>Demand Invoice Guide</h3>
+
+        <p>
+          Follow the decision flow for PRO posted checks, queue
+          handling, resend scenarios, and invoice types.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           12 — RECYCLED PRO
+           ================================================== -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/recycled-pro-guide.html"
+        data-search="recycled pro version history resolution shipment"
+      >
+
+        <div class="quick-icon guide-card-icon orange-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 7a7 7 0 0 1 11 2"/>
+            <path d="m18 5v4h-4"/>
+            <path d="M17 17a7 7 0 0 1-11-2"/>
+            <path d="m6 19v-4h4"/>
+          </svg>
+        </div>
+
+        <h3>Recycled Pro Guide</h3>
+
+        <p>
+          Identify recycled PRO issues, validate version history,
+          and apply the correct resolution.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           13 — EMPLOYEE DISCOUNT
+           ================================================== -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/employee-discount-guide.html"
+        data-search="employee discount eligibility invoice application billing"
+      >
+
+        <div class="quick-icon guide-card-icon blue-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="8" r="3"/>
+            <path d="M4 19c.5-3 2.2-5 5-5s4.5 2 5 5"/>
+            <path d="M16 7h5M18.5 4.5v5"/>
+          </svg>
+        </div>
+
+        <h3>Employee Discount Guide</h3>
+
+        <p>
+          Validate employee discount eligibility and determine
+          whether the discount should be applied.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           14 — VOID AND WRITE OFF
+           ================================================== -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/void-and-wo-guide.html"
+        data-search="void write off grainger rebill surcharge removal billing"
+      >
+
+        <div class="quick-icon guide-card-icon green-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h12l1 16H5z"/>
+            <path d="m9 9 6 6M15 9l-6 6"/>
+          </svg>
+        </div>
+
+        <h3>Void and Write Off Guide</h3>
+
+        <p>
+          Follow the workflow for service errors, rebills, surcharge
+          handling, PRO voiding, and write-offs.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           15 — PRO NUMBER SUFFIX
+           ================================================== -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/pro-no-suffix.html"
+        data-search="pro suffix f0 d0 c0 y0 dead freight void salvage"
+      >
+
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h12v16H6z"/>
+            <path d="M9 8h6M9 12h6M9 16h3"/>
+            <path d="M15 16h3"/>
+          </svg>
+        </div>
+
+        <h3>Pro Number Suffix Guide</h3>
+
+        <p>
+          Identify correct handling based on PRO number suffix,
+          including F0, D0, C0, Y0, and non-revenue scenarios.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           16 — VOLUME APPLICATION
+           ================================================== -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/volume-application.html"
+        data-search="volume application validation processing pricing"
+      >
+
+        <div class="quick-icon guide-card-icon purple-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 8h16v11H4z"/>
+            <path d="M8 8V5h8v3"/>
+            <path d="M8 13h8M8 16h5"/>
+          </svg>
+        </div>
+
+        <h3>Volume Application Guide</h3>
+
+        <p>
+          Review, validate, and process volume application requests
+          using the correct workflow.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           17 — PAT7
+           ================================================== -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/pat7-guide.html"
+        data-search="pat7 eoir lockheed martin sikorsky united launch alliance noar amcoat billing"
+      >
+
+        <div class="quick-icon guide-card-icon orange-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h14v16H5z"/>
+            <path d="M8 8h8M8 12h8M8 16h5"/>
+          </svg>
+        </div>
+
+        <h3>PAT7 Guide</h3>
+
+        <p>
+          Review special invoice handling, BOL imaging, reference edits,
+          PO validation, and invoice posting actions.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           18 — PRIORITY PLUS
+           ================================================== -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/priority-plus-guide.html"
+        data-search="priority plus expedited shipment fxfp service upgrade rate service loa bol"
+      >
+
+        <div class="quick-icon guide-card-icon blue-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 15h13V6H3z"/>
+            <path d="M16 10h3l2 3v2h-5z"/>
+            <circle cx="7" cy="17" r="2"/>
+            <circle cx="18" cy="17" r="2"/>
+            <path d="M10 10h4"/>
+          </svg>
+        </div>
+
+        <h3>Expedited Shipment / Priority Plus Guide</h3>
+
+        <p>
+          Review Priority Plus or Expedited Shipment disputes and
+          validate rate, service, BOL, and LOA support.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           19 — RERATE TREATMENT
+           ================================================== -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/rerate-treatment-process-guide.html"
+        data-search="rerate treatment pro age pricing debtor loa rebill surcharge billing"
+      >
+
+        <div class="quick-icon guide-card-icon green-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 7h14v12H5z"/>
+            <path d="M8 7V4h8v3"/>
+            <path d="M9 12h6M9 15h4"/>
+            <path d="m16 15 2 2 2-2"/>
+          </svg>
+        </div>
+
+        <h3>Rerate Treatment Process Guide</h3>
+
+        <p>
+          Determine the correct rerate treatment based on PRO age,
+          pricing status, debtor updates, rebills, and corrections.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           20 — INBOND FEE
+           ================================================== -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/inbond-fee-guide.html"
+        data-search="inbond fee cargo care bol documentation keep remove billing"
+      >
+
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v18"/>
+            <path d="M17 7c-1.2-1-2.8-1.5-5-1.5-3 0-5 1.2-5 3.2 0 5 10 2.2 10 6.8 0 2-2 3-5 3-2.2 0-4-.6-5-1.7"/>
+          </svg>
+        </div>
+
+        <h3>Inbond Fee Guide</h3>
+
+        <p>
+          Validate Inbond fee disputes using BOL documentation,
+          Cargo Care indicators, and PRO comments.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           21 — HANDLING FEE
+           ================================================== -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/handling-fee-guide.html"
+        data-search="handling fee liftgate loading unloading assembly billing"
+      >
+
+        <div class="quick-icon guide-card-icon purple-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 11V5a2 2 0 0 1 4 0v5"/>
+            <path d="M11 10V4a2 2 0 0 1 4 0v7"/>
+            <path d="M15 11V7a2 2 0 0 1 4 0v6"/>
+            <path d="M7 10 5 9a2 2 0 0 0-2 3l4 7h9c3 0 5-2 5-5"/>
+          </svg>
+        </div>
+
+        <h3>Handling Fee Guide</h3>
+
+        <p>
+          Validate handling fee disputes involving liftgate usage,
+          loading, unloading, assembly, and supporting documents.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           22 — ISPI MASS ADJUSTMENT
+           ================================================== -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/ispi-guide.html"
+        data-search="ispi mass adjustment account update bill to shipper consignee rebill"
+      >
+
+        <div class="quick-icon guide-card-icon orange-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h12v16H6z"/>
+            <path d="M9 8h6M9 12h6M9 16h3"/>
+            <path d="m16 15 2 2 2-2"/>
+          </svg>
+        </div>
+
+        <h3>ISPI — Mass Adjustment Guide</h3>
+
+        <p>
+          Process mass adjustments including PRO entry, account changes,
+          approval checks, and final processing.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           23 — ALL SHORTS
+           ================================================== -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/all-shorts-guide.html"
+        data-search="all short partial short dispute claim loa shipment history weight piece pallet"
+      >
+
+        <div class="quick-icon guide-card-icon blue-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16v12H4z"/>
+            <path d="M8 7V4h8v3"/>
+            <path d="M8 12h8M8 15h5"/>
+          </svg>
+        </div>
+
+        <h3>All Shorts Guide</h3>
+
+        <p>
+          Handle All Short and Partial Short disputes using shipment
+          history, claims, LOA documentation, and piece counts.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           24 — SALES WRITE-OFF
+           ================================================== -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/sales-write-off-guide.html"
+        data-search="sales write off shine case approval debtor eligibility tl kurt correction billing"
+      >
+
+        <div class="quick-icon guide-card-icon green-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h14v16H5z"/>
+            <path d="M8 8h8M8 12h6M8 16h4"/>
+            <path d="m15 15 2 2 3-4"/>
+          </svg>
+        </div>
+
+        <h3>Sales Write-Off Guide</h3>
+
+        <p>
+          Review sales write-off requests, validate PRO and debtor
+          eligibility, and follow approval thresholds.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+      <!-- ==================================================
+           25 — WRITE-OFF IN CAPS
+           ================================================== -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Other Guides/wo-process-caps-guide.html"
+        data-search="write off caps process arfw fxfx request approve close case status"
+      >
+
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h14v16H5z"/>
+            <path d="M8 8h8M8 12h8M8 16h5"/>
+            <path d="m15 15 2 2 3-3"/>
+          </svg>
+        </div>
+
+        <h3>Write-off in CAPS — Step by Step Procedure</h3>
+
+        <p>
+          Process write-offs in CAPS from Business Unit selection and
+          PRO entry through comments, responses, and case closure.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+
+      </article>
+
+
+    </div>
+
+
+    <!-- ======================================================
+         NO RESULTS
+         ====================================================== -->
+    <div class="no-results" id="noResults" hidden>
+
+      <i class="fa-solid fa-magnifying-glass"></i>
+
+      <h3>No matching guide</h3>
+
+      <p>
+        Try another other guide keyword.
+      </p>
+
+    </div>
+
+  </section>
+
+</main>
+
+    <div id="footer-placeholder"></div>
+
+  </div>
+
+
+  <script src="assets/js/group-guides.js"></script>
+
+    <script src="assets/js/page-loader.js"></script>
+</body>
+</html>
