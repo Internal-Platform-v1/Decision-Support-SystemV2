@@ -13,8 +13,19 @@
         document.documentElement.classList.add("page-loading");
         document.documentElement.setAttribute("aria-busy", "true");
     </script>
+
+    <style>
+        html.page-loading .user-name,
+        html.page-loading .welcome-name,
+        html.page-loading #userName,
+        html.page-loading #user-name,
+        html.page-loading #welcomeName,
+        html.page-loading #welcome-name {
+            visibility: hidden !important;
+        }
+    </style>
 </head>
-<body>
+<body data-waits-for-user="true">
     <!-- GLOBAL PAGE LOADER -->
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
         <div class="page-loader-inner">
@@ -268,5 +279,12 @@
 <!-- Dashboard -->
 <script src="assets/js/script.js"></script>
     <script src="assets/js/page-loader.js"></script>
+
+    <script>
+        window.bdToolsUserReady = function () {
+            window.dispatchEvent(new Event("bdtools:user-ready"));
+        };
+    </script>
+
 </body>
 </html>
