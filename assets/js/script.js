@@ -184,13 +184,13 @@ const guideRoutes = {
       "guides/Other%20Surcharge%20Guides/surcharge-guides.html",
 
     "Account Handling Guide":
-      "guides/Billing%20Dispute%20Guides/account-handling-guides.html",
+      "guides/Account%20Handling%20Guides/account-handling-guides.html",
 
     "PAUD Queue's Guide":
-      "guides/Billing%20Dispute%20Guides/paud-guides.html",
+      "guides/PAUD%20Guides/paud-guides.html",
 
     "Other Operational Guides":
-      "guides/Billing%20Dispute%20Guides/other-guides.html"
+      "guides/Other%20Guides/other-guides.html"
 
 };
 
