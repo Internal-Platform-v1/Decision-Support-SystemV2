@@ -178,10 +178,10 @@ const guideRoutes = {
       "guides/Billing%20Dispute%20Guides/billing-dispute-guides.html",
 
     "Pricing General Guides":
-      "guides/Billing%20Dispute%20Guides/pricing-guides.html",
+      "guides/Pricing%20Guides/pricing-guides.html",
 
     "Surcharges Guide":
-      "guides/Billing%20Dispute%20Guides/surcharge-guides.html",
+      "guides/Other%20Surcharge%20Guides/surcharge-guides.html",
 
     "Account Handling Guide":
       "guides/Billing%20Dispute%20Guides/account-handling-guides.html",
