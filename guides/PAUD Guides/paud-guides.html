@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <base href="../../">
+
+<title>PAUD Queue Guides | Decision Support System</title>
+  <link rel="stylesheet" href="assets/css/group-guides.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+
+  <script src="shared/include.js"></script>
+    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <script>
+        document.documentElement.classList.add("page-loading");
+        document.documentElement.setAttribute("aria-busy", "true");
+    </script>
+</head>
+
+<body>
+    <!-- GLOBAL PAGE LOADER -->
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="page-loader-inner">
+            <div class="page-loader-mark" aria-hidden="true">
+                <span class="page-loader-ring"></span>
+                <span class="page-loader-dot"></span>
+            </div>
+            <p class="page-loader-text">Loading BD Tools…</p>
+        </div>
+    </div>
+
+
+  <div class="app-shell">
+
+    <div id="header-placeholder"></div>
+
+<main>
+
+  <!-- ======================================================
+       PAUD QUEUE HERO
+       ====================================================== -->
+  <section class="group-hero paud-hero">
+
+    <div class="group-hero-image" aria-hidden="true"></div>
+
+    <div class="group-hero-content">
+
+      <div class="group-hero-copy">
+
+        <div class="intro-kicker">
+          <i class="fa-solid fa-layer-group"></i>
+          PAUD Queue
+        </div>
+
+        <h1>PAUD Queue Guides</h1>
+
+        <p>
+          Select the guide that matches the PAUD queue request and
+          open the appropriate workflow.
+        </p>
+
+        <label class="hero-search" for="guideSearch">
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <input
+            id="guideSearch"
+            type="search"
+            placeholder="Search PAUD queue guides..."
+            autocomplete="off"
+          >
+
+          <button
+            id="clearGuideSearch"
+            type="button"
+            aria-label="Clear search"
+            title="Clear search"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+
+          <span class="hero-search-button">Search</span>
+        </label>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ======================================================
+       GUIDE LIBRARY
+       ====================================================== -->
+  <section class="section guide-library">
+
+    <div class="section-heading library-toolbar">
+
+      <h2>
+        <span class="heading-bar"></span>
+        Guide Library
+      </h2>
+
+      <button
+        class="view-all"
+        type="button"
+        data-action="view-all-guides"
+      >
+        View All Guides <span>→</span>
+      </button>
+
+    </div>
+
+    <p class="library-results" id="resultsText">
+      Showing all 16 guides
+    </p>
+
+
+    <div class="quick-grid guide-grid" id="guideGrid">
+
+      <!-- 01 -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/region-and-ehot-queue.html"
+        data-search="regions ehot queue region routing account validation location paud queue"
+      >
+        <div class="quick-icon guide-card-icon purple-bg">
+          <i class="fa-solid fa-earth-americas"></i>
+        </div>
+
+        <h3>Regions and EHOT Queue Guide</h3>
+
+        <p>
+          Review and process region and EHOT queue requests including
+          account, accessorial, service type, and related updates.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 02 -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/tplo-guide.html"
+        data-search="tplo bill to shipper consignee spoc validation account mapping routing paud queue"
+      >
+        <div class="quick-icon guide-card-icon orange-bg">
+          <i class="fa-solid fa-sitemap"></i>
+        </div>
+
+        <h3>TPLO Guide</h3>
+
+        <p>
+          Handle TPLO requests including SPOC validation, account
+          mapping, special account routing, and billing handling.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 03 -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/tphi-guide.html"
+        data-search="tphi temp sys match charge account to account temp audit auto matching process paud queue"
+      >
+        <div class="quick-icon guide-card-icon blue-bg">
+          <i class="fa-solid fa-diagram-project"></i>
+        </div>
+
+        <h3>TPHI Guide</h3>
+
+        <p>
+          Follow the TEMP-SYS matching process to correctly map charge
+          accounts and ensure proper debtor selection.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 04 -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/paud-tpkn-guide.html"
+        data-search="paud tpkn correction request account check auto rate noar shipper consignee paud queue"
+      >
+        <div class="quick-icon guide-card-icon green-bg">
+          <i class="fa-solid fa-boxes-stacked"></i>
+        </div>
+
+        <h3>PAUD / TPKN Guide</h3>
+
+        <p>
+          Follow the process for replacing Shipper Code requests,
+          including account validation, auto-rating, and corrections.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 05 -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/crau-guide.html"
+        data-search="crau cra u request decision guide collection validation shipment review request paud queue"
+      >
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <i class="fa-solid fa-clipboard-list"></i>
+        </div>
+
+        <h3>CRAU — Request Decision Guide</h3>
+
+        <p>
+          Handle CRAU requests through validation checks, request
+          review, and the correct next action.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 06 -->
+      <article
+        class="quick-card guide-card pink-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/PAUD FPAY Guide.html"
+        data-search="paud fpay payment billing account validation financial payment paud queue"
+      >
+        <div class="quick-icon guide-card-icon pink-bg">
+          <i class="fa-solid fa-credit-card"></i>
+        </div>
+
+        <h3>PAUD-FPAY Guide</h3>
+
+        <p>
+          Review payment-related handling, account validation, and
+          proper PAUD-FPAY workflow decisions.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 07 -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/cod-guide.html"
+        data-search="cod collect on delivery add remove cod loa cbl remit amount correction paud queue"
+      >
+        <div class="quick-icon guide-card-icon purple-bg">
+          <i class="fa-solid fa-money-bill-transfer"></i>
+        </div>
+
+        <h3>COD (Collect on Delivery) Guide</h3>
+
+        <p>
+          Handle COD additions or removals using BOL validation,
+          LOA/CBL support, keywords, and autorating steps.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 08 -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/ispd-guide.html"
+        data-search="ispd invalid consignee shipper account accops freight corrections bol edm aem accf accr paud queue"
+      >
+        <div class="quick-icon guide-card-icon orange-bg">
+          <i class="fa-solid fa-user-xmark"></i>
+        </div>
+
+        <h3>Invalid Consignee/Shipper Account (ISPD)</h3>
+
+        <p>
+          Review ISPD queue requests, validate account discrepancies,
+          and apply the correct ACCR correction path.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 09 -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/lmpb-guide.html"
+        data-search="lmpb lumper fee sort segregate prepaid third party correction paud queue"
+      >
+        <div class="quick-icon guide-card-icon blue-bg">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+
+        <h3>LMPB (Lumper Fee) Guide</h3>
+
+        <p>
+          Handle Lumper fee requests, Sort &amp; Segregate validation,
+          prepaid/third-party handling, and CORR ACC correction.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 10 -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/irt1-guide.html"
+        data-search="irt1 po number division validation prepaid collect third party fedi cedi correction code paud queue"
+      >
+        <div class="quick-icon guide-card-icon green-bg">
+          <i class="fa-solid fa-hashtag"></i>
+        </div>
+
+        <h3>IRT1 – PO Number &amp; Division Validation</h3>
+
+        <p>
+          Validate PO number and division information and determine
+          the correct billing terms, account, and correction action.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 11 -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/irt-vsat-guide.html"
+        data-search="irt vsat grainger rio bravo hino noar capl correction corr vrfy corr cae corr accr consignee account update"
+      >
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <i class="fa-solid fa-file-pen"></i>
+        </div>
+
+        <h3>IRT/VSAT – Queue Guide</h3>
+
+        <p>
+          Handle Grainger, Rio Bravo, and Hino queue cases through
+          validation, account mapping, and correction codes.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 12 -->
+      <article
+        class="quick-card guide-card pink-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/saf2-guide.html"
+        data-search="saf2 airgas harte hanks nmfc reweigh certificate pallet weight tare weight rewe correction code corr ewpd corr cusi corr vrfy paud queue"
+      >
+        <div class="quick-icon guide-card-icon pink-bg">
+          <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+
+        <h3>SAF2 Guide – NMFC, Reweigh &amp; Weight Validation</h3>
+
+        <p>
+          Validate NMFC classifications, pallet and tare weights,
+          reweigh certificates, and billing corrections.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 13 -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/bloa-guide.html"
+        data-search="bloa letter of authority accessorial surcharges lifc idc dunc prepaid collect driver spotted delivery receipt blanket loa corr etms paud queue"
+      >
+        <div class="quick-icon guide-card-icon purple-bg">
+          <i class="fa-solid fa-file-signature"></i>
+        </div>
+
+        <h3>BLOA Guide – Accessorial &amp; Terms Validation</h3>
+
+        <p>
+          Validate accessorial terms against the Letter of Authority
+          and determine the correct billing correction.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 14 -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/pat8-guide.html"
+        data-search="pat8 emerson sid pilgrims harte hanks top value fabrics stps stpl accessorial removal correction queue paud"
+      >
+        <div class="quick-icon guide-card-icon orange-bg">
+          <i class="fa-solid fa-building"></i>
+        </div>
+
+        <h3>PAT8 – Multi-Company Queue Guide</h3>
+
+        <p>
+          Handle EMERSON, PILGRIMS, Harte Hanks, Top Value Fabrics,
+          and accessorial removal requests.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 15 -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/pars-guide.html"
+        data-search="pars parker hannifin debtor consignee account update terms prepaid collect correction queue validation"
+      >
+        <div class="quick-icon guide-card-icon blue-bg">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+
+        <h3>PARS – Parker Hannifin Queue Guide</h3>
+
+        <p>
+          Validate Parker Hannifin debtor handling, consignee updates,
+          rate comparisons, and correction code selection.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 16 -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/cort-guide.html"
+        data-search="cort reconsignment newp oldp weight piece count customer center auto rate fbi freight bill inquiry"
+      >
+        <div class="quick-icon guide-card-icon green-bg">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </div>
+
+        <h3>CORT – Reconsignment Guide</h3>
+
+        <p>
+          Handle reconsignment requests by validating weight, piece
+          count, customer center, NEWP, and AUTO RATE requirements.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+
+      <!-- 17 -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/paud-queue-guides/hot-guide.html"
+        data-search="hot ho2 ehot storage dispute shipment details origin destination international redelivery gamd inbo inbc shipping date on hand"
+      >
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <i class="fa-solid fa-fire"></i>
+        </div>
+
+        <h3>HOT – EHOT Queue Requests Guide</h3>
+
+        <p>
+          Handle HOT/HO2 requests including storage disputes, shipment
+          detail updates, routing, redelivery, GAMD, and RECON/STOR.
+        </p>
+
+        <button class="arrow-btn" type="button" aria-label="Open guide">→</button>
+      </article>
+
+    </div>
+
+
+    <div class="no-results" id="noResults" hidden>
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <h3>No matching guide</h3>
+      <p>Try another PAUD queue keyword.</p>
+    </div>
+
+  </section>
+
+</main>
+
+    <div id="footer-placeholder"></div>
+
+  </div>
+
+
+  <script src="assets/js/group-guides.js"></script>
+
+    <script src="assets/js/page-loader.js"></script>
+</body>
+</html>
