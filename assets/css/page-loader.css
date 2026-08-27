@@ -1,0 +1,124 @@
+/* ============================================================
+   BD TOOLS — CLEAN PAGE LOADER
+   Shared by Main Index and Group Pages
+   ============================================================ */
+
+html.page-loading {
+    background: #f8f7ff;
+}
+
+html.page-loading body {
+    overflow: hidden;
+}
+
+html.page-loading .app-shell {
+    opacity: 0;
+}
+
+.app-shell {
+    opacity: 1;
+    transition: opacity .28s ease;
+}
+
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f8f7ff;
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity .28s ease,
+        visibility .28s ease;
+}
+
+.page-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.page-loader-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+
+    min-width: 150px;
+    padding: 24px 28px;
+}
+
+.page-loader-mark {
+    position: relative;
+    width: 38px;
+    height: 38px;
+}
+
+.page-loader-ring {
+    position: absolute;
+    inset: 0;
+
+    border: 3px solid rgba(77, 20, 140, .12);
+    border-top-color: #4d148c;
+    border-right-color: #ff6600;
+    border-radius: 50%;
+
+    animation: pageLoaderSpin .85s linear infinite;
+}
+
+.page-loader-dot {
+    position: absolute;
+    inset: 11px;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4d148c, #ff6600);
+
+    animation: pageLoaderPulse 1.1s ease-in-out infinite;
+}
+
+.page-loader-text {
+    margin: 0;
+
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: #555677;
+}
+
+@keyframes pageLoaderSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pageLoaderPulse {
+    0%, 100% {
+        transform: scale(.82);
+        opacity: .72;
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-shell,
+    .page-loader {
+        transition: none;
+    }
+
+    .page-loader-ring,
+    .page-loader-dot {
+        animation: none;
+    }
+}
