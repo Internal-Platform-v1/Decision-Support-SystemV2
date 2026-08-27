@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <base href="../../">
+
+  <title>Other Surcharge Guides | Decision Support System</title>
+  <link rel="stylesheet" href="assets/css/group-guides.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+
+  <script src="shared/include.js"></script>
+    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <script>
+        document.documentElement.classList.add("page-loading");
+        document.documentElement.setAttribute("aria-busy", "true");
+    </script>
+</head>
+
+<body>
+    <!-- GLOBAL PAGE LOADER -->
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="page-loader-inner">
+            <div class="page-loader-mark" aria-hidden="true">
+                <span class="page-loader-ring"></span>
+                <span class="page-loader-dot"></span>
+            </div>
+            <p class="page-loader-text">Loading BD Tools…</p>
+        </div>
+    </div>
+
+
+  <div class="app-shell">
+
+    <div id="header-placeholder"></div>
+
+<main>
+
+  <!-- ======================================================
+       SURCHARGES HERO
+       ====================================================== -->
+  <section class="hero">
+    <div class="container">
+
+      <div class="hero-shell">
+
+        <div class="hero-card reveal delay-1">
+
+          <div class="hero-content">
+
+            <div class="pill">
+              <i class="fa-solid fa-receipt"></i>
+              Surcharge workspace
+            </div>
+
+            <h1>Other Surcharge Guides</h1>
+
+            <p>
+              Open the surcharge guide that matches the concern so you can
+              move faster through review, validation, and the correct next
+              action in one clean workspace.
+            </p>
+
+            <div class="hero-actions">
+
+              <a href="#guideLibrary" class="hero-main-btn">
+                Explore guides
+                <i class="fa-solid fa-arrow-down"></i>
+              </a>
+
+              <button
+                type="button"
+                class="hero-ghost-btn"
+                onclick="focusGuideSearch()"
+              >
+                Search guides
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+
+            </div>
+
+            <div class="hero-metrics">
+
+              <div class="metric">
+                <strong>14</strong>
+                <span>
+                  Other surcharge guides ready in one premium workspace.
+                </span>
+              </div>
+
+              <div class="metric">
+                <strong>4</strong>
+                <span>
+                  Filter by fees, discounts, compliance, or other surcharge handling.
+                </span>
+              </div>
+
+              <div class="metric">
+                <strong>Fast</strong>
+                <span>
+                  Cleaner layout so the right surcharge guide is easier to find.
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             SIDE STACK
+             ================================================== -->
+        <aside class="side-stack">
+
+          <div class="focus-card reveal delay-2">
+
+            <div class="card-label">
+              <span>
+                <i class="fa-solid fa-compass"></i>
+                HISTORY
+              </span>
+
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+
+            <h2>Pick up where you left off</h2>
+
+            <p>
+              Quickly access your history, recent guides, most-used guides,
+              and bookmarks to stay on track.
+            </p>
+
+
+            <ul class="quick-list">
+
+              <!-- HISTORY -->
+              <li class="quick-item" id="history-item">
+
+                <div class="quick-icon">
+                  <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+
+                <div>
+                  <strong>HISTORY</strong>
+                  <span>Click to open history ▼</span>
+                </div>
+
+                <!-- Premium Dropdown -->
+                <div id="history-dropdown">
+
+                  <div id="history-dropdown-header">
+
+                    <span>
+                      <i class="fa-regular fa-clock"></i>
+                      History
+                    </span>
+
+                    <button
+                      class="history-clear-all"
+                      id="clearAllHistoryBtn"
+                    >
+                      Clear all
+                    </button>
+
+                  </div>
+
+                  <div id="history-dropdown-list"></div>
+
+                </div>
+
+              </li>
+
+
+              <!-- RECENT GUIDE -->
+              <li class="quick-item" id="recent-item">
+
+                <div class="quick-icon">
+                  <i class="fa-solid fa-folder-open"></i>
+                </div>
+
+                <div>
+                  <strong>Recent Guide</strong>
+                  <span id="recent-guide-label">Loading…</span>
+                </div>
+
+              </li>
+
+
+              <!-- MOST USED -->
+              <li class="quick-item" id="mostused-item">
+
+                <div class="quick-icon">
+                  <i class="fa-solid fa-route"></i>
+                </div>
+
+                <div>
+                  <strong>Most used guide</strong>
+                  <span id="mostused-guide-label">Loading…</span>
+                </div>
+
+              </li>
+
+
+              <!-- OTHER -->
+              <li class="quick-item" id="other-item">
+
+                <div class="quick-icon">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <div>
+                  <strong>Other</strong>
+                  <span>
+                    Bookmarks &amp; favorites (coming soon)
+                  </span>
+                </div>
+
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          <!-- READY TO WORK -->
+          <div class="focus-card dark reveal delay-3">
+
+            <div class="card-label">
+
+              <span>
+                <i class="fa-solid fa-shield-halved"></i>
+                Ready to work
+              </span>
+
+              <i class="fa-solid fa-truck-fast"></i>
+
+            </div>
+
+            <h2>Choose a guide below to begin.</h2>
+
+            <p>
+              Use the search, filters, and guide cards to find the right
+              surcharge workflow faster. If the case does not match any
+              guide, use Get Help or ask your team lead before applying
+              a decision.
+            </p>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ======================================================
+       SEARCH SECTION
+       ====================================================== -->
+  <section class="search-section reveal delay-2">
+
+    <div class="container">
+
+      <div class="search-panel">
+
+        <div class="search-top">
+
+          <div class="search-copy">
+
+            <h2>Search the surcharge guide library</h2>
+
+            <p>
+              Search by guide name, fee type, surcharge concern, keyword,
+              or case type. You can also filter the cards by category.
+            </p>
+
+          </div>
+
+
+          <div class="chip-row">
+
+            <span class="chip">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge Guides
+            </span>
+
+            <span class="chip">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              Quick Access
+            </span>
+
+            <span class="chip">
+              <i class="fa-solid fa-bolt"></i>
+              Fast review
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="toolbar">
+
+          <div class="search-input-wrap">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="text"
+              id="guideSearch"
+              placeholder="Search surcharge guides..."
+            >
+
+            <button
+              id="clearSearchBtn"
+              type="button"
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+
+          </div>
+
+
+          <div class="filter-row">
+
+            <button
+              class="filter-btn active"
+              data-filter="all"
+            >
+              All
+            </button>
+
+            <button
+              class="filter-btn"
+              data-filter="fee"
+            >
+              Fees
+            </button>
+
+            <button
+              class="filter-btn"
+              data-filter="discount"
+            >
+              Discount
+            </button>
+
+            <button
+              class="filter-btn"
+              data-filter="compliance"
+            >
+              Compliance
+            </button>
+
+            <button
+              class="filter-btn"
+              data-filter="service"
+            >
+              Service
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       GUIDE LIBRARY
+       ====================================================== -->
+  <section class="section" id="guideLibrary">
+
+    <div class="container">
+
+      <div class="section-head reveal">
+
+        <div>
+
+          <div class="section-kicker">
+            <i class="fa-solid fa-layer-group"></i>
+            Guide library
+          </div>
+
+          <h2 class="section-title">
+            Select the surcharge guide that fits the case.
+          </h2>
+
+        </div>
+
+        <p class="section-copy">
+          Each card includes the surcharge type, a short description,
+          and a direct link to open the guide.
+        </p>
+
+      </div>
+
+
+      <div id="resultsLine" class="results-line"></div>
+
+
+      <div class="guide-grid" id="guideGrid">
+
+
+        <!-- ==================================================
+             01 — HIGH COST FEE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-1"
+          data-category="fee"
+          data-keywords="high cost fee surcharge pricing guide charge"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-money-bill-wave"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+
+          </div>
+
+          <h3>High Cost Fee</h3>
+
+          <p class="lead">
+            Open the guide for high cost fee review, related surcharge
+            questions, and supporting validation steps.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-bolt"></i>
+              Quick Review
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/high-cost-fee.html"
+            class="guide-link"
+          >
+            Open High Cost Fee
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this when the concern involves high cost fee review
+            or validation.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             02 — PEAK SURCHARGE FEE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-2"
+          data-category="fee"
+          data-keywords="peak surcharge fee seasonal charge pricing guide"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-chart-line"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+          </div>
+
+          <h3>Peak Surcharge Fee</h3>
+
+          <p class="lead">
+            Review peak surcharge concerns and open the correct guide
+            for temporary or period-based surcharge questions.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-chart-line"></i>
+              Peak
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/peak-surcharge-fee.html"
+            class="guide-link"
+          >
+            Open Peak Surcharge Fee
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Helpful for peak period charge review and surcharge validation.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             03 — CALIFORNIA COMPLIANCE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-3"
+          data-category="compliance"
+          data-keywords="california compliance surcharge legal regulation guide"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-scale-balanced"></i>
+              Compliance
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+
+          </div>
+
+          <h3>California Compliance</h3>
+
+          <p class="lead">
+            Open the California compliance guide for surcharge concerns
+            tied to compliance requirements or charge validation.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-scale-balanced"></i>
+              Compliance
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-shield-halved"></i>
+              Validation
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/california-compliance.html"
+            class="guide-link"
+          >
+            Open California Compliance
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Helpful for compliance-related surcharge review and guidance.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             04 — ZIP SERVICE CHARGE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-4"
+          data-category="fee"
+          data-keywords="zip service charge surcharge zone location guide"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-location-dot"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+
+          </div>
+
+          <h3>Zip Service Charge</h3>
+
+          <p class="lead">
+            Use this guide when the concern is tied to zip service charge
+            validation, location-based review, or surcharge logic.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-location-dot"></i>
+              ZIP
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/zip-service-charge.html"
+            class="guide-link"
+          >
+            Open Zip Service Charge
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Best for zip-based service charge review and related guidance.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             05 — CROSS-BORDER PROCESSING FEE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-5"
+          data-category="fee"
+          data-keywords="cross border processing fee international surcharge guide"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-globe"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-globe"></i>
+            </div>
+
+          </div>
+
+          <h3>Cross-Border Processing Fee</h3>
+
+          <p class="lead">
+            Open this guide for cross-border processing fee concerns,
+            international surcharge review, and next-step validation.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              International
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-globe"></i>
+              Cross-Border
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/cross-border-processing-fee.html"
+            class="guide-link"
+          >
+            Open Cross-Border Processing Fee
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this for international or cross-border surcharge fee review.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             06 — CANADIAN CUSTOM INSPECTION FEE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-6"
+          data-category="fee"
+          data-keywords="canadian custom inspection fee canada surcharge guide inspection"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-box-open"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+
+          </div>
+
+          <h3>Canadian Custom Inspection Fee</h3>
+
+          <p class="lead">
+            Review Canadian custom inspection fee concerns with the
+            correct guide for inspection-related surcharge validation.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Canada
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-box-open"></i>
+              Inspection
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/canadian-custom-inspection-fee.html"
+            class="guide-link"
+          >
+            Open Canadian Custom Inspection Fee
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this for Canada inspection-related surcharge questions
+            and validation.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             07 — CANADIAN SURCHARGE GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-1"
+          data-category="fee"
+          data-keywords="canadian surcharge guide canada surcharge pricing guide customs border"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-flag"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-flag"></i>
+            </div>
+
+          </div>
+
+          <h3>Canadian Surcharge Guide</h3>
+
+          <p class="lead">
+            Open the Canadian surcharge guide for Canada-related surcharge
+            review, validation, and the correct next pricing action.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Canada
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-flag"></i>
+              Surcharge
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/canadian-surcharge-guide.html"
+            class="guide-link"
+          >
+            Open Canadian Surcharge Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this for Canadian surcharge concerns, charge review,
+            and related guidance.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             08 — WEIGHING SERVICE FEE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-2"
+          data-category="fee"
+          data-keywords="weighing service fee weight charge validation bol service guide"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-weight-scale"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-weight-scale"></i>
+            </div>
+
+          </div>
+
+          <h3>Weighing Service Fee</h3>
+
+          <p class="lead">
+            Use this guide to validate weighing service fee disputes
+            and determine if the charge should be applied or removed.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-scale-balanced"></i>
+              Validation
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/weighing-service-guide.html"
+            class="guide-link"
+          >
+            Open Weighing Service Fee
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Best for verifying if weighing service was requested
+            and validating the fee.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             09 — NOST GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-3"
+          data-category="service"
+          data-keywords="nost non optional service transfer no service time pickup request dashboard dispute surcharge charge validation rqd1 void account correction"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-truck-fast"></i>
+              Service
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+
+          </div>
+
+          <h3>NOST Guide</h3>
+
+          <p class="lead">
+            Structured guide for NOST disputes including pickup request
+            validation, dashboard review, shipment history checks,
+            courtesy handling, and void or account correction actions.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-truck-fast"></i>
+              NOST
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/nost-guide.html"
+            class="guide-link"
+          >
+            Open NOST Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this for NOST dispute handling, courtesy review,
+            account correction, and RQD1 void processing.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             10 — SORT & SEGREGATE GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-4"
+          data-category="fee"
+          data-keywords="sort segregate sort and segregate fee surcharge charge validation handling dispute pricing"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-filter-circle-dollar"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-shuffle"></i>
+            </div>
+
+          </div>
+
+          <h3>Sort &amp; Segregate Guide</h3>
+
+          <p class="lead">
+            Decision tree for validating Sort &amp; Segregate disputes
+            and determining the correct surcharge handling.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-shuffle"></i>
+              Sort &amp; Seg
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/sort-and-segregate-guide.html"
+            class="guide-link"
+          >
+            Open Sort &amp; Seg Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this for sort and segregate fee review, validation,
+            and correct keep-or-remove handling.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             11 — NOTIFY FEE GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-5"
+          data-category="fee"
+          data-keywords="notify fee surcharge notification phone call consignee shipper charge validation dispute"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-bell"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-phone-volume"></i>
+            </div>
+
+          </div>
+
+          <h3>Notify Fee Guide</h3>
+
+          <p class="lead">
+            Decision tree for handling Notify Fee disputes and validating
+            whether the notification charge should stay or be removed.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-bell"></i>
+              Notify
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/notify-fee-guide.html"
+            class="guide-link"
+          >
+            Open Notify Fee Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Use this for notify charge validation, dispute handling,
+            and final surcharge action.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             12 — LUMPER FEE GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-6"
+          data-category="fee"
+          data-keywords="lumper fee sort segregate lmpp lmpb lmpc override dispute backup documents tariff 579 lumper service"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-hand-holding-heart"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-hand-holding-heart"></i>
+            </div>
+
+          </div>
+
+          <h3>Lumper Fee Guide</h3>
+
+          <p class="lead">
+            Handle Lumper fee disputes (LMPB, LMPP, LMPC) by explaining
+            the service per FXF Rules Tariff Item 579 and providing
+            appropriate responses based on whether the customer is
+            disputing the fee or requesting backup documentation.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-tag"></i>
+              LMPB/LMPP/LMPC
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/lumper-fee-guide.html"
+            class="guide-link"
+          >
+            Open Lumper Fee Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Best for Lumper fee disputes, Sort &amp; Segregate fee
+            validation, backup documentation requests, and customer
+            communication using FXF Rules Tariff Item 579.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             13 — STORAGE FEE GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-6"
+          data-category="fee"
+          data-keywords="storage fee dispute calculation fedex fault on hand notice legal refusal supporting documents tariff 910"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-warehouse"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-warehouse"></i>
+            </div>
+
+          </div>
+
+          <h3>Storage Fee Guide</h3>
+
+          <p class="lead">
+            Validate storage fee disputes by reviewing supporting
+            documents (Legal Notice of Refusal or On-Hand Freight),
+            verifying fee calculations per FXF Rules Tariff, and
+            handling FedEx fault claims through destination center
+            confirmation.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-calculator"></i>
+              Calculation
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/storage-fee-guide.html"
+            class="guide-link"
+          >
+            Open Storage Fee Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Best for storage fee disputes, calculation validation,
+            On-Hand Notice review, FedEx fault claims, and removal handling.
+          </p>
+
+        </article>
+
+
+        <!-- ==================================================
+             14 — REDELIVERY HANDLING GUIDE
+             ================================================== -->
+        <article
+          class="guide-card reveal delay-6"
+          data-category="fee"
+          data-keywords="redelivery fee second attempt appointment dockspace liftgate straight truck bobtail rear load receiving closed refused carrier failure salvage reconsignment billing error state of emergency weather"
+        >
+
+          <div class="guide-card-top">
+
+            <span class="guide-meta">
+              <i class="fa-solid fa-truck-arrow-right"></i>
+              Fee
+            </span>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-truck-arrow-right"></i>
+            </div>
+
+          </div>
+
+          <h3>Redelivery Handling Guide</h3>
+
+          <p class="lead">
+            Validate redelivery fee disputes by reviewing second delivery
+            attempts, appointment requirements, receiving conditions,
+            customer refusal reasons, and carrier failures to determine
+            if the fee should be kept or removed.
+          </p>
+
+          <div class="card-meta">
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-file-lines"></i>
+              Surcharge
+            </span>
+
+            <span class="meta-pill">
+              <i class="fa-solid fa-truck"></i>
+              Redelivery
+            </span>
+
+          </div>
+
+          <a
+            href="other-surcharges/redelivery-fee-guide.html"
+            class="guide-link"
+          >
+            Open Redelivery Handling Guide
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+
+          <p class="small">
+            Best for redelivery fee disputes, second attempt validation,
+            appointment checks, receiving condition review, customer
+            refusal handling, carrier failure scenarios, and keep-or-remove
+            decision making.
+          </p>
+
+        </article>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+    <div id="footer-placeholder"></div>
+
+  </div>
+
+
+  <script src="assets/js/group-guides.js"></script>
+
+    <script src="assets/js/page-loader.js"></script>
+</body>
+</html>
