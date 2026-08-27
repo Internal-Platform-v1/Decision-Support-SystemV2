@@ -15,9 +15,25 @@
   >
 
   <script src="shared/include.js"></script>
+    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <script>
+        document.documentElement.classList.add("page-loading");
+        document.documentElement.setAttribute("aria-busy", "true");
+    </script>
 </head>
 
 <body>
+    <!-- GLOBAL PAGE LOADER -->
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="page-loader-inner">
+            <div class="page-loader-mark" aria-hidden="true">
+                <span class="page-loader-ring"></span>
+                <span class="page-loader-dot"></span>
+            </div>
+            <p class="page-loader-text">Loading BD Tools…</p>
+        </div>
+    </div>
+
 
   <div class="app-shell">
 
@@ -292,5 +308,6 @@
 
   <script src="assets/js/group-guides.js"></script>
 
+    <script src="assets/js/page-loader.js"></script>
 </body>
 </html>
