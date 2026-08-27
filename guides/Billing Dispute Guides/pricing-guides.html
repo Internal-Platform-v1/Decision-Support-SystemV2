@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" class="page-protected">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="../../">
+  <title>Pricing Guides | Decision Support System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="assets/css/guide-themes.css">
+  <link rel="stylesheet" href="assets/css/group-guides.css">
+
+  <script src="shared/include.js"></script>
+</head>
+
+<body class="theme-fedex group-page pricing-guides-page">
+  <div class="app-shell">
+
+    <div id="header-placeholder"></div>
+
+    <main>
+      <section class="group-hero pricing-guides-hero">
+        <div class="group-hero-image" aria-hidden="true"></div>
+
+        <div class="group-hero-content">
+          <div class="group-hero-copy">
+            <div class="intro-kicker">
+              <i class="fa-solid fa-tags"></i>
+              Pricing
+            </div>
+
+            <h1>Pricing Guides</h1>
+
+            <p>
+              Select the pricing guide or support tool that matches the pricing
+              concern and open the appropriate workflow.
+            </p>
+
+            <label class="hero-search" for="guideSearch">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input
+                id="guideSearch"
+                type="search"
+                placeholder="Search pricing guides..."
+                autocomplete="off"
+              >
+              <button
+                id="clearGuideSearch"
+                type="button"
+                aria-label="Clear search"
+                title="Clear search"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              <span class="hero-search-button">Search</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="section guide-library">
+        <div class="section-heading library-toolbar">
+          <h2>
+            <span class="heading-bar"></span>
+            Guide Library
+          </h2>
+
+          <button
+            class="view-all"
+            type="button"
+            data-action="view-all-guides"
+          >
+            View All Guides <span>→</span>
+          </button>
+        </div>
+
+        <p class="library-results" id="resultsText">
+          Showing all 8 guides
+        </p>
+
+        <div class="quick-grid guide-grid" id="guideGrid">
+
+          <article
+            class="quick-card guide-card purple-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/fuel-guide.html"
+            data-search="fuel pricing guide dispute charge review"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-gas-pump"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>Fuel Guide</h3>
+              <p>Review fuel-related pricing disputes using the correct guide and supporting validation steps.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/fuel-guide.html"
+                aria-label="Open Fuel Guide"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card orange-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/surcharge-guide.html"
+            data-search="surcharge pricing guide review validation dispute"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>Surcharge Guide</h3>
+              <p>Check surcharge disputes and verify the correct supporting logic before responding.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/surcharge-guide.html"
+                aria-label="Open Surcharge Guide"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card blue-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/eprt-guide.html"
+            data-search="eprt guide exception escalation review pricing"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>ePRT Guide</h3>
+              <p>Use ePRT guidance when pricing results need exception handling or escalation review.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/eprt-guide.html"
+                aria-label="Open ePRT Guide"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card green-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/eprt-submission.html"
+            data-search="eprt submission routing escalation submit"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>ePRT Submission</h3>
+              <p>Open the submission page when the case already requires formal ePRT routing.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/eprt-submission.html"
+                aria-label="Open ePRT Submission"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card indigo-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/checking-eprs.html"
+            data-search="checking eprs agreement pricing setup validation tool"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>Checking EPRS</h3>
+              <p>Validate customer agreement and pricing setup using the EPRS reference tool.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/checking-eprs.html"
+                aria-label="Open Checking EPRS"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card pink-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/base-rater.html"
+            data-search="base rater rate validation pricing tool"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>Base Rater</h3>
+              <p>Open the base rating tool when pricing needs direct rate validation support.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/base-rater.html"
+                aria-label="Open Base Rater"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card purple-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/discount-amc-guide.html"
+            data-search="discount amc pricing agreement exception rerate guide"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-tags"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>Discount - AMC Guide</h3>
+              <p>Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/discount-amc-guide.html"
+                aria-label="Open Discount - AMC Guide"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+
+          <article
+            class="quick-card guide-card orange-card"
+            tabindex="0"
+            role="link"
+            data-url="pricing-guides-list/courtesy-discount.html"
+            data-search="courtesy discount surcharge guide adjustment pricing"
+          >
+            <div class="quick-icon guide-card-icon">
+              <i class="fa-solid fa-tags"></i>
+            </div>
+            <div class="guide-card-content">
+              <span class="guide-tag">Pricing</span>
+              <h3>Courtesy Discount</h3>
+              <p>Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.</p>
+              <a
+                class="arrow-btn guide-open"
+                href="pricing-guides-list/courtesy-discount.html"
+                aria-label="Open Courtesy Discount"
+                title="Open Guide"
+              ><i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="no-results" id="noResults" hidden>
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <h3>No matching guide</h3>
+          <p>Try another pricing keyword.</p>
+        </div>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+  </div>
+
+  <script src="assets/js/group-guides.js"></script>
+</body>
+</html>
