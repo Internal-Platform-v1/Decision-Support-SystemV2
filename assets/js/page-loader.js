@@ -1,28 +1,32 @@
 /* ============================================================
-   BD TOOLS — CLEAN PAGE LOADER
-   Waits for the page shell, shared header/footer, fonts,
-   images, and browser load before revealing the page.
+   BD TOOLS — GLOBAL PAGE LOADER
    ============================================================ */
 
 (function () {
     "use strict";
 
-    const LOADER_ID = "pageLoader";
-    const MAX_WAIT = 5000;
-    const MIN_DISPLAY = 320;
+    const loader = document.getElementById("pageLoader");
+    const MIN_DISPLAY_TIME = 450;
+    const MAX_WAIT_TIME = 7000;
+    const USER_READY_EVENT = "bdtools:user-ready";
+    const started = performance.now();
 
-    const startedAt = performance.now();
+    let userReady = false;
 
-    function markPageLoading() {
-        document.documentElement.classList.add("page-loading");
-        document.documentElement.setAttribute("aria-busy", "true");
-    }
+    /*
+     * The Main Index can receive the authenticated user's name after the
+     * document itself is already loaded. Listening for this event lets the
+     * loader reveal the page only after that name has been resolved.
+     *
+     * Existing pages that do not dispatch the event are not blocked forever;
+     * the normal readiness check and safety timeout still apply.
+     */
+    window.addEventListener(USER_READY_EVENT, function () {
+        userReady = true;
+    }, { once: true });
 
-    function getLoader() {
-        return document.getElementById(LOADER_ID);
-    }
 
-    function sharedComponentsReady() {
+    function sharedPartsReady() {
         const header = document.getElementById("header-placeholder");
         const footer = document.getElementById("footer-placeholder");
 
@@ -33,9 +37,7 @@
     }
 
     function imagesReady() {
-        const images = Array.from(document.images);
-
-        return images.every(function (img) {
+        return Array.from(document.images).every(function (img) {
             return img.complete;
         });
     }
@@ -45,25 +47,66 @@
     }
 
     function pageReady() {
+        const waitsForUser =
+            document.body &&
+            document.body.dataset &&
+            document.body.dataset.waitsForUser === "true";
+
         return (
             document.readyState === "complete" &&
-            sharedComponentsReady() &&
+            sharedPartsReady() &&
             imagesReady() &&
-            fontsReady()
+            fontsReady() &&
+            (!waitsForUser || userNameIsResolved())
         );
     }
 
-    function revealPage() {
-        const loader = getLoader();
+    function userNameIsResolved() {
+        /*
+         * Accept the authenticated user's resolved name when the page code
+         * has already populated a visible greeting/name element.
+         * Generic placeholders are treated as unresolved.
+         */
+        const selectors = [
+            "#userName",
+            "#user-name",
+            "#welcomeName",
+            "#welcome-name",
+            ".user-name",
+            ".welcome-name"
+        ];
 
+        for (const selector of selectors) {
+            const el = document.querySelector(selector);
+            if (!el) continue;
+
+            const text = (el.textContent || "").trim();
+
+            if (
+                text &&
+                !/^(jennifer|loading|user|guest|undefined|null|name)$/i.test(text)
+            ) {
+                return true;
+            }
+        }
+
+        /*
+         * If the current page uses another mechanism for the greeting,
+         * don't hold the page indefinitely. The safety timeout remains the
+         * final fallback.
+         */
+        return false;
+    }
+
+    function reveal() {
         if (!loader) {
             document.documentElement.classList.remove("page-loading");
             document.documentElement.removeAttribute("aria-busy");
             return;
         }
 
-        const elapsed = performance.now() - startedAt;
-        const remaining = Math.max(0, MIN_DISPLAY - elapsed);
+        const elapsed = performance.now() - started;
+        const delay = Math.max(0, MIN_DISPLAY_TIME - elapsed);
 
         window.setTimeout(function () {
             loader.classList.add("is-hidden");
@@ -71,17 +114,19 @@
             document.documentElement.removeAttribute("aria-busy");
 
             window.setTimeout(function () {
-                loader.remove();
+                if (loader && loader.parentNode) {
+                    loader.remove();
+                }
             }, 320);
-        }, remaining);
+        }, delay);
     }
 
-    function waitForPage() {
-        const deadline = performance.now() + MAX_WAIT;
+    function waitUntilReady() {
+        const deadline = performance.now() + MAX_WAIT_TIME;
 
         function check() {
             if (pageReady() || performance.now() >= deadline) {
-                revealPage();
+                reveal();
                 return;
             }
 
@@ -91,13 +136,14 @@
         check();
     }
 
-    markPageLoading();
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", waitForPage, { once: true });
+        document.addEventListener("DOMContentLoaded", waitUntilReady, { once: true });
     } else {
-        waitForPage();
+        waitUntilReady();
     }
 
-    window.addEventListener("load", waitForPage, { once: true });
+    window.addEventListener("load", waitUntilReady, { once: true });
 })();
