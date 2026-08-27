@@ -23,6 +23,11 @@ if (displayName) {
     nameElement.textContent =
         firstName;
 
+    // Tell the page loader that the real user name is ready
+    if (typeof window.bdToolsUserReady === "function") {
+        window.bdToolsUserReady();
+    }
+
 }
 
 }
