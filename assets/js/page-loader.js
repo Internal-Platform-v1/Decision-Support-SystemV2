@@ -8,7 +8,7 @@
 
     const loader = document.getElementById("pageLoader");
     const MIN_DISPLAY_TIME = 180;
-    const MAX_WAIT_TIME = 1800;
+    const MAX_WAIT_TIME = 3000;
     const started = performance.now();
 
     function sharedPartsReady() {
@@ -21,17 +21,26 @@
         return headerReady && footerReady;
     }
 
-    function pageReady() {
-        /*
-         * Only wait for the document and dynamically injected shared shell.
-         * Images/fonts are allowed to finish naturally after the page appears,
-         * which keeps the loading screen short.
-         */
-        return (
-            document.readyState === "complete" &&
-            sharedPartsReady()
-        );
+function userNameReady() {
+    const nameElement = document.getElementById("currentUserName");
+
+    if (!nameElement) {
+        return true;
     }
+
+    const name = nameElement.textContent.trim();
+
+    // Do not reveal the page while the fallback is still showing.
+    return name !== "" && name.toLowerCase() !== "user";
+}
+
+function pageReady() {
+    return (
+        document.readyState === "complete" &&
+        sharedPartsReady() &&
+        userNameReady()
+    );
+}
 
     function reveal() {
         if (!loader) {
