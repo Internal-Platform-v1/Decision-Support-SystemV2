@@ -15,6 +15,11 @@
   >
 
   <script src="shared/include.js"></script>
+    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <script>
+        document.documentElement.classList.add("page-loading");
+        document.documentElement.setAttribute("aria-busy", "true");
+    </script>
 </head>
 
 <body>
@@ -323,6 +328,8 @@
   </div>
 
   <script src="assets/js/group-guides.js"></script>
+
+    <script src="assets/js/page-loader.js"></script>
 
 </body>
 </html>
