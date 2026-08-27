@@ -172,12 +172,27 @@ renderLists();
 
 function openGuide(name){
 
-  const guideRoutes = {
+const guideRoutes = {
 
     "Billing Dispute Guides":
-      "guides/Billing%20Dispute%20Guides/billing-dispute-guides.html"
+      "guides/Billing%20Dispute%20Guides/billing-dispute-guides.html",
 
-  };
+    "Pricing General Guides":
+      "guides/Billing%20Dispute%20Guides/pricing-guides.html",
+
+    "Surcharges Guide":
+      "guides/Billing%20Dispute%20Guides/surcharge-guides.html",
+
+    "Account Handling Guide":
+      "guides/Billing%20Dispute%20Guides/account-handling-guides.html",
+
+    "PAUD Queue's Guide":
+      "guides/Billing%20Dispute%20Guides/paud-guides.html",
+
+    "Other Operational Guides":
+      "guides/Billing%20Dispute%20Guides/other-guides.html"
+
+};
 
   const target =
     guideRoutes[name];
