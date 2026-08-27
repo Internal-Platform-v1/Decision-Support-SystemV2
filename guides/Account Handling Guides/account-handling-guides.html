@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <base href="../../">
+
+<title>Account Handling Guides | Decision Support System</title>
+  <link rel="stylesheet" href="assets/css/group-guides.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+
+  <script src="shared/include.js"></script>
+    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <script>
+        document.documentElement.classList.add("page-loading");
+        document.documentElement.setAttribute("aria-busy", "true");
+    </script>
+</head>
+
+<body>
+    <!-- GLOBAL PAGE LOADER -->
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="page-loader-inner">
+            <div class="page-loader-mark" aria-hidden="true">
+                <span class="page-loader-ring"></span>
+                <span class="page-loader-dot"></span>
+            </div>
+            <p class="page-loader-text">Loading BD Tools…</p>
+        </div>
+    </div>
+
+
+  <div class="app-shell">
+
+    <div id="header-placeholder"></div>
+
+<main>
+
+  <!-- ======================================================
+       ACCOUNT HANDLING HERO
+       ====================================================== -->
+  <section class="group-hero account-handling-hero">
+
+    <div class="group-hero-image" aria-hidden="true"></div>
+
+    <div class="group-hero-content">
+
+      <div class="group-hero-copy">
+
+        <div class="intro-kicker">
+          <i class="fa-solid fa-user-gear"></i>
+          Account Handling
+        </div>
+
+        <h1>Account Handling Guides</h1>
+
+        <p>
+          Select the guide that matches the account concern and
+          open the appropriate workflow.
+        </p>
+
+        <label class="hero-search" for="guideSearch">
+
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <input
+            id="guideSearch"
+            type="search"
+            placeholder="Search account handling guides..."
+            autocomplete="off"
+          >
+
+          <button
+            id="clearGuideSearch"
+            type="button"
+            aria-label="Clear search"
+            title="Clear search"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+
+          <span class="hero-search-button">Search</span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       GUIDE LIBRARY
+       ====================================================== -->
+  <section class="section guide-library">
+
+    <div class="section-heading library-toolbar">
+
+      <h2>
+        <span class="heading-bar"></span>
+        Guide Library
+      </h2>
+
+      <button
+        class="view-all"
+        type="button"
+        data-action="view-all-guides"
+      >
+        View All Guides <span>→</span>
+      </button>
+
+    </div>
+
+    <p class="library-results" id="resultsText">
+      Showing all 5 guides
+    </p>
+
+
+    <div class="quick-grid guide-grid" id="guideGrid">
+
+
+      <!-- ==================================================
+           01 — HANDLING INACTIVE ACCOUNT
+           ================================================== -->
+      <article
+        class="quick-card guide-card purple-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/account-handling-guides-list/handling-notactive-guide.html"
+        data-search="inactive account archived deleted dnu not active handling account status"
+      >
+
+        <div class="quick-icon guide-card-icon purple-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="3"/>
+            <path d="M6 19c.6-3.2 2.7-5 6-5s5.4 1.8 6 5"/>
+            <path d="m17 5 3 3M20 5l-3 3"/>
+          </svg>
+        </div>
+
+        <h3>Handling Inactive Account</h3>
+
+        <p>
+          Validate inactive, archived, deleted, or do-not-use accounts
+          and determine the correct next action.
+        </p>
+
+        <button
+          class="arrow-btn"
+          type="button"
+          aria-label="Open guide"
+        >
+          →
+        </button>
+
+      </article>
+
+
+      <!-- ==================================================
+           02 — CREATING CUSTOMER'S ACCOUNT
+           ================================================== -->
+      <article
+        class="quick-card guide-card orange-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/account-handling-guides-list/creating-customer-account.html"
+        data-search="creating customer account create customer new account setup account creation"
+      >
+
+        <div class="quick-icon guide-card-icon orange-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="10" cy="8" r="3"/>
+            <path d="M4.5 19c.6-3.2 2.6-5 5.5-5s4.9 1.8 5.5 5"/>
+            <path d="M18 8v6M15 11h6"/>
+          </svg>
+        </div>
+
+        <h3>Creating Customer's Account</h3>
+
+        <p>
+          Follow the correct setup process when creating a new
+          customer account.
+        </p>
+
+        <button
+          class="arrow-btn"
+          type="button"
+          aria-label="Open guide"
+        >
+          →
+        </button>
+
+      </article>
+
+
+      <!-- ==================================================
+           03 — ACCOUNT CREATION STEPS
+           ================================================== -->
+      <article
+        class="quick-card guide-card blue-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/account-handling-guides-list/account-creation-steps.html"
+        data-search="steps how create account account creation steps process guide setup"
+      >
+
+        <div class="quick-icon guide-card-icon blue-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 5h12"/>
+            <path d="M6 10h12"/>
+            <path d="M6 15h8"/>
+            <path d="M6 19h5"/>
+            <circle cx="18" cy="17" r="2.5"/>
+            <path d="m17 17 1 1 2-2"/>
+          </svg>
+        </div>
+
+        <h3>Steps on How to Create an Account</h3>
+
+        <p>
+          Follow the structured step-by-step process for complete
+          customer account creation.
+        </p>
+
+        <button
+          class="arrow-btn"
+          type="button"
+          aria-label="Open guide"
+        >
+          →
+        </button>
+
+      </article>
+
+
+      <!-- ==================================================
+           04 — SEARCHING FOR ACCOUNT
+           ================================================== -->
+      <article
+        class="quick-card guide-card green-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/account-handling-guides-list/searching-account-guide.html"
+        data-search="searching account search find account customer account validation review"
+      >
+
+        <div class="quick-icon guide-card-icon green-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="10.5" cy="10.5" r="5.5"/>
+            <path d="m15 15 4.5 4.5"/>
+            <path d="M8 10.5h5"/>
+            <path d="M10.5 8v5"/>
+          </svg>
+        </div>
+
+        <h3>Searching for Account Guide</h3>
+
+        <p>
+          Locate and validate the correct customer account before
+          proceeding with account handling.
+        </p>
+
+        <button
+          class="arrow-btn"
+          type="button"
+          aria-label="Open guide"
+        >
+          →
+        </button>
+
+      </article>
+
+
+      <!-- ==================================================
+           05 — UPDATING SCAC/BU
+           ================================================== -->
+      <article
+        class="quick-card guide-card indigo-card"
+        tabindex="0"
+        role="link"
+        data-url="guides/Billing Dispute Guides/account-handling-guides-list/updating-bt-scacbu-guide.html"
+        data-search="updating scac bu bt scacbu account update correction validation"
+      >
+
+        <div class="quick-icon guide-card-icon indigo-bg">
+          <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 7h14"/>
+            <path d="M5 12h9"/>
+            <path d="M5 17h7"/>
+            <path d="m16 15 4 4"/>
+            <path d="m19.5 14.5 1 1-4 4-1-1z"/>
+          </svg>
+        </div>
+
+        <h3>Updating SCAC/BU Guide</h3>
+
+        <p>
+          Validate SCAC/BU update requests and determine the correct
+          correction and update steps.
+        </p>
+
+        <button
+          class="arrow-btn"
+          type="button"
+          aria-label="Open guide"
+        >
+          →
+        </button>
+
+      </article>
+
+
+    </div>
+
+
+    <!-- ======================================================
+         NO RESULTS
+         ====================================================== -->
+    <div class="no-results" id="noResults" hidden>
+
+      <i class="fa-solid fa-magnifying-glass"></i>
+
+      <h3>No matching guide</h3>
+
+      <p>
+        Try another account handling keyword.
+      </p>
+
+    </div>
+
+  </section>
+
+</main>
+
+    <div id="footer-placeholder"></div>
+
+  </div>
+
+
+  <script src="assets/js/group-guides.js"></script>
+
+    <script src="assets/js/page-loader.js"></script>
+</body>
+</html>
