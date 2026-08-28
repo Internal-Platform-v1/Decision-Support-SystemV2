@@ -1,657 +1,454 @@
 /* ============================================================
-   DSS V2 — SHARED FOOTER BEHAVIOR
+   DSS V2 — SHARED FOOTER
    Feedback + Get Help
-   Uses the authenticated Firebase session already established
-   by DSS V2. If Firebase is not yet present, it loads the
-   compatible SDK and initializes the same DSS project once.
+   All behavior lives here. No separate rating JS.
    ============================================================ */
 
 (function () {
-  "use strict";
+    "use strict";
 
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fKDr8KwnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+    let selectedRating = 0;
+    let ratingStars = [];
+    let lastFocusedElement = null;
 
-  const FIREBASE_SCRIPTS = [
-    "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"
-  ];
-
-  const ratingLabels = {
-    1: "Poor",
-    2: "Needs improvement",
-    3: "Good",
-    4: "Very good",
-    5: "Excellent"
-  };
-
-  let selectedRating = 0;
-  let activeModal = null;
-  let lastFocusedElement = null;
-  let firebaseReadyPromise = null;
-
-  function getFirebase() {
-    return typeof window.firebase !== "undefined" ? window.firebase : null;
-  }
-
-  function loadScript(src) {
-    return new Promise(function (resolve, reject) {
-      const existing = document.querySelector('script[src="' + src + '"]');
-
-      if (existing) {
-        if (getFirebase()) {
-          resolve();
-          return;
+    function getFirebaseDB() {
+        if (typeof firebase === "undefined") {
+            return null;
         }
 
-        existing.addEventListener("load", resolve, { once: true });
-        existing.addEventListener("error", reject, { once: true });
-        return;
-      }
+        try {
+            if (firebase.apps && firebase.apps.length) {
+                return firebase.firestore();
+            }
+        } catch (error) {
+            console.error("DSS Footer: Firestore unavailable.", error);
+        }
 
-      const script = document.createElement("script");
-      script.src = src;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = function () {
-        reject(new Error("Unable to load Firebase SDK."));
-      };
-
-      document.head.appendChild(script);
-    });
-  }
-
-  async function ensureFirebase() {
-    if (firebaseReadyPromise) {
-      return firebaseReadyPromise;
+        return null;
     }
 
-    firebaseReadyPromise = (async function () {
-      try {
-        if (!getFirebase()) {
-          await loadScript(FIREBASE_SCRIPTS[0]);
+    function getCurrentUser() {
+        try {
+            if (window.currentUser) return window.currentUser;
+
+            if (typeof firebase !== "undefined" &&
+                firebase.auth &&
+                firebase.auth().currentUser) {
+                return firebase.auth().currentUser;
+            }
+        } catch (error) {
+            console.error("DSS Footer: Unable to read current user.", error);
         }
 
-        if (!getFirebase()) {
-          throw new Error("Firebase SDK is unavailable.");
-        }
-
-        if (typeof firebase.auth !== "function") {
-          await loadScript(FIREBASE_SCRIPTS[1]);
-        }
-
-        if (typeof firebase.firestore !== "function") {
-          await loadScript(FIREBASE_SCRIPTS[2]);
-        }
-
-        if (!firebase.apps.length) {
-          firebase.initializeApp(FIREBASE_CONFIG);
-        }
-
-        return firebase;
-      } catch (error) {
-        firebaseReadyPromise = null;
-        throw error;
-      }
-    })();
-
-    return firebaseReadyPromise;
-  }
-
-  function getCurrentProfile() {
-    const profile = window.currentUserProfile || {};
-    const authUser =
-      getFirebase() &&
-      typeof firebase.auth === "function"
-        ? firebase.auth().currentUser
-        : null;
-
-    return {
-      uid: profile.uid || (authUser && authUser.uid) || "",
-      email: profile.email || (authUser && authUser.email) || "",
-      displayName:
-        profile.displayName ||
-        (authUser && authUser.displayName) ||
-        ""
-    };
-  }
-
-  function getPageContext() {
-    const pageTitle =
-      document.title ||
-      document.querySelector("h1")?.textContent?.trim() ||
-      "DSS V2";
-
-    return {
-      page: window.location.pathname || "/",
-      pageTitle: pageTitle.trim()
-    };
-  }
-
-  function getAuthUser(firebaseInstance) {
-    const current = firebaseInstance.auth().currentUser;
-
-    if (current) {
-      return Promise.resolve(current);
+        return null;
     }
 
-    return new Promise(function (resolve, reject) {
-      let settled = false;
+    function openModal(modal) {
+        if (!modal) return;
 
-      const unsubscribe = firebaseInstance.auth().onAuthStateChanged(function (user) {
-        if (settled) return;
+        lastFocusedElement = document.activeElement;
 
-        settled = true;
-        unsubscribe();
+        modal.style.display = "flex";
+        modal.setAttribute("aria-hidden", "false");
+        modal.classList.remove("is-closing");
 
-        if (user) {
-          resolve(user);
+        requestAnimationFrame(function () {
+            modal.classList.add("is-open");
+
+            const firstInput = modal.querySelector(
+                "input, textarea, button:not(.footer-modal-close)"
+            );
+
+            if (firstInput) firstInput.focus();
+        });
+    }
+
+    function closeModal(modal, callback) {
+        if (!modal) return;
+
+        modal.classList.remove("is-open");
+        modal.classList.add("is-closing");
+        modal.setAttribute("aria-hidden", "true");
+
+        setTimeout(function () {
+            modal.style.display = "none";
+            modal.classList.remove("is-closing");
+
+            if (typeof callback === "function") {
+                callback();
+            }
+
+            if (lastFocusedElement &&
+                typeof lastFocusedElement.focus === "function") {
+                lastFocusedElement.focus();
+            }
+        }, 220);
+    }
+
+    function updateRatingUI() {
+        const ratingValue = document.getElementById("ratingValue");
+        const ratingHint = document.getElementById("ratingHint");
+
+        if (ratingValue) {
+            ratingValue.textContent = selectedRating + " / 5";
+        }
+
+        ratingStars.forEach(function (star) {
+            const value = Number(star.dataset.value || 0);
+            const selected = value <= selectedRating;
+
+            star.classList.toggle("selected", selected);
+            star.classList.remove("is-preview");
+            star.setAttribute("aria-checked", String(value === selectedRating));
+        });
+
+        const hints = {
+            0: "Select a star rating",
+            1: "Very poor",
+            2: "Needs improvement",
+            3: "Okay",
+            4: "Good",
+            5: "Excellent"
+        };
+
+        if (ratingHint) {
+            ratingHint.textContent = hints[selectedRating] || "Select a star rating";
+        }
+    }
+
+    function initRatingStars() {
+        ratingStars = Array.from(
+            document.querySelectorAll("#ratingStars .rating-star")
+        );
+
+        if (!ratingStars.length) return;
+
+        ratingStars.forEach(function (star) {
+            if (star.dataset.footerRatingInitialized === "true") {
+                return;
+            }
+
+            star.dataset.footerRatingInitialized = "true";
+
+            star.addEventListener("mouseenter", function () {
+                const value = Number(star.dataset.value || 0);
+
+                ratingStars.forEach(function (item) {
+                    const itemValue = Number(item.dataset.value || 0);
+                    item.classList.toggle("is-preview", itemValue <= value);
+                });
+            });
+
+            star.addEventListener("mouseleave", function () {
+                ratingStars.forEach(function (item) {
+                    item.classList.remove("is-preview");
+                });
+            });
+
+            star.addEventListener("focus", function () {
+                const value = Number(star.dataset.value || 0);
+
+                ratingStars.forEach(function (item) {
+                    const itemValue = Number(item.dataset.value || 0);
+                    item.classList.toggle("is-preview", itemValue <= value);
+                });
+            });
+
+            star.addEventListener("blur", function () {
+                ratingStars.forEach(function (item) {
+                    item.classList.remove("is-preview");
+                });
+            });
+
+            star.addEventListener("click", function () {
+                selectedRating = Number(star.dataset.value || 0);
+                updateRatingUI();
+            });
+
+            star.addEventListener("keydown", function (event) {
+                let nextRating = selectedRating;
+
+                if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+                    nextRating = Math.min(5, Math.max(1, selectedRating + 1));
+                    event.preventDefault();
+                }
+
+                if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+                    nextRating = Math.max(1, selectedRating - 1);
+                    event.preventDefault();
+                }
+
+                if (event.key === "Home") {
+                    nextRating = 1;
+                    event.preventDefault();
+                }
+
+                if (event.key === "End") {
+                    nextRating = 5;
+                    event.preventDefault();
+                }
+
+                if (nextRating !== selectedRating) {
+                    selectedRating = nextRating;
+                    updateRatingUI();
+
+                    const target = ratingStars.find(function (item) {
+                        return Number(item.dataset.value || 0) === selectedRating;
+                    });
+
+                    if (target) target.focus();
+                }
+            });
+        });
+
+        updateRatingUI();
+    }
+
+    function clearFeedbackForm() {
+        const name = document.getElementById("commentName");
+        const text = document.getElementById("commentText");
+        const message = document.getElementById("feedbackMessage");
+
+        if (name) name.value = "";
+        if (text) text.value = "";
+
+        selectedRating = 0;
+        updateRatingUI();
+
+        if (message) {
+            message.style.display = "none";
+            message.textContent = "";
+        }
+    }
+
+    function clearHelpForm() {
+        const subject = document.getElementById("helpSubject");
+        const message = document.getElementById("helpMessage");
+        const status = document.getElementById("helpMessageStatus");
+
+        if (subject) subject.value = "";
+        if (message) message.value = "";
+
+        if (status) {
+            status.style.display = "none";
+            status.textContent = "";
+        }
+    }
+
+    function showStatus(element, text, type) {
+        if (!element) return;
+
+        element.style.display = "block";
+        element.textContent = text;
+
+        if (type === "success") {
+            element.style.background = "#ecfdf3";
+            element.style.color = "#15803d";
         } else {
-          reject(new Error("AUTH_REQUIRED"));
+            element.style.background = "#fff1f2";
+            element.style.color = "#dc2626";
         }
-      });
+    }
 
-      setTimeout(function () {
-        if (settled) return;
+    window.openComment = function () {
+        openModal(document.getElementById("commentModal"));
+    };
 
-        settled = true;
-        unsubscribe();
-        reject(new Error("AUTH_TIMEOUT"));
-      }, 7000);
-    });
-  }
+    window.closeComment = function () {
+        closeModal(document.getElementById("commentModal"));
+    };
 
-  function setStatus(elementId, message, type) {
-    const el = document.getElementById(elementId);
+    window.openHelp = function () {
+        openModal(document.getElementById("helpModal"));
+    };
 
-    if (!el) return;
+    window.closeHelp = function () {
+        closeModal(document.getElementById("helpModal"));
+    };
 
-    el.hidden = !message;
-    el.textContent = message;
-    el.className = "modal-status" + (type ? " " + type : "");
-  }
+    window.sendComment = async function () {
+        const message = document.getElementById("feedbackMessage");
+        const name = (document.getElementById("commentName")?.value || "").trim();
+        const comment = (document.getElementById("commentText")?.value || "").trim();
 
-  function setButtonLoading(button, loading, loadingText) {
-    if (!button) return;
+        if (!selectedRating) {
+            showStatus(message, "Please select a star rating first.", "error");
+            return;
+        }
 
-    if (loading) {
-      button.dataset.originalText =
-        button.querySelector("span")?.textContent || "";
-      button.disabled = true;
+        const db = getFirebaseDB();
+        const user = getCurrentUser();
 
-      const span = button.querySelector("span");
-      if (span) {
-        span.textContent = loadingText || "Sending...";
-      }
+        if (!db) {
+            showStatus(
+                message,
+                "Feedback could not be submitted because the DSS database is not available.",
+                "error"
+            );
+            return;
+        }
+
+        try {
+            const payload = {
+                rating: selectedRating,
+                name: name || "Anonymous",
+                comment: comment || "",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (user) {
+                payload.uid = user.uid;
+
+                if (user.email) {
+                    payload.email = String(user.email).trim().toLowerCase();
+                }
+            }
+
+            await db.collection("feedback").add(payload);
+
+            showStatus(
+                message,
+                "Thank you. Your feedback was submitted successfully.",
+                "success"
+            );
+
+            setTimeout(function () {
+                closeModal(document.getElementById("commentModal"), clearFeedbackForm);
+            }, 900);
+
+        } catch (error) {
+            console.error("DSS Footer: feedback submission failed:", error);
+
+            showStatus(
+                message,
+                "Unable to send feedback right now. Please try again.",
+                "error"
+            );
+        }
+    };
+
+    window.sendHelpRequest = async function () {
+        const status = document.getElementById("helpMessageStatus");
+        const subject = (document.getElementById("helpSubject")?.value || "").trim();
+        const helpText = (document.getElementById("helpMessage")?.value || "").trim();
+
+        if (!subject || !helpText) {
+            showStatus(
+                status,
+                "Please enter both a subject and a description.",
+                "error"
+            );
+            return;
+        }
+
+        const db = getFirebaseDB();
+        const user = getCurrentUser();
+
+        if (!db) {
+            showStatus(
+                status,
+                "Your help request could not be submitted because the DSS database is not available.",
+                "error"
+            );
+            return;
+        }
+
+        try {
+            const payload = {
+                subject: subject,
+                message: helpText,
+                status: "new",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (user) {
+                payload.uid = user.uid;
+
+                if (user.email) {
+                    payload.email = String(user.email).trim().toLowerCase();
+                }
+
+                if (user.displayName) {
+                    payload.name = user.displayName;
+                }
+            }
+
+            await db.collection("help_requests").add(payload);
+
+            showStatus(
+                status,
+                "Your help request was submitted successfully.",
+                "success"
+            );
+
+            setTimeout(function () {
+                closeModal(document.getElementById("helpModal"), clearHelpForm);
+            }, 900);
+
+        } catch (error) {
+            console.error("DSS Footer: help request submission failed:", error);
+
+            showStatus(
+                status,
+                "Unable to submit your help request right now. Please try again.",
+                "error"
+            );
+        }
+    };
+
+    function closeOnBackdrop(event) {
+        if (event.target.classList.contains("footer-modal")) {
+            if (event.target.id === "commentModal") {
+                window.closeComment();
+            }
+
+            if (event.target.id === "helpModal") {
+                window.closeHelp();
+            }
+        }
+    }
+
+    function closeOnEscape(event) {
+        if (event.key !== "Escape") return;
+
+        const commentModal = document.getElementById("commentModal");
+        const helpModal = document.getElementById("helpModal");
+
+        if (commentModal?.classList.contains("is-open")) {
+            window.closeComment();
+        }
+
+        if (helpModal?.classList.contains("is-open")) {
+            window.closeHelp();
+        }
+    }
+
+    function initFooter() {
+        initRatingStars();
+
+        const commentModal = document.getElementById("commentModal");
+        const helpModal = document.getElementById("helpModal");
+
+        if (commentModal) {
+            commentModal.addEventListener("click", closeOnBackdrop);
+        }
+
+        if (helpModal) {
+            helpModal.addEventListener("click", closeOnBackdrop);
+        }
+
+        if (document.body.dataset.footerEventsInitialized !== "true") {
+            document.body.dataset.footerEventsInitialized = "true";
+            document.addEventListener("keydown", closeOnEscape);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initFooter);
     } else {
-      button.disabled = false;
-
-      const span = button.querySelector("span");
-      if (span && button.dataset.originalText) {
-        span.textContent = button.dataset.originalText;
-      }
-    }
-  }
-
-  function openModal(modalId, trigger) {
-    const modal = document.getElementById(modalId);
-
-    if (!modal) return;
-
-    lastFocusedElement = trigger || document.activeElement;
-    activeModal = modal;
-
-    modal.hidden = false;
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("footer-modal-open");
-
-    requestAnimationFrame(function () {
-      modal.classList.add("is-open");
-    });
-
-    const firstFocusable = modal.querySelector(
-      "button, input, textarea, select"
-    );
-
-    if (firstFocusable) {
-      setTimeout(function () {
-        firstFocusable.focus();
-      }, 30);
-    }
-  }
-
-  function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-
-    if (!modal) return;
-
-    modal.classList.remove("is-open");
-    modal.classList.add("is-closing");
-    modal.setAttribute("aria-hidden", "true");
-
-    setTimeout(function () {
-      modal.hidden = true;
-      modal.classList.remove("is-closing");
-    }, 210);
-
-    document.body.classList.remove("footer-modal-open");
-
-    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
-      setTimeout(function () {
-        lastFocusedElement.focus();
-      }, 20);
+        initFooter();
     }
 
-    activeModal = null;
-  }
-
-  function resetFeedbackForm() {
-    const form = document.getElementById("feedbackForm");
-    if (form) form.reset();
-
-    selectedRating = 0;
-
-    document.querySelectorAll(".rating-star").forEach(function (star) {
-      star.classList.remove("is-selected");
-      star.setAttribute("aria-checked", "false");
-    });
-
-    const caption = document.getElementById("ratingCaption");
-    if (caption) caption.textContent = "Select a rating";
-
-    const count = document.getElementById("feedbackCharCount");
-    if (count) count.textContent = "0/1000";
-
-    setStatus("feedbackStatus", "", "");
-  }
-
-  function resetHelpForm() {
-    const form = document.getElementById("helpForm");
-    if (form) form.reset();
-
-    const count = document.getElementById("helpCharCount");
-    if (count) count.textContent = "0/1500";
-
-    setStatus("helpStatus", "", "");
-  }
-
-  function setupRating() {
-    const stars = Array.from(document.querySelectorAll(".rating-star"));
-
-    stars.forEach(function (star) {
-      star.addEventListener("mouseenter", function () {
-        const value = Number(star.dataset.rating || 0);
-
-        stars.forEach(function (item) {
-          item.classList.toggle(
-            "is-selected",
-            Number(item.dataset.rating || 0) <= value
-          );
-        });
-      });
-
-      star.addEventListener("mouseleave", function () {
-        stars.forEach(function (item) {
-          item.classList.toggle(
-            "is-selected",
-            Number(item.dataset.rating || 0) <= selectedRating
-          );
-        });
-      });
-
-      star.addEventListener("click", function () {
-        selectedRating = Number(star.dataset.rating || 0);
-
-        stars.forEach(function (item) {
-          const value = Number(item.dataset.rating || 0);
-          const selected = value <= selectedRating;
-
-          item.classList.toggle("is-selected", selected);
-          item.setAttribute("aria-checked", String(value === selectedRating));
-        });
-
-        const caption = document.getElementById("ratingCaption");
-        if (caption) {
-          caption.textContent = ratingLabels[selectedRating] || "Selected";
-        }
-
-        setStatus("feedbackStatus", "", "");
-      });
-    });
-  }
-
-  function setupCharacterCounter(textareaId, counterId, max) {
-    const textarea = document.getElementById(textareaId);
-    const counter = document.getElementById(counterId);
-
-    if (!textarea || !counter) return;
-
-    function update() {
-      counter.textContent =
-        String(textarea.value.length) + "/" + String(max);
-    }
-
-    textarea.addEventListener("input", update);
-    update();
-  }
-
-  function describeFirestoreError(error) {
-    if (!error) {
-      return "Unable to complete the request right now.";
-    }
-
-    console.error("DSS V2 footer Firestore error:", error);
-
-    const code = String(error.code || "").toLowerCase();
-
-    if (code.includes("permission-denied")) {
-      return "The request reached Firestore, but permission was denied. Please contact the DSS administrator.";
-    }
-
-    if (code.includes("unauthenticated")) {
-      return "Your DSS session has expired. Please sign in again.";
-    }
-
-    if (
-      code.includes("failed-precondition") &&
-      String(error.message || "").toLowerCase().includes("offline")
-    ) {
-      return "The DSS connection is currently offline. Please check your connection and try again.";
-    }
-
-    if (code.includes("unavailable")) {
-      return "Firestore is temporarily unavailable. Please try again in a moment.";
-    }
-
-    if (code.includes("network")) {
-      return "The network connection is unavailable. Please try again.";
-    }
-
-    return "Unable to send this request right now. Please try again.";
-  }
-
-  async function sendFeedback(event) {
-    event.preventDefault();
-
-    const statusId = "feedbackStatus";
-    const button = document.getElementById("sendFeedbackBtn");
-
-    const comment =
-      document.getElementById("feedbackText")?.value.trim() || "";
-
-    const name =
-      document.getElementById("feedbackName")?.value.trim() || "";
-
-    if (!selectedRating) {
-      setStatus(statusId, "Please select a rating first.", "error");
-      return;
-    }
-
-    if (!comment) {
-      setStatus(statusId, "Please enter your feedback.", "error");
-      document.getElementById("feedbackText")?.focus();
-      return;
-    }
-
-    setButtonLoading(button, true, "Sending...");
-
-    try {
-      const firebaseInstance = await ensureFirebase();
-      const user = await getAuthUser(firebaseInstance);
-      const profile = getCurrentProfile();
-      const page = getPageContext();
-
-      await firebaseInstance.firestore().collection("feedback").add({
-        uid: user.uid,
-        userId: user.uid,
-        email: user.email || profile.email || "",
-        name: name || profile.displayName || "Anonymous",
-        rating: selectedRating,
-        comment: comment,
-        page: page.page,
-        pageTitle: page.pageTitle,
-        createdAt: firebaseInstance.firestore.FieldValue.serverTimestamp()
-      });
-
-      setStatus(
-        statusId,
-        "Thank you. Your feedback was sent successfully.",
-        "success"
-      );
-
-      setButtonLoading(button, false);
-
-      setTimeout(function () {
-        resetFeedbackForm();
-        closeModal("feedbackModal");
-      }, 900);
-    } catch (error) {
-      setButtonLoading(button, false);
-
-      if (error && error.message === "AUTH_REQUIRED") {
-        setStatus(
-          statusId,
-          "You must be signed in to send feedback.",
-          "error"
-        );
-      } else if (error && error.message === "AUTH_TIMEOUT") {
-        setStatus(
-          statusId,
-          "We could not confirm your DSS session. Please refresh and try again.",
-          "error"
-        );
-      } else {
-        setStatus(statusId, describeFirestoreError(error), "error");
-      }
-    }
-  }
-
-  async function sendHelpRequest(event) {
-    event.preventDefault();
-
-    const statusId = "helpStatus";
-    const button = document.getElementById("sendHelpBtn");
-
-    const category =
-      document.getElementById("helpCategory")?.value.trim() || "";
-
-    const subject =
-      document.getElementById("helpSubject")?.value.trim() || "";
-
-    const message =
-      document.getElementById("helpMessage")?.value.trim() || "";
-
-    if (!category) {
-      setStatus(statusId, "Please select a help category.", "error");
-      document.getElementById("helpCategory")?.focus();
-      return;
-    }
-
-    if (!subject) {
-      setStatus(statusId, "Please enter a subject.", "error");
-      document.getElementById("helpSubject")?.focus();
-      return;
-    }
-
-    if (!message) {
-      setStatus(statusId, "Please describe the issue.", "error");
-      document.getElementById("helpMessage")?.focus();
-      return;
-    }
-
-    setButtonLoading(button, true, "Sending...");
-
-    try {
-      const firebaseInstance = await ensureFirebase();
-      const user = await getAuthUser(firebaseInstance);
-      const profile = getCurrentProfile();
-      const page = getPageContext();
-
-      await firebaseInstance.firestore().collection("help_requests").add({
-        uid: user.uid,
-        userId: user.uid,
-        email: user.email || profile.email || "",
-        name: profile.displayName || "User",
-        category: category,
-        subject: subject,
-        message: message,
-        page: page.page,
-        pageTitle: page.pageTitle,
-        status: "open",
-        createdAt: firebaseInstance.firestore.FieldValue.serverTimestamp()
-      });
-
-      setStatus(
-        statusId,
-        "Your help request was sent successfully.",
-        "success"
-      );
-
-      setButtonLoading(button, false);
-
-      setTimeout(function () {
-        resetHelpForm();
-        closeModal("helpModal");
-      }, 900);
-    } catch (error) {
-      setButtonLoading(button, false);
-
-      if (error && error.message === "AUTH_REQUIRED") {
-        setStatus(
-          statusId,
-          "You must be signed in to send a help request.",
-          "error"
-        );
-      } else if (error && error.message === "AUTH_TIMEOUT") {
-        setStatus(
-          statusId,
-          "We could not confirm your DSS session. Please refresh and try again.",
-          "error"
-        );
-      } else {
-        setStatus(statusId, describeFirestoreError(error), "error");
-      }
-    }
-  }
-
-  function trapFocus(event) {
-    if (!activeModal || event.key !== "Tab") return;
-
-    const focusables = Array.from(
-      activeModal.querySelectorAll(
-        'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled])'
-      )
-    ).filter(function (element) {
-      return element.offsetParent !== null;
-    });
-
-    if (!focusables.length) return;
-
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  }
-
-  function handleKeydown(event) {
-    if (event.key === "Escape" && activeModal) {
-      closeModal(activeModal.id);
-      return;
-    }
-
-    trapFocus(event);
-  }
-
-  function setupModalEvents() {
-    const feedbackBtn = document.getElementById("footerFeedbackBtn");
-    const helpBtn = document.getElementById("footerHelpBtn");
-
-    if (feedbackBtn) {
-      feedbackBtn.addEventListener("click", function () {
-        resetFeedbackForm();
-        openModal("feedbackModal", feedbackBtn);
-      });
-    }
-
-    if (helpBtn) {
-      helpBtn.addEventListener("click", function () {
-        resetHelpForm();
-        openModal("helpModal", helpBtn);
-      });
-    }
-
-    document.querySelectorAll("[data-close-modal]").forEach(function (element) {
-      element.addEventListener("click", function () {
-        closeModal(element.dataset.closeModal);
-      });
-    });
-
-    const feedbackForm = document.getElementById("feedbackForm");
-    if (feedbackForm) {
-      feedbackForm.addEventListener("submit", sendFeedback);
-    }
-
-    const helpForm = document.getElementById("helpForm");
-    if (helpForm) {
-      helpForm.addEventListener("submit", sendHelpRequest);
-    }
-
-    document.addEventListener("keydown", handleKeydown);
-  }
-
-  function init() {
-    setupModalEvents();
-    setupRating();
-    setupCharacterCounter("feedbackText", "feedbackCharCount", 1000);
-    setupCharacterCounter("helpMessage", "helpCharCount", 1500);
-
-    /*
-     * If the shared header has already loaded the user's profile,
-     * populate the optional feedback name automatically.
-     */
-    const profile = getCurrentProfile();
-    const feedbackName = document.getElementById("feedbackName");
-
-    if (feedbackName && profile.displayName) {
-      feedbackName.value = profile.displayName;
-    }
-  }
-
-  /*
-   * Footer HTML is inserted asynchronously by the shared
-   * footer loader, so support both immediate and loader-driven
-   * initialization.
-   */
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
-  }
-
-  document.addEventListener("footerLoaded", function () {
-    /*
-     * Guard against duplicate initialization when a loader
-     * dispatches its completion event.
-     */
-    if (document.body.dataset.footerModalInitialized === "true") {
-      return;
-    }
-
-    document.body.dataset.footerModalInitialized = "true";
-    init();
-  }, { once: true });
+    document.addEventListener("footerLoaded", initFooter);
 
 })();
