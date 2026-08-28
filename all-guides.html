@@ -1,202 +1,158 @@
 <!DOCTYPE html>
-<html lang="en" class="page-protected">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DSS — All Guides</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BD Tools — All Guides</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/guide-themes.css" />
+  <link rel="stylesheet" href="assets/css/all-guides.css" />
+  <link rel="stylesheet" href="assets/css/page-loader.css" />
 
-  <!-- Existing DSS theme system -->
-  <link rel="stylesheet" href="assets/css/guide-themes.css">
-  <link rel="stylesheet" href="assets/css/all-guides.css">
-
-  <!-- Existing DSS guide registry — no JSON/database required -->
-  <script src="assets/js/guide-registry-clean.js"></script>
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
 </head>
 
-<body class="theme-fedex" data-page="all-guides">
-  <div class="page">
-    <div id="site-header"></div>
+<body data-waits-for-user="true">
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading BD Tools…</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <!-- ===== SHARED HEADER ===== -->
+    <div id="header-placeholder"></div>
 
     <main>
       <!-- =========================================================
            V2 ALL GUIDES HERO
-           Mirrors the visual language of the current DSS dashboard.
+           Deliberately follows the current index-main.html hero.
            ========================================================= -->
-      <section class="all-guides-hero">
-        <div class="hero-glow hero-glow-one"></div>
-        <div class="hero-glow hero-glow-two"></div>
+      <section class="hero all-guides-hero">
+        <div class="hero-copy">
+          <h1>All <span>Guides</span></h1>
+          <p>Your complete Decision Support System library.<br class="desktop-only" /> Search, filter, and open the guide you need.</p>
 
-        <div class="container hero-inner">
-          <div class="hero-copy">
-            <div class="hero-kicker">
-              <span class="hero-kicker-icon"><i class="fa-solid fa-layer-group"></i></span>
-              DSS GUIDE LIBRARY
-            </div>
-
-            <h1>All Guides</h1>
-
-            <p>
-              Your complete Decision Support System guide library.
-              Search across every workflow, then use the group filters
-              to quickly narrow the right guide for the case.
-            </p>
-
-            <div class="hero-search">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input
-                id="guideSearch"
-                type="search"
-                autocomplete="off"
-                placeholder="Search guides, topics, keywords..."
-                aria-label="Search all guides"
-              >
-              <button id="clearSearch" type="button" aria-label="Clear search">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-              <button id="searchButton" type="button">Search</button>
-            </div>
-
-            <div class="hero-hints">
-              <span><i class="fa-solid fa-bolt"></i> Instant search</span>
-              <span><i class="fa-solid fa-filter"></i> 7 group filters</span>
-              <span><i class="fa-solid fa-book-open"></i> Complete library</span>
-            </div>
-          </div>
-
-          <div class="hero-orbit" aria-hidden="true">
-            <div class="orbit-ring ring-one"></div>
-            <div class="orbit-ring ring-two"></div>
-            <div class="orbit-core">
-              <i class="fa-solid fa-compass"></i>
-              <span>DSS</span>
-              <small>Guide Library</small>
-            </div>
-            <div class="orbit-node node-purple"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <div class="orbit-node node-orange"><i class="fa-solid fa-tags"></i></div>
-            <div class="orbit-node node-blue"><i class="fa-solid fa-receipt"></i></div>
-            <div class="orbit-node node-green"><i class="fa-solid fa-user-gear"></i></div>
-            <div class="orbit-node node-indigo"><i class="fa-solid fa-diagram-project"></i></div>
-            <div class="orbit-node node-pink"><i class="fa-solid fa-toolbox"></i></div>
+          <div class="hero-search">
+            <span class="search-icon"></span>
+            <input
+              id="guideSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="Search for guides, tools, topics..."
+              aria-label="Search all guides"
+            />
+            <button id="searchButton" type="button">Search</button>
           </div>
         </div>
+
+        <!-- The dashboard hero artwork is supplied by hero-background.png,
+             exactly like the current main dashboard. -->
+        <div class="hero-art" aria-hidden="true"></div>
+
+        <!-- =========================================================
+             7 FILTERS — occupy the exact role/position of the dashboard
+             4 statistic boxes.
+             ========================================================= -->
+        <section class="stats-row guide-filter-row" aria-label="Guide categories">
+          <button class="stat-card guide-filter active purple-filter" type="button" data-group="all">
+            <div class="stat-icon purple">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="5" width="6" height="6" rx="1.2"/><rect x="14" y="5" width="6" height="6" rx="1.2"/>
+                <rect x="4" y="13" width="6" height="6" rx="1.2"/><rect x="14" y="13" width="6" height="6" rx="1.2"/>
+              </svg>
+            </div>
+            <div class="filter-copy"><strong id="count-all">0</strong><small>All Guides</small></div>
+          </button>
+
+          <button class="stat-card guide-filter purple-filter" type="button" data-group="billing">
+            <div class="stat-icon purple"><svg class="ui-icon stat-svg" viewBox="0 0 24 24"><path d="M6 3.8h8l4 4v12.4H6z"/><path d="M14 3.8v4h4M9 12h6M9 15h4"/></svg></div>
+            <div class="filter-copy"><strong id="count-billing">0</strong><small>Billing Dispute</small></div>
+          </button>
+
+          <button class="stat-card guide-filter orange-filter" type="button" data-group="pricing">
+            <div class="stat-icon orange"><svg class="ui-icon stat-svg" viewBox="0 0 24 24"><path d="M5 6h14M5 10h14M7 14h10M9 18h6"/><circle cx="18" cy="18" r="2.2"/></svg></div>
+            <div class="filter-copy"><strong id="count-pricing">0</strong><small>Pricing General</small></div>
+          </button>
+
+          <button class="stat-card guide-filter blue-filter" type="button" data-group="surcharge">
+            <div class="stat-icon blue"><svg class="ui-icon stat-svg" viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div>
+            <div class="filter-copy"><strong id="count-surcharge">0</strong><small>Surcharges</small></div>
+          </button>
+
+          <button class="stat-card guide-filter green-filter" type="button" data-group="account">
+            <div class="stat-icon green"><svg class="ui-icon stat-svg" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3"/><path d="M4.8 19v-1.2a4.5 4.5 0 0 1 4.5-4.5h1.4a4.5 4.5 0 0 1 4.5 4.5V19"/><path d="M16 9h4M18 7v4"/></svg></div>
+            <div class="filter-copy"><strong id="count-account">0</strong><small>Account Handling</small></div>
+          </button>
+
+          <button class="stat-card guide-filter indigo-filter" type="button" data-group="paud">
+            <div class="stat-icon indigo"><svg class="ui-icon stat-svg" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><path d="M4 15h10v4H4zM17 16l2 2 3-4"/></svg></div>
+            <div class="filter-copy"><strong id="count-paud">0</strong><small>PAUD Queue</small></div>
+          </button>
+
+          <button class="stat-card guide-filter pink-filter" type="button" data-group="other">
+            <div class="stat-icon pink"><svg class="ui-icon stat-svg" viewBox="0 0 24 24"><path d="M6 3.8h8l4 4v12.4H6z"/><path d="M14 3.8v4h4M9 12h6M9 15h4"/><circle cx="17" cy="17" r="2"/></svg></div>
+            <div class="filter-copy"><strong id="count-other">0</strong><small>Other Operational</small></div>
+          </button>
+        </section>
       </section>
 
       <!-- =========================================================
-           THE 7 FILTERS — THIS REPLACES THE 4 DASHBOARD STAT BOXES
+           GUIDE LIBRARY
            ========================================================= -->
-      <section class="filter-strip">
-        <div class="container">
-          <div class="filter-strip-head">
-            <div>
-              <span class="section-label"><span></span> GUIDE CATEGORIES</span>
-              <h2>Find the right workspace</h2>
-            </div>
-            <div class="library-total">
-              <strong id="totalGuides">0</strong>
-              <span>guides in library</span>
-            </div>
+      <section class="section library-section" id="guideLibrary">
+        <div class="library-heading">
+          <div>
+            <h2><span class="heading-bar"></span><span id="libraryTitle">All Guides</span></h2>
+            <p id="resultsText">Showing all guides</p>
           </div>
 
-          <div class="category-filters" role="tablist" aria-label="Guide groups">
-            <button class="category-filter active filter-all" type="button" data-group="all">
-              <span class="filter-icon"><i class="fa-solid fa-layer-group"></i></span>
-              <span class="filter-text"><strong>All Guides</strong><small>Complete library</small></span>
-              <span class="filter-count" id="count-all">0</span>
-            </button>
-
-            <button class="category-filter filter-billing" type="button" data-group="billing">
-              <span class="filter-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-              <span class="filter-text"><strong>Billing Dispute</strong><small>Billing workflows</small></span>
-              <span class="filter-count" id="count-billing">0</span>
-            </button>
-
-            <button class="category-filter filter-pricing" type="button" data-group="pricing">
-              <span class="filter-icon"><i class="fa-solid fa-tags"></i></span>
-              <span class="filter-text"><strong>Pricing General</strong><small>Rates & pricing</small></span>
-              <span class="filter-count" id="count-pricing">0</span>
-            </button>
-
-            <button class="category-filter filter-surcharge" type="button" data-group="surcharge">
-              <span class="filter-icon"><i class="fa-solid fa-receipt"></i></span>
-              <span class="filter-text"><strong>Surcharges</strong><small>Fee workflows</small></span>
-              <span class="filter-count" id="count-surcharge">0</span>
-            </button>
-
-            <button class="category-filter filter-account" type="button" data-group="account">
-              <span class="filter-icon"><i class="fa-solid fa-user-gear"></i></span>
-              <span class="filter-text"><strong>Account Handling</strong><small>Account workflows</small></span>
-              <span class="filter-count" id="count-account">0</span>
-            </button>
-
-            <button class="category-filter filter-paud" type="button" data-group="paud">
-              <span class="filter-icon"><i class="fa-solid fa-diagram-project"></i></span>
-              <span class="filter-text"><strong>PAUD Queue</strong><small>Queue workflows</small></span>
-              <span class="filter-count" id="count-paud">0</span>
-            </button>
-
-            <button class="category-filter filter-other" type="button" data-group="other">
-              <span class="filter-icon"><i class="fa-solid fa-toolbox"></i></span>
-              <span class="filter-text"><strong>Other Operational</strong><small>Operations & support</small></span>
-              <span class="filter-count" id="count-other">0</span>
-            </button>
+          <div class="library-actions">
+            <button id="clearSearch" class="soft-action" type="button" hidden>Clear Search</button>
+            <button id="sortButton" class="soft-action" type="button">Sort A–Z <span>↕</span></button>
           </div>
         </div>
-      </section>
 
-      <!-- =========================================================
-           LIBRARY
-           ========================================================= -->
-      <section class="library-section" id="guideLibrary">
-        <div class="container">
-          <div class="library-head">
-            <div>
-              <div class="library-kicker">
-                <i class="fa-solid fa-book-open"></i>
-                DSS Guide Library
-              </div>
-              <h2 id="libraryTitle">All Decision Guides</h2>
-              <p id="resultsText">Showing all guides</p>
-            </div>
+        <div id="activeFilterPill" class="active-filter-pill" hidden>
+          <span>Filtered by</span>
+          <strong id="activeFilterName">All Guides</strong>
+          <button id="clearFilter" type="button" aria-label="Clear category filter">×</button>
+        </div>
 
-            <div class="library-actions">
-              <button id="sortButton" class="soft-action" type="button">
-                <i class="fa-solid fa-arrow-down-a-z"></i>
-                <span>Sort A–Z</span>
-              </button>
-            </div>
-          </div>
+        <div id="guideGrid" class="guide-grid" aria-live="polite"></div>
 
-          <div id="activeFilterPill" class="active-filter-pill" hidden>
-            <span>Filtered by</span>
-            <strong id="activeFilterName">All Guides</strong>
-            <button id="clearFilter" type="button" aria-label="Clear category filter">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-
-          <div id="guideGrid" class="guide-grid" aria-live="polite"></div>
-
-          <div id="noResults" class="no-results" hidden>
-            <div class="no-results-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-            <h3>No guides found</h3>
-            <p>Try another guide name, topic, keyword, or choose a different group.</p>
-            <button id="resetSearch" type="button">Show all guides</button>
-          </div>
+        <div id="noResults" class="no-results" hidden>
+          <div class="no-results-icon">⌕</div>
+          <h3>No guides found</h3>
+          <p>Try another guide name, topic, or keyword.</p>
+          <button id="resetSearch" type="button">Show All Guides</button>
         </div>
       </section>
     </main>
 
+    <!-- ===== SHARED FOOTER ===== -->
     <div id="footer-placeholder"></div>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <!-- Existing registry. No JSON and no database required. -->
+  <script src="assets/js/guide-registry-clean.js"></script>
   <script src="shared/include.js"></script>
   <script src="assets/js/all-guides.js"></script>
+  <script src="assets/js/page-loader.js"></script>
+
+  <script>
+    window.bdToolsUserReady = function () {
+      window.dispatchEvent(new Event("bdtools:user-ready"));
+    };
+  </script>
 </body>
 </html>
