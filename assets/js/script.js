@@ -209,7 +209,7 @@ const guideRoutes = {
 }
 
 function openGuideLibrary(){
-  showToast("Guide library opened");
+  window.location.href = "all-guides.html";
 }
 
 window.openGuideLibrary = openGuideLibrary;
