@@ -17,21 +17,34 @@
 
     <main>
       <section class="all-guides-hero">
-        <div class="hero-orbit orbit-one"></div>
-        <div class="hero-orbit orbit-two"></div>
+        <div class="hero-glow glow-purple"></div>
+        <div class="hero-glow glow-orange"></div>
+        <div class="hero-lines"></div>
         <div class="hero-inner">
           <div class="hero-copy">
             <div class="intro-kicker"><i class="fa-solid fa-layer-group"></i> DSS Guide Library</div>
             <h1>All Guides</h1>
-            <p>Find the right Decision Support System guide from every guide group in one searchable workspace.</p>
+            <p>Every Decision Support System guide in one place. Search by guide name, queue, process, keyword, or guide group.</p>
+            <div class="hero-stats">
+              <div><strong id="heroTotal">75</strong><span>Guides available</span></div>
+              <div><strong id="heroGroups">6</strong><span>Guide groups</span></div>
+              <div><strong><i class="fa-solid fa-bolt"></i></strong><span>Fast search</span></div>
+            </div>
           </div>
+
           <div class="hero-search-card">
-            <div class="hero-search-label"><span><i class="fa-solid fa-magnifying-glass"></i> Search the entire guide library</span><kbd>/</kbd></div>
+            <div class="hero-search-label">
+              <span><i class="fa-solid fa-magnifying-glass"></i> Search the complete library</span>
+              <kbd>/</kbd>
+            </div>
             <div class="global-guide-search">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input id="allGuideSearch" type="search" placeholder="Search guide name, topic, keyword, or process..." autocomplete="off" aria-label="Search all guides">
               <button id="clearAllGuideSearch" type="button" aria-label="Clear search" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
-              <span id="searchCount" class="search-count">63 guides</span>
+            </div>
+            <div class="search-helper">
+              <span id="searchCount">75 guides</span>
+              <span>Press <kbd>/</kbd> to focus</span>
             </div>
           </div>
         </div>
@@ -43,19 +56,24 @@
             <div>
               <div class="section-kicker"><span class="heading-bar"></span> Guide workspace</div>
               <h2>Browse the complete guide library</h2>
-              <p id="resultsText">Showing all guides across every DSS group.</p>
+              <p id="resultsText">Showing all 75 guides across every DSS group.</p>
             </div>
-            <button id="clearFilters" class="clear-filters" type="button">Reset filters</button>
+            <button id="clearFilters" class="clear-filters" type="button"><i class="fa-solid fa-rotate-left"></i> Reset filters</button>
           </div>
 
-          <div class="filter-row" id="filterRow" aria-label="Guide categories">
-            <button class="filter-chip active" type="button" data-filter="all">All Guides <span id="allCount">63</span></button>
-            <button class="filter-chip" type="button" data-filter="billing">Billing Dispute <span data-count="billing">6</span></button>
-            <button class="filter-chip" type="button" data-filter="pricing">Pricing <span data-count="pricing">8</span></button>
-            <button class="filter-chip" type="button" data-filter="surcharge">Surcharges <span data-count="surcharge">11</span></button>
-            <button class="filter-chip" type="button" data-filter="account">Account Handling <span data-count="account">5</span></button>
-            <button class="filter-chip" type="button" data-filter="paud">PAUD Queue <span data-count="paud">8</span></button>
-            <button class="filter-chip" type="button" data-filter="other">Other <span data-count="other">25</span></button>
+          <div class="filter-row" id="filterRow" aria-label="Guide groups">
+            <button class="filter-chip active" type="button" data-filter="all">All Guides <span id="allCount">75</span></button>
+            <button class="filter-chip billing" type="button" data-filter="billing">Billing Dispute <span data-count="billing">6</span></button>
+            <button class="filter-chip pricing" type="button" data-filter="pricing">Pricing <span data-count="pricing">8</span></button>
+            <button class="filter-chip surcharge" type="button" data-filter="surcharge">Surcharges <span data-count="surcharge">14</span></button>
+            <button class="filter-chip account" type="button" data-filter="account">Account Handling <span data-count="account">5</span></button>
+            <button class="filter-chip paud" type="button" data-filter="paud">PAUD Queue <span data-count="paud">17</span></button>
+            <button class="filter-chip other" type="button" data-filter="other">Other <span data-count="other">25</span></button>
+          </div>
+
+          <div class="library-status" id="libraryStatus" aria-live="polite">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Search across guide names, descriptions, keywords, and processes.</span>
           </div>
 
           <div id="guideGrid" class="all-guide-grid" aria-live="polite"></div>
@@ -63,7 +81,7 @@
           <div id="noResults" class="empty-state" hidden>
             <div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
             <h3>No matching guides</h3>
-            <p>Try a different guide name, keyword, process, or category.</p>
+            <p>Try a different guide name, queue, keyword, process, or group.</p>
             <button id="emptyReset" type="button">Show all guides</button>
           </div>
 
