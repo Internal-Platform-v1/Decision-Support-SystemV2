@@ -21,7 +21,7 @@
             type="button"
             class="footer-action-btn footer-feedback-btn"
             id="footerFeedbackBtn"
-            onclick="openComment()"
+            data-footer-action="feedback"
         >
             <i class="fa-regular fa-star" aria-hidden="true"></i>
             Feedback
@@ -31,7 +31,7 @@
             type="button"
             class="footer-action-btn footer-help-btn"
             id="footerHelpBtn"
-            onclick="openHelp()"
+            data-footer-action="help"
         >
             <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
             Get Help
@@ -60,7 +60,7 @@
         <button
             type="button"
             class="footer-modal-close"
-            onclick="closeComment()"
+            data-footer-close="comment"
             aria-label="Close feedback"
         >
             <i class="fa-solid fa-xmark"></i>
@@ -115,11 +115,11 @@
         <div class="footer-feedback-message-box" id="feedbackMessage" role="status" aria-live="polite"></div>
 
         <div class="footer-modal-actions">
-            <button type="button" class="footer-secondary-btn" onclick="closeComment()">
+            <button type="button" class="footer-secondary-btn" data-footer-close="comment">
                 Cancel
             </button>
 
-            <button type="button" class="footer-primary-btn" onclick="sendComment()">
+            <button type="button" class="footer-primary-btn" data-footer-submit="feedback">
                 <i class="fa-solid fa-paper-plane"></i>
                 Send Feedback
             </button>
@@ -145,7 +145,7 @@
         <button
             type="button"
             class="footer-modal-close"
-            onclick="closeHelp()"
+            data-footer-close="help"
             aria-label="Close help"
         >
             <i class="fa-solid fa-xmark"></i>
@@ -178,11 +178,11 @@
         <div class="footer-help-message-box" id="helpMessageStatus" role="status" aria-live="polite"></div>
 
         <div class="footer-modal-actions">
-            <button type="button" class="footer-secondary-btn" onclick="closeHelp()">
+            <button type="button" class="footer-secondary-btn" data-footer-close="help">
                 Cancel
             </button>
 
-            <button type="button" class="footer-primary-btn" onclick="sendHelpRequest()">
+            <button type="button" class="footer-primary-btn" data-footer-submit="help">
                 <i class="fa-solid fa-paper-plane"></i>
                 Submit Help Request
             </button>
