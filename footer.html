@@ -1,0 +1,192 @@
+<footer class="footer-banner" aria-label="DSS footer">
+
+    <div class="footer-quote">
+        <span class="quote-mark" aria-hidden="true">“</span>
+
+        <div class="quote-copy">
+            Guiding every decision.<br>
+            <strong>Delivering every time.</strong>
+        </div>
+    </div>
+
+    <div class="footer-message">
+        <span class="footer-message-title">Help us improve DSS</span>
+        <span class="footer-message-text">
+            Your feedback helps us make every guide clearer and easier to use.
+        </span>
+    </div>
+
+    <div class="footer-actions">
+        <button
+            type="button"
+            class="footer-action-btn footer-feedback-btn"
+            id="footerFeedbackBtn"
+            data-footer-action="feedback"
+        >
+            <i class="fa-regular fa-star" aria-hidden="true"></i>
+            Feedback
+        </button>
+
+        <button
+            type="button"
+            class="footer-action-btn footer-help-btn"
+            id="footerHelpBtn"
+            data-footer-action="help"
+        >
+            <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+            Get Help
+        </button>
+    </div>
+
+    <div class="wave wave-one" aria-hidden="true"></div>
+    <div class="wave wave-two" aria-hidden="true"></div>
+
+</footer>
+
+
+<!-- ============================================================
+     FEEDBACK MODAL
+     ============================================================ -->
+<div
+    class="footer-modal"
+    id="commentModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="feedbackModalTitle"
+>
+    <div class="footer-modal-content">
+
+        <button
+            type="button"
+            class="footer-modal-close"
+            data-footer-close="comment"
+            aria-label="Close feedback"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="footer-modal-icon feedback-modal-icon">
+            <i class="fa-regular fa-star"></i>
+        </div>
+
+        <div class="footer-modal-heading">
+            <span class="footer-modal-kicker">DSS Feedback</span>
+            <h2 id="feedbackModalTitle">How was your experience?</h2>
+            <p>Your feedback helps us improve the Decision Support System.</p>
+        </div>
+
+        <div class="rating-section">
+            <div class="rating-label-row">
+                <span>Rate this experience</span>
+                <strong id="ratingValue">0 / 5</strong>
+            </div>
+
+            <div
+                class="rating-stars"
+                id="ratingStars"
+                role="radiogroup"
+                aria-label="Rating from 1 to 5 stars"
+            >
+                <button type="button" class="rating-star" data-value="1" role="radio" aria-label="1 star" aria-checked="false">★</button>
+                <button type="button" class="rating-star" data-value="2" role="radio" aria-label="2 stars" aria-checked="false">★</button>
+                <button type="button" class="rating-star" data-value="3" role="radio" aria-label="3 stars" aria-checked="false">★</button>
+                <button type="button" class="rating-star" data-value="4" role="radio" aria-label="4 stars" aria-checked="false">★</button>
+                <button type="button" class="rating-star" data-value="5" role="radio" aria-label="5 stars" aria-checked="false">★</button>
+            </div>
+
+            <div class="rating-hint" id="ratingHint">
+                Select a star rating
+            </div>
+        </div>
+
+        <div class="footer-form-grid">
+            <label class="footer-field">
+                <span>Your name <em>optional</em></span>
+                <input id="commentName" type="text" maxlength="120" placeholder="Enter your name">
+            </label>
+
+            <label class="footer-field footer-field-full">
+                <span>Comments <em>optional</em></span>
+                <textarea id="commentText" rows="4" maxlength="2000" placeholder="Tell us what worked well or what we can improve..."></textarea>
+            </label>
+        </div>
+
+        <div class="footer-feedback-message-box" id="feedbackMessage" role="status" aria-live="polite"></div>
+
+        <div class="footer-modal-actions">
+            <button type="button" class="footer-secondary-btn" data-footer-close="comment">
+                Cancel
+            </button>
+
+            <button type="button" class="footer-primary-btn" data-footer-submit="feedback">
+                <i class="fa-solid fa-paper-plane"></i>
+                Send Feedback
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ============================================================
+     GET HELP MODAL
+     ============================================================ -->
+<div
+    class="footer-modal"
+    id="helpModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="helpModalTitle"
+>
+    <div class="footer-modal-content">
+
+        <button
+            type="button"
+            class="footer-modal-close"
+            data-footer-close="help"
+            aria-label="Close help"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="footer-modal-icon help-modal-icon">
+            <i class="fa-regular fa-circle-question"></i>
+        </div>
+
+        <div class="footer-modal-heading">
+            <span class="footer-modal-kicker">DSS Support</span>
+            <h2 id="helpModalTitle">Need help?</h2>
+            <p>Tell us what you need and we'll use your request to improve support.</p>
+        </div>
+
+        <div class="footer-form-grid">
+
+            <label class="footer-field">
+                <span>Subject</span>
+                <input id="helpSubject" type="text" maxlength="160" placeholder="What do you need help with?">
+            </label>
+
+            <label class="footer-field footer-field-full">
+                <span>Describe the issue</span>
+                <textarea id="helpMessage" rows="6" maxlength="3000" placeholder="Describe what happened, which guide or page you were using, and what you expected..."></textarea>
+            </label>
+
+        </div>
+
+        <div class="footer-help-message-box" id="helpMessageStatus" role="status" aria-live="polite"></div>
+
+        <div class="footer-modal-actions">
+            <button type="button" class="footer-secondary-btn" data-footer-close="help">
+                Cancel
+            </button>
+
+            <button type="button" class="footer-primary-btn" data-footer-submit="help">
+                <i class="fa-solid fa-paper-plane"></i>
+                Submit Help Request
+            </button>
+        </div>
+
+    </div>
+</div>
