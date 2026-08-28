@@ -1,192 +1,296 @@
-<footer class="footer-banner" aria-label="DSS footer">
+<!-- =========================================================
+     DSS V2 — SHARED FOOTER
+     Includes Feedback + Get Help modals.
+     Loaded by the shared footer loader.
+     ========================================================= -->
 
-    <div class="footer-quote">
-        <span class="quote-mark" aria-hidden="true">“</span>
+<footer class="footer-banner" role="contentinfo">
 
-        <div class="quote-copy">
-            Guiding every decision.<br>
-            <strong>Delivering every time.</strong>
-        </div>
+  <div class="footer-quote">
+    <div class="quote-mark" aria-hidden="true">“</div>
+
+    <div class="quote-copy">
+      <span>Guiding every decision.</span>
+      <strong>Delivering every time.</strong>
     </div>
+  </div>
+
+  <div class="footer-waves" aria-hidden="true">
+    <div class="wave wave-one"></div>
+    <div class="wave wave-two"></div>
+  </div>
+
+  <div class="footer-support">
 
     <div class="footer-message">
-        <span class="footer-message-title">Help us improve DSS</span>
-        <span class="footer-message-text">
-            Your feedback helps us make every guide clearer and easier to use.
-        </span>
+      <strong>Your feedback helps improve the tool.</strong>
+      <span>Use Feedback or Get Help whenever something is unclear.</span>
     </div>
 
     <div class="footer-actions">
-        <button
-            type="button"
-            class="footer-action-btn footer-feedback-btn"
-            id="footerFeedbackBtn"
-            data-footer-action="feedback"
-        >
-            <i class="fa-regular fa-star" aria-hidden="true"></i>
-            Feedback
-        </button>
 
-        <button
-            type="button"
-            class="footer-action-btn footer-help-btn"
-            id="footerHelpBtn"
-            data-footer-action="help"
-        >
-            <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
-            Get Help
-        </button>
+      <button
+        type="button"
+        class="footer-action-btn"
+        id="footerFeedbackBtn"
+        aria-haspopup="dialog"
+        aria-controls="feedbackModal"
+      >
+        <i class="fa-regular fa-comments" aria-hidden="true"></i>
+        <span>Give Feedback</span>
+      </button>
+
+      <button
+        type="button"
+        class="footer-action-btn"
+        id="footerHelpBtn"
+        aria-haspopup="dialog"
+        aria-controls="helpModal"
+      >
+        <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+        <span>Get Help</span>
+        <i class="fa-solid fa-chevron-down footer-action-chevron" aria-hidden="true"></i>
+      </button>
+
     </div>
-
-    <div class="wave wave-one" aria-hidden="true"></div>
-    <div class="wave wave-two" aria-hidden="true"></div>
+  </div>
 
 </footer>
 
 
-<!-- ============================================================
+<!-- =========================================================
      FEEDBACK MODAL
-     ============================================================ -->
+     ========================================================= -->
 <div
-    class="footer-modal"
-    id="commentModal"
-    aria-hidden="true"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="feedbackModalTitle"
+  class="footer-modal"
+  id="feedbackModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="feedbackModalTitle"
+  aria-hidden="true"
+  hidden
 >
-    <div class="footer-modal-content">
+  <div class="footer-modal-backdrop" data-close-modal="feedbackModal"></div>
 
-        <button
-            type="button"
-            class="footer-modal-close"
-            data-footer-close="comment"
-            aria-label="Close feedback"
+  <div class="footer-modal-card" role="document">
+
+    <div class="modal-accent"></div>
+
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+
+        <div class="modal-icon feedback-icon" aria-hidden="true">
+          <i class="fa-regular fa-comments"></i>
+        </div>
+
+        <div>
+          <span class="modal-kicker">DSS FEEDBACK</span>
+          <h2 id="feedbackModalTitle">Help us improve DSS</h2>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        data-close-modal="feedbackModal"
+        aria-label="Close feedback"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <p class="modal-intro">
+      Your feedback helps us make the Decision Support System easier,
+      clearer, and better for everyone.
+    </p>
+
+    <form id="feedbackForm" novalidate>
+
+      <div class="form-field">
+        <div class="field-label-row">
+          <label for="feedbackRating">How was your experience?</label>
+          <span class="required-mark">*</span>
+        </div>
+
+        <div
+          class="rating-row"
+          id="feedbackRating"
+          role="radiogroup"
+          aria-label="Rate your experience from 1 to 5"
         >
-            <i class="fa-solid fa-xmark"></i>
+          <button type="button" class="rating-star" data-rating="1" role="radio" aria-checked="false" aria-label="1 star">★</button>
+          <button type="button" class="rating-star" data-rating="2" role="radio" aria-checked="false" aria-label="2 stars">★</button>
+          <button type="button" class="rating-star" data-rating="3" role="radio" aria-checked="false" aria-label="3 stars">★</button>
+          <button type="button" class="rating-star" data-rating="4" role="radio" aria-checked="false" aria-label="4 stars">★</button>
+          <button type="button" class="rating-star" data-rating="5" role="radio" aria-checked="false" aria-label="5 stars">★</button>
+        </div>
+
+        <div class="rating-caption" id="ratingCaption">Select a rating</div>
+      </div>
+
+      <div class="form-field">
+        <div class="field-label-row">
+          <label for="feedbackName">Your name</label>
+          <span class="optional-label">Optional</span>
+        </div>
+
+        <input
+          id="feedbackName"
+          name="name"
+          type="text"
+          maxlength="120"
+          autocomplete="name"
+          placeholder="Your name"
+        >
+      </div>
+
+      <div class="form-field">
+        <div class="field-label-row">
+          <label for="feedbackText">Your feedback</label>
+          <span class="required-mark">*</span>
+        </div>
+
+        <div class="textarea-wrap">
+          <textarea
+            id="feedbackText"
+            name="feedback"
+            maxlength="1000"
+            rows="5"
+            placeholder="Tell us what worked well or what we can improve..."
+          ></textarea>
+          <span class="char-count" id="feedbackCharCount">0/1000</span>
+        </div>
+      </div>
+
+      <div class="modal-status" id="feedbackStatus" role="status" aria-live="polite" hidden></div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-btn secondary" data-close-modal="feedbackModal">
+          Cancel
         </button>
 
-        <div class="footer-modal-icon feedback-modal-icon">
-            <i class="fa-regular fa-star"></i>
-        </div>
+        <button type="submit" class="modal-btn primary" id="sendFeedbackBtn">
+          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          <span>Send Feedback</span>
+        </button>
+      </div>
 
-        <div class="footer-modal-heading">
-            <span class="footer-modal-kicker">DSS Feedback</span>
-            <h2 id="feedbackModalTitle">How was your experience?</h2>
-            <p>Your feedback helps us improve the Decision Support System.</p>
-        </div>
-
-        <div class="rating-section">
-            <div class="rating-label-row">
-                <span>Rate this experience</span>
-                <strong id="ratingValue">0 / 5</strong>
-            </div>
-
-            <div
-                class="rating-stars"
-                id="ratingStars"
-                role="radiogroup"
-                aria-label="Rating from 1 to 5 stars"
-            >
-                <button type="button" class="rating-star" data-value="1" role="radio" aria-label="1 star" aria-checked="false">★</button>
-                <button type="button" class="rating-star" data-value="2" role="radio" aria-label="2 stars" aria-checked="false">★</button>
-                <button type="button" class="rating-star" data-value="3" role="radio" aria-label="3 stars" aria-checked="false">★</button>
-                <button type="button" class="rating-star" data-value="4" role="radio" aria-label="4 stars" aria-checked="false">★</button>
-                <button type="button" class="rating-star" data-value="5" role="radio" aria-label="5 stars" aria-checked="false">★</button>
-            </div>
-
-            <div class="rating-hint" id="ratingHint">
-                Select a star rating
-            </div>
-        </div>
-
-        <div class="footer-form-grid">
-            <label class="footer-field">
-                <span>Your name <em>optional</em></span>
-                <input id="commentName" type="text" maxlength="120" placeholder="Enter your name">
-            </label>
-
-            <label class="footer-field footer-field-full">
-                <span>Comments <em>optional</em></span>
-                <textarea id="commentText" rows="4" maxlength="2000" placeholder="Tell us what worked well or what we can improve..."></textarea>
-            </label>
-        </div>
-
-        <div class="footer-feedback-message-box" id="feedbackMessage" role="status" aria-live="polite"></div>
-
-        <div class="footer-modal-actions">
-            <button type="button" class="footer-secondary-btn" data-footer-close="comment">
-                Cancel
-            </button>
-
-            <button type="button" class="footer-primary-btn" data-footer-submit="feedback">
-                <i class="fa-solid fa-paper-plane"></i>
-                Send Feedback
-            </button>
-        </div>
-
-    </div>
+    </form>
+  </div>
 </div>
 
 
-<!-- ============================================================
+<!-- =========================================================
      GET HELP MODAL
-     ============================================================ -->
+     ========================================================= -->
 <div
-    class="footer-modal"
-    id="helpModal"
-    aria-hidden="true"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="helpModalTitle"
+  class="footer-modal"
+  id="helpModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="helpModalTitle"
+  aria-hidden="true"
+  hidden
 >
-    <div class="footer-modal-content">
+  <div class="footer-modal-backdrop" data-close-modal="helpModal"></div>
 
-        <button
-            type="button"
-            class="footer-modal-close"
-            data-footer-close="help"
-            aria-label="Close help"
+  <div class="footer-modal-card" role="document">
+
+    <div class="modal-accent"></div>
+
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+
+        <div class="modal-icon help-icon" aria-hidden="true">
+          <i class="fa-regular fa-circle-question"></i>
+        </div>
+
+        <div>
+          <span class="modal-kicker">DSS SUPPORT</span>
+          <h2 id="helpModalTitle">How can we help?</h2>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        data-close-modal="helpModal"
+        aria-label="Close help"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <p class="modal-intro">
+      Tell us what you need help with. Include enough detail so the
+      issue can be reviewed quickly.
+    </p>
+
+    <form id="helpForm" novalidate>
+
+      <div class="form-field">
+        <div class="field-label-row">
+          <label for="helpCategory">What do you need help with?</label>
+          <span class="required-mark">*</span>
+        </div>
+
+        <select id="helpCategory" name="category">
+          <option value="">Select a category</option>
+          <option value="Guide / Decision">Guide / Decision</option>
+          <option value="Website / Navigation">Website / Navigation</option>
+          <option value="Technical Issue">Technical Issue</option>
+          <option value="Incorrect Information">Incorrect Information</option>
+          <option value="Access / Login">Access / Login</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <div class="field-label-row">
+          <label for="helpSubject">Subject</label>
+          <span class="required-mark">*</span>
+        </div>
+
+        <input
+          id="helpSubject"
+          name="subject"
+          type="text"
+          maxlength="150"
+          placeholder="Briefly describe the issue"
         >
-            <i class="fa-solid fa-xmark"></i>
+      </div>
+
+      <div class="form-field">
+        <div class="field-label-row">
+          <label for="helpMessage">Describe the issue</label>
+          <span class="required-mark">*</span>
+        </div>
+
+        <div class="textarea-wrap">
+          <textarea
+            id="helpMessage"
+            name="message"
+            maxlength="1500"
+            rows="5"
+            placeholder="What happened? What were you trying to do?"
+          ></textarea>
+          <span class="char-count" id="helpCharCount">0/1500</span>
+        </div>
+      </div>
+
+      <div class="modal-status" id="helpStatus" role="status" aria-live="polite" hidden></div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-btn secondary" data-close-modal="helpModal">
+          Cancel
         </button>
 
-        <div class="footer-modal-icon help-modal-icon">
-            <i class="fa-regular fa-circle-question"></i>
-        </div>
+        <button type="submit" class="modal-btn primary" id="sendHelpBtn">
+          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          <span>Send Help Request</span>
+        </button>
+      </div>
 
-        <div class="footer-modal-heading">
-            <span class="footer-modal-kicker">DSS Support</span>
-            <h2 id="helpModalTitle">Need help?</h2>
-            <p>Tell us what you need and we'll use your request to improve support.</p>
-        </div>
-
-        <div class="footer-form-grid">
-
-            <label class="footer-field">
-                <span>Subject</span>
-                <input id="helpSubject" type="text" maxlength="160" placeholder="What do you need help with?">
-            </label>
-
-            <label class="footer-field footer-field-full">
-                <span>Describe the issue</span>
-                <textarea id="helpMessage" rows="6" maxlength="3000" placeholder="Describe what happened, which guide or page you were using, and what you expected..."></textarea>
-            </label>
-
-        </div>
-
-        <div class="footer-help-message-box" id="helpMessageStatus" role="status" aria-live="polite"></div>
-
-        <div class="footer-modal-actions">
-            <button type="button" class="footer-secondary-btn" data-footer-close="help">
-                Cancel
-            </button>
-
-            <button type="button" class="footer-primary-btn" data-footer-submit="help">
-                <i class="fa-solid fa-paper-plane"></i>
-                Submit Help Request
-            </button>
-        </div>
-
-    </div>
+    </form>
+  </div>
 </div>
