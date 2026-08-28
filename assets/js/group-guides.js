@@ -433,41 +433,32 @@
 
 
 
-  /* ============================================================
-     VIEW ALL GUIDES
-     
-     The destination page will be connected later.
-     ============================================================ */
+/* ============================================================
+   VIEW ALL GUIDES
+   ============================================================ */
 
-  function initViewAll() {
+function initViewAll() {
 
-    const buttons =
-      document.querySelectorAll(
-        '[data-action="view-all-guides"]'
-      );
+  const buttons =
+    document.querySelectorAll(
+      '[data-action="view-all-guides"]'
+    );
 
+  buttons.forEach(function (button) {
 
-    buttons.forEach(function (button) {
+    button.addEventListener(
+      "click",
+      function () {
 
-      button.addEventListener(
-        "click",
-        function () {
+        window.location.href =
+          "../../all-guides.html";
 
-          /*
-           * Intentionally left ready
-           * for the future All Guides page.
-           */
+      }
+    );
 
-          console.log(
-            "View All Guides selected"
-          );
+  });
 
-        }
-      );
-
-    });
-
-  }
+}
 
 
 
