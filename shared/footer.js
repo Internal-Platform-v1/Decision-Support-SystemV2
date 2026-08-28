@@ -1,233 +1,657 @@
-/* DSS V2 Shared Footer JS — Feedback + Get Help */
-(function(){
+/* ============================================================
+   DSS V2 — SHARED FOOTER BEHAVIOR
+   Feedback + Get Help
+   Uses the authenticated Firebase session already established
+   by DSS V2. If Firebase is not yet present, it loads the
+   compatible SDK and initializes the same DSS project once.
+   ============================================================ */
+
+(function () {
   "use strict";
 
-  const state={rating:0,activeModal:null,lastFocus:null,closeTimer:null};
-  const ratingLabels={1:"Needs improvement",2:"Could be better",3:"Good",4:"Very good",5:"Excellent"};
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fKDr8KwnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  };
 
-  const $=(s,r=document)=>r.querySelector(s);
-  const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+  const FIREBASE_SCRIPTS = [
+    "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js",
+    "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js",
+    "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"
+  ];
 
-  function message(el,text,type){
-    if(!el)return;
-    el.textContent=text;
-    el.className="dss-form-message is-visible "+(type==="success"?"is-success":"is-error");
+  const ratingLabels = {
+    1: "Poor",
+    2: "Needs improvement",
+    3: "Good",
+    4: "Very good",
+    5: "Excellent"
+  };
+
+  let selectedRating = 0;
+  let activeModal = null;
+  let lastFocusedElement = null;
+  let firebaseReadyPromise = null;
+
+  function getFirebase() {
+    return typeof window.firebase !== "undefined" ? window.firebase : null;
   }
-  function clearMessage(el){
-    if(el){el.textContent="";el.className="dss-form-message";}
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      const existing = document.querySelector('script[src="' + src + '"]');
+
+      if (existing) {
+        if (getFirebase()) {
+          resolve();
+          return;
+        }
+
+        existing.addEventListener("load", resolve, { once: true });
+        existing.addEventListener("error", reject, { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = function () {
+        reject(new Error("Unable to load Firebase SDK."));
+      };
+
+      document.head.appendChild(script);
+    });
   }
 
-  function pageContext(){
-    const heading=$(".group-hero h1")||$("main h1");
+  async function ensureFirebase() {
+    if (firebaseReadyPromise) {
+      return firebaseReadyPromise;
+    }
+
+    firebaseReadyPromise = (async function () {
+      try {
+        if (!getFirebase()) {
+          await loadScript(FIREBASE_SCRIPTS[0]);
+        }
+
+        if (!getFirebase()) {
+          throw new Error("Firebase SDK is unavailable.");
+        }
+
+        if (typeof firebase.auth !== "function") {
+          await loadScript(FIREBASE_SCRIPTS[1]);
+        }
+
+        if (typeof firebase.firestore !== "function") {
+          await loadScript(FIREBASE_SCRIPTS[2]);
+        }
+
+        if (!firebase.apps.length) {
+          firebase.initializeApp(FIREBASE_CONFIG);
+        }
+
+        return firebase;
+      } catch (error) {
+        firebaseReadyPromise = null;
+        throw error;
+      }
+    })();
+
+    return firebaseReadyPromise;
+  }
+
+  function getCurrentProfile() {
+    const profile = window.currentUserProfile || {};
+    const authUser =
+      getFirebase() &&
+      typeof firebase.auth === "function"
+        ? firebase.auth().currentUser
+        : null;
+
     return {
-      pageUrl:location.href,
-      pagePath:location.pathname,
-      pageTitle:document.title||"",
-      guideTitle:heading?heading.textContent.trim():""
+      uid: profile.uid || (authUser && authUser.uid) || "",
+      email: profile.email || (authUser && authUser.email) || "",
+      displayName:
+        profile.displayName ||
+        (authUser && authUser.displayName) ||
+        ""
     };
   }
 
-  function userContext(){
-    const p=window.currentUserProfile||{};
-    const u=window.currentUser||{};
+  function getPageContext() {
+    const pageTitle =
+      document.title ||
+      document.querySelector("h1")?.textContent?.trim() ||
+      "DSS V2";
+
     return {
-      uid:p.uid||u.uid||null,
-      email:p.email||u.email||null,
-      displayName:p.displayName||u.displayName||null
+      page: window.location.pathname || "/",
+      pageTitle: pageTitle.trim()
     };
   }
 
-  function updateHelpPage(){
-    const el=$("#dssHelpPage");
-    if(!el)return;
-    const ctx=pageContext();
-    el.textContent=ctx.guideTitle||ctx.pageTitle||"Current DSS page";
+  function getAuthUser(firebaseInstance) {
+    const current = firebaseInstance.auth().currentUser;
+
+    if (current) {
+      return Promise.resolve(current);
+    }
+
+    return new Promise(function (resolve, reject) {
+      let settled = false;
+
+      const unsubscribe = firebaseInstance.auth().onAuthStateChanged(function (user) {
+        if (settled) return;
+
+        settled = true;
+        unsubscribe();
+
+        if (user) {
+          resolve(user);
+        } else {
+          reject(new Error("AUTH_REQUIRED"));
+        }
+      });
+
+      setTimeout(function () {
+        if (settled) return;
+
+        settled = true;
+        unsubscribe();
+        reject(new Error("AUTH_TIMEOUT"));
+      }, 7000);
+    });
   }
 
-  function resetFeedback(){
-    const form=$("#dssFeedbackForm");
-    if(form)form.reset();
-    state.rating=0;
-    $$(".dss-star").forEach(s=>{s.classList.remove("is-selected");s.setAttribute("aria-checked","false")});
-    const label=$("#dssRatingLabel"); if(label)label.textContent="Select a rating";
-    const count=$("#dssFeedbackCount"); if(count)count.textContent="0";
-    clearMessage($("#dssFeedbackMessage"));
-    const btn=$("#dssFeedbackSubmit"); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> Send Feedback'}
+  function setStatus(elementId, message, type) {
+    const el = document.getElementById(elementId);
+
+    if (!el) return;
+
+    el.hidden = !message;
+    el.textContent = message;
+    el.className = "modal-status" + (type ? " " + type : "");
   }
 
-  function resetHelp(){
-    const form=$("#dssHelpForm");
-    if(form)form.reset();
-    const count=$("#dssHelpCount"); if(count)count.textContent="0";
-    clearMessage($("#dssHelpMessage"));
-    const btn=$("#dssHelpSubmit"); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> Send Help Request'}
-    updateHelpPage();
+  function setButtonLoading(button, loading, loadingText) {
+    if (!button) return;
+
+    if (loading) {
+      button.dataset.originalText =
+        button.querySelector("span")?.textContent || "";
+      button.disabled = true;
+
+      const span = button.querySelector("span");
+      if (span) {
+        span.textContent = loadingText || "Sending...";
+      }
+    } else {
+      button.disabled = false;
+
+      const span = button.querySelector("span");
+      if (span && button.dataset.originalText) {
+        span.textContent = button.dataset.originalText;
+      }
+    }
   }
 
-  function openModal(modal){
-    if(!modal)return;
-    if(state.closeTimer)clearTimeout(state.closeTimer);
-    state.lastFocus=document.activeElement;
-    state.activeModal=modal;
-    document.body.classList.add("dss-modal-open");
-    modal.hidden=false;
-    modal.classList.remove("is-closing");
-    requestAnimationFrame(()=>modal.classList.add("is-open"));
-    setTimeout(()=>{const f=$("button,input,textarea,select",modal);if(f)f.focus()},70);
+  function openModal(modalId, trigger) {
+    const modal = document.getElementById(modalId);
+
+    if (!modal) return;
+
+    lastFocusedElement = trigger || document.activeElement;
+    activeModal = modal;
+
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("footer-modal-open");
+
+    requestAnimationFrame(function () {
+      modal.classList.add("is-open");
+    });
+
+    const firstFocusable = modal.querySelector(
+      "button, input, textarea, select"
+    );
+
+    if (firstFocusable) {
+      setTimeout(function () {
+        firstFocusable.focus();
+      }, 30);
+    }
   }
 
-  function closeModal(modal){
-    if(!modal)return;
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (!modal) return;
+
     modal.classList.remove("is-open");
     modal.classList.add("is-closing");
-    state.closeTimer=setTimeout(()=>{
-      modal.hidden=true;
+    modal.setAttribute("aria-hidden", "true");
+
+    setTimeout(function () {
+      modal.hidden = true;
       modal.classList.remove("is-closing");
-      if(state.activeModal===modal)state.activeModal=null;
-      if(!$(".dss-modal.is-open"))document.body.classList.remove("dss-modal-open");
-      if(state.lastFocus&&document.contains(state.lastFocus))state.lastFocus.focus();
-    },230);
+    }, 210);
+
+    document.body.classList.remove("footer-modal-open");
+
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      setTimeout(function () {
+        lastFocusedElement.focus();
+      }, 20);
+    }
+
+    activeModal = null;
   }
 
-  function setRating(value){
-    state.rating=Math.max(0,Math.min(5,Number(value)||0));
-    $$(".dss-star").forEach(s=>{
-      const n=Number(s.dataset.rating||0);
-      s.classList.toggle("is-selected",n<=state.rating);
-      s.setAttribute("aria-checked",n===state.rating?"true":"false");
+  function resetFeedbackForm() {
+    const form = document.getElementById("feedbackForm");
+    if (form) form.reset();
+
+    selectedRating = 0;
+
+    document.querySelectorAll(".rating-star").forEach(function (star) {
+      star.classList.remove("is-selected");
+      star.setAttribute("aria-checked", "false");
     });
-    const label=$("#dssRatingLabel");
-    if(label)label.textContent=ratingLabels[state.rating]||"Select a rating";
+
+    const caption = document.getElementById("ratingCaption");
+    if (caption) caption.textContent = "Select a rating";
+
+    const count = document.getElementById("feedbackCharCount");
+    if (count) count.textContent = "0/1000";
+
+    setStatus("feedbackStatus", "", "");
   }
 
-  function firestore(){
-    if(typeof firebase==="undefined"||!firebase.firestore)return null;
-    try{return firebase.firestore()}catch(e){console.error("DSS Footer: Firestore unavailable",e);return null}
+  function resetHelpForm() {
+    const form = document.getElementById("helpForm");
+    if (form) form.reset();
+
+    const count = document.getElementById("helpCharCount");
+    if (count) count.textContent = "0/1500";
+
+    setStatus("helpStatus", "", "");
   }
 
-  async function sendFeedback(e){
-    e.preventDefault();
-    const msg=$("#dssFeedbackMessage"),btn=$("#dssFeedbackSubmit");
-    const name=$("#dssFeedbackName")?.value.trim()||"";
-    const comment=$("#dssFeedbackComment")?.value.trim()||"";
+  function setupRating() {
+    const stars = Array.from(document.querySelectorAll(".rating-star"));
 
-    if(!state.rating){message(msg,"Please select a rating first.","error");return}
-    if(!comment){message(msg,"Please tell us a little about your experience.","error");$("#dssFeedbackComment")?.focus();return}
+    stars.forEach(function (star) {
+      star.addEventListener("mouseenter", function () {
+        const value = Number(star.dataset.rating || 0);
 
-    const db=firestore();
-    if(!db){message(msg,"Feedback could not be sent because the DSS connection is unavailable.","error");return}
-
-    btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-
-    try{
-      const u=userContext(),p=pageContext();
-      await db.collection("feedback").add({
-        type:"feedback",
-        rating:state.rating,
-        name:name||u.displayName||"Anonymous",
-        comment,
-        userId:u.uid,
-        email:u.email,
-        pageUrl:p.pageUrl,
-        pagePath:p.pagePath,
-        pageTitle:p.pageTitle,
-        guideTitle:p.guideTitle,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        stars.forEach(function (item) {
+          item.classList.toggle(
+            "is-selected",
+            Number(item.dataset.rating || 0) <= value
+          );
+        });
       });
-      message(msg,"Thank you! Your feedback was sent successfully.","success");
-      btn.innerHTML='<i class="fa-solid fa-check"></i> Sent';
-      setTimeout(()=>closeModal($("#dssFeedbackModal")),900);
-    }catch(err){
-      console.error("DSS Footer: Feedback submission failed:",err);
-      message(msg,"Unable to send feedback right now. Please try again.","error");
-      btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> Send Feedback';
-    }
-  }
 
-  async function sendHelp(e){
-    e.preventDefault();
-    const msg=$("#dssHelpMessage"),btn=$("#dssHelpSubmit");
-    const issueType=$("#dssHelpType")?.value||"";
-    const details=$("#dssHelpDetails")?.value.trim()||"";
-
-    if(!issueType){message(msg,"Please select what you need help with.","error");return}
-    if(!details){message(msg,"Please describe the issue so it can be followed up.","error");$("#dssHelpDetails")?.focus();return}
-
-    const db=firestore();
-    if(!db){message(msg,"Help request could not be sent because the DSS connection is unavailable.","error");return}
-
-    btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-
-    try{
-      const u=userContext(),p=pageContext();
-      await db.collection("help_requests").add({
-        type:"help_request",
-        issueType,
-        details,
-        userId:u.uid,
-        email:u.email,
-        name:u.displayName,
-        pageUrl:p.pageUrl,
-        pagePath:p.pagePath,
-        pageTitle:p.pageTitle,
-        guideTitle:p.guideTitle,
-        status:"new",
-        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      star.addEventListener("mouseleave", function () {
+        stars.forEach(function (item) {
+          item.classList.toggle(
+            "is-selected",
+            Number(item.dataset.rating || 0) <= selectedRating
+          );
+        });
       });
-      message(msg,"Your help request was sent successfully.","success");
-      btn.innerHTML='<i class="fa-solid fa-check"></i> Sent';
-      setTimeout(()=>closeModal($("#dssHelpModal")),900);
-    }catch(err){
-      console.error("DSS Footer: Help request submission failed:",err);
-      message(msg,"Unable to send the help request right now. Please try again.","error");
-      btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> Send Help Request';
-    }
+
+      star.addEventListener("click", function () {
+        selectedRating = Number(star.dataset.rating || 0);
+
+        stars.forEach(function (item) {
+          const value = Number(item.dataset.rating || 0);
+          const selected = value <= selectedRating;
+
+          item.classList.toggle("is-selected", selected);
+          item.setAttribute("aria-checked", String(value === selectedRating));
+        });
+
+        const caption = document.getElementById("ratingCaption");
+        if (caption) {
+          caption.textContent = ratingLabels[selectedRating] || "Selected";
+        }
+
+        setStatus("feedbackStatus", "", "");
+      });
+    });
   }
 
-  function clickHandler(e){
-    const action=e.target.closest("[data-footer-action]");
-    if(action){
-      e.preventDefault();
-      if(action.dataset.footerAction==="feedback"){resetFeedback();openModal($("#dssFeedbackModal"))}
-      if(action.dataset.footerAction==="help"){resetHelp();openModal($("#dssHelpModal"))}
+  function setupCharacterCounter(textareaId, counterId, max) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+
+    if (!textarea || !counter) return;
+
+    function update() {
+      counter.textContent =
+        String(textarea.value.length) + "/" + String(max);
+    }
+
+    textarea.addEventListener("input", update);
+    update();
+  }
+
+  function describeFirestoreError(error) {
+    if (!error) {
+      return "Unable to complete the request right now.";
+    }
+
+    console.error("DSS V2 footer Firestore error:", error);
+
+    const code = String(error.code || "").toLowerCase();
+
+    if (code.includes("permission-denied")) {
+      return "The request reached Firestore, but permission was denied. Please contact the DSS administrator.";
+    }
+
+    if (code.includes("unauthenticated")) {
+      return "Your DSS session has expired. Please sign in again.";
+    }
+
+    if (
+      code.includes("failed-precondition") &&
+      String(error.message || "").toLowerCase().includes("offline")
+    ) {
+      return "The DSS connection is currently offline. Please check your connection and try again.";
+    }
+
+    if (code.includes("unavailable")) {
+      return "Firestore is temporarily unavailable. Please try again in a moment.";
+    }
+
+    if (code.includes("network")) {
+      return "The network connection is unavailable. Please try again.";
+    }
+
+    return "Unable to send this request right now. Please try again.";
+  }
+
+  async function sendFeedback(event) {
+    event.preventDefault();
+
+    const statusId = "feedbackStatus";
+    const button = document.getElementById("sendFeedbackBtn");
+
+    const comment =
+      document.getElementById("feedbackText")?.value.trim() || "";
+
+    const name =
+      document.getElementById("feedbackName")?.value.trim() || "";
+
+    if (!selectedRating) {
+      setStatus(statusId, "Please select a rating first.", "error");
       return;
     }
-    const close=e.target.closest("[data-close-modal]");
-    if(close){
-      const modal=close.closest(".dss-modal");
-      if(modal)closeModal(modal);
+
+    if (!comment) {
+      setStatus(statusId, "Please enter your feedback.", "error");
+      document.getElementById("feedbackText")?.focus();
       return;
     }
-    const star=e.target.closest(".dss-star");
-    if(star)setRating(star.dataset.rating);
+
+    setButtonLoading(button, true, "Sending...");
+
+    try {
+      const firebaseInstance = await ensureFirebase();
+      const user = await getAuthUser(firebaseInstance);
+      const profile = getCurrentProfile();
+      const page = getPageContext();
+
+      await firebaseInstance.firestore().collection("feedback").add({
+        uid: user.uid,
+        userId: user.uid,
+        email: user.email || profile.email || "",
+        name: name || profile.displayName || "Anonymous",
+        rating: selectedRating,
+        comment: comment,
+        page: page.page,
+        pageTitle: page.pageTitle,
+        createdAt: firebaseInstance.firestore.FieldValue.serverTimestamp()
+      });
+
+      setStatus(
+        statusId,
+        "Thank you. Your feedback was sent successfully.",
+        "success"
+      );
+
+      setButtonLoading(button, false);
+
+      setTimeout(function () {
+        resetFeedbackForm();
+        closeModal("feedbackModal");
+      }, 900);
+    } catch (error) {
+      setButtonLoading(button, false);
+
+      if (error && error.message === "AUTH_REQUIRED") {
+        setStatus(
+          statusId,
+          "You must be signed in to send feedback.",
+          "error"
+        );
+      } else if (error && error.message === "AUTH_TIMEOUT") {
+        setStatus(
+          statusId,
+          "We could not confirm your DSS session. Please refresh and try again.",
+          "error"
+        );
+      } else {
+        setStatus(statusId, describeFirestoreError(error), "error");
+      }
+    }
   }
 
-  function keyHandler(e){
-    if(e.key==="Escape"&&state.activeModal){closeModal(state.activeModal);return}
-    if(e.key!=="Tab"||!state.activeModal)return;
-    const focusable=$$("button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[href],[tabindex]:not([tabindex='-1'])",state.activeModal);
-    if(!focusable.length)return;
-    const first=focusable[0],last=focusable[focusable.length-1];
-    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
-    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  async function sendHelpRequest(event) {
+    event.preventDefault();
+
+    const statusId = "helpStatus";
+    const button = document.getElementById("sendHelpBtn");
+
+    const category =
+      document.getElementById("helpCategory")?.value.trim() || "";
+
+    const subject =
+      document.getElementById("helpSubject")?.value.trim() || "";
+
+    const message =
+      document.getElementById("helpMessage")?.value.trim() || "";
+
+    if (!category) {
+      setStatus(statusId, "Please select a help category.", "error");
+      document.getElementById("helpCategory")?.focus();
+      return;
+    }
+
+    if (!subject) {
+      setStatus(statusId, "Please enter a subject.", "error");
+      document.getElementById("helpSubject")?.focus();
+      return;
+    }
+
+    if (!message) {
+      setStatus(statusId, "Please describe the issue.", "error");
+      document.getElementById("helpMessage")?.focus();
+      return;
+    }
+
+    setButtonLoading(button, true, "Sending...");
+
+    try {
+      const firebaseInstance = await ensureFirebase();
+      const user = await getAuthUser(firebaseInstance);
+      const profile = getCurrentProfile();
+      const page = getPageContext();
+
+      await firebaseInstance.firestore().collection("help_requests").add({
+        uid: user.uid,
+        userId: user.uid,
+        email: user.email || profile.email || "",
+        name: profile.displayName || "User",
+        category: category,
+        subject: subject,
+        message: message,
+        page: page.page,
+        pageTitle: page.pageTitle,
+        status: "open",
+        createdAt: firebaseInstance.firestore.FieldValue.serverTimestamp()
+      });
+
+      setStatus(
+        statusId,
+        "Your help request was sent successfully.",
+        "success"
+      );
+
+      setButtonLoading(button, false);
+
+      setTimeout(function () {
+        resetHelpForm();
+        closeModal("helpModal");
+      }, 900);
+    } catch (error) {
+      setButtonLoading(button, false);
+
+      if (error && error.message === "AUTH_REQUIRED") {
+        setStatus(
+          statusId,
+          "You must be signed in to send a help request.",
+          "error"
+        );
+      } else if (error && error.message === "AUTH_TIMEOUT") {
+        setStatus(
+          statusId,
+          "We could not confirm your DSS session. Please refresh and try again.",
+          "error"
+        );
+      } else {
+        setStatus(statusId, describeFirestoreError(error), "error");
+      }
+    }
   }
 
-  function inputHandler(e){
-    if(e.target.id==="dssFeedbackComment")$("#dssFeedbackCount").textContent=e.target.value.length;
-    if(e.target.id==="dssHelpDetails")$("#dssHelpCount").textContent=e.target.value.length;
+  function trapFocus(event) {
+    if (!activeModal || event.key !== "Tab") return;
+
+    const focusables = Array.from(
+      activeModal.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled])'
+      )
+    ).filter(function (element) {
+      return element.offsetParent !== null;
+    });
+
+    if (!focusables.length) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
-  function init(){
-    document.addEventListener("click",clickHandler);
-    document.addEventListener("keydown",keyHandler);
-    document.addEventListener("input",inputHandler);
+  function handleKeydown(event) {
+    if (event.key === "Escape" && activeModal) {
+      closeModal(activeModal.id);
+      return;
+    }
 
-    const feedbackForm=$("#dssFeedbackForm");if(feedbackForm)feedbackForm.addEventListener("submit",sendFeedback);
-    const helpForm=$("#dssHelpForm");if(helpForm)helpForm.addEventListener("submit",sendHelp);
-
-    updateHelpPage();
-    document.addEventListener("currentUserProfileLoaded",updateHelpPage);
+    trapFocus(event);
   }
 
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+  function setupModalEvents() {
+    const feedbackBtn = document.getElementById("footerFeedbackBtn");
+    const helpBtn = document.getElementById("footerHelpBtn");
+
+    if (feedbackBtn) {
+      feedbackBtn.addEventListener("click", function () {
+        resetFeedbackForm();
+        openModal("feedbackModal", feedbackBtn);
+      });
+    }
+
+    if (helpBtn) {
+      helpBtn.addEventListener("click", function () {
+        resetHelpForm();
+        openModal("helpModal", helpBtn);
+      });
+    }
+
+    document.querySelectorAll("[data-close-modal]").forEach(function (element) {
+      element.addEventListener("click", function () {
+        closeModal(element.dataset.closeModal);
+      });
+    });
+
+    const feedbackForm = document.getElementById("feedbackForm");
+    if (feedbackForm) {
+      feedbackForm.addEventListener("submit", sendFeedback);
+    }
+
+    const helpForm = document.getElementById("helpForm");
+    if (helpForm) {
+      helpForm.addEventListener("submit", sendHelpRequest);
+    }
+
+    document.addEventListener("keydown", handleKeydown);
+  }
+
+  function init() {
+    setupModalEvents();
+    setupRating();
+    setupCharacterCounter("feedbackText", "feedbackCharCount", 1000);
+    setupCharacterCounter("helpMessage", "helpCharCount", 1500);
+
+    /*
+     * If the shared header has already loaded the user's profile,
+     * populate the optional feedback name automatically.
+     */
+    const profile = getCurrentProfile();
+    const feedbackName = document.getElementById("feedbackName");
+
+    if (feedbackName && profile.displayName) {
+      feedbackName.value = profile.displayName;
+    }
+  }
+
+  /*
+   * Footer HTML is inserted asynchronously by the shared
+   * footer loader, so support both immediate and loader-driven
+   * initialization.
+   */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+
+  document.addEventListener("footerLoaded", function () {
+    /*
+     * Guard against duplicate initialization when a loader
+     * dispatches its completion event.
+     */
+    if (document.body.dataset.footerModalInitialized === "true") {
+      return;
+    }
+
+    document.body.dataset.footerModalInitialized = "true";
+    init();
+  }, { once: true });
+
 })();
