@@ -1,184 +1,71 @@
-/* SHARED FOOTER — upgraded dashboard/group-guide reference */
+/* DSS V2 Shared Footer + Modals */
 
-.footer-banner {
-  position: relative;
-  width: 100%;
-  height: 66px;
-  min-height: 66px;
-  margin: 0;
-  padding: 0 5.5%;
-  overflow: hidden;
-  isolation: isolate;
-  background: linear-gradient(110deg,#42119d 0%,#4d0ba9 48%,#3b078d 100%);
-  color: #fff;
+.footer-banner{
+  height:66px;margin:0;background:linear-gradient(110deg,#42119d,#4d0ba9 48%,#3b078d);
+  position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;
+  padding:0 5.5%;border-radius:0;width:100%;isolation:isolate;
 }
+.footer-quote{display:flex;align-items:center;position:relative;z-index:3;flex-shrink:0}
+.quote-mark{font-family:Georgia,serif;font-size:62px;font-weight:bold;line-height:1;opacity:.9;margin-right:10px;margin-top:-8px}
+.quote-copy{font-size:9px;line-height:1.45;z-index:2}.quote-copy strong{font-weight:700}
+.footer-support-copy{margin-left:auto;margin-right:22px;max-width:290px;position:relative;z-index:3;display:flex;flex-direction:column;gap:2px;font-size:8px;line-height:1.35;color:rgba(255,255,255,.9)}
+.footer-support-copy span:last-child{color:rgba(255,255,255,.72)}
+.footer-actions{display:flex;align-items:center;gap:10px;position:relative;z-index:4;flex-shrink:0}
+.footer-action-btn{height:29px;padding:0 12px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.035);color:#fff;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font:700 8px "Inter","Segoe UI",Arial,sans-serif;cursor:pointer;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s;white-space:nowrap}
+.footer-action-btn i{font-size:10px}.footer-action-btn .footer-btn-chevron{font-size:7px;margin-left:1px}
+.footer-action-btn:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.52);transform:translateY(-1px);box-shadow:0 6px 18px rgba(17,0,70,.18)}
+.footer-action-btn:focus-visible{outline:2px solid rgba(255,255,255,.92);outline-offset:2px}
+.wave{position:absolute;height:55px;width:55%;border-top:1px solid rgba(255,111,27,.75);border-radius:50%;left:25%;bottom:-33px;transform:rotate(-4deg);z-index:1;pointer-events:none}
+.wave-two{left:36%;bottom:-24px;border-top-color:rgba(255,255,255,.24);transform:rotate(-5deg);width:48%}
 
-.footer-inner {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
+.dss-modal[hidden]{display:none!important}
+.dss-modal{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:24px}
+.dss-modal-backdrop{position:absolute;inset:0;background:rgba(19,10,48,.54);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .22s}
+.dss-modal-card{width:min(500px,100%);max-height:min(760px,calc(100vh - 48px));overflow-y:auto;position:relative;z-index:2;background:linear-gradient(180deg,#fff 0%,#fbfaff 100%);border:1px solid rgba(77,20,140,.12);border-radius:18px;box-shadow:0 30px 90px rgba(20,7,57,.3),0 8px 28px rgba(77,20,140,.12);transform:translateY(14px) scale(.97);opacity:0;transition:transform .24s cubic-bezier(.22,1,.36,1),opacity .2s}
+.dss-modal.is-open .dss-modal-backdrop{opacity:1}.dss-modal.is-open .dss-modal-card{opacity:1;transform:translateY(0) scale(1)}
+.dss-modal.is-closing .dss-modal-backdrop{opacity:0}.dss-modal.is-closing .dss-modal-card{opacity:0;transform:translateY(10px) scale(.98)}
+.dss-modal-accent{position:absolute;top:0;left:34px;right:34px;height:3px;border-radius:0 0 6px 6px;background:linear-gradient(90deg,#4d148c,#7b32d4,#ff6600)}
+.dss-modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:26px 26px 0}
+.dss-modal-title-wrap{display:flex;align-items:center;gap:13px;min-width:0}
+.dss-modal-icon{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;flex:0 0 43px;font-size:17px}
+.feedback-icon{background:#f0e8ff;color:#6422bf}.help-icon{background:#fff0e4;color:#ed650f}
+.dss-modal-eyebrow{display:block;margin-bottom:4px;color:#7d819d;font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.dss-modal-header h2{margin:0;color:#10134f;font-size:20px;line-height:1.15;font-weight:800;letter-spacing:-.3px}
+.dss-modal-close{width:31px;height:31px;flex:0 0 31px;border:1px solid #e7e5ef;border-radius:9px;background:#fff;color:#777a99;display:grid;place-items:center;cursor:pointer}
+.dss-modal-close:hover{background:#f5f1fc;color:#4d148c;border-color:#d9c9ef}
+.dss-modal-description{margin:12px 26px 20px;color:#666a87;font-size:10px;line-height:1.55}
+.dss-form-group{position:relative;margin:0 26px 16px}.dss-form-label{display:flex;align-items:center;gap:5px;margin-bottom:7px;color:#34365e;font-size:9px;font-weight:800}
+.required-mark{color:#ff6600}.optional-label{margin-left:auto;color:#9a9db2;font-size:8px;font-weight:500}
+.dss-input,.dss-textarea{width:100%;border:1px solid #dedeea;border-radius:9px;background:#fff;color:#17194e;font:10px "Inter","Segoe UI",Arial,sans-serif;outline:0;transition:border-color .18s,box-shadow .18s}
+.dss-input{height:37px;padding:0 11px}.dss-textarea{min-height:92px;resize:vertical;padding:10px 11px 22px;line-height:1.5}
+.dss-input::placeholder,.dss-textarea::placeholder{color:#a0a2b4}.dss-input:focus,.dss-textarea:focus{border-color:#8b58cf;box-shadow:0 0 0 3px rgba(107,32,208,.09)}
+.dss-select{appearance:auto;cursor:pointer}
+.dss-rating{display:flex;align-items:center;gap:5px}.dss-star{width:31px;height:31px;padding:0;border:0;border-radius:8px;background:#f5f3f9;color:#c6c4d2;display:grid;place-items:center;cursor:pointer;transition:color .15s,background .15s,transform .15s}
+.dss-star i{font-size:14px}.dss-star:hover,.dss-star.is-selected{color:#ff8a24;background:#fff1e5}.dss-star:hover{transform:translateY(-1px)}
+.dss-rating-label{min-height:14px;margin-top:5px;color:#8a8da6;font-size:8px;font-weight:600}
+.dss-character-count{position:absolute;right:9px;bottom:7px;color:#a0a2b4;font-size:7px;pointer-events:none}
+.dss-form-message{display:none;margin:-2px 26px 14px;padding:9px 10px;border-radius:8px;font-size:8px;line-height:1.4;font-weight:700}
+.dss-form-message.is-visible{display:block}.dss-form-message.is-error{color:#b42318;background:#fff0ee;border:1px solid #ffd1cb}.dss-form-message.is-success{color:#137333;background:#edf9ef;border:1px solid #ccebd1}
+.dss-modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:0 26px 24px}
+.dss-btn{min-height:34px;padding:0 14px;border-radius:8px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:7px;font:800 8px "Inter","Segoe UI",Arial,sans-serif;cursor:pointer}
+.dss-btn-secondary{background:#fff;color:#656984;border-color:#dedeea}.dss-btn-primary{background:linear-gradient(135deg,#5915c8,#4d148c);color:#fff;border-color:#5915c8;box-shadow:0 7px 18px rgba(89,21,200,.18)}
+.dss-btn-primary:disabled{opacity:.65;cursor:wait}.dss-context-card{margin:0 26px 18px;padding:10px 11px;border:1px solid #e8e2f1;border-radius:10px;background:linear-gradient(135deg,#faf8ff,#fffaf6);display:flex;align-items:center;gap:9px}
+.dss-context-icon{width:28px;height:28px;border-radius:8px;background:#eee7fb;color:#6a29c2;display:grid;place-items:center;flex:0 0 28px;font-size:10px}
+.dss-context-copy{min-width:0;display:flex;flex-direction:column;gap:2px}.dss-context-copy span{color:#999cb2;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.dss-context-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3d4066;font-size:9px}
+
+@media(max-width:900px){.footer-support-copy{max-width:220px;margin-right:14px}}
+@media(max-width:700px){
+  .footer-banner{height:auto;min-height:92px;padding:13px 5%;flex-wrap:wrap;row-gap:9px}
+  .quote-mark{font-size:48px}.quote-copy{font-size:8px}
+  .footer-support-copy{width:100%;max-width:none;margin:0;text-align:left;order:3}
+  .footer-actions{margin-left:auto}.footer-action-btn{height:28px;padding:0 9px;font-size:7px}
+  .dss-modal{padding:12px}.dss-modal-card{max-height:calc(100vh - 24px);border-radius:15px}
+  .dss-modal-header{padding:22px 20px 0}.dss-modal-description{margin-left:20px;margin-right:20px}
+  .dss-form-group{margin-left:20px;margin-right:20px}.dss-context-card{margin-left:20px;margin-right:20px}
+  .dss-form-message{margin-left:20px;margin-right:20px}.dss-modal-footer{padding-left:20px;padding-right:20px}
 }
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-  min-width: 185px;
+@media(max-width:460px){
+  .footer-actions{width:100%;margin-left:0}.footer-action-btn{flex:1}
+  .dss-modal-header h2{font-size:17px}.dss-modal-footer{flex-direction:column-reverse}.dss-btn{width:100%}
 }
-
-.quote-mark {
-  flex: 0 0 auto;
-  font-family: Georgia,"Times New Roman",serif;
-  font-size: 58px;
-  font-weight: 700;
-  line-height: .7;
-  margin: -4px 10px 0 0;
-  color: rgba(255,255,255,.94);
-}
-
-.quote-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  color: rgba(255,255,255,.92);
-  font-family: "Inter","Segoe UI",Arial,sans-serif;
-  font-size: 8px;
-  line-height: 1.35;
-  font-weight: 500;
-}
-
-.quote-copy strong {
-  color: #fff;
-  font-weight: 700;
-}
-
-.footer-wave {
-  position: absolute;
-  z-index: 1;
-  left: 19%;
-  bottom: 0;
-  width: 47%;
-  height: 66px;
-  pointer-events: none;
-}
-
-.wave {
-  position: absolute;
-  display: block;
-  height: 58px;
-  width: 100%;
-  left: 0;
-  bottom: -42px;
-  border-top: 1px solid rgba(255,102,0,.78);
-  border-radius: 50%;
-  transform: rotate(-5deg);
-}
-
-.wave-two {
-  left: 13%;
-  bottom: -34px;
-  width: 88%;
-  border-top-color: rgba(255,255,255,.22);
-  transform: rotate(-6deg);
-}
-
-.footer-feedback-message {
-  position: relative;
-  z-index: 4;
-  margin-left: auto;
-  margin-right: 23px;
-  max-width: 250px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  text-align: left;
-  color: rgba(255,255,255,.88);
-  font-family: "Inter","Segoe UI",Arial,sans-serif;
-  font-size: 7.5px;
-  line-height: 1.35;
-  font-weight: 500;
-}
-
-.footer-actions {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-}
-
-.footer-action {
-  height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 0 12px;
-  border: 1px solid rgba(255,255,255,.30);
-  border-radius: 7px;
-  background: rgba(255,255,255,.035);
-  color: #fff;
-  font-family: "Inter","Segoe UI",Arial,sans-serif;
-  font-size: 7.5px;
-  font-weight: 700;
-  letter-spacing: .01em;
-  white-space: nowrap;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08),0 2px 6px rgba(25,5,74,.12);
-  transition: background .16s ease,border-color .16s ease,transform .16s ease;
-}
-
-.footer-action:hover {
-  background: rgba(255,255,255,.11);
-  border-color: rgba(255,255,255,.52);
-  transform: translateY(-1px);
-}
-
-.footer-action:active { transform: translateY(0); }
-
-.footer-action:focus-visible {
-  outline: 2px solid rgba(255,255,255,.9);
-  outline-offset: 2px;
-}
-
-.footer-action-icon {
-  display: grid;
-  place-items: center;
-  width: 13px;
-  height: 13px;
-  font-size: 10px;
-}
-
-.footer-chevron {
-  margin-left: 1px;
-  font-size: 7px;
-  opacity: .9;
-}
-
-@media (max-width:900px) {
-  .footer-feedback-message {
-    margin-right: 15px;
-    max-width: 205px;
-    font-size: 7px;
-  }
-  .footer-actions { gap: 6px; }
-  .footer-action { padding: 0 9px; }
-}
-
-@media (max-width:700px) {
-  .footer-banner {
-    height: auto;
-    min-height: 76px;
-    padding: 9px 5.5%;
-  }
-  .footer-inner { min-height: 58px; }
-  .footer-brand { min-width: 170px; }
-  .footer-feedback-message { max-width: 190px; }
-}
-
-@media (max-width:560px) {
-  .footer-banner { min-width: 760px; }
-}
+@media(prefers-reduced-motion:reduce){.footer-action-btn,.dss-modal-backdrop,.dss-modal-card,.dss-star,.dss-input,.dss-textarea,.dss-btn{transition:none!important}}

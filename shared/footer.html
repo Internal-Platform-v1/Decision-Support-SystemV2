@@ -1,34 +1,160 @@
-<footer class="footer-banner" aria-label="Guide support footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="quote-mark" aria-hidden="true">“</div>
-      <div class="quote-copy">
-        <span>Guiding every decision.</span>
-        <strong>Delivering every time.</strong>
-      </div>
-    </div>
+<!-- DSS V2 Shared Footer -->
+<footer class="footer-banner" aria-label="Decision Support System footer">
+  <div class="footer-quote">
+    <span class="quote-mark" aria-hidden="true">“</span>
+    <div class="quote-copy">Guiding every decision.<br><strong>Delivering every time.</strong></div>
+  </div>
 
-    <div class="footer-wave" aria-hidden="true">
-      <span class="wave wave-one"></span>
-      <span class="wave wave-two"></span>
-    </div>
+  <div class="wave wave-one" aria-hidden="true"></div>
+  <div class="wave wave-two" aria-hidden="true"></div>
 
-    <div class="footer-feedback-message">
-      <span>Your feedback helps improve the tool.</span>
-      <span>Use Feedback or Get Help whenever something is unclear.</span>
-    </div>
+  <div class="footer-support-copy">
+    <span>Your feedback helps improve the tool.</span>
+    <span>Use Feedback or Get Help whenever something is unclear.</span>
+  </div>
 
-    <div class="footer-actions">
-      <button id="feedbackBtn" class="footer-action" type="button" data-action="feedback">
-        <span class="footer-action-icon"><i class="fa-solid fa-share-nodes"></i></span>
-        <span>Give Feedback</span>
-      </button>
+  <div class="footer-actions">
+    <button type="button" class="footer-action-btn" data-footer-action="feedback"
+            aria-haspopup="dialog" aria-controls="dssFeedbackModal">
+      <i class="fa-regular fa-comments" aria-hidden="true"></i>
+      <span>Give Feedback</span>
+    </button>
 
-      <button id="getHelpBtn" class="footer-action" type="button" data-action="get-help">
-        <span class="footer-action-icon"><i class="fa-regular fa-circle-question"></i></span>
-        <span>Get Help</span>
-        <i class="fa-solid fa-chevron-down footer-chevron"></i>
-      </button>
-    </div>
+    <button type="button" class="footer-action-btn" data-footer-action="help"
+            aria-haspopup="dialog" aria-controls="dssHelpModal">
+      <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+      <span>Get Help</span>
+      <i class="fa-solid fa-chevron-down footer-btn-chevron" aria-hidden="true"></i>
+    </button>
   </div>
 </footer>
+
+<div class="dss-modal" id="dssFeedbackModal" role="dialog" aria-modal="true"
+     aria-labelledby="dssFeedbackTitle" hidden>
+  <div class="dss-modal-backdrop" data-close-modal></div>
+  <div class="dss-modal-card">
+    <div class="dss-modal-accent"></div>
+    <div class="dss-modal-header">
+      <div class="dss-modal-title-wrap">
+        <div class="dss-modal-icon feedback-icon"><i class="fa-regular fa-comments"></i></div>
+        <div>
+          <span class="dss-modal-eyebrow">DSS Feedback</span>
+          <h2 id="dssFeedbackTitle">Help us improve DSS</h2>
+        </div>
+      </div>
+      <button type="button" class="dss-modal-close" data-close-modal aria-label="Close feedback dialog">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <p class="dss-modal-description">
+      Your feedback helps us make the Decision Support System easier, clearer, and better for everyone.
+    </p>
+
+    <form id="dssFeedbackForm" novalidate>
+      <div class="dss-form-group">
+        <label class="dss-form-label">How was your experience? <span class="required-mark">*</span></label>
+        <div class="dss-rating" id="dssRating" role="radiogroup" aria-label="Rating from 1 to 5 stars">
+          <button type="button" class="dss-star" data-rating="1" role="radio" aria-checked="false" aria-label="1 star"><i class="fa-solid fa-star"></i></button>
+          <button type="button" class="dss-star" data-rating="2" role="radio" aria-checked="false" aria-label="2 stars"><i class="fa-solid fa-star"></i></button>
+          <button type="button" class="dss-star" data-rating="3" role="radio" aria-checked="false" aria-label="3 stars"><i class="fa-solid fa-star"></i></button>
+          <button type="button" class="dss-star" data-rating="4" role="radio" aria-checked="false" aria-label="4 stars"><i class="fa-solid fa-star"></i></button>
+          <button type="button" class="dss-star" data-rating="5" role="radio" aria-checked="false" aria-label="5 stars"><i class="fa-solid fa-star"></i></button>
+        </div>
+        <div class="dss-rating-label" id="dssRatingLabel">Select a rating</div>
+      </div>
+
+      <div class="dss-form-group">
+        <label class="dss-form-label" for="dssFeedbackName">
+          Your name <span class="optional-label">Optional</span>
+        </label>
+        <input id="dssFeedbackName" class="dss-input" type="text" maxlength="80"
+               autocomplete="name" placeholder="Enter your name">
+      </div>
+
+      <div class="dss-form-group">
+        <label class="dss-form-label" for="dssFeedbackComment">
+          Your feedback <span class="required-mark">*</span>
+        </label>
+        <textarea id="dssFeedbackComment" class="dss-textarea" maxlength="1000" rows="5"
+                  placeholder="Tell us what worked well or what we can improve..."></textarea>
+        <div class="dss-character-count"><span id="dssFeedbackCount">0</span>/1000</div>
+      </div>
+
+      <div class="dss-form-message" id="dssFeedbackMessage" role="status" aria-live="polite"></div>
+
+      <div class="dss-modal-footer">
+        <button type="button" class="dss-btn dss-btn-secondary" data-close-modal>Cancel</button>
+        <button type="submit" class="dss-btn dss-btn-primary" id="dssFeedbackSubmit">
+          <i class="fa-solid fa-paper-plane"></i> Send Feedback
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="dss-modal" id="dssHelpModal" role="dialog" aria-modal="true"
+     aria-labelledby="dssHelpTitle" hidden>
+  <div class="dss-modal-backdrop" data-close-modal></div>
+  <div class="dss-modal-card dss-help-card">
+    <div class="dss-modal-accent"></div>
+    <div class="dss-modal-header">
+      <div class="dss-modal-title-wrap">
+        <div class="dss-modal-icon help-icon"><i class="fa-regular fa-circle-question"></i></div>
+        <div>
+          <span class="dss-modal-eyebrow">DSS Support</span>
+          <h2 id="dssHelpTitle">How can we help?</h2>
+        </div>
+      </div>
+      <button type="button" class="dss-modal-close" data-close-modal aria-label="Close help dialog">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <p class="dss-modal-description">
+      Tell us what you need help with and we’ll capture the details so the issue can be followed up properly.
+    </p>
+
+    <form id="dssHelpForm" novalidate>
+      <div class="dss-context-card">
+        <div class="dss-context-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="dss-context-copy">
+          <span>Current DSS page</span>
+          <strong id="dssHelpPage">Current page</strong>
+        </div>
+      </div>
+
+      <div class="dss-form-group">
+        <label class="dss-form-label" for="dssHelpType">
+          What do you need help with? <span class="required-mark">*</span>
+        </label>
+        <select id="dssHelpType" class="dss-input dss-select">
+          <option value="">Select an issue type</option>
+          <option value="Guide question">I don't understand a guide</option>
+          <option value="Cannot find guide">I can't find what I'm looking for</option>
+          <option value="Incorrect guide step">I found an incorrect step</option>
+          <option value="Tool or link issue">A tool or link is not working</option>
+          <option value="Other issue">Something else</option>
+        </select>
+      </div>
+
+      <div class="dss-form-group">
+        <label class="dss-form-label" for="dssHelpDetails">
+          Describe the issue <span class="required-mark">*</span>
+        </label>
+        <textarea id="dssHelpDetails" class="dss-textarea" maxlength="1500" rows="6"
+                  placeholder="Describe what happened, what you expected, or where you got stuck..."></textarea>
+        <div class="dss-character-count"><span id="dssHelpCount">0</span>/1500</div>
+      </div>
+
+      <div class="dss-form-message" id="dssHelpMessage" role="status" aria-live="polite"></div>
+
+      <div class="dss-modal-footer">
+        <button type="button" class="dss-btn dss-btn-secondary" data-close-modal>Cancel</button>
+        <button type="submit" class="dss-btn dss-btn-primary" id="dssHelpSubmit">
+          <i class="fa-solid fa-paper-plane"></i> Send Help Request
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
