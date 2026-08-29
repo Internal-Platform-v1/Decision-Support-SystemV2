@@ -995,59 +995,35 @@ body.theme-simple{
   .guide-grid{grid-template-columns:1fr;}
 }
 
-
 /* ============================================================
-   ICON-ONLY GROUP COLOR LOCK — FINAL
-   Group colors are allowed ONLY on the main guide icon.
-   Cards, labels, badges, buttons, borders, and footer accents
-   remain neutral to match the DSS V2 dashboard.
+   FINAL COLOR-ONLY OVERRIDE
+   IMPORTANT: layout, sizing, spacing, typography and structure
+   above are intentionally unchanged.
+   Group color is used ONLY by the guide icon.
    ============================================================ */
+.guide-card::after{display:none !important;}
 
-/* Keep every guide card visually neutral. */
-.guide-card,
-.guide-card:hover {
-  --card-accent: #6d20d9;
-  --card-soft: #f0e9ff;
-  border-color: #e2e5ef;
+.group-billing,
+.group-pricing,
+.group-surcharge,
+.group-account,
+.group-paud,
+.group-other{
+  --card-soft:#f3f4f8;
 }
 
-.guide-card::after {
-  display: none !important;
-  background: none !important;
-}
+.group-billing .guide-icon{color:#6d2ce0;background:#f0e9ff;}
+.group-pricing .guide-icon{color:#ff7218;background:#fff0e4;}
+.group-surcharge .guide-icon{color:#3564e5;background:#edf2ff;}
+.group-account .guide-icon{color:#2f9e44;background:#e8f7ea;}
+.group-paud .guide-icon{color:#5965e8;background:#eceeff;}
+.group-other .guide-icon{color:#e83e8c;background:#ffeaf2;}
 
-/* The ONLY group-colored element inside a guide card. */
-.group-billing .guide-icon { color: #6d2ce0 !important; background: #f0e9ff !important; }
-.group-pricing .guide-icon { color: #ff7218 !important; background: #fff0e4 !important; }
-.group-surcharge .guide-icon { color: #3564e5 !important; background: #edf2ff !important; }
-.group-account .guide-icon { color: #2f9e44 !important; background: #e8f7ea !important; }
-.group-paud .guide-icon { color: #5965e8 !important; background: #eceeff !important; }
-.group-other .guide-icon { color: #e83e8c !important; background: #ffeaf2 !important; }
-
-/* All text/action indicators stay neutral. */
+/* Everything else on the guide card remains neutral. */
 .guide-group,
-.guide-group i,
-.guide-badge,
-.guide-badge i {
-  color: #7b829d !important;
-  background: #f5f6f9 !important;
+.guide-badge{
+  color:#7b829d !important;
+  background:#f5f6f9 !important;
 }
-
-.open-guide,
-.open-guide i {
-  color: #6d20d9 !important;
-  background: transparent !important;
-}
-
-/* Do not let the group variables recolor titles, descriptions, etc. */
-.guide-card h3 { color: #11194f !important; }
-.guide-card p,
-.guide-card .description { color: #737c9b !important; }
-
-/* Filter-row colors remain on the filter icons, as intended. */
-.guide-filter-row .purple-filter .stat-icon { background:#f0e9ff !important; color:#6d2ce0 !important; }
-.guide-filter-row .orange-filter .stat-icon { background:#fff0e4 !important; color:#ff7218 !important; }
-.guide-filter-row .blue-filter .stat-icon { background:#edf2ff !important; color:#3564e5 !important; }
-.guide-filter-row .green-filter .stat-icon { background:#e8f7ea !important; color:#2f9e44 !important; }
-.guide-filter-row .indigo-filter .stat-icon { background:#eceeff !important; color:#5965e8 !important; }
-.guide-filter-row .pink-filter .stat-icon { background:#ffeaf2 !important; color:#e83e8c !important; }
+.guide-group i{color:#9aa0b5 !important;}
+.open-guide{color:#6d20d9 !important;}
