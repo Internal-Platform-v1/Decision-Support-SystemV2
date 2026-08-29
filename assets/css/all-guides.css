@@ -332,6 +332,18 @@ a{text-decoration:none;color:inherit}
   transform:translateY(-1px);
 }
 
+
+/* ============================================================
+   LIBRARY HEADER — SINGLE V2 ROW
+   All Guides | Filtered by | Sort A-Z
+   ============================================================ */
+.library-heading{position:relative;align-items:center;min-height:30px;}
+.library-heading h2{display:flex;align-items:center;white-space:nowrap;}
+.library-heading .library-actions{margin-left:auto;position:relative;z-index:3;}
+.library-heading .active-filter-pill{position:absolute;right:88px;top:0;margin:0;z-index:2;}
+.library-heading + #resultsText{margin-top:3px;}
+.active-filter-pill{box-shadow:none;}
+
 .active-filter-pill{
   display:inline-flex;
   align-items:center;
@@ -397,14 +409,14 @@ a{text-decoration:none;color:inherit}
   right:0;
   bottom:0;
   height:2px;
-  background:var(--card-accent,#7131dc);
-  opacity:.92;
+  background:#e4e6f0;
+  opacity:1;
 }
 
 .guide-card:hover{
   transform:translateY(-2px);
   box-shadow:0 9px 22px rgba(41,32,94,.11);
-  border-color:color-mix(in srgb,var(--card-accent,#7131dc) 32%,#e4e6f0);
+  border-color:#dcdfea;
 }
 
 .guide-card:focus-visible{
@@ -440,8 +452,8 @@ a{text-decoration:none;color:inherit}
   max-width:72%;
   padding:4px 6px;
   border-radius:999px;
-  background:var(--card-soft,#f1eaff);
-  color:var(--card-accent,#7131dc);
+  background:#f5f6fa;
+  color:#777b93;
   font-size:6.7px;
   line-height:1.1;
   font-weight:800;
@@ -487,8 +499,8 @@ a{text-decoration:none;color:inherit}
   max-width:65%;
   padding:4px 6px;
   border-radius:999px;
-  background:var(--card-soft,#f1eaff);
-  color:var(--card-accent,#7131dc);
+  background:#f5f6fa;
+  color:#777b93;
   font-size:6.8px;
   font-weight:800;
   white-space:nowrap;
@@ -501,7 +513,7 @@ a{text-decoration:none;color:inherit}
 .open-guide{
   border:0;
   background:transparent;
-  color:var(--card-accent,#7131dc);
+  color:#5b17c5;
   font-size:8px;
   font-weight:800;
   padding:3px 0;
