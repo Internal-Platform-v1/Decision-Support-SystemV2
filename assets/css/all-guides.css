@@ -371,18 +371,15 @@ a{text-decoration:none;color:inherit}
 .library-section > .active-filter-pill{
   position:absolute;
   top:22px;
-  right:82px;
+  right:88px;
 
   margin:0;
   z-index:4;
+  white-space:nowrap;
 }
 
 /* Keep any nested/legacy filter pill positioning harmless. */
-.library-heading .active-filter-pill{
-  position:static;
-  margin:0;
-  z-index:4;
-}
+
 
 .library-heading + #resultsText{
   margin-top:3px;
