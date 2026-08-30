@@ -765,13 +765,79 @@ const NODES = {
     }
   }
 
+
+  function showToast(message) {
+    const toast = $("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(window.__guideToastTimer);
+    window.__guideToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+  }
+
+  function bindTemplateButtons() {
+    document.querySelectorAll(".template-copy").forEach((button) => {
+      button.addEventListener("click", () => {
+        copyTemplate(button.dataset.target, button);
+      });
+    });
+
+    document.querySelectorAll(".template-link").forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = button.dataset.target;
+        if (target) {
+          window.location.href = target;
+        } else {
+          showToast("Reference tool link is not configured yet.");
+        }
+      });
+    });
+  }
+
+  function openImageModal(src) {
+    const modal = $("imageModal");
+    const image = $("imageModalImg");
+    if (!modal || !image || !src) return;
+    image.src = src;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeImageModal() {
+    const modal = $("imageModal");
+    const image = $("imageModalImg");
+    if (!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+    if (image) image.removeAttribute("src");
+  }
+
   function init() {
-    $("restartGuide")?.addEventListener("click",restart);
-    $("backToGroup")?.addEventListener("click",()=>history.back());
-    bindTemplateButtons(); renderNode("start");
-    document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImageModal();});
-    $("imageModal")?.addEventListener("click",e=>{if(e.target.id==="imageModal")closeImageModal();});
-    window.guideEngine={restart,goBack,openImageModal,closeImageModal};
+    // Render the guide first. Optional helper controls must never prevent
+    // the decision flow from appearing.
+    renderNode("start");
+
+    $("restartGuide")?.addEventListener("click", restart);
+    $("backToGroup")?.addEventListener("click", () => history.back());
+
+    bindTemplateButtons();
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeImageModal();
+    });
+
+    $("imageModal")?.addEventListener("click", (event) => {
+      if (event.target.id === "imageModal") closeImageModal();
+    });
+
+    window.guideEngine = {
+      restart,
+      goBack,
+      openImageModal,
+      closeImageModal
+    };
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
