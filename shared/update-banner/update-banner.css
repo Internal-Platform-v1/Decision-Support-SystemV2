@@ -1,25 +1,44 @@
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER
-   Used by every guide page. Static-site friendly.
+   shared/update-banner/update-banner.css
+
+   Used by every DSS V2 guide page.
+   Static-site friendly.
+   The parent page controls the overall horizontal alignment.
    ============================================================ */
 
 .dss-update-banner {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(360px, 43%) minmax(0, 57%);
+  grid-template-columns: minmax(330px, 42%) minmax(0, 58%);
+  width: 100%;
   min-height: 136px;
-  margin: 10px 17px 12px;
+  margin: 8px 0 8px;
   overflow: hidden;
+
   border: 1px solid #ece8f6;
   border-radius: 9px;
-  background: linear-gradient(90deg, #f6f0ff 0%, #fbf8ff 43%, #fff8f2 100%);
+
+  background:
+    linear-gradient(
+      90deg,
+      #f6f0ff 0%,
+      #fbf8ff 43%,
+      #fff8f2 100%
+    );
+
   box-shadow: 0 3px 14px rgba(48, 38, 111, .06);
 }
+
+/* ============================================================
+   COPY
+   ============================================================ */
 
 .dss-update-banner__copy {
   position: relative;
   z-index: 2;
-  padding: 14px 14px 12px 27px;
+  min-width: 0;
+  padding: 13px 12px 11px 24px;
 }
 
 .dss-update-banner__eyebrow {
@@ -27,6 +46,7 @@
   align-items: center;
   gap: 7px;
   margin-bottom: 4px;
+
   color: #4d148c;
   font-size: 7px;
   line-height: 1;
@@ -37,9 +57,11 @@
 .dss-update-banner__icon {
   width: 30px;
   height: 30px;
+  flex: 0 0 30px;
+
   display: grid;
   place-items: center;
-  margin-right: 3px;
+
   border-radius: 8px;
   background: #f0e8ff;
   color: #4d148c;
@@ -48,6 +70,7 @@
 
 .dss-update-banner h2 {
   margin: -25px 0 3px 39px;
+
   color: #17194f;
   font-size: 15px;
   line-height: 1.15;
@@ -57,6 +80,7 @@
 
 .dss-update-banner__date {
   margin: 0 0 2px 39px !important;
+
   color: #17194f !important;
   font-size: 8px !important;
   line-height: 1.25 !important;
@@ -64,12 +88,13 @@
 }
 
 .dss-update-banner__date i {
-  color: #4d148c;
   margin-right: 3px;
+  color: #4d148c;
 }
 
-.dss-update-banner__copy > p:not(.dss-update-banner__date) {
+.dss-update-banner__message {
   margin: 0 0 6px 39px;
+
   color: #3f4168;
   font-size: 8px;
   line-height: 1.35;
@@ -77,31 +102,54 @@
 }
 
 .dss-update-banner__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
   margin-left: 39px;
   min-height: 23px;
   padding: 0 9px;
+
   border: 1px solid #6a24c7;
   border-radius: 4px;
+
   background: #fff;
   color: #4d148c;
+
   font-size: 7px;
   line-height: 1;
   font-weight: 800;
+
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    transform .16s ease;
 }
 
 .dss-update-banner__button span {
-  margin-left: 5px;
   font-size: 10px;
+  line-height: 1;
 }
 
 .dss-update-banner__button:hover {
   background: #f6f0ff;
+  border-color: #4d148c;
 }
+
+.dss-update-banner__button:active {
+  transform: translateY(1px);
+}
+
+/* ============================================================
+   IMAGE / VISUAL
+   ============================================================ */
 
 .dss-update-banner__visual {
   position: relative;
   min-width: 0;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .dss-update-banner__visual::before {
@@ -109,24 +157,43 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(90deg, #fbf8ff 0%, rgba(251,248,255,.15) 20%, rgba(255,248,242,0) 100%);
+
+  background:
+    linear-gradient(
+      90deg,
+      #fbf8ff 0%,
+      rgba(251, 248, 255, .35) 12%,
+      rgba(251, 248, 255, .08) 28%,
+      rgba(255, 248, 242, 0) 52%
+    );
+
   pointer-events: none;
 }
 
 .dss-update-banner__visual img {
+  position: absolute;
+  inset: 0;
+
   width: 100%;
   height: 100%;
+
   display: block;
   object-fit: cover;
-  object-position: center;
+  object-position: center center;
 }
+
+/* ============================================================
+   SLIDER DOTS
+   ============================================================ */
 
 .dss-update-banner__dots {
   position: absolute;
-  top: 24px;
-  right: 22px;
+  top: 16px;
+  right: 16px;
   z-index: 3;
+
   display: flex;
+  align-items: center;
   gap: 7px;
 }
 
@@ -134,17 +201,26 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 0 0 1px rgba(77,20,140,.04);
+
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 0 0 1px rgba(77, 20, 140, .05);
 }
 
 .dss-update-banner__dots span.is-active {
   background: #4d148c;
 }
 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
 @media (max-width: 900px) {
   .dss-update-banner {
     grid-template-columns: 48% 52%;
+  }
+
+  .dss-update-banner__copy {
+    padding-left: 18px;
   }
 }
 
@@ -156,5 +232,9 @@
 
   .dss-update-banner__visual {
     min-height: 100px;
+  }
+
+  .dss-update-banner__copy {
+    padding: 13px 16px 10px;
   }
 }
