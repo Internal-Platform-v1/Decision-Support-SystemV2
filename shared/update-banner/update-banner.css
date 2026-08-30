@@ -3,17 +3,21 @@
    shared/update-banner/update-banner.css
 
    Used by every DSS V2 guide page.
-   Static-site friendly.
-   The parent page controls the overall horizontal alignment.
+   Full width of the page content container.
+   No top padding / no top margin.
    ============================================================ */
 
 .dss-update-banner {
   position: relative;
   display: grid;
   grid-template-columns: minmax(330px, 42%) minmax(0, 58%);
+
   width: 100%;
   min-height: 136px;
-  margin: 8px 0 8px;
+
+  margin: 0;
+  padding: 0;
+
   overflow: hidden;
 
   border: 1px solid #ece8f6;
@@ -38,6 +42,7 @@
   position: relative;
   z-index: 2;
   min-width: 0;
+
   padding: 13px 12px 11px 24px;
 }
 
@@ -45,6 +50,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
+
   margin-bottom: 4px;
 
   color: #4d148c;
@@ -178,6 +184,7 @@
   height: 100%;
 
   display: block;
+
   object-fit: cover;
   object-position: center center;
 }
@@ -200,6 +207,7 @@
 .dss-update-banner__dots span {
   width: 7px;
   height: 7px;
+
   border-radius: 50%;
 
   background: rgba(255, 255, 255, .9);
