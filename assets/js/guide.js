@@ -1,12 +1,9 @@
 /* DSS V2 — REUSABLE GUIDE ENGINE
-   Guide-specific decision data is kept in NODES below.
-   The rendering, navigation, history, templates, image viewer and UI
-   behavior are reusable for every guide page. */
-(function(){
-"use strict";
-
-const TEMPLATE_COLLECTION="billing_dispute_general_template";
-const MAX_STEPS=8;
+   Functional logic derived from the working Debtor Update per BOL guide.
+   Styling is intentionally not carried over from the old DSS.
+*/
+(function() {
+  "use strict";
 
 const NODES = {
     start: {
@@ -452,85 +449,109 @@ const NODES = {
     final_noterms_shipping_true3pty_prepaid: { text: "Check if account/account information per BOL was previously billed.\n\nIf no, look for a billing account using the account information then proceed with rebilling the account no. per BOL. Update the terms if necessary. Example: Update to Prepaid if account is related to the Shipper or True 3rd party. Check if account is ABT of the Shipper.\n\nIf yes, this is billing correctly to shipper. An LOA is needed from new debtor.", choices: [] },
     final_noterms_shipping_true3pty_collect: { text: "Check if account/account information per BOL was previously billed.\n\nIf no, look for a billing account using the account information then proceed with rebilling the account no. per BOL. Update the terms if necessary. Example: Update to Collect if account is related to the Consignee or True 3rd party. Check if account is ABT of the Consignee.\n\nIf yes, bill it to shipper in attempt of payment.", choices: [] },
     final_noterms_shipping_true3pty_account_noted: { text: "Check if this is the first time they are making a dispute.\n\nIf yes, educate the customer that this is billing correctly.\n\nIf no, bill it to shipper in attempt of payment.", choices: [] }
+  };
+
+  const TEMPLATE_COLLECTION = "billing_dispute_general_template";
+  const MAX_STEPS = 8;
+  const state = { currentKey:"start", path:[], history:[], finalText:"" };
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
+  const nodeText = n => n?.text || n?.question || "";
+  const choices = n => Array.isArray(n?.choices) ? n.choices : [];
+  const isFinal = n => !!n?.action || (!choices(n).length && !n?.next);
+
+  function setTemplate(id,text) { const el=$(id); if(!el)return; el.textContent=text||""; el.classList.toggle("empty",!text); }
+  function clearTemplates() { setTemplate("suggestedComment",""); setTemplate("suggestedCorrCode",""); setTemplate("suggestedEmail",""); }
+
+  async function loadTemplates(recommendation) {
+    clearTemplates();
+    const db=window.db;
+    if(!db || !recommendation) return;
+    const norm=String(recommendation).toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
+    const ids={comment:`comment__${norm}`,corr:`corr__${norm}`,email:`email__${norm}`};
+    try {
+      const [a,b,c]=await Promise.all([db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()]);
+      setTemplate("suggestedComment",a.exists ? (a.data().text||""):"");
+      setTemplate("suggestedCorrCode",b.exists ? (b.data().text||""):"");
+      setTemplate("suggestedEmail",c.exists ? (c.data().text||""):"");
+    } catch(e) { console.warn("Guide templates unavailable:",e); }
   }
 
-const els={
- stageCard:document.getElementById("stageCard"),progressFill:document.getElementById("progressFill"),progressText:document.getElementById("progressText"),
- recommendationBox:document.getElementById("recommendationBox"),pathBox:document.getElementById("pathBox"),metricSteps:document.getElementById("metricSteps"),metricAnswer:document.getElementById("metricAnswer"),statusPill:document.getElementById("statusPill"),
- suggestedComment:document.getElementById("suggestedComment"),suggestedCorrCode:document.getElementById("suggestedCorrCode"),suggestedEmail:document.getElementById("suggestedEmail")
-};
-let path=[],currentKey="start",currentFinalRecommendation="";
-const templateCache={};
+  function copyTemplate(id,btn) { const el=$(id); if(!el || el.classList.contains("empty")) return; navigator.clipboard?.writeText(el.innerText.trim()).then(()=>{ const old=btn.textContent; btn.textContent="Copied"; btn.classList.add("copied"); setTimeout(()=>{btn.textContent=old;btn.classList.remove("copied")},1400); }).catch(()=>{}); }
 
-function escapeHtml(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")}
-function normalizeId(v){return String(v||"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"")}
-function getDocId(rec,type){return `${type}__${normalizeId(rec)}`}
-function nodeText(n){return n?.text||n?.question||""}
-function nodeChoices(n){return Array.isArray(n?.choices)?n.choices:[]}
-function isFinalNode(n){return !!n?.action||(!nodeChoices(n).length&&!n?.next)}
-function setTemplateValue(el,text){if(!el)return;el.textContent=text;el.classList.toggle("empty",!text)}
-function showToast(message){const t=document.getElementById("toast");if(!t)return;t.textContent=message;t.classList.add("show");clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),1600)}
+  function progress() {
+    const pct=state.finalText?100:Math.min(95,Math.round((state.path.length/MAX_STEPS)*100));
+    $("progressFill").style.width=pct+"%";
+    $("progressText").textContent=state.finalText?"Recommendation ready":state.path.length?"Flow in progress":"Not started";
+    $("metricSteps").textContent=state.path.length;
+    $("metricAnswer").textContent=state.path.length?state.path[state.path.length-1].answer:"—";
+    $("statusText").textContent=state.finalText?"Completed":state.path.length?"Working":"Ready";
+  }
 
-function getPercent(final){if(final)return 100;if(!path.length)return 0;return Math.min(Math.round((path.length/MAX_STEPS)*100),95)}
-function updateMeta(final){const pct=getPercent(final);els.progressFill.style.width=pct+"%";els.progressText.textContent=final?"Recommendation ready":path.length?"Flow in progress":"Not started";els.metricSteps.textContent=String(path.length);els.metricAnswer.textContent=path.length?path[path.length-1].answer:"—";els.statusPill.querySelector("span").textContent=final?"Completed":path.length?"Working":"Ready"}
-function updateRecommendation(text,final){els.recommendationBox.className=final?"recommendation":"recommendation empty";els.recommendationBox.textContent=final?text:"Follow the flow to reach the final instruction."}
+  function renderPath() {
+    const box=$("pathBox");
+    if(!state.path.length) { box.className="path-empty"; box.textContent="No steps selected yet. Your decisions will appear here."; return; }
+    box.className="path-list";
+    box.innerHTML=state.path.map((x,i)=>`<div class="path-item"><button class="path-jump ${i===state.path.length-1 && !state.finalText?"active":(state.finalText && (x.nextKey==="__final__" || isFinal(NODES[x.nextKey]))?"active":"")}" data-index="${i}"><div class="path-step">Step ${i+1}</div><div class="path-question">${esc(x.question)}</div><div class="path-answer">→ ${esc(x.answer)}</div></button></div>`).join("");
+    box.querySelectorAll(".path-jump").forEach(b=>b.addEventListener("click",()=>jumpTo(Number(b.dataset.index))));
+  }
 
-function updatePath(){
- if(!path.length){els.pathBox.className="path-empty";els.pathBox.textContent="No steps selected yet. Your decisions will appear here.";return}
- els.pathBox.className="path-list";
- els.pathBox.innerHTML=path.map((item,i)=>{const active=currentKey==="__final__"?(item.nextKey==="__final__"||(NODES[item.nextKey]&&isFinalNode(NODES[item.nextKey]))):item.fromKey===currentKey;return `<div class="path-item"><button type="button" class="path-jump ${active?"active":""}" data-step-index="${i}"><div class="path-step">Step ${i+1}</div><div class="path-question">${escapeHtml(item.question)}</div><div class="path-answer">→ ${escapeHtml(item.answer)}</div></button></div>`}).join("");
- els.pathBox.querySelectorAll(".path-jump").forEach(b=>b.addEventListener("click",()=>jumpToPathStep(Number(b.dataset.stepIndex))));
-}
+  function updateRecommendation(text,final) { const box=$("recommendationBox"); box.className=final?"recommendation":"recommendation empty"; box.textContent=final?text:"No recommendation yet. Follow the flow to reach the final instruction."; }
 
-async function loadTemplates(rec){
- if(!rec){setTemplateValue(els.suggestedComment,"");setTemplateValue(els.suggestedCorrCode,"");setTemplateValue(els.suggestedEmail,"");return}
- const db=window.db;
- if(!db||typeof db.collection!=="function"){setTemplateValue(els.suggestedComment,"");setTemplateValue(els.suggestedCorrCode,"");setTemplateValue(els.suggestedEmail,"");return}
- const ids={comment:getDocId(rec,"comment"),corr:getDocId(rec,"corr"),email:getDocId(rec,"email")};
- if(templateCache[ids.comment]!==undefined){setTemplateValue(els.suggestedComment,templateCache[ids.comment]);setTemplateValue(els.suggestedCorrCode,templateCache[ids.corr]||"");setTemplateValue(els.suggestedEmail,templateCache[ids.email]||"");return}
- try{const [a,b,c]=await Promise.all([db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()]);const values=[a,b,c].map(d=>d.exists?(d.data().text||""):"");templateCache[ids.comment]=values[0];templateCache[ids.corr]=values[1];templateCache[ids.email]=values[2];setTemplateValue(els.suggestedComment,values[0]);setTemplateValue(els.suggestedCorrCode,values[1]);setTemplateValue(els.suggestedEmail,values[2]);}catch{setTemplateValue(els.suggestedComment,"");setTemplateValue(els.suggestedCorrCode,"");setTemplateValue(els.suggestedEmail,"")}
-}
+  function renderFinal(finalNode) {
+    const text=finalNode.action||nodeText(finalNode)||""; const note=finalNode.note||""; state.finalText=text; state.currentKey="__final__"; progress(); renderPath(); updateRecommendation(text,true); loadTemplates(text);
+    $("stageCard").innerHTML=`<div class="stage-top"><span class="stage-badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</span><span class="stage-badge alt"><i class="fa-solid fa-lightbulb"></i> Final instruction</span></div><div class="final-card"><div class="final-badge"><i class="fa-solid fa-check"></i> Recommended Action</div><div class="final-title">Use this handling outcome</div><div class="final-text">${esc(text)}</div>${note?`<div class="final-note">${esc(note)}</div>`:""}<div class="final-actions"><button class="action-btn" id="finalBack">Go Back</button><button class="action-btn primary" id="finalRestart">Start Over</button></div></div>`;
+    $("finalBack").onclick=goBack; $("finalRestart").onclick=restart;
+  }
 
-async function copyTemplate(id,btn){const el=document.getElementById(id);const value=el?.innerText.trim();if(!value||el.classList.contains("empty")){showToast("No template available to copy.");return}try{await navigator.clipboard.writeText(value);const old=btn.innerHTML;btn.innerHTML="<i class='fa-solid fa-check'></i>";showToast("Copied to clipboard");setTimeout(()=>btn.innerHTML=old,1200)}catch{showToast("Unable to copy text.")}}
+  function renderNode(key) {
+    state.currentKey=key; state.finalText=""; clearTemplates(); updateRecommendation("",false);
+    const n=NODES[key]; if(!n){$("stageCard").innerHTML=`<div class="question-wrap"><div class="question-card"><div class="question-text">Guide step not found</div></div></div>`;return;}
+    if(isFinal(n)){renderFinal(n);return;}
+    const idx=state.path.findIndex(x=>x.fromKey===key); const prev=state.path.findIndex(x=>x.nextKey===key); const step=key==="start"?0:idx>=0?idx+1:prev>=0?prev+2:1;
+    const ch=choices(n);
+    const choicesHtml=ch.map(c=>`<button class="choice" data-next="${esc(c.next||"")}" data-label="${esc(c.label||"")}" data-action="${esc(c.action||"")}" data-note="${esc(c.note||"")}"><div class="choice-icon"><i class="${c.icon||"fa-solid fa-circle"}"></i></div><div class="choice-body"><div class="choice-title">${esc(c.label||"")}</div><div class="choice-desc">${esc(c.desc||"Continue to the next step.")}</div></div></button>`).join("");
+    const image=n.image?`<div class="question-image" id="questionImage"><img src="${esc(n.image)}" alt="Guide reference image" loading="lazy"></div>`:"";
+    $("stageCard").innerHTML=`<div class="stage-top"><span class="stage-badge"><i class="fa-solid fa-route"></i> Guided Decision</span><span class="stage-badge alt"><i class="fa-solid fa-list-ol"></i> ${key==="start"?"Start":"Step "+step}</span></div><div class="question-wrap"><div class="question-card"><div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Decision Point</div><div class="question-text">${esc(nodeText(n))}</div>${n.help?`<div class="question-help">${esc(n.help).replace(/\n/g,"<br>")}</div>`:""}${n.note?`<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(n.note)}</div></div>`:""}${image}</div><div class="choices">${choicesHtml}</div></div><div class="decision-footer"><div class="footer-step">Decision Guide<strong>${key==="start"?"Ready to begin":"Currently on step "+step}</strong></div><div class="decision-actions"><button class="action-btn" id="inlineBack" ${key==="start"?'style="display:none"':''}>Go Back</button><button class="action-btn primary" id="inlineRestart" ${state.path.length?'':'style="display:none"'}>Start Over</button></div></div>`;
+    if($("inlineBack")) $("inlineBack").onclick=goBack; if($("inlineRestart")) $("inlineRestart").onclick=restart;
+    if($("questionImage")) $("questionImage").onclick=()=>openImageModal(n.image);
+    $("stageCard").querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>choose(btn,n)));
+    progress(); renderPath();
+  }
 
-function openImageModal(src){const m=document.getElementById("imageModal"),img=document.getElementById("imageModalImg");if(!m||!img)return;img.src=src;m.classList.add("open");m.setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
-function closeImageModal(){const m=document.getElementById("imageModal"),img=document.getElementById("imageModalImg");if(!m)return;m.classList.remove("open");m.setAttribute("aria-hidden","true");if(img)img.src="";document.body.style.overflow=""}
+  function choose(btn,node) {
+    const next=btn.dataset.next,label=btn.dataset.label,action=btn.dataset.action,note=btn.dataset.note;
+    const existing=state.path.findIndex(x=>x.fromKey===state.currentKey); if(existing>=0) state.path=state.path.slice(0,existing);
+    const reached=state.path.findIndex(x=>x.nextKey===state.currentKey); if(existing<0 && reached>=0) state.path=state.path.slice(0,reached+1);
+    state.history.push({key:state.currentKey,path:[...state.path]});
+    if(state.currentKey!=="start") state.path.push({question:nodeText(node),answer:label,fromKey:state.currentKey,nextKey:action?"__final__":next,finalNode:action?{action,note}:null});
+    btn.classList.add("selected"); progress(); renderPath(); setTimeout(()=>action?renderFinal({action,note}):renderNode(next),100);
+  }
 
-async function renderFinal(finalNode){
- const finalText=finalNode.action||nodeText(finalNode)||"";const finalNote=finalNode.note||"";const finalImage=finalNode.image||"";currentFinalRecommendation=finalText;currentKey="__final__";updateMeta(true);updatePath();updateRecommendation(finalText,true);await loadTemplates(finalText);
- els.stageCard.innerHTML=`<div class="stage-top"><div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div><div class="badge alt"><i class="fa-solid fa-check"></i> Final instruction ready</div></div><div class="final-card"><div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div><div class="final-title">Use this handling outcome</div><div class="final-text">${escapeHtml(finalText).replace(/\r?\n/g,"<br>")}</div>${finalNote?`<div class="final-note-html">${finalNote}</div>`:""}${finalImage?`<div class="question-image final-image" data-image="${escapeHtml(finalImage)}"><img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy"></div>`:""}<div class="final-actions"><button class="app-btn secondary" id="inlineBack" ${path.length?"":"hidden"}>Go Back</button><button class="app-btn primary" id="inlineRestart">Start Over</button></div></div>`;
- document.getElementById("inlineBack")?.addEventListener("click",goBack);document.getElementById("inlineRestart")?.addEventListener("click",restart);els.stageCard.querySelector(".final-image")?.addEventListener("click",e=>openImageModal(e.currentTarget.dataset.image));
-}
+  function goBack() {
+    clearTemplates(); state.finalText=""; updateRecommendation("",false);
+    if(state.currentKey==="__final__") { const i=state.path.findIndex(x=>x.nextKey==="__final__" || isFinal(NODES[x.nextKey])); if(i<0)return renderNode("start"); return renderNode(state.path[i].fromKey); }
+    const i=state.path.findIndex(x=>x.fromKey===state.currentKey); if(i>=0) return renderNode(i===0?"start":state.path[i-1].fromKey);
+    const j=state.path.findIndex(x=>x.nextKey===state.currentKey); if(j>=0)return renderNode(state.path[j].fromKey);
+    renderNode("start");
+  }
 
-function renderNode(key){
- currentKey=key;const node=NODES[key];if(!node){els.stageCard.innerHTML=`<div class="question-wrap"><div class="question-card"><div class="question-text">Node not found</div><div class="question-help">${escapeHtml(key)}</div></div></div>`;return}
- if(isFinalNode(node)){renderFinal(node);return}
- currentFinalRecommendation="";loadTemplates("");const choices=nodeChoices(node);const text=nodeText(node);const help=node.help||"";const note=node.note||"";const image=node.image||"";const fromIndex=path.findIndex(x=>x.fromKey===currentKey);const step=currentKey==="start"?0:fromIndex!==-1?fromIndex+1:1;
- updateMeta(false);updatePath();updateRecommendation("",false);
- const choicesHtml=choices.map(c=>`<button class="choice" type="button" data-next="${escapeHtml(c.next||"")}" data-label="${escapeHtml(c.label||"")}" data-action="${escapeHtml(c.action||"")}" data-note="${escapeHtml(c.note||"")}"><div class="choice-icon"><i class="${c.icon||"fa-solid fa-circle"}"></i></div><div class="choice-body"><div class="choice-title">${escapeHtml(c.label||"")}</div><div class="choice-desc">${escapeHtml(c.desc||"Continue to the next step in the flow.")}</div></div></button>`).join("");
- els.stageCard.innerHTML=`<div class="stage-top"><div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div><div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${currentKey==="start"?"Start":"Step "+step}</div></div><div class="question-wrap"><div class="question-card"><div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div><div class="question-text">${escapeHtml(text)}</div>${help?`<div class="question-help">${escapeHtml(help).replace(/\r?\n/g,"<br>")}</div>`:""}${note?`<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${note}</div></div>`:""}${image?`<div class="question-image" data-image="${escapeHtml(image)}"><img src="${escapeHtml(image)}" alt="Guide step image" loading="lazy"></div>`:""}</div><div class="choices">${choicesHtml}</div></div><div class="decision-footer"><div><div class="footer-label">Decision Guide</div><div class="footer-value">${currentKey==="start"?"Ready to begin":"Currently on step "+step}</div></div><div class="decision-actions"><button class="app-btn ghost" id="inlineBack" ${currentKey!=="start"?"":"hidden"}>Go Back</button><button class="app-btn primary" id="inlineRestart" ${path.length?"":"hidden"}>Start Over</button></div></div>`;
- document.getElementById("inlineBack")?.addEventListener("click",goBack);document.getElementById("inlineRestart")?.addEventListener("click",restart);els.stageCard.querySelector(".question-image")?.addEventListener("click",e=>openImageModal(e.currentTarget.dataset.image));
- els.stageCard.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>{
-   els.stageCard.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected");
-   const next=btn.dataset.next,label=btn.dataset.label,action=btn.dataset.action,noteValue=btn.dataset.note;
-   const existing=path.findIndex(x=>x.fromKey===currentKey);if(existing!==-1)path=path.slice(0,existing);const nextExisting=path.findIndex(x=>x.nextKey===currentKey);if(nextExisting!==-1)path=path.slice(0,nextExisting+1);
-   if(currentKey!=="start")path.push({question:text,answer:label,fromKey:currentKey,nextKey:action?"__final__":next,finalNode:action?{action,note:noteValue}:null});
-   updatePath();updateMeta(false);setTimeout(()=>action?renderFinal({action,note:noteValue}):renderNode(next),120);
- }));
-}
+  function restart() { state.path=[];state.history=[];state.finalText="";state.currentKey="start";clearTemplates();updateRecommendation("",false);renderNode("start");window.scrollTo({top:0,behavior:"smooth"}); }
 
-function goBack(){
- if(currentKey==="__final__"){const i=path.findIndex(x=>x.nextKey==="__final__"||(NODES[x.nextKey]&&isFinalNode(NODES[x.nextKey])));if(i>=0){renderNode(path[i].fromKey);return}restart();return}
- const i=path.findIndex(x=>x.fromKey===currentKey);if(i>0){renderNode(path[i-1].fromKey);return}if(i===0){renderNode("start");return}
- const j=path.findIndex(x=>x.nextKey===currentKey);if(j>=0){renderNode(path[j].fromKey);return}renderNode("start");
-}
-function jumpToPathStep(index){if(index<0||index>=path.length)return;const item=path[index];if(item.nextKey==="__final__"&&item.finalNode){renderFinal(item.finalNode);return}renderNode(item.fromKey)}
-function restart(){path=[];currentKey="start";currentFinalRecommendation="";setTemplateValue(els.suggestedComment,"");setTemplateValue(els.suggestedCorrCode,"");setTemplateValue(els.suggestedEmail,"");renderNode("start");showToast("Guide restarted")}
+  function jumpTo(i) { const x=state.path[i]; if(!x)return; state.finalText=""; if(x.nextKey==="__final__"&&x.finalNode)return renderFinal(x.finalNode); renderNode(x.fromKey); }
 
-function init(){
- document.querySelectorAll("[data-copy-target]").forEach(btn=>btn.addEventListener("click",()=>copyTemplate(btn.dataset.copyTarget,btn)));
- document.getElementById("imageModalClose")?.addEventListener("click",closeImageModal);document.getElementById("imageModal")?.addEventListener("click",e=>{if(e.target.id==="imageModal")closeImageModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImageModal()});
- renderNode("start");
-}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+  function openImageModal(src) { const m=$("imageModal"),img=$("imageModalImg"); if(!m||!img)return;img.src=src;m.classList.add("open");document.body.style.overflow="hidden"; }
+  function closeImageModal() { const m=$("imageModal"),img=$("imageModalImg");if(!m||!img)return;m.classList.remove("open");img.src="";document.body.style.overflow=""; }
+
+  function bindTemplateButtons() { document.querySelectorAll(".template-copy").forEach(b=>b.addEventListener("click",()=>copyTemplate(b.dataset.target,b))); }
+
+  function init() {
+    $("restartGuide")?.addEventListener("click",restart);
+    $("backToGroup")?.addEventListener("click",()=>history.back());
+    bindTemplateButtons(); renderNode("start");
+    document.addEventListener("keydown",e=>{if(e.key==="Escape")closeImageModal();});
+    $("imageModal")?.addEventListener("click",e=>{if(e.target.id==="imageModal")closeImageModal();});
+    window.guideEngine={restart,goBack,openImageModal,closeImageModal};
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
