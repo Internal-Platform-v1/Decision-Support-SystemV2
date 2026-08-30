@@ -453,7 +453,7 @@ const NODES = {
 
   const TEMPLATE_COLLECTION = "billing_dispute_general_template";
   const MAX_STEPS = 8;
-  const state = { currentKey:"start", path:[], history:[], finalText:"" };
+  const state = { currentKey:"start", path:[], history:[], finalText:"", pathExpanded:false };
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
   const nodeText = n => n?.text || n?.question || "";
@@ -501,13 +501,17 @@ const NODES = {
 
     if (!state.path.length) {
       box.className = "path-empty";
-      box.textContent = "No steps selected yet. The full path will appear here as you move through the steps.";
+      box.innerHTML = "No steps selected yet. The full path will appear here as you move through the steps.";
       return;
     }
 
-    box.className = "path-list";
-    box.innerHTML = state.path.map((x, i) => {
-      const active = i === state.path.length - 1 && !state.finalText;
+    const lastIndex = state.path.length - 1;
+    const visiblePath = state.pathExpanded ? state.path : [state.path[lastIndex]];
+
+    box.className = state.pathExpanded ? "path-list is-expanded" : "path-list is-collapsed";
+    box.innerHTML = visiblePath.map((x) => {
+      const i = state.path.indexOf(x);
+      const active = i === lastIndex && !state.finalText;
       const finalActive = state.finalText && (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
       return `<div class="path-item">
         <button class="path-jump ${active || finalActive ? "active" : ""}" data-index="${i}" type="button">
@@ -517,6 +521,23 @@ const NODES = {
         </button>
       </div>`;
     }).join("");
+
+    if (state.path.length > 1) {
+      const toggleLabel = state.pathExpanded
+        ? '<i class="fa-solid fa-chevron-up"></i> Show selected step only'
+        : `<i class="fa-solid fa-chevron-down"></i> View full path (${state.path.length} steps)`;
+
+      box.insertAdjacentHTML("beforeend", `
+        <button class="path-toggle" type="button" aria-expanded="${state.pathExpanded}">
+          ${toggleLabel}
+        </button>
+      `);
+
+      box.querySelector(".path-toggle")?.addEventListener("click", () => {
+        state.pathExpanded = !state.pathExpanded;
+        renderPath();
+      });
+    }
 
     box.querySelectorAll(".path-jump").forEach(btn => {
       btn.addEventListener("click", () => jumpTo(Number(btn.dataset.index)));
@@ -696,6 +717,10 @@ const NODES = {
       finalNode: action ? { action, note } : null
     });
 
+    // Keep the Selected Path compact while the user moves through the flow.
+    // The user can expand it when they want to review every step.
+    state.pathExpanded = false;
+
     btn.classList.add("selected");
     progress();
     renderPath();
@@ -731,6 +756,7 @@ const NODES = {
     state.path = [];
     state.history = [];
     state.finalText = "";
+    state.pathExpanded = false;
     state.currentKey = "start";
     clearTemplates();
     updateRecommendation("", false);
@@ -744,6 +770,7 @@ const NODES = {
 
     state.finalText = "";
     state.path = state.path.slice(0, i + 1);
+    state.pathExpanded = false;
 
     if (x.nextKey === "__final__" && x.finalNode) return renderFinal(x.finalNode);
     renderNode(x.nextKey);
