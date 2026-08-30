@@ -432,3 +432,76 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
   }
 }
 
+/* ============================================================
+   GUIDE — LARGER SECONDARY / GREY TEXT
+   ============================================================ */
+
+/* Question helper text */
+.question-help {
+  font-size: 11px;
+}
+
+/* Note / reminder text */
+.note-body {
+  font-size: 10.5px;
+}
+
+/* Path information */
+.path-empty {
+  font-size: 9.5px;
+}
+
+.path-question {
+  font-size: 9px;
+}
+
+.path-answer {
+  font-size: 8.5px;
+}
+
+/* Recommended Action */
+.recommendation {
+  font-size: 10px;
+}
+
+/* Guide Info labels and values */
+.guide-info-list dt {
+  font-size: 8px;
+}
+
+.guide-info-list dd {
+  font-size: 10.5px;
+}
+
+/* Template supporting text */
+.template-sub {
+  font-size: 8px;
+}
+
+.template-box {
+  font-size: 9px;
+}
+
+/* Template action links */
+.template-link {
+  font-size: 7.5px;
+}
+
+/* Progress supporting text */
+.progress-status {
+  font-size: 8.5px;
+}
+
+/* Footer step information */
+.footer-step {
+  font-size: 8px;
+}
+
+.footer-step strong {
+  font-size: 9px;
+}
+
+/* General side-card description */
+.side-description {
+  font-size: 8.5px;
+}
