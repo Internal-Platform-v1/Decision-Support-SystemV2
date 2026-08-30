@@ -218,3 +218,216 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
 .shared-update-banner .dss-update-banner{width:100%;margin:0 0 10px;padding:0}
 .guide-page{padding-top:2px}
 .guide-workspace{width:100%;max-width:none}
+
+
+/* ============================================================
+   DSS V2 — FINAL GUIDE LAYOUT / SPACE BALANCE FIX
+   Append this block to the END of guide.css
+   ============================================================ */
+
+/* Keep the approved column widths exactly as they are.
+   Only stretch the columns/cards vertically. */
+.guide-workspace{
+  align-items:stretch;
+}
+
+.guide-main-column,
+.guide-middle-column,
+.guide-right-column{
+  min-height:100%;
+}
+
+/* Main guide column fills the available row height. */
+.guide-main-column{
+  display:flex;
+  flex-direction:column;
+}
+
+/* The stage consumes the remaining height instead of leaving
+   unused space below the main guide content. */
+.guide-main-column .stage-card{
+  flex:1 1 auto;
+  min-height:0;
+}
+
+/* Middle column:
+   Selected Path
+   Recommended Action
+   Quick Snapshot
+   Guide Info
+*/
+.guide-middle-column{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.guide-middle-column .path-card,
+.guide-middle-column .recommendation-card,
+.guide-middle-column .snapshot-card{
+  flex:0 0 auto;
+}
+
+.guide-middle-column .info-card{
+  flex:1 1 auto;
+  min-height:0;
+}
+
+/* Right column: Suggested Templates stretches all the way down. */
+.guide-right-column{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.guide-right-column .templates-card{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+
+/* The three template cards share the available height instead
+   of leaving a large empty area below the stack. */
+.guide-right-column .template-stack{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.guide-right-column .template-card{
+  flex:1 1 0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.guide-right-column .template-box{
+  flex:1 1 auto;
+  min-height:52px;
+}
+
+/* Slightly larger side text for the expanded layout. */
+.side-head{
+  font-size:10px;
+}
+
+.side-description{
+  font-size:8px;
+}
+
+.path-empty{
+  font-size:8.5px;
+}
+
+.path-step{
+  font-size:7px;
+}
+
+.path-question{
+  font-size:8.2px;
+}
+
+.path-answer{
+  font-size:7.7px;
+}
+
+.recommendation{
+  font-size:9.5px;
+}
+
+.metric-k{
+  font-size:7px;
+}
+
+.metric-v{
+  font-size:14px;
+}
+
+.guide-info-list{
+  gap:12px;
+}
+
+.guide-info-list dt{
+  font-size:7.5px;
+}
+
+.guide-info-list dd{
+  font-size:10px;
+}
+
+.template-title{
+  font-size:8.5px;
+}
+
+.template-sub{
+  font-size:7px;
+}
+
+.template-box{
+  font-size:8px;
+}
+
+.template-link{
+  font-size:7px;
+}
+
+.template-copy{
+  font-size:7.5px;
+}
+
+/* Keep the small, even spacing between banner and guide. */
+.shared-update-banner{
+  margin:0;
+  padding:0;
+}
+
+.shared-update-banner .dss-update-banner{
+  margin:0 0 10px;
+}
+
+.guide-page{
+  padding-top:2px;
+  padding-bottom:8px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media(max-width:1100px){
+  .guide-workspace{
+    align-items:stretch;
+  }
+
+  .guide-right-column{
+    display:block;
+  }
+
+  .guide-right-column .templates-card{
+    display:flex;
+  }
+}
+
+@media(max-width:850px){
+  .guide-workspace{
+    align-items:stretch;
+  }
+
+  .guide-middle-column,
+  .guide-right-column{
+    min-height:0;
+  }
+
+  .guide-middle-column .info-card,
+  .guide-right-column .templates-card{
+    flex:none;
+  }
+
+  .guide-right-column .template-card{
+    flex:none;
+  }
+}
+
