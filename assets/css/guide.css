@@ -505,3 +505,28 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
 .side-description {
   font-size: 8.5px;
 }
+
+/* ============================================================
+   SUGGESTED TEMPLATES — LARGER TEXT
+   ============================================================ */
+
+.template-title {
+  font-size: 9.5px;
+}
+
+.template-sub {
+  font-size: 8.5px;
+}
+
+.template-box {
+  font-size: 9.5px;
+  line-height: 1.55;
+}
+
+.template-link {
+  font-size: 8px;
+}
+
+.template-copy {
+  font-size: 8px;
+}
