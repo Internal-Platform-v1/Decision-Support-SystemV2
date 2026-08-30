@@ -3,7 +3,14 @@
    shared/update-banner/update-banner.css
 
    Shared by every DSS V2 guide page.
-   Full-width image layer with text above it.
+
+   DESIGN:
+   - Full width of parent container
+   - Touches the header
+   - No rounded outer corners
+   - Original uploaded banner image fills the entire banner
+   - Text sits above the image
+   - Only a subtle readability overlay is used
    ============================================================ */
 
 .dss-update-banner {
@@ -21,7 +28,6 @@
   border-radius: 0;
 
   background: #f6f0ff;
-
   box-shadow: 0 3px 14px rgba(48, 38, 111, .06);
 }
 
@@ -32,11 +38,7 @@
 
 .dss-update-banner__visual {
   position: absolute;
-
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
 
   width: 100%;
   height: 100%;
@@ -45,15 +47,12 @@
   padding: 0;
 
   overflow: hidden;
-
   z-index: 1;
 }
 
 .dss-update-banner__visual img {
   position: absolute;
-
-  top: 0;
-  left: 0;
+  inset: 0;
 
   width: 100%;
   height: 100%;
@@ -63,37 +62,39 @@
 
   display: block;
 
+  /*
+   * Keep the uploaded artwork filling the complete banner.
+   * The image itself is not divided into a left and right section.
+   */
   object-fit: cover;
-  object-position: 58% 50%;
+  object-position: center center;
 }
 
 
 /* ============================================================
-   IMAGE READABILITY OVERLAY
+   SUBTLE READABILITY OVERLAY
    ============================================================ */
 
 .dss-update-banner__visual::before {
   content: "";
 
   position: absolute;
-
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
 
   z-index: 2;
 
-  background:
-    linear-gradient(
-      90deg,
-      rgba(246, 240, 255, .94) 0%,
-      rgba(246, 240, 255, .88) 18%,
-      rgba(246, 240, 255, .68) 32%,
-      rgba(246, 240, 255, .34) 45%,
-      rgba(246, 240, 255, .08) 58%,
-      rgba(246, 240, 255, 0) 72%
-    );
+  /*
+   * The image remains clearly visible across the ENTIRE banner.
+   * The left side is only lightly softened behind the text.
+   */
+  background: linear-gradient(
+    90deg,
+    rgba(246, 240, 255, .58) 0%,
+    rgba(246, 240, 255, .38) 18%,
+    rgba(246, 240, 255, .18) 32%,
+    rgba(246, 240, 255, .06) 46%,
+    rgba(246, 240, 255, 0) 60%
+  );
 
   pointer-events: none;
 }
@@ -105,7 +106,6 @@
 
 .dss-update-banner__copy {
   position: relative;
-
   z-index: 3;
 
   width: 43%;
@@ -130,11 +130,9 @@
   margin: 0 0 4px;
 
   color: #4d148c;
-
   font-size: 7px;
   line-height: 1;
   font-weight: 800;
-
   letter-spacing: .045em;
 }
 
@@ -168,11 +166,9 @@
   margin: 0 0 3px 39px;
 
   color: #17194f;
-
   font-size: 15px;
   line-height: 1.15;
   font-weight: 800;
-
   letter-spacing: -.2px;
 }
 
@@ -185,7 +181,6 @@
   margin: 0 0 2px 39px !important;
 
   color: #17194f !important;
-
   font-size: 8px !important;
   line-height: 1.25 !important;
   font-weight: 700 !important;
@@ -193,7 +188,6 @@
 
 .dss-update-banner__date i {
   margin-right: 3px;
-
   color: #4d148c;
 }
 
@@ -206,7 +200,6 @@
   margin: 0 0 6px 39px;
 
   color: #3f4168;
-
   font-size: 8px;
   line-height: 1.35;
   font-weight: 500;
@@ -221,7 +214,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 5px;
 
   margin-left: 39px;
@@ -276,7 +268,6 @@
 
   display: flex;
   align-items: center;
-
   gap: 7px;
 }
 
@@ -302,7 +293,6 @@
    ============================================================ */
 
 @media (max-width: 900px) {
-
   .dss-update-banner {
     height: 136px;
     min-height: 136px;
@@ -311,30 +301,26 @@
   .dss-update-banner__copy {
     width: 48%;
     min-width: 300px;
-
     padding-left: 18px;
   }
 
   .dss-update-banner__visual img {
-    object-position: 58% 50%;
+    object-position: center center;
   }
 
   .dss-update-banner__visual::before {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(246, 240, 255, .96) 0%,
-        rgba(246, 240, 255, .88) 22%,
-        rgba(246, 240, 255, .55) 40%,
-        rgba(246, 240, 255, .15) 60%,
-        rgba(246, 240, 255, 0) 75%
-      );
+    background: linear-gradient(
+      90deg,
+      rgba(246, 240, 255, .58) 0%,
+      rgba(246, 240, 255, .36) 20%,
+      rgba(246, 240, 255, .16) 38%,
+      rgba(246, 240, 255, .04) 55%,
+      rgba(246, 240, 255, 0) 68%
+    );
   }
 }
 
-
 @media (max-width: 700px) {
-
   .dss-update-banner {
     height: 190px;
     min-height: 190px;
@@ -344,22 +330,20 @@
     width: 100%;
     min-width: 0;
     height: auto;
-
     padding: 13px 16px 14px;
   }
 
   .dss-update-banner__visual img {
-    object-position: 58% 50%;
+    object-position: center center;
   }
 
   .dss-update-banner__visual::before {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(246, 240, 255, .97) 0%,
-        rgba(246, 240, 255, .85) 40%,
-        rgba(246, 240, 255, .30) 75%,
-        rgba(246, 240, 255, 0) 100%
-      );
+    background: linear-gradient(
+      90deg,
+      rgba(246, 240, 255, .68) 0%,
+      rgba(246, 240, 255, .38) 40%,
+      rgba(246, 240, 255, .12) 72%,
+      rgba(246, 240, 255, 0) 100%
+    );
   }
 }
