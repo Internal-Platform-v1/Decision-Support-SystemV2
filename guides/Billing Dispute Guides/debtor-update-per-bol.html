@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- The guide lives in /Guides/<Group Folder>/. This base keeps all shared V2 assets rooted at the DSS project root. -->
+  <base href="../../" />
   <title>Debtor Update per BOL — DSS</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link rel="stylesheet" href="../../assets/css/guide-themes.css" />
-  <link rel="stylesheet" href="../../assets/css/guide.css" />
-  <link rel="stylesheet" href="../../assets/css/page-loader.css" />
+  <link rel="stylesheet" href="assets/css/guide-themes.css" />
+  <link rel="stylesheet" href="assets/css/guide.css" />
+  <link rel="stylesheet" href="assets/css/page-loader.css" />
 
   <script>
     document.documentElement.classList.add("page-loading");
@@ -191,8 +193,15 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="../../shared/include.js"></script>
-  <script src="../../assets/js/guide.js"></script>
-  <script src="../../assets/js/page-loader.js"></script>
+  <script src="shared/include.js"></script>
+  <script src="assets/js/guide.js"></script>
+  <script src="assets/js/page-loader.js"></script>
+
+  <script>
+    /* Shared include/page-loader handshake used by DSS V2 pages. */
+    window.bdToolsUserReady = function () {
+      window.dispatchEvent(new Event("bdtools:user-ready"));
+    };
+  </script>
 </body>
 </html>
