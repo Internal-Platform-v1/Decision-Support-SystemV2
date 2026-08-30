@@ -375,7 +375,7 @@ a {
 }
 .choice-body { min-width: 0; }
 .choice-title {
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.32;
   font-weight: 800;
   color: #171a50;
@@ -501,7 +501,7 @@ a {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--ink);
   margin-bottom: 9px;
@@ -572,7 +572,7 @@ a {
   letter-spacing: .05em;
 }
 .path-question {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.35;
   margin-top: 3px;
@@ -694,7 +694,7 @@ a {
   color: var(--orange);
 }
 .template-title {
-  font-size: 9.5px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--ink);
 }
