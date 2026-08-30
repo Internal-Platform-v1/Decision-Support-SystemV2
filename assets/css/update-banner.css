@@ -1,0 +1,160 @@
+/* ============================================================
+   DSS V2 — SHARED UPDATE BANNER
+   Used by every guide page. Static-site friendly.
+   ============================================================ */
+
+.dss-update-banner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(360px, 43%) minmax(0, 57%);
+  min-height: 136px;
+  margin: 10px 17px 12px;
+  overflow: hidden;
+  border: 1px solid #ece8f6;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #f6f0ff 0%, #fbf8ff 43%, #fff8f2 100%);
+  box-shadow: 0 3px 14px rgba(48, 38, 111, .06);
+}
+
+.dss-update-banner__copy {
+  position: relative;
+  z-index: 2;
+  padding: 14px 14px 12px 27px;
+}
+
+.dss-update-banner__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 4px;
+  color: #4d148c;
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: .045em;
+}
+
+.dss-update-banner__icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  margin-right: 3px;
+  border-radius: 8px;
+  background: #f0e8ff;
+  color: #4d148c;
+  font-size: 14px;
+}
+
+.dss-update-banner h2 {
+  margin: -25px 0 3px 39px;
+  color: #17194f;
+  font-size: 15px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -.2px;
+}
+
+.dss-update-banner__date {
+  margin: 0 0 2px 39px !important;
+  color: #17194f !important;
+  font-size: 8px !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+}
+
+.dss-update-banner__date i {
+  color: #4d148c;
+  margin-right: 3px;
+}
+
+.dss-update-banner__copy > p:not(.dss-update-banner__date) {
+  margin: 0 0 6px 39px;
+  color: #3f4168;
+  font-size: 8px;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.dss-update-banner__button {
+  margin-left: 39px;
+  min-height: 23px;
+  padding: 0 9px;
+  border: 1px solid #6a24c7;
+  border-radius: 4px;
+  background: #fff;
+  color: #4d148c;
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.dss-update-banner__button span {
+  margin-left: 5px;
+  font-size: 10px;
+}
+
+.dss-update-banner__button:hover {
+  background: #f6f0ff;
+}
+
+.dss-update-banner__visual {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dss-update-banner__visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, #fbf8ff 0%, rgba(251,248,255,.15) 20%, rgba(255,248,242,0) 100%);
+  pointer-events: none;
+}
+
+.dss-update-banner__visual img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.dss-update-banner__dots {
+  position: absolute;
+  top: 24px;
+  right: 22px;
+  z-index: 3;
+  display: flex;
+  gap: 7px;
+}
+
+.dss-update-banner__dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 0 0 1px rgba(77,20,140,.04);
+}
+
+.dss-update-banner__dots span.is-active {
+  background: #4d148c;
+}
+
+@media (max-width: 900px) {
+  .dss-update-banner {
+    grid-template-columns: 48% 52%;
+  }
+}
+
+@media (max-width: 700px) {
+  .dss-update-banner {
+    grid-template-columns: 1fr;
+    min-height: 190px;
+  }
+
+  .dss-update-banner__visual {
+    min-height: 100px;
+  }
+}
