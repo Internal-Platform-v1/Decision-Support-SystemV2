@@ -2,23 +2,26 @@
    DSS V2 — SHARED UPDATE BANNER
    shared/update-banner/update-banner.css
 
-   Used by every DSS V2 guide page.
+   Shared by every DSS V2 guide page.
 
-   V2 DESIGN:
-   - Full width of parent content
+   DESIGN:
+   - Full width of the page/container
    - Touches the header
    - No top margin
    - No rounded outer corners
-   - Wide truck image fills the ENTIRE banner
-   - Text sits over the left side
-   - Purple/white gradient keeps text readable
+   - Original banner image used without modification
+   - Image fills the complete banner
+   - Image position controlled with object-position
+   - Text layered above the image
    ============================================================ */
+
 
 .dss-update-banner {
   position: relative;
+
   width: 100%;
-  min-height: 136px;
   height: 136px;
+  min-height: 136px;
 
   margin: 0 0 10px;
   padding: 0;
@@ -40,17 +43,34 @@
 
 .dss-update-banner__visual {
   position: absolute;
+
   inset: 0;
 
   width: 100%;
   height: 100%;
 
   overflow: hidden;
+
   z-index: 1;
 }
 
+
+/*
+   The uploaded image is kept at its original proportions.
+
+   object-fit: cover
+   = fills the entire banner without distortion.
+
+   object-position
+   = controls which portion of the original image is visible.
+
+   Start with 58% because the truck is positioned toward
+   the right side of the source image.
+*/
+
 .dss-update-banner__visual img {
   position: absolute;
+
   inset: 0;
 
   width: 100%;
@@ -59,21 +79,19 @@
   display: block;
 
   object-fit: cover;
-  object-position: center center;
+  object-position: 58% 50%;
 }
 
 
 /* ============================================================
-   IMAGE READABILITY OVERLAY
-
-   Stronger on the left for the update text.
-   Transparent toward the truck/right side.
+   IMAGE OVERLAY
    ============================================================ */
 
 .dss-update-banner__visual::before {
   content: "";
 
   position: absolute;
+
   inset: 0;
 
   z-index: 2;
@@ -81,12 +99,12 @@
   background:
     linear-gradient(
       90deg,
-      rgba(246, 240, 255, 1) 0%,
-      rgba(246, 240, 255, .98) 20%,
-      rgba(246, 240, 255, .88) 31%,
-      rgba(246, 240, 255, .58) 43%,
-      rgba(246, 240, 255, .20) 55%,
-      rgba(246, 240, 255, 0) 70%
+      rgba(246, 240, 255, 0.96) 0%,
+      rgba(246, 240, 255, 0.91) 18%,
+      rgba(246, 240, 255, 0.72) 32%,
+      rgba(246, 240, 255, 0.38) 45%,
+      rgba(246, 240, 255, 0.10) 58%,
+      rgba(246, 240, 255, 0) 72%
     );
 
   pointer-events: none;
@@ -115,8 +133,6 @@
    ============================================================ */
 
 .dss-update-banner__eyebrow {
-  position: relative;
-
   display: flex;
   align-items: center;
 
@@ -135,7 +151,7 @@
 }
 
 
-/* Megaphone icon */
+/* Megaphone */
 
 .dss-update-banner__icon {
   width: 30px;
@@ -155,7 +171,7 @@
 }
 
 
-/* SYSTEM UPDATE text */
+/* SYSTEM UPDATE */
 
 .dss-update-banner__eyebrow > span:last-child {
   margin-left: 9px;
@@ -307,8 +323,8 @@
 @media (max-width: 900px) {
 
   .dss-update-banner {
-    min-height: 136px;
     height: 136px;
+    min-height: 136px;
   }
 
   .dss-update-banner__copy {
@@ -318,14 +334,18 @@
     padding-left: 18px;
   }
 
+  .dss-update-banner__visual img {
+    object-position: 58% 50%;
+  }
+
   .dss-update-banner__visual::before {
     background:
       linear-gradient(
         90deg,
-        rgba(246, 240, 255, 1) 0%,
-        rgba(246, 240, 255, .97) 23%,
-        rgba(246, 240, 255, .75) 40%,
-        rgba(246, 240, 255, .20) 60%,
+        rgba(246, 240, 255, .96) 0%,
+        rgba(246, 240, 255, .88) 22%,
+        rgba(246, 240, 255, .55) 40%,
+        rgba(246, 240, 255, .15) 60%,
         rgba(246, 240, 255, 0) 75%
       );
   }
@@ -352,13 +372,17 @@
     padding: 13px 16px 14px;
   }
 
+  .dss-update-banner__visual img {
+    object-position: 58% 50%;
+  }
+
   .dss-update-banner__visual::before {
     background:
       linear-gradient(
         90deg,
-        rgba(246, 240, 255, .98) 0%,
-        rgba(246, 240, 255, .90) 45%,
-        rgba(246, 240, 255, .20) 80%,
+        rgba(246, 240, 255, .97) 0%,
+        rgba(246, 240, 255, .85) 40%,
+        rgba(246, 240, 255, .30) 75%,
         rgba(246, 240, 255, 0) 100%
       );
   }
