@@ -236,8 +236,8 @@ a{text-decoration:none;color:inherit}
 .guide-filter small{
   display:block;
   margin-top:3px;
-  font-size:8px;
-  line-height:1.15;
+  font-size:10px;
+  line-height:1.25;
   color:#757795;
   white-space:nowrap;
   overflow:hidden;
@@ -624,7 +624,7 @@ a{text-decoration:none;color:inherit}
 }
 
 .no-results h3{margin:0;color:#171b51;font-size:14px}
-.no-results p{margin:6px 0 13px;color:#7d819b;font-size:9px}
+.no-results p{margin:6px 0 13px;color:#7d819b;font-size:10px}
 
 .no-results button{
   border:0;
@@ -689,4 +689,16 @@ a{text-decoration:none;color:inherit}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ============================================================
+   DSS V2 — DEFAULT SECONDARY TEXT SIZE
+   10px is the standard readable size for grey supporting text.
+   ============================================================ */
+.guide-filter small,
+#resultsText,
+.guide-card .description,
+.no-results p {
+  font-size: 10px;
+  line-height: 1.5;
 }
