@@ -1,29 +1,76 @@
 /* ============================================================
-   shared/include.js — V2
-   Loads shared header/footer exactly once.
-   Safe for pages that load this script from <head> or <body>.
+   shared/include.js — DSS V2
+   ------------------------------------------------------------
+   Central shared-component loader.
+
+   Loads:
+   - Header
+   - Update Banner
+   - Footer
+
+   Shared component structure:
+
+   shared/
+   ├── header/
+   │   ├── header.html
+   │   ├── header.css
+   │   └── header.js
+   │
+   ├── footer/
+   │   ├── footer.html
+   │   ├── footer.css
+   │   └── footer.js
+   │
+   ├── update-banner/
+   │   ├── update-banner.html
+   │   ├── update-banner.css
+   │   └── update-banner.js
+   │
+   └── include.js
+
+   Pages only need to load this file.
+
    ============================================================ */
 
 (function () {
+
     "use strict";
 
+
+    /* =========================================================
+       LOAD HTML
+       ========================================================= */
+
     function loadText(url) {
-        return fetch(url, { cache: "no-cache" })
-            .then(function (response) {
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Unable to load " +
-                        url +
-                        " (" +
-                        response.status +
-                        ")"
-                    );
-                }
+        return fetch(url, {
+            cache: "no-cache"
+        })
 
-                return response.text();
-            });
+        .then(function (response) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load " +
+                    url +
+                    " (" +
+                    response.status +
+                    ")"
+                );
+
+            }
+
+            return response.text();
+
+        });
+
     }
+
+
+    /* =========================================================
+       LOAD CSS
+       ========================================================= */
 
     function loadCss(url) {
 
@@ -34,30 +81,54 @@
                     'link[data-shared-style="' + url + '"]'
                 )
             ) {
+
                 resolve();
+
                 return;
+
             }
 
-            const link = document.createElement("link");
+
+            const link =
+                document.createElement("link");
+
 
             link.rel = "stylesheet";
+
             link.href = url;
 
             link.dataset.sharedStyle = url;
 
-            link.onload = resolve;
 
-            link.onerror = function () {
-                reject(
-                    new Error(
-                        "Unable to load stylesheet " + url
-                    )
-                );
+            link.onload = function () {
+
+                resolve();
+
             };
 
+
+            link.onerror = function () {
+
+                reject(
+                    new Error(
+                        "Unable to load stylesheet " +
+                        url
+                    )
+                );
+
+            };
+
+
             document.head.appendChild(link);
+
         });
+
     }
+
+
+    /* =========================================================
+       LOAD JAVASCRIPT
+       ========================================================= */
 
     function loadScript(url) {
 
@@ -68,126 +139,308 @@
                     'script[data-shared-script="' + url + '"]'
                 )
             ) {
+
                 resolve();
+
                 return;
+
             }
 
-            const script = document.createElement("script");
+
+            const script =
+                document.createElement("script");
+
 
             script.src = url;
 
             script.dataset.sharedScript = url;
 
-            script.onload = resolve;
 
-            script.onerror = function () {
-                reject(
-                    new Error(
-                        "Unable to load script " + url
-                    )
-                );
+            script.onload = function () {
+
+                resolve();
+
             };
 
+
+            script.onerror = function () {
+
+                reject(
+                    new Error(
+                        "Unable to load script " +
+                        url
+                    )
+                );
+
+            };
+
+
             document.body.appendChild(script);
+
         });
+
     }
 
+
+    /* =========================================================
+       LOAD HEADER
+       ========================================================= */
 
     async function loadHeader() {
 
         const placeholder =
-            document.getElementById("header-placeholder");
+            document.getElementById(
+                "header-placeholder"
+            );
+
 
         if (!placeholder) {
+
             return;
+
         }
 
+
         const headerHtml =
-            await loadText("shared/header.html");
+            await loadText(
+                "shared/header/header.html"
+            );
 
-        placeholder.innerHTML = headerHtml;
 
-        await loadCss("shared/header.css");
+        placeholder.innerHTML =
+            headerHtml;
 
-        await loadScript("shared/header.js");
+
+        await loadCss(
+            "shared/header/header.css"
+        );
+
+
+        await loadScript(
+            "shared/header/header.js"
+        );
+
 
         window.dispatchEvent(
-            new Event("bdtools:header-ready")
+            new Event(
+                "bdtools:header-ready"
+            )
         );
+
     }
 
+
+    /* =========================================================
+       LOAD UPDATE BANNER
+       ========================================================= */
+
+    async function loadUpdateBanner() {
+
+        const placeholder =
+            document.getElementById(
+                "update-banner-placeholder"
+            );
+
+
+        /*
+         * Pages that do not have an update-banner
+         * placeholder simply skip the component.
+         */
+
+        if (!placeholder) {
+
+            return;
+
+        }
+
+
+        const bannerHtml =
+            await loadText(
+                "shared/update-banner/update-banner.html"
+            );
+
+
+        placeholder.innerHTML =
+            bannerHtml;
+
+
+        await loadCss(
+            "shared/update-banner/update-banner.css"
+        );
+
+
+        await loadScript(
+            "shared/update-banner/update-banner.js"
+        );
+
+
+        window.dispatchEvent(
+            new Event(
+                "bdtools:update-banner-ready"
+            )
+        );
+
+    }
+
+
+    /* =========================================================
+       LOAD FOOTER
+       ========================================================= */
 
     async function loadFooter() {
 
         const placeholder =
-            document.getElementById("footer-placeholder");
+            document.getElementById(
+                "footer-placeholder"
+            );
+
 
         if (!placeholder) {
+
             return;
+
         }
 
+
         const footerHtml =
-            await loadText("shared/footer.html");
+            await loadText(
+                "shared/footer/footer.html"
+            );
 
-        placeholder.innerHTML = footerHtml;
 
-        await loadCss("shared/footer.css");
+        placeholder.innerHTML =
+            footerHtml;
 
-        await loadScript("shared/footer.js");
+
+        await loadCss(
+            "shared/footer/footer.css"
+        );
+
+
+        await loadScript(
+            "shared/footer/footer.js"
+        );
+
 
         window.dispatchEvent(
-            new Event("bdtools:footer-ready")
+            new Event(
+                "bdtools:footer-ready"
+            )
         );
+
     }
 
 
+    /* =========================================================
+       START SHARED COMPONENT LOADING
+       ========================================================= */
+
     async function start() {
+
+
+        /* -----------------------------------------------------
+           HEADER
+           ----------------------------------------------------- */
 
         try {
 
             await loadHeader();
 
-        } catch (error) {
-
-            console.error(
-                "V2 Header loader error:",
-                error
-            );
         }
 
+        catch (error) {
+
+            console.error(
+                "DSS V2 Header loader error:",
+                error
+            );
+
+        }
+
+
+        /* -----------------------------------------------------
+           UPDATE BANNER
+           ----------------------------------------------------- */
+
+        try {
+
+            await loadUpdateBanner();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "DSS V2 Update Banner loader error:",
+                error
+            );
+
+        }
+
+
+        /* -----------------------------------------------------
+           FOOTER
+           ----------------------------------------------------- */
 
         try {
 
             await loadFooter();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
-                "V2 Footer loader error:",
+                "DSS V2 Footer loader error:",
                 error
             );
+
         }
+
+
+        /* -----------------------------------------------------
+           ALL SHARED COMPONENTS READY
+           ----------------------------------------------------- */
+
+        window.dispatchEvent(
+            new Event(
+                "bdtools:shared-ready"
+            )
+        );
+
     }
 
 
-    /*
-     * IMPORTANT:
-     *
-     * This allows include.js to work whether it is
-     * placed in <head> or at the bottom of <body>.
-     */
-    if (document.readyState === "loading") {
+    /* =========================================================
+       INITIALIZATION
+       =========================================================
+
+       Works whether include.js is loaded from:
+       - <head>
+       - bottom of <body>
+
+       ========================================================= */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
         document.addEventListener(
             "DOMContentLoaded",
             start,
-            { once: true }
+            {
+                once: true
+            }
         );
 
-    } else {
+    }
+
+    else {
 
         start();
 
     }
+
 
 })();
