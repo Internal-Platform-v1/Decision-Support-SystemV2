@@ -959,7 +959,7 @@ a {
   flex: 1 1 auto;
   min-height: 52px;
 }
-.side-head { font-size: 10px; }
+.side-head { font-size: 13px; }
 .side-description { font-size: 8px; }
 .path-empty { font-size: 8.5px; }
 .path-step { font-size: 7px; }
@@ -971,7 +971,7 @@ a {
 .guide-info-list { gap: 12px; }
 .guide-info-list dt { font-size: 7.5px; }
 .guide-info-list dd { font-size: 10px; }
-.template-title { font-size: 8.5px; }
+.template-title { font-size: 13px; }
 .template-sub { font-size: 7px; }
 .template-box { font-size: 8px; }
 .template-link { font-size: 7px; }
