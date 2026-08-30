@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- The guide lives in /Guides/<Group Folder>/. This base keeps all shared V2 assets rooted at the DSS project root. -->
+  <base href="../../" />
+  <title>Debtor Update per BOL — DSS</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/guide-themes.css" />
+  <link rel="stylesheet" href="assets/css/guide.css" />
+  <link rel="stylesheet" href="assets/css/page-loader.css" />
+
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
+</head>
+
+<body data-waits-for-user="true">
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading BD Tools…</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <div id="header-placeholder"></div>
+
+    <main>
+      <section class="guide-page" aria-labelledby="guideTitle">
+        <div class="guide-workspace">
+          <!-- =====================================================
+               LEFT — PRIMARY DECISION WORKSPACE
+               ===================================================== -->
+          <div class="guide-main-column">
+            <section class="guide-hero-card">
+              <div class="guide-hero-copy">
+                <div class="guide-hero-kicker">
+                  <i class="fa-solid fa-route"></i>
+                  Billing Dispute · Decision Guide
+                </div>
+                <h1 id="guideTitle">Debtor Update per BOL</h1>
+                <p>Follow a structured decision flow to determine the correct debtor and ensure the shipment is billed to the appropriate account.</p>
+              </div>
+              <div class="guide-status" aria-live="polite">
+                <span class="status-dot"></span>
+                <span id="statusText">Ready</span>
+              </div>
+            </section>
+
+            <section class="progress-card" aria-label="Decision progress">
+              <div class="progress-head">
+                <div class="progress-title">Progress</div>
+                <div class="progress-status" id="progressText">Not started</div>
+              </div>
+              <div class="progress-bar" aria-hidden="true">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </section>
+
+            <section class="stage-card" id="stageCard" aria-live="polite"></section>
+          </div>
+
+          <!-- =====================================================
+               MIDDLE — PATH + TEMPLATES
+               ===================================================== -->
+          <aside class="guide-middle-column">
+            <section class="side-card path-card">
+              <div class="side-head">
+                <span class="side-icon purple-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <span>Selected Path</span>
+              </div>
+              <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as you move through the steps.</div>
+            </section>
+
+            <section class="side-card templates-card">
+              <div class="side-head">
+                <span class="side-icon purple-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <span>Suggested Templates</span>
+              </div>
+              <p class="side-description">Ready-to-use content based on the final decision made.</p>
+
+              <div class="template-stack">
+                <article class="template-card">
+                  <div class="template-head">
+                    <span class="template-icon purple-soft"><i class="fa-solid fa-comment-dots"></i></span>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case notes</div>
+                    </div>
+                  </div>
+                  <div class="template-box empty" id="suggestedComment">Complete the flow first.</div>
+                  <div class="template-foot">
+                    <button class="template-link" type="button"><i class="fa-regular fa-comment-dots"></i> Open FBC Comments</button>
+                    <button class="template-copy" type="button" data-target="suggestedComment">Copy</button>
+                  </div>
+                </article>
+
+                <article class="template-card">
+                  <div class="template-head">
+                    <span class="template-icon code-soft"><i class="fa-solid fa-code"></i></span>
+                    <div>
+                      <div class="template-title">Suggested CORR Code</div>
+                      <div class="template-sub">Corrective code guidance</div>
+                    </div>
+                  </div>
+                  <div class="template-box empty" id="suggestedCorrCode">Complete the flow first.</div>
+                  <div class="template-foot">
+                    <button class="template-link" type="button"><i class="fa-solid fa-code"></i> Open Corr Code</button>
+                    <button class="template-copy" type="button" data-target="suggestedCorrCode">Copy</button>
+                  </div>
+                </article>
+
+                <article class="template-card">
+                  <div class="template-head">
+                    <span class="template-icon email-soft"><i class="fa-solid fa-envelope"></i></span>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer communication</div>
+                    </div>
+                  </div>
+                  <div class="template-box empty" id="suggestedEmail">Complete the flow first.</div>
+                  <div class="template-foot">
+                    <button class="template-link" type="button"><i class="fa-regular fa-envelope"></i> Open EBS Response</button>
+                    <button class="template-copy" type="button" data-target="suggestedEmail">Copy</button>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </aside>
+
+          <!-- =====================================================
+               RIGHT — DECISION CONTEXT
+               ===================================================== -->
+          <aside class="guide-right-column">
+            <section class="side-card recommendation-card">
+              <div class="side-head">
+                <span class="side-icon orange-icon"><i class="fa-solid fa-lightbulb"></i></span>
+                <span>Recommended Action</span>
+              </div>
+              <div id="recommendationBox" class="recommendation empty">No recommendations yet.<br />Follow the flow to reach the final instruction.</div>
+            </section>
+
+            <section class="side-card snapshot-card">
+              <div class="side-head">
+                <span class="side-icon purple-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                <span>Quick Snapshot</span>
+              </div>
+              <div class="snapshot">
+                <div class="metric">
+                  <span class="metric-k">Steps</span>
+                  <strong class="metric-v" id="metricSteps">0</strong>
+                </div>
+                <div class="metric">
+                  <span class="metric-k">Last Answer</span>
+                  <strong class="metric-v" id="metricAnswer">—</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="side-card info-card">
+              <div class="side-head">
+                <span class="side-icon purple-icon"><i class="fa-solid fa-circle-info"></i></span>
+                <span>Guide Info</span>
+              </div>
+              <dl class="guide-info-list">
+                <div><dt>Guide Type</dt><dd>Decision Flow</dd></div>
+                <div><dt>Category</dt><dd>Billing Dispute</dd></div>
+                <div><dt>Last Updated</dt><dd>May 21, 2025</dd></div>
+                <div><dt>Version</dt><dd>1.0.0</dd></div>
+              </dl>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+  </div>
+
+  <div class="image-modal" id="imageModal" aria-hidden="true">
+    <button class="image-modal-close" type="button" aria-label="Close image" onclick="window.guideEngine?.closeImageModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <img id="imageModalImg" src="" alt="Expanded guide image" />
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="shared/include.js"></script>
+  <script src="assets/js/guide.js"></script>
+  <script src="assets/js/page-loader.js"></script>
+
+  <script>
+    /* Shared include/page-loader handshake used by DSS V2 pages. */
+    window.bdToolsUserReady = function () {
+      window.dispatchEvent(new Event("bdtools:user-ready"));
+    };
+  </script>
+</body>
+</html>
