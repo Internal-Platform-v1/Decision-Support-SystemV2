@@ -25,7 +25,7 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
 .app-shell{width:calc(100% - 20px);max-width:1260px;min-height:calc(100vh - 20px);margin:0 auto;background:#fff;border-radius:7px;overflow:hidden;box-shadow:0 2px 12px rgba(34,27,84,.06);display:flex;flex-direction:column}
 .app-shell>main{flex:1 0 auto;width:100%}
 
-.guide-page{background:#fff;padding:8px 1.6% 8px}
+.guide-page{background:#fff;padding:8px 1% 8px 1.6%;}
 
 /* ============================================================
    THREE-COLUMN GUIDE WORKSPACE
