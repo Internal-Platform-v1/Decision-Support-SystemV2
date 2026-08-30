@@ -533,9 +533,9 @@ button {
 
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
 
-    font-size: 8px;
+    font-size: 10px;
 
-    line-height: 1.3;
+    line-height: 1.4;
 
     font-weight: 400;
 }
@@ -778,9 +778,9 @@ button {
    ============================================================ */
 
 .quick-card p {
-    font-size: 8px;
+    font-size: 10px;
 
-    line-height: 1.4;
+    line-height: 1.5;
 
     color: #7a7c98;
 
@@ -1034,3 +1034,13 @@ button {
     }
 }
 
+/* ============================================================
+   DSS V2 — DEFAULT SECONDARY TEXT SIZE
+   10px is the standard readable size for grey supporting text.
+   ============================================================ */
+.library-results,
+.quick-card p,
+.no-results p {
+  font-size: 10px;
+  line-height: 1.5;
+}
