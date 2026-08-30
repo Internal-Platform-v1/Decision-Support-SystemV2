@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- The guide lives in /Guides/<Group Folder>/. This base keeps all shared V2 assets rooted at the DSS project root. -->
   <base href="../../" />
   <title>Debtor Update per BOL — DSS</title>
 
@@ -35,15 +34,14 @@
     <main>
       <section class="guide-page" aria-labelledby="guideTitle">
         <div class="guide-workspace">
-          <!-- =====================================================
-               LEFT — PRIMARY DECISION WORKSPACE
-               ===================================================== -->
+
+          <!-- LEFT: PRIMARY GUIDE / DECISION FLOW -->
           <div class="guide-main-column">
             <section class="guide-hero-card">
               <div class="guide-hero-copy">
                 <div class="guide-hero-kicker">
-                  <i class="fa-solid fa-route"></i>
-                  Billing Dispute · Decision Guide
+                  <i class="fa-solid fa-book-open"></i>
+                  Billing Dispute &nbsp;›&nbsp; Decision Guide
                 </div>
                 <h1 id="guideTitle">Debtor Update per BOL</h1>
                 <p>Follow a structured decision flow to determine the correct debtor and ensure the shipment is billed to the appropriate account.</p>
@@ -67,78 +65,16 @@
             <section class="stage-card" id="stageCard" aria-live="polite"></section>
           </div>
 
-          <!-- =====================================================
-               MIDDLE — PATH + TEMPLATES
-               ===================================================== -->
+          <!-- MIDDLE: PATH / RECOMMENDATION / SNAPSHOT -->
           <aside class="guide-middle-column">
             <section class="side-card path-card">
               <div class="side-head">
-                <span class="side-icon purple-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                <span class="side-icon purple-icon"><i class="fa-solid fa-route"></i></span>
                 <span>Selected Path</span>
               </div>
               <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as you move through the steps.</div>
             </section>
 
-            <section class="side-card templates-card">
-              <div class="side-head">
-                <span class="side-icon purple-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-                <span>Suggested Templates</span>
-              </div>
-              <p class="side-description">Ready-to-use content based on the final decision made.</p>
-
-              <div class="template-stack">
-                <article class="template-card">
-                  <div class="template-head">
-                    <span class="template-icon purple-soft"><i class="fa-solid fa-comment-dots"></i></span>
-                    <div>
-                      <div class="template-title">Suggested Comment</div>
-                      <div class="template-sub">Internal case notes</div>
-                    </div>
-                  </div>
-                  <div class="template-box empty" id="suggestedComment">Complete the flow first.</div>
-                  <div class="template-foot">
-                    <button class="template-link" type="button"><i class="fa-regular fa-comment-dots"></i> Open FBC Comments</button>
-                    <button class="template-copy" type="button" data-target="suggestedComment">Copy</button>
-                  </div>
-                </article>
-
-                <article class="template-card">
-                  <div class="template-head">
-                    <span class="template-icon code-soft"><i class="fa-solid fa-code"></i></span>
-                    <div>
-                      <div class="template-title">Suggested CORR Code</div>
-                      <div class="template-sub">Corrective code guidance</div>
-                    </div>
-                  </div>
-                  <div class="template-box empty" id="suggestedCorrCode">Complete the flow first.</div>
-                  <div class="template-foot">
-                    <button class="template-link" type="button"><i class="fa-solid fa-code"></i> Open Corr Code</button>
-                    <button class="template-copy" type="button" data-target="suggestedCorrCode">Copy</button>
-                  </div>
-                </article>
-
-                <article class="template-card">
-                  <div class="template-head">
-                    <span class="template-icon email-soft"><i class="fa-solid fa-envelope"></i></span>
-                    <div>
-                      <div class="template-title">Suggested Email</div>
-                      <div class="template-sub">Customer communication</div>
-                    </div>
-                  </div>
-                  <div class="template-box empty" id="suggestedEmail">Complete the flow first.</div>
-                  <div class="template-foot">
-                    <button class="template-link" type="button"><i class="fa-regular fa-envelope"></i> Open EBS Response</button>
-                    <button class="template-copy" type="button" data-target="suggestedEmail">Copy</button>
-                  </div>
-                </article>
-              </div>
-            </section>
-          </aside>
-
-          <!-- =====================================================
-               RIGHT — DECISION CONTEXT
-               ===================================================== -->
-          <aside class="guide-right-column">
             <section class="side-card recommendation-card">
               <div class="side-head">
                 <span class="side-icon orange-icon"><i class="fa-solid fa-lightbulb"></i></span>
@@ -161,6 +97,64 @@
                   <span class="metric-k">Last Answer</span>
                   <strong class="metric-v" id="metricAnswer">—</strong>
                 </div>
+              </div>
+            </section>
+          </aside>
+
+          <!-- RIGHT: TEMPLATES / GUIDE INFO -->
+          <aside class="guide-right-column">
+            <section class="side-card templates-card">
+              <div class="side-head">
+                <span class="side-icon purple-icon"><i class="fa-solid fa-file"></i></span>
+                <span>Suggested Templates</span>
+              </div>
+              <p class="side-description">Ready-to-use content based on the final decision made.</p>
+
+              <div class="template-stack">
+                <article class="template-card">
+                  <div class="template-head">
+                    <span class="template-icon purple-soft"><i class="fa-solid fa-comment"></i></span>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case notes</div>
+                    </div>
+                  </div>
+                  <div class="template-box empty" id="suggestedComment">Complete the flow first.</div>
+                  <div class="template-foot">
+                    <button class="template-link" type="button" data-target=""><i class="fa-solid fa-arrow-right"></i> Open FBC Comments <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    <button class="template-copy" type="button" data-target="suggestedComment">Copy</button>
+                  </div>
+                </article>
+
+                <article class="template-card">
+                  <div class="template-head">
+                    <span class="template-icon code-soft"><i class="fa-solid fa-code"></i></span>
+                    <div>
+                      <div class="template-title">Suggested CORR Code</div>
+                      <div class="template-sub">Corrective code guidance</div>
+                    </div>
+                  </div>
+                  <div class="template-box empty" id="suggestedCorrCode">Complete the flow first.</div>
+                  <div class="template-foot">
+                    <button class="template-link" type="button" data-target=""><i class="fa-solid fa-arrow-right"></i> Open CORR Code <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    <button class="template-copy" type="button" data-target="suggestedCorrCode">Copy</button>
+                  </div>
+                </article>
+
+                <article class="template-card">
+                  <div class="template-head">
+                    <span class="template-icon email-soft"><i class="fa-solid fa-envelope"></i></span>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer communication</div>
+                    </div>
+                  </div>
+                  <div class="template-box empty" id="suggestedEmail">Complete the flow first.</div>
+                  <div class="template-foot">
+                    <button class="template-link" type="button" data-target=""><i class="fa-solid fa-arrow-right"></i> Open EBS Response <i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    <button class="template-copy" type="button" data-target="suggestedEmail">Copy</button>
+                  </div>
+                </article>
               </div>
             </section>
 
@@ -198,7 +192,6 @@
   <script src="assets/js/page-loader.js"></script>
 
   <script>
-    /* Shared include/page-loader handshake used by DSS V2 pages. */
     window.bdToolsUserReady = function () {
       window.dispatchEvent(new Event("bdtools:user-ready"));
     };
