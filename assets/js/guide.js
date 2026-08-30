@@ -480,70 +480,290 @@ const NODES = {
   function copyTemplate(id,btn) { const el=$(id); if(!el || el.classList.contains("empty")) return; navigator.clipboard?.writeText(el.innerText.trim()).then(()=>{ const old=btn.textContent; btn.textContent="Copied"; btn.classList.add("copied"); setTimeout(()=>{btn.textContent=old;btn.classList.remove("copied")},1400); }).catch(()=>{}); }
 
   function progress() {
-    const pct=state.finalText?100:Math.min(95,Math.round((state.path.length/MAX_STEPS)*100));
-    $("progressFill").style.width=pct+"%";
-    $("progressText").textContent=state.finalText?"Recommendation ready":state.path.length?"Flow in progress":"Not started";
-    $("metricSteps").textContent=state.path.length;
-    $("metricAnswer").textContent=state.path.length?state.path[state.path.length-1].answer:"—";
-    $("statusText").textContent=state.finalText?"Completed":state.path.length?"Working":"Ready";
+    const pct = state.finalText ? 100 : Math.min(95, Math.round((state.path.length / MAX_STEPS) * 100));
+    const fill = $("progressFill");
+    if (fill) fill.style.width = pct + "%";
+
+    $("progressText").textContent = state.finalText
+      ? "Recommendation ready"
+      : state.path.length
+        ? "Flow in progress"
+        : "Not started";
+
+    $("metricSteps").textContent = state.path.length;
+    $("metricAnswer").textContent = state.path.length ? state.path[state.path.length - 1].answer : "—";
+    $("statusText").textContent = state.finalText ? "Completed" : state.path.length ? "Working" : "Ready";
   }
 
   function renderPath() {
-    const box=$("pathBox");
-    if(!state.path.length) { box.className="path-empty"; box.textContent="No steps selected yet. Your decisions will appear here."; return; }
-    box.className="path-list";
-    box.innerHTML=state.path.map((x,i)=>`<div class="path-item"><button class="path-jump ${i===state.path.length-1 && !state.finalText?"active":(state.finalText && (x.nextKey==="__final__" || isFinal(NODES[x.nextKey]))?"active":"")}" data-index="${i}"><div class="path-step">Step ${i+1}</div><div class="path-question">${esc(x.question)}</div><div class="path-answer">→ ${esc(x.answer)}</div></button></div>`).join("");
-    box.querySelectorAll(".path-jump").forEach(b=>b.addEventListener("click",()=>jumpTo(Number(b.dataset.index))));
+    const box = $("pathBox");
+    if (!box) return;
+
+    if (!state.path.length) {
+      box.className = "path-empty";
+      box.textContent = "No steps selected yet. The full path will appear here as you move through the steps.";
+      return;
+    }
+
+    box.className = "path-list";
+    box.innerHTML = state.path.map((x, i) => {
+      const active = i === state.path.length - 1 && !state.finalText;
+      const finalActive = state.finalText && (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
+      return `<div class="path-item">
+        <button class="path-jump ${active || finalActive ? "active" : ""}" data-index="${i}" type="button">
+          <div class="path-step">Step ${i + 1}</div>
+          <div class="path-question">${esc(x.question)}</div>
+          <div class="path-answer">→ ${esc(x.answer)}</div>
+        </button>
+      </div>`;
+    }).join("");
+
+    box.querySelectorAll(".path-jump").forEach(btn => {
+      btn.addEventListener("click", () => jumpTo(Number(btn.dataset.index)));
+    });
   }
 
-  function updateRecommendation(text,final) { const box=$("recommendationBox"); box.className=final?"recommendation":"recommendation empty"; box.textContent=final?text:"No recommendation yet. Follow the flow to reach the final instruction."; }
+  function updateRecommendation(text, final) {
+    const box = $("recommendationBox");
+    if (!box) return;
+    box.className = final ? "recommendation" : "recommendation empty";
+    box.innerHTML = final ? esc(text).replace(/\n/g, "<br>") : "No recommendations yet.<br>Follow the flow to reach the final instruction.";
+  }
 
   function renderFinal(finalNode) {
-    const text=finalNode.action||nodeText(finalNode)||""; const note=finalNode.note||""; state.finalText=text; state.currentKey="__final__"; progress(); renderPath(); updateRecommendation(text,true); loadTemplates(text);
-    $("stageCard").innerHTML=`<div class="stage-top"><span class="stage-badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</span><span class="stage-badge alt"><i class="fa-solid fa-lightbulb"></i> Final instruction</span></div><div class="final-card"><div class="final-badge"><i class="fa-solid fa-check"></i> Recommended Action</div><div class="final-title">Use this handling outcome</div><div class="final-text">${esc(text)}</div>${note?`<div class="final-note">${esc(note)}</div>`:""}<div class="final-actions"><button class="action-btn" id="finalBack">Go Back</button><button class="action-btn primary" id="finalRestart">Start Over</button></div></div>`;
-    $("finalBack").onclick=goBack; $("finalRestart").onclick=restart;
+    const text = finalNode.action || nodeText(finalNode) || "";
+    const note = finalNode.note || "";
+
+    state.finalText = text;
+    state.currentKey = "__final__";
+
+    progress();
+    renderPath();
+    updateRecommendation(text, true);
+    loadTemplates(text);
+
+    $("stageCard").innerHTML = `
+      <div class="stage-top">
+        <span class="stage-badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</span>
+        <span class="stage-badge alt"><i class="fa-solid fa-lightbulb"></i> Final instruction</span>
+      </div>
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${esc(text)}</div>
+        ${note ? `<div class="final-note">${esc(note)}</div>` : ""}
+        <div class="final-actions">
+          <button class="action-btn" id="finalBack" type="button">Go Back</button>
+          <button class="action-btn primary" id="finalRestart" type="button">Start Over</button>
+        </div>
+      </div>`;
+
+    $("finalBack").onclick = goBack;
+    $("finalRestart").onclick = restart;
+  }
+
+  function renderStart(node) {
+    const ch = choices(node);
+    const continueChoice = ch[0];
+    const reminder = node.note || "";
+
+    const choiceHtml = continueChoice ? `
+      <button class="choice start-choice" data-next="${esc(continueChoice.next || "")}" data-label="${esc(continueChoice.label || "")}" data-action="${esc(continueChoice.action || "")}" data-note="${esc(continueChoice.note || "")}" type="button">
+        <div class="choice-icon"><i class="${continueChoice.icon || "fa-solid fa-arrow-right"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${esc(continueChoice.label || "Continue")}</div>
+          <div class="choice-desc">${esc(continueChoice.desc || "Start the decision flow.")}</div>
+        </div>
+      </button>` : "";
+
+    $("stageCard").innerHTML = `
+      <div class="stage-top">
+        <span class="stage-badge"><i class="fa-solid fa-circle-dot"></i> Getting Started</span>
+        <button class="save-guide-button" id="saveGuide" type="button"><i class="fa-regular fa-star"></i> Save Guide</button>
+      </div>
+      <div class="question-wrap start-card">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-share-nodes"></i> Current Step</div>
+          <div class="question-text">${esc(nodeText(node))}</div>
+          ${node.help ? `<div class="question-help">${esc(node.help).replace(/\n/g, "<br>")}</div>` : ""}
+          ${reminder ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(reminder)}</div></div>` : ""}
+        </div>
+        <div class="choices">${choiceHtml}</div>
+      </div>
+      <div class="decision-footer">
+        <div class="footer-step">DECISION GUIDE<strong>Ready to begin</strong></div>
+        <div class="decision-actions"><button class="action-btn primary" id="startContinue" type="button">Continue <i class="fa-solid fa-arrow-right"></i></button></div>
+      </div>`;
+
+    const choice = $("stageCard").querySelector(".choice");
+    if (choice) choice.addEventListener("click", () => choose(choice, node));
+    $("startContinue")?.addEventListener("click", () => choice?.click());
+    $("saveGuide")?.addEventListener("click", saveGuide);
+
+    progress();
+    renderPath();
   }
 
   function renderNode(key) {
-    state.currentKey=key; state.finalText=""; clearTemplates(); updateRecommendation("",false);
-    const n=NODES[key]; if(!n){$("stageCard").innerHTML=`<div class="question-wrap"><div class="question-card"><div class="question-text">Guide step not found</div></div></div>`;return;}
-    if(isFinal(n)){renderFinal(n);return;}
-    const idx=state.path.findIndex(x=>x.fromKey===key); const prev=state.path.findIndex(x=>x.nextKey===key); const step=key==="start"?0:idx>=0?idx+1:prev>=0?prev+2:1;
-    const ch=choices(n);
-    const choicesHtml=ch.map(c=>`<button class="choice" data-next="${esc(c.next||"")}" data-label="${esc(c.label||"")}" data-action="${esc(c.action||"")}" data-note="${esc(c.note||"")}"><div class="choice-icon"><i class="${c.icon||"fa-solid fa-circle"}"></i></div><div class="choice-body"><div class="choice-title">${esc(c.label||"")}</div><div class="choice-desc">${esc(c.desc||"Continue to the next step.")}</div></div></button>`).join("");
-    const image=n.image?`<div class="question-image" id="questionImage"><img src="${esc(n.image)}" alt="Guide reference image" loading="lazy"></div>`:"";
-    $("stageCard").innerHTML=`<div class="stage-top"><span class="stage-badge"><i class="fa-solid fa-route"></i> Guided Decision</span><span class="stage-badge alt"><i class="fa-solid fa-list-ol"></i> ${key==="start"?"Start":"Step "+step}</span></div><div class="question-wrap"><div class="question-card"><div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Decision Point</div><div class="question-text">${esc(nodeText(n))}</div>${n.help?`<div class="question-help">${esc(n.help).replace(/\n/g,"<br>")}</div>`:""}${n.note?`<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(n.note)}</div></div>`:""}${image}</div><div class="choices">${choicesHtml}</div></div><div class="decision-footer"><div class="footer-step">Decision Guide<strong>${key==="start"?"Ready to begin":"Currently on step "+step}</strong></div><div class="decision-actions"><button class="action-btn" id="inlineBack" ${key==="start"?'style="display:none"':''}>Go Back</button><button class="action-btn primary" id="inlineRestart" ${state.path.length?'':'style="display:none"'}>Start Over</button></div></div>`;
-    if($("inlineBack")) $("inlineBack").onclick=goBack; if($("inlineRestart")) $("inlineRestart").onclick=restart;
-    if($("questionImage")) $("questionImage").onclick=()=>openImageModal(n.image);
-    $("stageCard").querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>choose(btn,n)));
-    progress(); renderPath();
+    state.currentKey = key;
+    state.finalText = "";
+    clearTemplates();
+    updateRecommendation("", false);
+
+    const n = NODES[key];
+    if (!n) {
+      $("stageCard").innerHTML = `<div class="question-wrap"><div class="question-card"><div class="question-text">Guide step not found</div></div></div>`;
+      return;
+    }
+
+    if (key === "start") {
+      renderStart(n);
+      return;
+    }
+
+    if (isFinal(n)) {
+      renderFinal(n);
+      return;
+    }
+
+    const idx = state.path.findIndex(x => x.fromKey === key);
+    const prev = state.path.findIndex(x => x.nextKey === key);
+    const step = idx >= 0 ? idx + 1 : prev >= 0 ? prev + 2 : state.path.length + 1;
+    const ch = choices(n);
+
+    const choicesHtml = ch.map(c => `
+      <button class="choice" data-next="${esc(c.next || "")}" data-label="${esc(c.label || "")}" data-action="${esc(c.action || "")}" data-note="${esc(c.note || "")}" type="button">
+        <div class="choice-icon"><i class="${c.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${esc(c.label || "")}</div>
+          <div class="choice-desc">${esc(c.desc || "Continue to the next step.")}</div>
+        </div>
+      </button>`).join("");
+
+    const image = n.image ? `<div class="question-image" id="questionImage"><img src="${esc(n.image)}" alt="Guide reference image" loading="lazy"></div>` : "";
+
+    $("stageCard").innerHTML = `
+      <div class="stage-top">
+        <span class="stage-badge"><i class="fa-solid fa-route"></i> Guided Decision</span>
+        <span class="stage-badge alt"><i class="fa-solid fa-list-ol"></i> Step ${step}</span>
+      </div>
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Decision Point</div>
+          <div class="question-text">${esc(nodeText(n))}</div>
+          ${n.help ? `<div class="question-help">${esc(n.help).replace(/\n/g, "<br>")}</div>` : ""}
+          ${n.note ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(n.note)}</div></div>` : ""}
+          ${image}
+        </div>
+        <div class="choices">${choicesHtml}</div>
+      </div>
+      <div class="decision-footer">
+        <div class="footer-step">DECISION GUIDE<strong>Currently on step ${step}</strong></div>
+        <div class="decision-actions">
+          <button class="action-btn" id="inlineBack" type="button">Go Back</button>
+          <button class="action-btn primary" id="inlineRestart" type="button">Start Over</button>
+        </div>
+      </div>`;
+
+    $("inlineBack").onclick = goBack;
+    $("inlineRestart").onclick = restart;
+    if ($("questionImage")) $("questionImage").onclick = () => openImageModal(n.image);
+    $("stageCard").querySelectorAll(".choice").forEach(btn => btn.addEventListener("click", () => choose(btn, n)));
+
+    progress();
+    renderPath();
   }
 
-  function choose(btn,node) {
-    const next=btn.dataset.next,label=btn.dataset.label,action=btn.dataset.action,note=btn.dataset.note;
-    const existing=state.path.findIndex(x=>x.fromKey===state.currentKey); if(existing>=0) state.path=state.path.slice(0,existing);
-    const reached=state.path.findIndex(x=>x.nextKey===state.currentKey); if(existing<0 && reached>=0) state.path=state.path.slice(0,reached+1);
-    state.history.push({key:state.currentKey,path:[...state.path]});
-    if(state.currentKey!=="start") state.path.push({question:nodeText(node),answer:label,fromKey:state.currentKey,nextKey:action?"__final__":next,finalNode:action?{action,note}:null});
-    btn.classList.add("selected"); progress(); renderPath(); setTimeout(()=>action?renderFinal({action,note}):renderNode(next),100);
+  function choose(btn, node) {
+    const next = btn.dataset.next;
+    const label = btn.dataset.label;
+    const action = btn.dataset.action;
+    const note = btn.dataset.note;
+
+    const existing = state.path.findIndex(x => x.fromKey === state.currentKey);
+    if (existing >= 0) state.path = state.path.slice(0, existing);
+
+    const reached = state.path.findIndex(x => x.nextKey === state.currentKey);
+    if (existing < 0 && reached >= 0) state.path = state.path.slice(0, reached + 1);
+
+    state.history.push({ key: state.currentKey, path: [...state.path] });
+
+    state.path.push({
+      question: nodeText(node),
+      answer: label,
+      fromKey: state.currentKey,
+      nextKey: action ? "__final__" : next,
+      finalNode: action ? { action, note } : null
+    });
+
+    btn.classList.add("selected");
+    progress();
+    renderPath();
+
+    setTimeout(() => action ? renderFinal({ action, note }) : renderNode(next), 100);
   }
 
   function goBack() {
-    clearTemplates(); state.finalText=""; updateRecommendation("",false);
-    if(state.currentKey==="__final__") { const i=state.path.findIndex(x=>x.nextKey==="__final__" || isFinal(NODES[x.nextKey])); if(i<0)return renderNode("start"); return renderNode(state.path[i].fromKey); }
-    const i=state.path.findIndex(x=>x.fromKey===state.currentKey); if(i>=0) return renderNode(i===0?"start":state.path[i-1].fromKey);
-    const j=state.path.findIndex(x=>x.nextKey===state.currentKey); if(j>=0)return renderNode(state.path[j].fromKey);
+    clearTemplates();
+    state.finalText = "";
+    updateRecommendation("", false);
+
+    if (state.currentKey === "__final__") {
+      const i = state.path.findIndex(x => x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
+      if (i < 0) return renderNode("start");
+      state.path = state.path.slice(0, i);
+      return renderNode(i === 0 ? "start" : state.path[i - 1].nextKey);
+    }
+
+    const i = state.path.findIndex(x => x.fromKey === state.currentKey);
+    if (i >= 0) {
+      state.path = state.path.slice(0, i);
+      return renderNode(i === 0 ? "start" : state.path[i - 1].nextKey);
+    }
+
+    const j = state.path.findIndex(x => x.nextKey === state.currentKey);
+    if (j >= 0) return renderNode(state.path[j].fromKey);
+
     renderNode("start");
   }
 
-  function restart() { state.path=[];state.history=[];state.finalText="";state.currentKey="start";clearTemplates();updateRecommendation("",false);renderNode("start");window.scrollTo({top:0,behavior:"smooth"}); }
+  function restart() {
+    state.path = [];
+    state.history = [];
+    state.finalText = "";
+    state.currentKey = "start";
+    clearTemplates();
+    updateRecommendation("", false);
+    renderNode("start");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
-  function jumpTo(i) { const x=state.path[i]; if(!x)return; state.finalText=""; if(x.nextKey==="__final__"&&x.finalNode)return renderFinal(x.finalNode); renderNode(x.fromKey); }
+  function jumpTo(i) {
+    const x = state.path[i];
+    if (!x) return;
 
-  function openImageModal(src) { const m=$("imageModal"),img=$("imageModalImg"); if(!m||!img)return;img.src=src;m.classList.add("open");document.body.style.overflow="hidden"; }
-  function closeImageModal() { const m=$("imageModal"),img=$("imageModalImg");if(!m||!img)return;m.classList.remove("open");img.src="";document.body.style.overflow=""; }
+    state.finalText = "";
+    state.path = state.path.slice(0, i + 1);
 
-  function bindTemplateButtons() { document.querySelectorAll(".template-copy").forEach(b=>b.addEventListener("click",()=>copyTemplate(b.dataset.target,b))); }
+    if (x.nextKey === "__final__" && x.finalNode) return renderFinal(x.finalNode);
+    renderNode(x.nextKey);
+  }
+
+  function saveGuide() {
+    const key = "savedGuides";
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(key) || "[]"); } catch (_) {}
+    const guide = { title: "Debtor Update per BOL", url: window.location.pathname };
+    const exists = saved.some(x => x.url === guide.url);
+    saved = exists ? saved.filter(x => x.url !== guide.url) : [...saved, guide];
+    localStorage.setItem(key, JSON.stringify(saved));
+
+    const btn = $("saveGuide");
+    if (btn) {
+      btn.innerHTML = exists ? '<i class="fa-regular fa-star"></i> Save Guide' : '<i class="fa-solid fa-star"></i> Saved';
+      btn.classList.toggle("saved", !exists);
+    }
+  }
 
   function init() {
     $("restartGuide")?.addEventListener("click",restart);
