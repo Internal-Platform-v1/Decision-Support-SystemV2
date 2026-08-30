@@ -497,6 +497,28 @@ a {
   padding: 12px;
   box-shadow: var(--shadow);
 }
+
+/* ============================================================
+   SELECTED PATH + RECOMMENDED ACTION — EXTRA HEIGHT
+   ============================================================ */
+
+.path-card {
+  min-height: 190px;
+}
+
+.recommendation-card {
+  min-height: 210px;
+}
+
+.path-card .path-empty,
+.path-card .path-list {
+  min-height: 125px;
+}
+
+.recommendation {
+  min-height: 145px;
+}
+
 .side-head {
   display: flex;
   align-items: center;
@@ -631,10 +653,14 @@ a {
 
 .guide-info-list {
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  column-gap: 18px;
+  row-gap: 12px;
 }
+
 .guide-info-list div {
   display: flex;
   flex-direction: column;
