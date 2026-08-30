@@ -2,19 +2,15 @@
    DSS V2 — SHARED UPDATE BANNER
    shared/update-banner/update-banner.css
 
-   Shared by every DSS V2 guide page.
-
-   DESIGN:
-   - Full width of parent container
-   - Touches the header
-   - No rounded outer corners
-   - Original uploaded banner image fills the entire banner
-   - Text sits above the image
-   - Only a subtle readability overlay is used
+   The banner is a single full-width visual.
+   The uploaded artwork is used as the background layer and
+   the text is layered above it.
    ============================================================ */
 
 .dss-update-banner {
   position: relative;
+  display: block;
+
   width: 100%;
   height: 136px;
   min-height: 136px;
@@ -28,17 +24,20 @@
   border-radius: 0;
 
   background: #f6f0ff;
-  box-shadow: 0 3px 14px rgba(48, 38, 111, .06);
+  box-shadow: 0 3px 14px rgba(48,38,111,.06);
 }
 
 
 /* ============================================================
-   FULL-WIDTH IMAGE
+   IMAGE — FULL BANNER
    ============================================================ */
 
 .dss-update-banner__visual {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   width: 100%;
   height: 100%;
@@ -52,27 +51,32 @@
 
 .dss-update-banner__visual img {
   position: absolute;
-  inset: 0;
+
+  top: 50%;
+  left: 50%;
 
   width: 100%;
   height: 100%;
+
+  min-width: 100%;
+  min-height: 100%;
 
   margin: 0;
   padding: 0;
 
   display: block;
 
-  /*
-   * Keep the uploaded artwork filling the complete banner.
-   * The image itself is not divided into a left and right section.
-   */
+  transform: translate(-50%, -50%) scale(1.04);
+
   object-fit: cover;
   object-position: center center;
+
+  max-width: none;
 }
 
 
 /* ============================================================
-   SUBTLE READABILITY OVERLAY
+   READABILITY OVERLAY
    ============================================================ */
 
 .dss-update-banner__visual::before {
@@ -83,17 +87,13 @@
 
   z-index: 2;
 
-  /*
-   * The image remains clearly visible across the ENTIRE banner.
-   * The left side is only lightly softened behind the text.
-   */
   background: linear-gradient(
     90deg,
-    rgba(246, 240, 255, .58) 0%,
-    rgba(246, 240, 255, .38) 18%,
-    rgba(246, 240, 255, .18) 32%,
-    rgba(246, 240, 255, .06) 46%,
-    rgba(246, 240, 255, 0) 60%
+    rgba(246,240,255,.42) 0%,
+    rgba(246,240,255,.27) 18%,
+    rgba(246,240,255,.12) 34%,
+    rgba(246,240,255,.03) 50%,
+    rgba(246,240,255,0) 65%
   );
 
   pointer-events: none;
@@ -106,6 +106,7 @@
 
 .dss-update-banner__copy {
   position: relative;
+
   z-index: 3;
 
   width: 43%;
@@ -114,11 +115,6 @@
 
   padding: 13px 12px 11px 24px;
 }
-
-
-/* ============================================================
-   EYEBROW
-   ============================================================ */
 
 .dss-update-banner__eyebrow {
   display: flex;
@@ -130,6 +126,7 @@
   margin: 0 0 4px;
 
   color: #4d148c;
+
   font-size: 7px;
   line-height: 1;
   font-weight: 800;
@@ -157,30 +154,22 @@
   margin-left: 9px;
 }
 
-
-/* ============================================================
-   TITLE
-   ============================================================ */
-
 .dss-update-banner h2 {
   margin: 0 0 3px 39px;
 
   color: #17194f;
+
   font-size: 15px;
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -.2px;
 }
 
-
-/* ============================================================
-   DATE
-   ============================================================ */
-
 .dss-update-banner__date {
   margin: 0 0 2px 39px !important;
 
   color: #17194f !important;
+
   font-size: 8px !important;
   line-height: 1.25 !important;
   font-weight: 700 !important;
@@ -191,29 +180,21 @@
   color: #4d148c;
 }
 
-
-/* ============================================================
-   MESSAGE
-   ============================================================ */
-
 .dss-update-banner__message {
   margin: 0 0 6px 39px;
 
   color: #3f4168;
+
   font-size: 8px;
   line-height: 1.35;
   font-weight: 500;
 }
 
-
-/* ============================================================
-   BUTTON
-   ============================================================ */
-
 .dss-update-banner__button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 5px;
 
   margin-left: 39px;
@@ -224,7 +205,7 @@
   border: 1px solid #6a24c7;
   border-radius: 4px;
 
-  background: rgba(255, 255, 255, .94);
+  background: rgba(255,255,255,.94);
   color: #4d148c;
 
   font-size: 7px;
@@ -277,10 +258,10 @@
 
   border-radius: 50%;
 
-  background: rgba(255, 255, 255, .9);
+  background: rgba(255,255,255,.9);
 
   box-shadow:
-    0 0 0 1px rgba(77, 20, 140, .05);
+    0 0 0 1px rgba(77,20,140,.05);
 }
 
 .dss-update-banner__dots span.is-active {
@@ -292,7 +273,7 @@
    RESPONSIVE
    ============================================================ */
 
-@media (max-width: 900px) {
+@media (max-width:900px) {
   .dss-update-banner {
     height: 136px;
     min-height: 136px;
@@ -305,22 +286,12 @@
   }
 
   .dss-update-banner__visual img {
+    transform: translate(-50%, -50%) scale(1.04);
     object-position: center center;
-  }
-
-  .dss-update-banner__visual::before {
-    background: linear-gradient(
-      90deg,
-      rgba(246, 240, 255, .58) 0%,
-      rgba(246, 240, 255, .36) 20%,
-      rgba(246, 240, 255, .16) 38%,
-      rgba(246, 240, 255, .04) 55%,
-      rgba(246, 240, 255, 0) 68%
-    );
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width:700px) {
   .dss-update-banner {
     height: 190px;
     min-height: 190px;
@@ -334,16 +305,17 @@
   }
 
   .dss-update-banner__visual img {
+    transform: translate(-50%, -50%) scale(1.04);
     object-position: center center;
   }
 
   .dss-update-banner__visual::before {
     background: linear-gradient(
       90deg,
-      rgba(246, 240, 255, .68) 0%,
-      rgba(246, 240, 255, .38) 40%,
-      rgba(246, 240, 255, .12) 72%,
-      rgba(246, 240, 255, 0) 100%
+      rgba(246,240,255,.58) 0%,
+      rgba(246,240,255,.34) 40%,
+      rgba(246,240,255,.10) 72%,
+      rgba(246,240,255,0) 100%
     );
   }
 }
