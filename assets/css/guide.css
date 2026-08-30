@@ -1089,3 +1089,59 @@ a {
    ============================================================ */
 .metric-k { font-size: 10px; }
 .metric-v { font-size: 14px; }
+
+/* ============================================================
+   SELECTED PATH — EXPAND / COLLAPSE BUTTON
+   ============================================================ */
+
+.path-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: 100%;
+  min-height: 30px;
+
+  margin-top: 7px;
+  padding: 0 10px;
+
+  border: 1px solid #e1e2ec;
+  border-radius: 7px;
+
+  background: #fbfbfe;
+  color: #5b17c5;
+
+  font-family: inherit;
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    color .16s ease,
+    transform .16s ease;
+}
+
+.path-toggle i {
+  font-size: 9px;
+  line-height: 1;
+}
+
+.path-toggle:hover {
+  background: #f6f0ff;
+  border-color: #cfc2ec;
+  color: #4d148c;
+}
+
+.path-toggle:active {
+  transform: translateY(1px);
+}
+
+.path-list.is-collapsed,
+.path-list.is-expanded {
+  gap: 6px;
+}
