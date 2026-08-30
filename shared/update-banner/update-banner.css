@@ -3,22 +3,11 @@
    shared/update-banner/update-banner.css
 
    Shared by every DSS V2 guide page.
-
-   DESIGN:
-   - Full width of the page/container
-   - Touches the header
-   - No top margin
-   - No rounded outer corners
-   - Original banner image used without modification
-   - Image fills the complete banner
-   - Image position controlled with object-position
-   - Text layered above the image
+   Full-width image layer with text above it.
    ============================================================ */
-
 
 .dss-update-banner {
   position: relative;
-
   width: 100%;
   height: 136px;
   min-height: 136px;
@@ -44,47 +33,43 @@
 .dss-update-banner__visual {
   position: absolute;
 
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   width: 100%;
   height: 100%;
+
+  margin: 0;
+  padding: 0;
 
   overflow: hidden;
 
   z-index: 1;
 }
 
-
-/*
-   The uploaded image is kept at its original proportions.
-
-   object-fit: cover
-   = fills the entire banner without distortion.
-
-   object-position
-   = controls which portion of the original image is visible.
-
-   Start with 58% because the truck is positioned toward
-   the right side of the source image.
-*/
-
 .dss-update-banner__visual img {
   position: absolute;
 
-  inset: 0;
+  top: 0;
+  left: 0;
 
   width: 100%;
   height: 100%;
 
+  margin: 0;
+  padding: 0;
+
   display: block;
 
-  object-fit: fill;
+  object-fit: cover;
   object-position: 58% 50%;
 }
 
 
 /* ============================================================
-   IMAGE OVERLAY
+   IMAGE READABILITY OVERLAY
    ============================================================ */
 
 .dss-update-banner__visual::before {
@@ -92,18 +77,21 @@
 
   position: absolute;
 
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   z-index: 2;
 
   background:
     linear-gradient(
       90deg,
-      rgba(246, 240, 255, 0.96) 0%,
-      rgba(246, 240, 255, 0.91) 18%,
-      rgba(246, 240, 255, 0.72) 32%,
-      rgba(246, 240, 255, 0.38) 45%,
-      rgba(246, 240, 255, 0.10) 58%,
+      rgba(246, 240, 255, .94) 0%,
+      rgba(246, 240, 255, .88) 18%,
+      rgba(246, 240, 255, .68) 32%,
+      rgba(246, 240, 255, .34) 45%,
+      rgba(246, 240, 255, .08) 58%,
       rgba(246, 240, 255, 0) 72%
     );
 
@@ -150,9 +138,6 @@
   letter-spacing: .045em;
 }
 
-
-/* Megaphone */
-
 .dss-update-banner__icon {
   width: 30px;
   height: 30px;
@@ -169,9 +154,6 @@
 
   font-size: 14px;
 }
-
-
-/* SYSTEM UPDATE */
 
 .dss-update-banner__eyebrow > span:last-child {
   margin-left: 9px;
@@ -245,7 +227,6 @@
   margin-left: 39px;
 
   min-height: 23px;
-
   padding: 0 9px;
 
   border: 1px solid #6a24c7;
@@ -355,13 +336,8 @@
 @media (max-width: 700px) {
 
   .dss-update-banner {
-    height: auto;
+    height: 190px;
     min-height: 190px;
-  }
-
-  .dss-update-banner__visual {
-    position: absolute;
-    inset: 0;
   }
 
   .dss-update-banner__copy {
