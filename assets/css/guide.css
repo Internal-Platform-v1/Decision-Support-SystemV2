@@ -171,42 +171,27 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
 
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER + GUIDE ALIGNMENT
-   Banner and guide workspace share the same content width.
    ============================================================ */
 
 .shared-update-banner {
   width: 100%;
   margin: 0;
-  padding: 8px 2.6% 0;
+  padding: 0;
 }
 
 .shared-update-banner .dss-update-banner {
   width: 100%;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
+  padding: 0;
 }
 
-/* Keep the guide close to the shared update banner. */
+/* Keep the guide directly below the banner */
 .guide-page {
   padding-top: 0;
 }
 
-/* The guide workspace remains aligned to the banner's inner edges. */
+/* Guide workspace uses the normal guide content width */
 .guide-workspace {
   width: 100%;
   max-width: none;
-}
-
-/* The shared banner is loaded inside the app shell, just like header/footer. */
-@media (max-width: 850px) {
-  .shared-update-banner {
-    padding-left: 3%;
-    padding-right: 3%;
-  }
-}
-
-@media (max-width: 650px) {
-  .shared-update-banner {
-    padding-left: 3%;
-    padding-right: 3%;
-  }
 }
