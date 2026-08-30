@@ -431,3 +431,11 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
   }
 }
 
+/* ============================================================
+   EQUAL GUIDE BODY PADDING
+   ============================================================ */
+
+.guide-page {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
