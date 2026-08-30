@@ -78,7 +78,7 @@
 
   display: block;
 
-  object-fit: cover;
+  object-fit: fill;
   object-position: 58% 50%;
 }
 
