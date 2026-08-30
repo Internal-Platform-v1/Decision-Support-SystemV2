@@ -3,192 +3,50 @@
    shared/update-banner/update-banner.css
 
    Used by every DSS V2 guide page.
-   Full width of the page content container.
-   No top padding / no top margin.
+
+   V2 DESIGN:
+   - Full width of parent content
+   - Touches the header
+   - No top margin
+   - No rounded outer corners
+   - Wide truck image fills the ENTIRE banner
+   - Text sits over the left side
+   - Purple/white gradient keeps text readable
    ============================================================ */
 
 .dss-update-banner {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(330px, 42%) minmax(0, 58%);
-
   width: 100%;
   min-height: 136px;
+  height: 136px;
 
   margin: 0 0 10px;
   padding: 0;
 
   overflow: hidden;
 
-  border: 1px solid #ece8f6;
+  border: 0;
   border-radius: 0;
 
-  background:
-    linear-gradient(
-      90deg,
-      #f6f0ff 0%,
-      #fbf8ff 43%,
-      #fff8f2 100%
-    );
+  background: #f6f0ff;
 
   box-shadow: 0 3px 14px rgba(48, 38, 111, .06);
 }
 
-/* ============================================================
-   COPY
-   ============================================================ */
-
-.dss-update-banner__copy {
-  position: relative;
-  z-index: 2;
-  min-width: 0;
-  padding: 13px 12px 11px 24px;
-}
-
-.dss-update-banner__eyebrow {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-
-  width: 100%;
-  height: 30px;
-
-  margin: 0 0 4px;
-
-  color: #4d148c;
-  font-size: 7px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: .045em;
-}
-
-/* Megaphone icon */
-.dss-update-banner__icon {
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 8px;
-  background: #f0e8ff;
-  color: #4d148c;
-
-  font-size: 14px;
-}
-
-/* SYSTEM UPDATE text */
-.dss-update-banner__eyebrow > span:last-child {
-  margin-left: 9px;
-}
-
-/* Banner title */
-.dss-update-banner h2 {
-  margin: 0 0 3px 39px;
-
-  color: #17194f;
-  font-size: 15px;
-  line-height: 1.15;
-  font-weight: 800;
-  letter-spacing: -.2px;
-}
-
-/* Date */
-.dss-update-banner__date {
-  margin: 0 0 2px 39px !important;
-
-  color: #17194f !important;
-  font-size: 8px !important;
-  line-height: 1.25 !important;
-  font-weight: 700 !important;
-}
-
-.dss-update-banner__date i {
-  margin-right: 3px;
-  color: #4d148c;
-}
-
-/* Message */
-.dss-update-banner__message {
-  margin: 0 0 6px 39px;
-
-  color: #3f4168;
-  font-size: 8px;
-  line-height: 1.35;
-  font-weight: 500;
-}
-
-/* Button */
-.dss-update-banner__button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-
-  margin-left: 39px;
-
-  min-height: 23px;
-  padding: 0 9px;
-
-  border: 1px solid #6a24c7;
-  border-radius: 4px;
-
-  background: #fff;
-  color: #4d148c;
-
-  font-size: 7px;
-  line-height: 1;
-  font-weight: 800;
-
-  transition:
-    background .16s ease,
-    border-color .16s ease,
-    transform .16s ease;
-}
-
-.dss-update-banner__button span {
-  font-size: 10px;
-  line-height: 1;
-}
-
-.dss-update-banner__button:hover {
-  background: #f6f0ff;
-  border-color: #4d148c;
-}
-
-.dss-update-banner__button:active {
-  transform: translateY(1px);
-}
 
 /* ============================================================
-   IMAGE / VISUAL
+   FULL-WIDTH IMAGE
    ============================================================ */
 
 .dss-update-banner__visual {
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.dss-update-banner__visual::before {
-  content: "";
   position: absolute;
   inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
   z-index: 1;
-
-  background:
-    linear-gradient(
-      90deg,
-      #fbf8ff 0%,
-      rgba(251, 248, 255, .35) 12%,
-      rgba(251, 248, 255, .08) 28%,
-      rgba(255, 248, 242, 0) 52%
-    );
-
-  pointer-events: none;
 }
 
 .dss-update-banner__visual img {
@@ -204,18 +62,224 @@
   object-position: center center;
 }
 
+
+/* ============================================================
+   IMAGE READABILITY OVERLAY
+
+   Stronger on the left for the update text.
+   Transparent toward the truck/right side.
+   ============================================================ */
+
+.dss-update-banner__visual::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(246, 240, 255, 1) 0%,
+      rgba(246, 240, 255, .98) 20%,
+      rgba(246, 240, 255, .88) 31%,
+      rgba(246, 240, 255, .58) 43%,
+      rgba(246, 240, 255, .20) 55%,
+      rgba(246, 240, 255, 0) 70%
+    );
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   COPY
+   ============================================================ */
+
+.dss-update-banner__copy {
+  position: relative;
+
+  z-index: 3;
+
+  width: 43%;
+  min-width: 330px;
+  height: 100%;
+
+  padding: 13px 12px 11px 24px;
+}
+
+
+/* ============================================================
+   EYEBROW
+   ============================================================ */
+
+.dss-update-banner__eyebrow {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 30px;
+
+  margin: 0 0 4px;
+
+  color: #4d148c;
+
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+
+  letter-spacing: .045em;
+}
+
+
+/* Megaphone icon */
+
+.dss-update-banner__icon {
+  width: 30px;
+  height: 30px;
+
+  flex: 0 0 30px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 8px;
+
+  background: #f0e8ff;
+  color: #4d148c;
+
+  font-size: 14px;
+}
+
+
+/* SYSTEM UPDATE text */
+
+.dss-update-banner__eyebrow > span:last-child {
+  margin-left: 9px;
+}
+
+
+/* ============================================================
+   TITLE
+   ============================================================ */
+
+.dss-update-banner h2 {
+  margin: 0 0 3px 39px;
+
+  color: #17194f;
+
+  font-size: 15px;
+  line-height: 1.15;
+  font-weight: 800;
+
+  letter-spacing: -.2px;
+}
+
+
+/* ============================================================
+   DATE
+   ============================================================ */
+
+.dss-update-banner__date {
+  margin: 0 0 2px 39px !important;
+
+  color: #17194f !important;
+
+  font-size: 8px !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+}
+
+.dss-update-banner__date i {
+  margin-right: 3px;
+
+  color: #4d148c;
+}
+
+
+/* ============================================================
+   MESSAGE
+   ============================================================ */
+
+.dss-update-banner__message {
+  margin: 0 0 6px 39px;
+
+  color: #3f4168;
+
+  font-size: 8px;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   BUTTON
+   ============================================================ */
+
+.dss-update-banner__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  margin-left: 39px;
+
+  min-height: 23px;
+
+  padding: 0 9px;
+
+  border: 1px solid #6a24c7;
+  border-radius: 4px;
+
+  background: rgba(255, 255, 255, .94);
+  color: #4d148c;
+
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    transform .16s ease;
+}
+
+.dss-update-banner__button span {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.dss-update-banner__button:hover {
+  background: #fff;
+  border-color: #4d148c;
+}
+
+.dss-update-banner__button:active {
+  transform: translateY(1px);
+}
+
+
 /* ============================================================
    SLIDER DOTS
    ============================================================ */
 
 .dss-update-banner__dots {
   position: absolute;
+
   top: 16px;
   right: 16px;
-  z-index: 3;
+
+  z-index: 4;
 
   display: flex;
   align-items: center;
+
   gap: 7px;
 }
 
@@ -226,38 +290,76 @@
   border-radius: 50%;
 
   background: rgba(255, 255, 255, .9);
-  box-shadow: 0 0 0 1px rgba(77, 20, 140, .05);
+
+  box-shadow:
+    0 0 0 1px rgba(77, 20, 140, .05);
 }
 
 .dss-update-banner__dots span.is-active {
   background: #4d148c;
 }
 
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 
 @media (max-width: 900px) {
+
   .dss-update-banner {
-    grid-template-columns: 48% 52%;
+    min-height: 136px;
+    height: 136px;
   }
 
   .dss-update-banner__copy {
+    width: 48%;
+    min-width: 300px;
+
     padding-left: 18px;
+  }
+
+  .dss-update-banner__visual::before {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(246, 240, 255, 1) 0%,
+        rgba(246, 240, 255, .97) 23%,
+        rgba(246, 240, 255, .75) 40%,
+        rgba(246, 240, 255, .20) 60%,
+        rgba(246, 240, 255, 0) 75%
+      );
   }
 }
 
+
 @media (max-width: 700px) {
+
   .dss-update-banner {
-    grid-template-columns: 1fr;
+    height: auto;
     min-height: 190px;
   }
 
   .dss-update-banner__visual {
-    min-height: 100px;
+    position: absolute;
+    inset: 0;
   }
 
   .dss-update-banner__copy {
-    padding: 13px 16px 10px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+
+    padding: 13px 16px 14px;
+  }
+
+  .dss-update-banner__visual::before {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(246, 240, 255, .98) 0%,
+        rgba(246, 240, 255, .90) 45%,
+        rgba(246, 240, 255, .20) 80%,
+        rgba(246, 240, 255, 0) 100%
+      );
   }
 }
