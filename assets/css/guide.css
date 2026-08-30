@@ -530,3 +530,94 @@ button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inh
 .template-copy {
   font-size: 8px;
 }
+
+/* ============================================================
+   DSS V2 — CONSISTENT SECONDARY TEXT SIZE
+   Use Recommended Action text as the visual reference.
+   ============================================================ */
+
+/* Recommended Action — reference size */
+.recommendation {
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   GUIDE OPTIONS
+   ============================================================ */
+
+.choice-desc {
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   SUGGESTED TEMPLATES
+   ============================================================ */
+
+.template-sub {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.template-box {
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   SELECTED PATH
+   ============================================================ */
+
+.path-empty {
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.path-answer {
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   GUIDE / NOTE SUPPORTING TEXT
+   ============================================================ */
+
+.question-help {
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.note-body {
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.side-description {
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   GUIDE INFO
+   ============================================================ */
+
+.guide-info-list dt {
+  font-size: 10px;
+}
+
+.guide-info-list dd {
+  font-size: 10px;
+}
+
+/* ============================================================
+   SNAPSHOT LABELS
+   ============================================================ */
+
+.metric-k {
+  font-size: 10px;
+}
+
+.metric-v {
+  font-size: 14px;
+}
