@@ -1252,3 +1252,66 @@ a {
   border-color: #cfc2ec;
   color: #4d148c;
 }
+
+/* ============================================================
+   SELECTED PATH — COLLAPSED / EXPANDED TOGGLE
+   ============================================================ */
+
+.path-list.is-collapsed {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.path-list.is-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 370px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.path-toggle {
+  width: 100%;
+  margin-top: 2px;
+  padding: 8px 10px;
+
+  border: 1px solid #e4e1ed;
+  border-radius: 8px;
+
+  background: #faf9fd;
+  color: #6d2ce0;
+
+  font-family: inherit;
+  font-size: 7px;
+  font-weight: 800;
+  line-height: 1.2;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.path-toggle:hover {
+  background: #f5efff;
+  border-color: #cdbbe9;
+  color: #4d148c;
+}
+
+.path-toggle:active {
+  transform: translateY(1px);
+}
+
+.path-toggle i {
+  font-size: 7px;
+}
