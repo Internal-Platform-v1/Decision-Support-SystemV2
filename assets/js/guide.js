@@ -749,13 +749,17 @@ function renderPath() {
 
     state.history.push({ key: state.currentKey, path: [...state.path] });
 
-    state.path.push({
-      question: nodeText(node),
-      answer: label,
-      fromKey: state.currentKey,
-      nextKey: action ? "__final__" : next,
-      finalNode: action ? { action, note } : null
-    });
+// Only add actual decision questions to Selected Path.
+// The Start / Introduction / Continue screen is not a step.
+if (state.currentKey !== "start") {
+  state.path.push({
+    question: nodeText(node),
+    answer: label,
+    fromKey: state.currentKey,
+    nextKey: action ? "__final__" : next,
+    finalNode: action ? { action, note } : null
+  });
+}
 
     // Keep the Selected Path compact while the user moves through the flow.
     // The user can expand it when they want to review every step.
