@@ -495,94 +495,65 @@ const NODES = {
     $("statusText").textContent = state.finalText ? "Completed" : state.path.length ? "Working" : "Ready";
   }
 
-function renderPath() {
-  const box = $("pathBox");
-  if (!box) return;
+  function renderPath() {
+    const box = $("pathBox");
+    if (!box) return;
 
-  /*
-   * The toggle must NOT live inside #pathBox.
-   * #pathBox is the scrolling/list container.
-   * Keeping the toggle outside prevents it from being clipped
-   * and lets the full path behave like a dropdown overlay.
-   */
+    const host = box.closest(".side-card") || box.parentElement;
+    if (!host) return;
 
-  const host = box.closest(".side-card") || box.parentElement;
-  if (!host) return;
+    host.classList.add("path-card");
 
-  // Remove any previous toggle.
-  host.querySelector(".path-toggle")?.remove();
+    if (!host.dataset.pathHoverBound) {
+      host.dataset.pathHoverBound = "true";
 
-  if (!state.path.length) {
-    box.className = "path-empty";
-    box.innerHTML =
-      "No steps selected yet. The full path will appear here as you move through the steps.";
-    return;
-  }
+      host.addEventListener("mouseenter", () => {
+        if (state.path.length > 1) {
+          state.pathExpanded = true;
+          renderPath();
+        }
+      });
 
-  const lastIndex = state.path.length - 1;
+      host.addEventListener("mouseleave", () => {
+        if (state.pathExpanded) {
+          state.pathExpanded = false;
+          renderPath();
+        }
+      });
+    }
 
-  // Default = show only the latest selected step.
-  const visiblePath = state.pathExpanded
-    ? state.path
-    : [state.path[lastIndex]];
+    if (!state.path.length) {
+      box.className = "path-empty";
+      box.innerHTML = "No steps selected yet. The full path will appear here as you move through the steps.";
+      return;
+    }
 
-  box.className = state.pathExpanded
-    ? "path-list is-expanded"
-    : "path-list is-collapsed";
+    const lastIndex = state.path.length - 1;
+    const visiblePath = state.pathExpanded ? state.path : [state.path[lastIndex]];
 
-  box.innerHTML = visiblePath.map((x) => {
-    const i = state.path.indexOf(x);
-    const active =
-      i === lastIndex && !state.finalText;
+    box.className = state.pathExpanded
+      ? "path-list is-expanded"
+      : "path-list is-collapsed";
 
-    const finalActive =
-      state.finalText &&
-      (x.nextKey === "__final__" ||
-       isFinal(NODES[x.nextKey]));
+    box.innerHTML = visiblePath.map((x) => {
+      const i = state.path.indexOf(x);
+      const active = i === lastIndex && !state.finalText;
+      const finalActive = state.finalText &&
+        (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
 
-    return `
-      <div class="path-item">
-        <button
-          class="path-jump ${active || finalActive ? "active" : ""}"
-          data-index="${i}"
-          type="button"
-        >
+      return `<div class="path-item">
+        <button class="path-jump ${active || finalActive ? "active" : ""}" data-index="${i}" type="button">
           <div class="path-step">Step ${i + 1}</div>
           <div class="path-question">${esc(x.question)}</div>
           <div class="path-answer">→ ${esc(x.answer)}</div>
         </button>
-      </div>
-    `;
-  }).join("");
+      </div>`;
+    }).join("");
 
-  // Only show dropdown control when there is more than one step.
-  if (state.path.length > 1) {
-    const toggle = document.createElement("button");
-
-    toggle.className = "path-toggle";
-    toggle.type = "button";
-    toggle.setAttribute("aria-expanded", String(state.pathExpanded));
-
-    toggle.innerHTML = state.pathExpanded
-      ? '<i class="fa-solid fa-chevron-up"></i> Hide full path'
-      : `<i class="fa-solid fa-chevron-down"></i> View full path (${state.path.length} steps)`;
-
-    // Place toggle OUTSIDE #pathBox.
-    box.insertAdjacentElement("afterend", toggle);
-
-    toggle.addEventListener("click", () => {
-      state.pathExpanded = !state.pathExpanded;
-      renderPath();
+    box.querySelectorAll(".path-jump").forEach(btn => {
+      btn.addEventListener("click", () => jumpTo(Number(btn.dataset.index)));
     });
   }
-
-  // Existing path-step navigation.
-  box.querySelectorAll(".path-jump").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      jumpTo(Number(btn.dataset.index));
-    });
-  });
-}
 
   function updateRecommendation(text, final) {
     const box = $("recommendationBox");
@@ -749,17 +720,13 @@ function renderPath() {
 
     state.history.push({ key: state.currentKey, path: [...state.path] });
 
-// Only add actual decision questions to Selected Path.
-// The Start / Introduction / Continue screen is not a step.
-if (state.currentKey !== "start") {
-  state.path.push({
-    question: nodeText(node),
-    answer: label,
-    fromKey: state.currentKey,
-    nextKey: action ? "__final__" : next,
-    finalNode: action ? { action, note } : null
-  });
-}
+    state.path.push({
+      question: nodeText(node),
+      answer: label,
+      fromKey: state.currentKey,
+      nextKey: action ? "__final__" : next,
+      finalNode: action ? { action, note } : null
+    });
 
     // Keep the Selected Path compact while the user moves through the flow.
     // The user can expand it when they want to review every step.
