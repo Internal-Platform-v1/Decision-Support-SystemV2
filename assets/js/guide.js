@@ -495,54 +495,94 @@ const NODES = {
     $("statusText").textContent = state.finalText ? "Completed" : state.path.length ? "Working" : "Ready";
   }
 
-  function renderPath() {
-    const box = $("pathBox");
-    if (!box) return;
+function renderPath() {
+  const box = $("pathBox");
+  if (!box) return;
 
-    if (!state.path.length) {
-      box.className = "path-empty";
-      box.innerHTML = "No steps selected yet. The full path will appear here as you move through the steps.";
-      return;
-    }
+  /*
+   * The toggle must NOT live inside #pathBox.
+   * #pathBox is the scrolling/list container.
+   * Keeping the toggle outside prevents it from being clipped
+   * and lets the full path behave like a dropdown overlay.
+   */
 
-    const lastIndex = state.path.length - 1;
-    const visiblePath = state.pathExpanded ? state.path : [state.path[lastIndex]];
+  const host = box.closest(".side-card") || box.parentElement;
+  if (!host) return;
 
-    box.className = state.pathExpanded ? "path-list is-expanded" : "path-list is-collapsed";
-    box.innerHTML = visiblePath.map((x) => {
-      const i = state.path.indexOf(x);
-      const active = i === lastIndex && !state.finalText;
-      const finalActive = state.finalText && (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
-      return `<div class="path-item">
-        <button class="path-jump ${active || finalActive ? "active" : ""}" data-index="${i}" type="button">
+  // Remove any previous toggle.
+  host.querySelector(".path-toggle")?.remove();
+
+  if (!state.path.length) {
+    box.className = "path-empty";
+    box.innerHTML =
+      "No steps selected yet. The full path will appear here as you move through the steps.";
+    return;
+  }
+
+  const lastIndex = state.path.length - 1;
+
+  // Default = show only the latest selected step.
+  const visiblePath = state.pathExpanded
+    ? state.path
+    : [state.path[lastIndex]];
+
+  box.className = state.pathExpanded
+    ? "path-list is-expanded"
+    : "path-list is-collapsed";
+
+  box.innerHTML = visiblePath.map((x) => {
+    const i = state.path.indexOf(x);
+    const active =
+      i === lastIndex && !state.finalText;
+
+    const finalActive =
+      state.finalText &&
+      (x.nextKey === "__final__" ||
+       isFinal(NODES[x.nextKey]));
+
+    return `
+      <div class="path-item">
+        <button
+          class="path-jump ${active || finalActive ? "active" : ""}"
+          data-index="${i}"
+          type="button"
+        >
           <div class="path-step">Step ${i + 1}</div>
           <div class="path-question">${esc(x.question)}</div>
           <div class="path-answer">→ ${esc(x.answer)}</div>
         </button>
-      </div>`;
-    }).join("");
+      </div>
+    `;
+  }).join("");
 
-    if (state.path.length > 1) {
-const toggleLabel = state.pathExpanded
-  ? '<i class="fa-solid fa-chevron-up"></i> Hide full path'
-  : `<i class="fa-solid fa-chevron-down"></i> View full path (${state.path.length} steps)`;
+  // Only show dropdown control when there is more than one step.
+  if (state.path.length > 1) {
+    const toggle = document.createElement("button");
 
-      box.insertAdjacentHTML("beforeend", `
-        <button class="path-toggle" type="button" aria-expanded="${state.pathExpanded}">
-          ${toggleLabel}
-        </button>
-      `);
+    toggle.className = "path-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", String(state.pathExpanded));
 
-      box.querySelector(".path-toggle")?.addEventListener("click", () => {
-        state.pathExpanded = !state.pathExpanded;
-        renderPath();
-      });
-    }
+    toggle.innerHTML = state.pathExpanded
+      ? '<i class="fa-solid fa-chevron-up"></i> Hide full path'
+      : `<i class="fa-solid fa-chevron-down"></i> View full path (${state.path.length} steps)`;
 
-    box.querySelectorAll(".path-jump").forEach(btn => {
-      btn.addEventListener("click", () => jumpTo(Number(btn.dataset.index)));
+    // Place toggle OUTSIDE #pathBox.
+    box.insertAdjacentElement("afterend", toggle);
+
+    toggle.addEventListener("click", () => {
+      state.pathExpanded = !state.pathExpanded;
+      renderPath();
     });
   }
+
+  // Existing path-step navigation.
+  box.querySelectorAll(".path-jump").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      jumpTo(Number(btn.dataset.index));
+    });
+  });
+}
 
   function updateRecommendation(text, final) {
     const box = $("recommendationBox");
