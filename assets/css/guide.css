@@ -1407,38 +1407,84 @@ a {
   font-size: 9px;
 }
 
-/* DSS V2 — Selected Path hover dropdown */
+/* ============================================================
+   SELECTED PATH — SMOOTH HOVER EXPANSION
+   Other cards NEVER move.
+   ============================================================ */
 
 .guide-middle-column {
   position: relative;
-  z-index: 10;
+  z-index: 20;
 }
 
+/* Selected Path card is the positioning reference */
 .path-card {
   position: relative;
-  z-index: 30;
+  z-index: 50;
 }
 
+/* Normal compact state */
 .path-card #pathBox.is-collapsed {
-  max-height: none;
-  overflow: visible;
+  max-height: 62px;
+  overflow: hidden;
 }
 
+/* Smooth expanded dropdown */
 .path-card #pathBox.is-expanded {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  top: 100%;
+
+  left: 0;
+  right: 0;
+  top: 0;
+
   z-index: 100;
+
   max-height: 300px;
   overflow-y: auto;
-  padding: 8px;
+
+  padding: 12px;
+
   background: #fff;
+
   border: 1px solid #e4e5ef;
-  border-radius: 9px;
-  box-shadow: 0 10px 28px rgba(34, 27, 84, .14);
+  border-radius: 10px;
+
+  box-shadow:
+    0 12px 30px rgba(34, 27, 84, .16);
+
+  transform-origin: top center;
+
+  animation: selectedPathExpand .18s ease-out;
 }
 
+/* Smooth entrance */
+@keyframes selectedPathExpand {
+  from {
+    opacity: .75;
+    transform: scaleY(.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* Smooth scrollbar */
+.path-card #pathBox.is-expanded::-webkit-scrollbar {
+  width: 5px;
+}
+
+.path-card #pathBox.is-expanded::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.path-card #pathBox.is-expanded::-webkit-scrollbar-thumb {
+  background: #d8d2e6;
+  border-radius: 999px;
+}
+
+/* Path items */
 .path-card #pathBox.is-expanded .path-item {
   margin-bottom: 6px;
 }
@@ -1447,6 +1493,7 @@ a {
   margin-bottom: 0;
 }
 
+/* Remove old button completely */
 .path-toggle {
   display: none !important;
 }
