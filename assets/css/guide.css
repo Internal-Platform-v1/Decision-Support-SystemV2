@@ -503,11 +503,11 @@ a {
    ============================================================ */
 
 .path-card {
-  min-height: 180px;
+  min-height: 175px;
 }
 
 .recommendation-card {
-  min-height: 200px;
+  min-height: 195px;
 }
 
 .path-card .path-empty,
