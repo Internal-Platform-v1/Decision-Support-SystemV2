@@ -502,17 +502,9 @@ a {
    SELECTED PATH + RECOMMENDED ACTION — EXTRA HEIGHT
    ============================================================ */
 
-.path-card {
-  min-height: 175px;
-}
 
 .recommendation-card {
   min-height: 195px;
-}
-
-.path-card .path-empty,
-.path-card .path-list {
-  min-height: 125px;
 }
 
 .recommendation {
@@ -1170,4 +1162,93 @@ a {
 .path-list.is-collapsed,
 .path-list.is-expanded {
   gap: 6px;
+}
+
+/* ============================================================
+   SELECTED PATH — FIXED CARD + DROPDOWN OVERLAY
+   ============================================================ */
+
+.path-card {
+  position: relative;
+  z-index: 20;
+  min-height: 0;
+}
+
+/* Keep the normal selected-path area compact */
+.path-card .path-list {
+  position: relative;
+  max-height: 58px;
+  overflow: hidden;
+}
+
+/* Expanded path becomes an overlay instead of pushing
+   Recommended Action / Snapshot / Guide Info downward */
+.path-card .path-list.is-expanded {
+  position: absolute;
+  top: 58px;
+  left: 12px;
+  right: 12px;
+
+  max-height: 300px;
+
+  overflow-y: auto;
+
+  padding: 0;
+  margin: 0;
+
+  z-index: 50;
+
+  border: 1px solid #e1e2ec;
+  border-radius: 8px;
+
+  background: #fff;
+
+  box-shadow:
+    0 10px 25px rgba(48, 38, 111, .14);
+}
+
+/* Make sure the path items have room inside the dropdown */
+.path-card .path-list.is-expanded .path-item {
+  padding: 0;
+}
+
+/* Toggle button stays attached to the Selected Path card */
+.path-toggle {
+  position: relative;
+  z-index: 51;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: 100%;
+  min-height: 30px;
+
+  margin-top: 7px;
+  padding: 0 10px;
+
+  border: 1px solid #e1e2ec;
+  border-radius: 7px;
+
+  background: #fbfbfe;
+  color: #5b17c5;
+
+  font-family: inherit;
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    color .16s ease;
+}
+
+.path-toggle:hover {
+  background: #f6f0ff;
+  border-color: #cfc2ec;
+  color: #4d148c;
 }
