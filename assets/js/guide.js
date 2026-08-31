@@ -523,9 +523,9 @@ const NODES = {
     }).join("");
 
     if (state.path.length > 1) {
-      const toggleLabel = state.pathExpanded
-        ? '<i class="fa-solid fa-chevron-up"></i> Show selected step only'
-        : `<i class="fa-solid fa-chevron-down"></i> View full path (${state.path.length} steps)`;
+const toggleLabel = state.pathExpanded
+  ? '<i class="fa-solid fa-chevron-up"></i> Hide full path'
+  : `<i class="fa-solid fa-chevron-down"></i> View full path (${state.path.length} steps)`;
 
       box.insertAdjacentHTML("beforeend", `
         <button class="path-toggle" type="button" aria-expanded="${state.pathExpanded}">
