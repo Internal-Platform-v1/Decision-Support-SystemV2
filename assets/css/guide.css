@@ -1408,114 +1408,140 @@ a {
 }
 
 /* ============================================================
-   SELECTED PATH — STRETCH CARD ON HOVER
+   SELECTED PATH — CARD STRETCH ON HOVER
    ============================================================ */
 
-/*
-   Keep the middle column as the positioning reference.
-   The other cards keep their original positions.
-*/
 .guide-middle-column {
   position: relative;
-  z-index: 10;
 }
 
-/*
-   The Selected Path card itself becomes the expandable element.
-*/
+
+/* ------------------------------------------------------------
+   SELECTED PATH CARD
+   ------------------------------------------------------------ */
+
 .path-card {
-  position: relative;
-  z-index: 20;
-
-  /* Smooth expansion */
-  transition:
-    height .22s ease,
-    box-shadow .22s ease;
-}
-
-/*
-   NORMAL STATE
-   Keep the card compact.
-*/
-.path-card:not(:has(#pathBox.is-expanded)) {
-  z-index: 20;
-}
-
-/*
-   EXPANDED STATE
-   The ENTIRE CARD stretches downward.
-*/
-.path-card:has(#pathBox.is-expanded) {
   position: absolute;
-
+  top: 0;
   left: 0;
   right: 0;
-  top: 0;
+
+  z-index: 30;
+
+  height: 170px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  transition:
+    height 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* ------------------------------------------------------------
+   HOVER / EXPANDED STATE
+   ------------------------------------------------------------ */
+
+.path-card.path-expanded {
+  height: 430px;
 
   z-index: 100;
 
-  /*
-     Make the card tall enough to show the complete path.
-     Change 300px if you want more/less expansion.
-  */
-  min-height: 300px;
-
-  background: #fff;
-
-  border: 1px solid #e4e5ef;
-  border-radius: 10px;
-
   box-shadow:
-    0 12px 30px rgba(34, 27, 84, .16);
+    0 14px 32px rgba(30, 20, 70, 0.16);
+}
+
+
+/* ------------------------------------------------------------
+   PATH CONTENT
+   ------------------------------------------------------------ */
+
+.path-card #pathBox {
+  height: calc(100% - 42px);
+
+  overflow: hidden;
 
   transition:
-    min-height .22s ease,
-    box-shadow .22s ease;
+    height 0.25s ease;
 }
 
-/*
-   The path itself fills the expanded card.
-*/
-.path-card:has(#pathBox.is-expanded) #pathBox {
-  max-height: 255px;
+
+.path-card.path-expanded #pathBox {
+  height: calc(100% - 42px);
+
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/*
-   Don't let the internal list create strange spacing.
-*/
-.path-card:has(#pathBox.is-expanded) .path-list {
+
+/* ------------------------------------------------------------
+   PATH LIST
+   ------------------------------------------------------------ */
+
+.path-card .path-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  margin: 0;
+  padding: 0;
 }
 
-/*
-   Keep each selected-path item consistent.
-*/
-.path-card:has(#pathBox.is-expanded) .path-item {
+
+/* ------------------------------------------------------------
+   INDIVIDUAL PATH ITEMS
+   ------------------------------------------------------------ */
+
+.path-card .path-item {
+  flex: 0 0 auto;
   margin: 0;
 }
 
-/*
-   Smooth scrollbar.
-*/
-.path-card:has(#pathBox.is-expanded) #pathBox::-webkit-scrollbar {
+
+/* ------------------------------------------------------------
+   COLLAPSED STATE
+   Only show the current/latest step.
+   ------------------------------------------------------------ */
+
+.path-card .path-list.is-collapsed {
+  overflow: hidden;
+}
+
+
+/* ------------------------------------------------------------
+   EXPANDED STATE
+   Show all selected steps INSIDE THE SAME CARD.
+   ------------------------------------------------------------ */
+
+.path-card .path-list.is-expanded {
+  overflow: visible;
+}
+
+
+/* ------------------------------------------------------------
+   SCROLLBAR
+   ------------------------------------------------------------ */
+
+.path-card.path-expanded #pathBox::-webkit-scrollbar {
   width: 5px;
 }
 
-.path-card:has(#pathBox.is-expanded) #pathBox::-webkit-scrollbar-track {
+.path-card.path-expanded #pathBox::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.path-card:has(#pathBox.is-expanded) #pathBox::-webkit-scrollbar-thumb {
+.path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
   background: #d8d2e6;
-  border-radius: 999px;
+  border-radius: 10px;
 }
 
-/*
-   REMOVE the old expand button.
-*/
+
+/* ------------------------------------------------------------
+   REMOVE OLD EXPAND BUTTON
+   ------------------------------------------------------------ */
+
 .path-toggle {
   display: none !important;
 }
