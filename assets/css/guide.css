@@ -1109,305 +1109,6 @@ a {
 .metric-v { font-size: 14px; }
 
 /* ============================================================
-   SELECTED PATH — EXPAND / COLLAPSE BUTTON
-   ============================================================ */
-
-.path-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  width: 100%;
-  min-height: 30px;
-
-  margin-top: 7px;
-  padding: 0 10px;
-
-  border: 1px solid #e1e2ec;
-  border-radius: 7px;
-
-  background: #fbfbfe;
-  color: #5b17c5;
-
-  font-family: inherit;
-  font-size: 8px;
-  line-height: 1;
-  font-weight: 800;
-
-  cursor: pointer;
-
-  transition:
-    background .16s ease,
-    border-color .16s ease,
-    color .16s ease,
-    transform .16s ease;
-}
-
-.path-toggle i {
-  font-size: 9px;
-  line-height: 1;
-}
-
-.path-toggle:hover {
-  background: #f6f0ff;
-  border-color: #cfc2ec;
-  color: #4d148c;
-}
-
-.path-toggle:active {
-  transform: translateY(1px);
-}
-
-.path-list.is-collapsed,
-.path-list.is-expanded {
-  gap: 6px;
-}
-
-/* ============================================================
-   SELECTED PATH — FIXED CARD + DROPDOWN OVERLAY
-   ============================================================ */
-
-.path-card {
-  position: relative;
-  z-index: 20;
-  min-height: 0;
-}
-
-/* Keep the normal selected-path area compact */
-.path-card .path-list {
-  position: relative;
-  max-height: 58px;
-  overflow: hidden;
-}
-
-/* Expanded path becomes an overlay instead of pushing
-   Recommended Action / Snapshot / Guide Info downward */
-.path-card .path-list.is-expanded {
-  position: absolute;
-  top: 58px;
-  left: 12px;
-  right: 12px;
-
-  max-height: 300px;
-
-  overflow-y: auto;
-
-  padding: 0;
-  margin: 0;
-
-  z-index: 50;
-
-  border: 1px solid #e1e2ec;
-  border-radius: 8px;
-
-  background: #fff;
-
-  box-shadow:
-    0 10px 25px rgba(48, 38, 111, .14);
-}
-
-/* Make sure the path items have room inside the dropdown */
-.path-card .path-list.is-expanded .path-item {
-  padding: 0;
-}
-
-/* Toggle button stays attached to the Selected Path card */
-.path-toggle {
-  position: relative;
-  z-index: 51;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  width: 100%;
-  min-height: 30px;
-
-  margin-top: 7px;
-  padding: 0 10px;
-
-  border: 1px solid #e1e2ec;
-  border-radius: 7px;
-
-  background: #fbfbfe;
-  color: #5b17c5;
-
-  font-family: inherit;
-  font-size: 8px;
-  line-height: 1;
-  font-weight: 800;
-
-  cursor: pointer;
-
-  transition:
-    background .16s ease,
-    border-color .16s ease,
-    color .16s ease;
-}
-
-.path-toggle:hover {
-  background: #f6f0ff;
-  border-color: #cfc2ec;
-  color: #4d148c;
-}
-
-/* ============================================================
-   SELECTED PATH — COLLAPSED / EXPANDED TOGGLE
-   ============================================================ */
-
-.path-list.is-collapsed {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.path-list.is-expanded {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 370px;
-  overflow-y: auto;
-  padding-right: 2px;
-}
-
-.path-toggle {
-  width: 100%;
-  margin-top: 2px;
-  padding: 8px 10px;
-
-  border: 1px solid #e4e1ed;
-  border-radius: 8px;
-
-  background: #faf9fd;
-  color: #6d2ce0;
-
-  font-family: inherit;
-  font-size: 7px;
-  font-weight: 800;
-  line-height: 1.2;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  transition:
-    background .15s ease,
-    border-color .15s ease,
-    color .15s ease,
-    transform .15s ease;
-}
-
-.path-toggle:hover {
-  background: #f5efff;
-  border-color: #cdbbe9;
-  color: #4d148c;
-}
-
-.path-toggle:active {
-  transform: translateY(1px);
-}
-
-.path-toggle i {
-  font-size: 7px;
-}
-
-/* ============================================================
-   SELECTED PATH — DROPDOWN
-   ============================================================ */
-
-.guide-middle-column .side-card {
-  position: relative;
-}
-
-#pathBox {
-  position: relative;
-  z-index: 5;
-}
-
-#pathBox.is-collapsed {
-  overflow: visible;
-  max-height: none;
-}
-
-#pathBox.is-expanded {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  z-index: 100;
-  max-height: 300px;
-  overflow-y: auto;
-
-  padding: 8px;
-
-  background: #fff;
-  border: 1px solid #e4e5ef;
-  border-radius: 9px;
-
-  box-shadow: 0 10px 28px rgba(34, 27, 84, .14);
-}
-
-/* Keep the dropdown contents clean */
-#pathBox.is-expanded .path-item {
-  margin-bottom: 6px;
-}
-
-#pathBox.is-expanded .path-item:last-child {
-  margin-bottom: 0;
-}
-
-.path-toggle {
-  width: 100%;
-  min-height: 30px;
-
-  margin-top: 7px;
-  padding: 7px 10px;
-
-  border: 1px solid #dcdce8;
-  border-radius: 7px;
-
-  background: #fff;
-  color: #343565;
-
-  font-family: inherit;
-  font-size: 9px;
-  font-weight: 700;
-  line-height: 1.2;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  cursor: pointer;
-
-  transition:
-    background .15s ease,
-    border-color .15s ease,
-    color .15s ease;
-}
-
-.path-toggle:hover {
-  background: #f7f3ff;
-  border-color: #cdbbe9;
-  color: #4d148c;
-}
-
-.path-toggle:focus-visible {
-  outline: 2px solid #6d2ce0;
-  outline-offset: 2px;
-}
-
-.path-toggle i {
-  font-size: 9px;
-}
-
-/* ============================================================
    SELECTED PATH — CARD STRETCH ON HOVER
    ============================================================ */
 
@@ -1422,6 +1123,7 @@ a {
 
 .path-card {
   position: absolute;
+
   top: 0;
   left: 0;
   right: 0;
@@ -1435,13 +1137,13 @@ a {
   overflow: hidden;
 
   transition:
-    height 0.25s ease,
-    box-shadow 0.25s ease;
+    height .25s ease,
+    box-shadow .25s ease;
 }
 
 
 /* ------------------------------------------------------------
-   HOVER / EXPANDED STATE
+   EXPANDED
    ------------------------------------------------------------ */
 
 .path-card.path-expanded {
@@ -1450,7 +1152,7 @@ a {
   z-index: 100;
 
   box-shadow:
-    0 14px 32px rgba(30, 20, 70, 0.16);
+    0 14px 32px rgba(30, 20, 70, .16);
 }
 
 
@@ -1463,11 +1165,11 @@ a {
 
   overflow: hidden;
 
-  transition:
-    height 0.25s ease;
+  margin: 0;
 }
 
 
+/* Expanded content stays INSIDE the card */
 .path-card.path-expanded #pathBox {
   height: calc(100% - 42px);
 
@@ -1491,7 +1193,7 @@ a {
 
 
 /* ------------------------------------------------------------
-   INDIVIDUAL PATH ITEMS
+   PATH ITEMS
    ------------------------------------------------------------ */
 
 .path-card .path-item {
@@ -1501,8 +1203,7 @@ a {
 
 
 /* ------------------------------------------------------------
-   COLLAPSED STATE
-   Only show the current/latest step.
+   COLLAPSED
    ------------------------------------------------------------ */
 
 .path-card .path-list.is-collapsed {
@@ -1511,8 +1212,7 @@ a {
 
 
 /* ------------------------------------------------------------
-   EXPANDED STATE
-   Show all selected steps INSIDE THE SAME CARD.
+   EXPANDED
    ------------------------------------------------------------ */
 
 .path-card .path-list.is-expanded {
@@ -1539,7 +1239,7 @@ a {
 
 
 /* ------------------------------------------------------------
-   REMOVE OLD EXPAND BUTTON
+   OLD BUTTON — REMOVE COMPLETELY
    ------------------------------------------------------------ */
 
 .path-toggle {
