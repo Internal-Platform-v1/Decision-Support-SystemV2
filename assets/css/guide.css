@@ -1109,38 +1109,19 @@ a {
 .metric-v { font-size: 14px; }
 
 /* ============================================================
-   SELECTED PATH — STATIC LAYOUT / CARD-ONLY EXPANSION
+   SELECTED PATH — STATIC CARD / CONTENT-BASED EXPANSION
    ============================================================ */
 
-/*
-   The middle column itself never changes height or position
-   when Selected Path expands.
-*/
 .guide-middle-column {
   position: relative;
-  box-sizing: border-box;
-
-  /*
-     Reserve the normal Selected Path height.
-
-     This keeps Recommended Action, Quick Snapshot and
-     Guide Info permanently in the same position.
-  */
-  padding-top: 170px;
+  padding-top: 180px; /* 170px card + 10px gap */
 }
 
 
-/* ============================================================
-   SELECTED PATH CARD
-   ============================================================ */
+/* ------------------------------------------------------------
+   NORMAL CARD
+   ------------------------------------------------------------ */
 
-/*
-   IMPORTANT:
-   The card is absolute ALL THE TIME.
-
-   Therefore hovering it cannot change the flex layout,
-   workspace height, or footer position.
-*/
 .guide-middle-column .path-card {
   position: absolute;
 
@@ -1160,21 +1141,17 @@ a {
   overflow: hidden;
 
   transition:
-    height .25s ease,
-    box-shadow .25s ease;
+    height .22s ease,
+    box-shadow .22s ease;
 }
 
 
-/* ============================================================
-   EXPANDED SELECTED PATH
-   ============================================================ */
+/* ------------------------------------------------------------
+   EXPANDED CARD
+   Height is supplied by JS based on actual steps.
+   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card.path-expanded {
-  /*
-     ONLY THIS CARD changes.
-  */
-  height: 430px;
-
   z-index: 100;
 
   box-shadow:
@@ -1182,12 +1159,12 @@ a {
 }
 
 
-/* ============================================================
+/* ------------------------------------------------------------
    PATH CONTENT
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card #pathBox {
-  height: calc(100% - 42px);
+  height: auto;
 
   margin: 0;
 
@@ -1195,21 +1172,17 @@ a {
 }
 
 
-/*
-   Expanded content remains completely INSIDE
-   the Selected Path card.
-*/
+/* Expanded = show the complete path inside the card */
 .guide-middle-column .path-card.path-expanded #pathBox {
-  height: calc(100% - 42px);
+  height: auto;
 
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
 }
 
 
-/* ============================================================
+/* ------------------------------------------------------------
    PATH LIST
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card .path-list {
   display: flex;
@@ -1219,12 +1192,15 @@ a {
 
   margin: 0;
   padding: 0;
+
+  max-height: none;
+  overflow: visible;
 }
 
 
-/* ============================================================
+/* ------------------------------------------------------------
    PATH ITEMS
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card .path-item {
   flex: 0 0 auto;
@@ -1232,45 +1208,48 @@ a {
 }
 
 
-/* ============================================================
+/* ------------------------------------------------------------
    COLLAPSED
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card .path-list.is-collapsed {
   overflow: hidden;
 }
 
 
-/* ============================================================
+/* ------------------------------------------------------------
    EXPANDED
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card .path-list.is-expanded {
   overflow: visible;
 }
 
 
-/* ============================================================
-   PATH SCROLLBAR
-   ============================================================ */
+/* ------------------------------------------------------------
+   NO OLD DROPDOWN
+   ------------------------------------------------------------ */
 
-.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar {
-  width: 5px;
-}
+.path-card #pathBox.is-expanded {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
 
-.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-track {
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
   background: transparent;
-}
 
-.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
-  background: #d8d2e6;
-  border-radius: 10px;
+  box-shadow: none;
 }
 
 
-/* ============================================================
-   NO EXPAND BUTTON
-   ============================================================ */
+/* ------------------------------------------------------------
+   OLD BUTTON
+   ------------------------------------------------------------ */
 
 .path-toggle {
   display: none !important;
