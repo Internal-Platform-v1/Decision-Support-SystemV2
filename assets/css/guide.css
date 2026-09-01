@@ -1109,35 +1109,53 @@ a {
 .metric-v { font-size: 14px; }
 
 /* ============================================================
-   SELECTED PATH — CARD STRETCH ON HOVER
+   SELECTED PATH — STATIC LAYOUT / CARD-ONLY EXPANSION
    ============================================================ */
 
-/* Middle column is the positioning reference */
+/*
+   The middle column itself never changes height or position
+   when Selected Path expands.
+*/
 .guide-middle-column {
   position: relative;
+  box-sizing: border-box;
+
+  /*
+     Reserve the normal Selected Path height.
+
+     This keeps Recommended Action, Quick Snapshot and
+     Guide Info permanently in the same position.
+  */
+  padding-top: 170px;
 }
 
 
 /* ============================================================
-   NORMAL SELECTED PATH
+   SELECTED PATH CARD
    ============================================================ */
 
-.path-card {
-  position: relative;
+/*
+   IMPORTANT:
+   The card is absolute ALL THE TIME.
+
+   Therefore hovering it cannot change the flex layout,
+   workspace height, or footer position.
+*/
+.guide-middle-column .path-card {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
 
   width: 100%;
 
-  z-index: 20;
-
-  /*
-     IMPORTANT:
-     Keep this card INSIDE the normal flex layout
-     while collapsed.
-  */
   height: 170px;
   min-height: 170px;
 
   box-sizing: border-box;
+
+  z-index: 30;
 
   overflow: hidden;
 
@@ -1151,17 +1169,10 @@ a {
    EXPANDED SELECTED PATH
    ============================================================ */
 
-.path-card.path-expanded {
+.guide-middle-column .path-card.path-expanded {
   /*
-     Take the card out of the normal flow ONLY while
-     expanded so the other cards don't move.
+     ONLY THIS CARD changes.
   */
-  position: absolute;
-
-  top: 0;
-  left: 0;
-  right: 0;
-
   height: 430px;
 
   z-index: 100;
@@ -1175,7 +1186,7 @@ a {
    PATH CONTENT
    ============================================================ */
 
-.path-card #pathBox {
+.guide-middle-column .path-card #pathBox {
   height: calc(100% - 42px);
 
   margin: 0;
@@ -1184,8 +1195,11 @@ a {
 }
 
 
-/* Expanded path stays inside the Selected Path card */
-.path-card.path-expanded #pathBox {
+/*
+   Expanded content remains completely INSIDE
+   the Selected Path card.
+*/
+.guide-middle-column .path-card.path-expanded #pathBox {
   height: calc(100% - 42px);
 
   overflow-y: auto;
@@ -1197,7 +1211,7 @@ a {
    PATH LIST
    ============================================================ */
 
-.path-card .path-list {
+.guide-middle-column .path-card .path-list {
   display: flex;
   flex-direction: column;
 
@@ -1212,50 +1226,50 @@ a {
    PATH ITEMS
    ============================================================ */
 
-.path-card .path-item {
+.guide-middle-column .path-card .path-item {
   flex: 0 0 auto;
   margin: 0;
 }
 
 
 /* ============================================================
-   COLLAPSED PATH
+   COLLAPSED
    ============================================================ */
 
-.path-card .path-list.is-collapsed {
+.guide-middle-column .path-card .path-list.is-collapsed {
   overflow: hidden;
 }
 
 
 /* ============================================================
-   EXPANDED PATH
+   EXPANDED
    ============================================================ */
 
-.path-card .path-list.is-expanded {
+.guide-middle-column .path-card .path-list.is-expanded {
   overflow: visible;
 }
 
 
 /* ============================================================
-   SCROLLBAR
+   PATH SCROLLBAR
    ============================================================ */
 
-.path-card.path-expanded #pathBox::-webkit-scrollbar {
+.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar {
   width: 5px;
 }
 
-.path-card.path-expanded #pathBox::-webkit-scrollbar-track {
+.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
+.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
   background: #d8d2e6;
   border-radius: 10px;
 }
 
 
 /* ============================================================
-   OLD EXPAND BUTTON — REMOVE
+   NO EXPAND BUTTON
    ============================================================ */
 
 .path-toggle {
