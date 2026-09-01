@@ -504,56 +504,91 @@ const NODES = {
 
     host.classList.add("path-card");
 
+    /* IMPORTANT:
+       Tell the actual Selected Path CARD
+       whether it is expanded.
+    */
+    host.classList.toggle("path-expanded", state.pathExpanded);
+
     if (!host.dataset.pathHoverBound) {
-      host.dataset.pathHoverBound = "true";
+        host.dataset.pathHoverBound = "true";
 
-      host.addEventListener("mouseenter", () => {
-        if (state.path.length > 1) {
-          state.pathExpanded = true;
-          renderPath();
-        }
-      });
+        host.addEventListener("mouseenter", () => {
+            if (state.path.length > 1) {
+                state.pathExpanded = true;
+                renderPath();
+            }
+        });
 
-      host.addEventListener("mouseleave", () => {
-        if (state.pathExpanded) {
-          state.pathExpanded = false;
-          renderPath();
-        }
-      });
+        host.addEventListener("mouseleave", () => {
+            if (state.pathExpanded) {
+                state.pathExpanded = false;
+                renderPath();
+            }
+        });
     }
 
     if (!state.path.length) {
-      box.className = "path-empty";
-      box.innerHTML = "No steps selected yet. The full path will appear here as you move through the steps.";
-      return;
+        host.classList.remove("path-expanded");
+
+        box.className = "path-empty";
+        box.innerHTML =
+            "No steps selected yet. The full path will appear here as you move through the steps.";
+
+        return;
     }
 
     const lastIndex = state.path.length - 1;
-    const visiblePath = state.pathExpanded ? state.path : [state.path[lastIndex]];
+
+    const visiblePath = state.pathExpanded
+        ? state.path
+        : [state.path[lastIndex]];
 
     box.className = state.pathExpanded
-      ? "path-list is-expanded"
-      : "path-list is-collapsed";
+        ? "path-list is-expanded"
+        : "path-list is-collapsed";
 
     box.innerHTML = visiblePath.map((x) => {
-      const i = state.path.indexOf(x);
-      const active = i === lastIndex && !state.finalText;
-      const finalActive = state.finalText &&
-        (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
+        const i = state.path.indexOf(x);
 
-      return `<div class="path-item">
-        <button class="path-jump ${active || finalActive ? "active" : ""}" data-index="${i}" type="button">
-          <div class="path-step">Step ${i + 1}</div>
-          <div class="path-question">${esc(x.question)}</div>
-          <div class="path-answer">→ ${esc(x.answer)}</div>
-        </button>
-      </div>`;
+        const active =
+            i === lastIndex &&
+            !state.finalText;
+
+        const finalActive =
+            state.finalText &&
+            (x.nextKey === "__final__" ||
+             isFinal(NODES[x.nextKey]));
+
+        return `
+            <div class="path-item">
+                <button
+                    class="path-jump ${active || finalActive ? "active" : ""}"
+                    data-index="${i}"
+                    type="button"
+                >
+                    <div class="path-step">
+                        Step ${i + 1}
+                    </div>
+
+                    <div class="path-question">
+                        ${esc(x.question)}
+                    </div>
+
+                    <div class="path-answer">
+                        → ${esc(x.answer)}
+                    </div>
+                </button>
+            </div>
+        `;
     }).join("");
 
     box.querySelectorAll(".path-jump").forEach(btn => {
-      btn.addEventListener("click", () => jumpTo(Number(btn.dataset.index)));
+        btn.addEventListener("click", () => {
+            jumpTo(Number(btn.dataset.index));
+        });
     });
-  }
+}
 
   function updateRecommendation(text, final) {
     const box = $("recommendationBox");
