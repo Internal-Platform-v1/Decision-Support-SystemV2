@@ -1408,89 +1408,114 @@ a {
 }
 
 /* ============================================================
-   SELECTED PATH — LOWER PANEL HOVER EXPANSION
+   SELECTED PATH — STRETCH CARD ON HOVER
    ============================================================ */
 
+/*
+   Keep the middle column as the positioning reference.
+   The other cards keep their original positions.
+*/
+.guide-middle-column {
+  position: relative;
+  z-index: 10;
+}
+
+/*
+   The Selected Path card itself becomes the expandable element.
+*/
 .path-card {
   position: relative;
-  z-index: 50;
+  z-index: 20;
+
+  /* Smooth expansion */
+  transition:
+    height .22s ease,
+    box-shadow .22s ease;
 }
 
-/* Normal path area */
-.path-card #pathBox {
-  position: relative;
+/*
+   NORMAL STATE
+   Keep the card compact.
+*/
+.path-card:not(:has(#pathBox.is-expanded)) {
+  z-index: 20;
 }
 
-/* Only the latest step is shown normally */
-.path-card #pathBox.is-collapsed {
-  max-height: 62px;
-  overflow: hidden;
-}
-
-/* Full path drops DOWN from the existing card */
-.path-card #pathBox.is-expanded {
+/*
+   EXPANDED STATE
+   The ENTIRE CARD stretches downward.
+*/
+.path-card:has(#pathBox.is-expanded) {
   position: absolute;
-  top: 100%;
+
   left: 0;
   right: 0;
+  top: 0;
 
   z-index: 100;
 
-  max-height: 300px;
-  overflow-y: auto;
-
-  padding: 8px;
+  /*
+     Make the card tall enough to show the complete path.
+     Change 300px if you want more/less expansion.
+  */
+  min-height: 300px;
 
   background: #fff;
 
   border: 1px solid #e4e5ef;
-  border-top: 0;
-  border-radius: 0 0 9px 9px;
+  border-radius: 10px;
 
-  box-shadow: 0 10px 25px rgba(34, 27, 84, .14);
+  box-shadow:
+    0 12px 30px rgba(34, 27, 84, .16);
+
+  transition:
+    min-height .22s ease,
+    box-shadow .22s ease;
 }
 
-/* Don't allow the expanded path to affect layout below */
-.path-card #pathBox.is-expanded {
-  transform-origin: top center;
+/*
+   The path itself fills the expanded card.
+*/
+.path-card:has(#pathBox.is-expanded) #pathBox {
+  max-height: 255px;
+  overflow-y: auto;
 }
 
-/* Path entries */
-.path-card #pathBox.is-expanded .path-item {
-  margin-bottom: 6px;
+/*
+   Don't let the internal list create strange spacing.
+*/
+.path-card:has(#pathBox.is-expanded) .path-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.path-card #pathBox.is-expanded .path-item:last-child {
-  margin-bottom: 0;
+/*
+   Keep each selected-path item consistent.
+*/
+.path-card:has(#pathBox.is-expanded) .path-item {
+  margin: 0;
 }
 
-/* Smooth individual path appearance */
-.path-card #pathBox.is-expanded .path-item {
-  animation: pathStepFade .16s ease-out both;
-}
-
-@keyframes pathStepFade {
-  from {
-    opacity: 0;
-    transform: translateY(-3px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Scrollbar */
-.path-card #pathBox.is-expanded::-webkit-scrollbar {
+/*
+   Smooth scrollbar.
+*/
+.path-card:has(#pathBox.is-expanded) #pathBox::-webkit-scrollbar {
   width: 5px;
 }
 
-.path-card #pathBox.is-expanded::-webkit-scrollbar-track {
+.path-card:has(#pathBox.is-expanded) #pathBox::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.path-card #pathBox.is-expanded::-webkit-scrollbar-thumb {
+.path-card:has(#pathBox.is-expanded) #pathBox::-webkit-scrollbar-thumb {
   background: #d8d2e6;
   border-radius: 999px;
+}
+
+/*
+   REMOVE the old expand button.
+*/
+.path-toggle {
+  display: none !important;
 }
