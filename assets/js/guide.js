@@ -504,10 +504,9 @@ const NODES = {
 
     host.classList.add("path-card");
 
-    /* IMPORTANT:
-       Tell the actual Selected Path CARD
-       whether it is expanded.
-    */
+    /* --------------------------------------------------------
+       UPDATE EXPANDED STATE ON THE ACTUAL CARD
+       -------------------------------------------------------- */
     host.classList.toggle("path-expanded", state.pathExpanded);
 
     if (!host.dataset.pathHoverBound) {
@@ -528,8 +527,12 @@ const NODES = {
         });
     }
 
+    /* --------------------------------------------------------
+       NO PATH
+       -------------------------------------------------------- */
     if (!state.path.length) {
         host.classList.remove("path-expanded");
+        host.style.height = "170px";
 
         box.className = "path-empty";
         box.innerHTML =
@@ -540,6 +543,10 @@ const NODES = {
 
     const lastIndex = state.path.length - 1;
 
+    /* --------------------------------------------------------
+       SHOW ONLY CURRENT STEP WHEN COLLAPSED
+       SHOW ALL STEPS WHEN HOVERED
+       -------------------------------------------------------- */
     const visiblePath = state.pathExpanded
         ? state.path
         : [state.path[lastIndex]];
@@ -548,6 +555,9 @@ const NODES = {
         ? "path-list is-expanded"
         : "path-list is-collapsed";
 
+    /* --------------------------------------------------------
+       RENDER PATH ITEMS
+       -------------------------------------------------------- */
     box.innerHTML = visiblePath.map((x) => {
         const i = state.path.indexOf(x);
 
@@ -557,8 +567,10 @@ const NODES = {
 
         const finalActive =
             state.finalText &&
-            (x.nextKey === "__final__" ||
-             isFinal(NODES[x.nextKey]));
+            (
+                x.nextKey === "__final__" ||
+                isFinal(NODES[x.nextKey])
+            );
 
         return `
             <div class="path-item">
@@ -583,6 +595,46 @@ const NODES = {
         `;
     }).join("");
 
+    /* --------------------------------------------------------
+       MEASURE THE ACTUAL CARD CONTENT
+       -------------------------------------------------------- */
+
+    if (state.pathExpanded && state.path.length > 1) {
+
+        /*
+         * Temporarily remove the fixed height so the browser
+         * can calculate the real content height.
+         */
+        host.style.height = "auto";
+
+        requestAnimationFrame(() => {
+
+            const requiredHeight = host.scrollHeight;
+
+            /*
+             * Add a tiny amount of breathing room so the last
+             * path item never touches the bottom edge.
+             */
+            const finalHeight = requiredHeight + 2;
+
+            /*
+             * Set the measured height so CSS can animate
+             * from the collapsed height to the real height.
+             */
+            host.style.height = `${finalHeight}px`;
+        });
+
+    } else {
+
+        /*
+         * Normal collapsed state.
+         */
+        host.style.height = "170px";
+    }
+
+    /* --------------------------------------------------------
+       PATH JUMP BUTTONS
+       -------------------------------------------------------- */
     box.querySelectorAll(".path-jump").forEach(btn => {
         btn.addEventListener("click", () => {
             jumpTo(Number(btn.dataset.index));
