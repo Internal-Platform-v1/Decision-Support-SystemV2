@@ -799,32 +799,86 @@ const NODES = {
     const action = btn.dataset.action;
     const note = btn.dataset.note;
 
-    const existing = state.path.findIndex(x => x.fromKey === state.currentKey);
-    if (existing >= 0) state.path = state.path.slice(0, existing);
+    /*
+     * The INTRO / START screen is not part of the
+     * decision path.
+     *
+     * Therefore clicking "Continue" from the intro
+     * should NOT create a Selected Path step.
+     */
+    if (state.currentKey === "start") {
+        state.currentKey = next;
+        state.finalText = "";
+        clearTemplates();
+        updateRecommendation("", false);
 
-    const reached = state.path.findIndex(x => x.nextKey === state.currentKey);
-    if (existing < 0 && reached >= 0) state.path = state.path.slice(0, reached + 1);
+        renderNode(next);
+        return;
+    }
 
-    state.history.push({ key: state.currentKey, path: [...state.path] });
+    /*
+     * If the user changes an earlier decision,
+     * remove everything after that decision.
+     */
+    const existing = state.path.findIndex(
+        x => x.fromKey === state.currentKey
+    );
 
-    state.path.push({
-      question: nodeText(node),
-      answer: label,
-      fromKey: state.currentKey,
-      nextKey: action ? "__final__" : next,
-      finalNode: action ? { action, note } : null
+    if (existing >= 0) {
+        state.path = state.path.slice(0, existing);
+    }
+
+    /*
+     * Prevent duplicate / stale path entries when
+     * navigating back into an existing branch.
+     */
+    const reached = state.path.findIndex(
+        x => x.nextKey === state.currentKey
+    );
+
+    if (existing < 0 && reached >= 0) {
+        state.path = state.path.slice(0, reached + 1);
+    }
+
+    /*
+     * Save history before adding the new decision.
+     */
+    state.history.push({
+        key: state.currentKey,
+        path: [...state.path]
     });
 
-    // Keep the Selected Path compact while the user moves through the flow.
-    // The user can expand it when they want to review every step.
-    state.pathExpanded = false;
+    /*
+     * Add ONLY real decision steps.
+     *
+     * The "start" intro never reaches this section.
+     */
+    state.path.push({
+        question: nodeText(node),
+        answer: label,
+        fromKey: state.currentKey,
+        nextKey: action ? "__final__" : next,
+        finalNode: action
+            ? { action, note }
+            : null
+    });
 
     btn.classList.add("selected");
+
     progress();
     renderPath();
 
-    setTimeout(() => action ? renderFinal({ action, note }) : renderNode(next), 100);
-  }
+    /*
+     * Continue to the selected answer.
+     */
+    setTimeout(() => {
+        if (action) {
+            renderFinal({ action, note });
+        } else {
+            renderNode(next);
+        }
+    }, 100);
+}
 
   function goBack() {
     clearTemplates();
@@ -862,17 +916,40 @@ const NODES = {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function jumpTo(i) {
+function jumpTo(i) {
     const x = state.path[i];
     if (!x) return;
 
-    state.finalText = "";
+    /*
+     * Remove any later decisions.
+     * The clicked step becomes the current point
+     * in the decision flow.
+     */
     state.path = state.path.slice(0, i + 1);
-    state.pathExpanded = false;
 
-    if (x.nextKey === "__final__" && x.finalNode) return renderFinal(x.finalNode);
-    renderNode(x.nextKey);
-  }
+    /*
+     * Clear the final recommendation because we're
+     * going back into the decision flow.
+     */
+    state.finalText = "";
+
+    /*
+     * Clear templates/recommendation from the previous
+     * final state.
+     */
+    clearTemplates();
+    updateRecommendation("", false);
+
+    /*
+     * IMPORTANT:
+     *
+     * x.fromKey is the node represented by this
+     * Selected Path item.
+     *
+     * Do NOT use x.nextKey here.
+     */
+    renderNode(x.fromKey);
+}
 
   function saveGuide() {
     const key = "savedGuides";
