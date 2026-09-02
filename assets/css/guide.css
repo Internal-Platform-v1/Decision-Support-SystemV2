@@ -575,6 +575,21 @@ a {
   font-size: 10px;
   line-height: 1.55;
 }
+
+.path-hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: -3px 0 7px;
+  color: #8588a2;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.path-hint i {
+  color: var(--purple);
+  font-size: 8px;
+}
 .path-list {
   display: flex;
   flex-direction: column;
