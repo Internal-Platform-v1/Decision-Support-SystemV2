@@ -418,7 +418,29 @@ a {
   color: #5b17c5;
   font-size: 8px;
   font-weight: 800;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
+
+#finalBack::before,
+#inlineBack::before {
+  content: "\f060";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 11px;
+}
+
+#finalRestart::before,
+#inlineRestart::before {
+  content: "\f2f1";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 11px;
+}
+
 .action-btn.primary {
   border-color: transparent;
   background: linear-gradient(135deg, var(--purple), var(--purple2));
@@ -521,12 +543,12 @@ a {
   margin-bottom: 9px;
 }
 .side-icon {
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   border-radius: 8px;
   display: grid;
   place-items: center;
-  flex: 0 0 25px;
+  flex: 0 0 28px;
   font-size: 10px;
 }
 .purple-icon {
@@ -692,12 +714,12 @@ a {
   background: #fbfbfe;
 }
 .template-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 8px;
   display: grid;
   place-items: center;
-  font-size: 9px;
+  font-size: 10px;
 }
 .purple-soft {
   background: #f0e9ff;
@@ -708,8 +730,8 @@ a {
   color: var(--purple);
 }
 .email-soft {
-  background: #fff0e4;
-  color: var(--orange);
+  background: var(--purple-soft);
+  color: var(--purple);
 }
 .template-title {
   font-size: 13px;
