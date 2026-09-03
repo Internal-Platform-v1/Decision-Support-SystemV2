@@ -54,12 +54,18 @@ function updateUserDisplay(profile) {
         ? String(profile.role).trim()
         : "";
 
+    const normalizedRole = role.toLowerCase();
+
     const profileName = document.getElementById("profileName");
     const profileRole = document.getElementById("profileRole");
     const profileButton = document.getElementById("profileBtn");
     const commandCenterButton = document.getElementById(
         "systemCommandCenterBtn"
     );
+
+    /* ------------------------------------------------------------
+       User name, role, and avatar
+       ------------------------------------------------------------ */
 
     if (profileName) {
         profileName.textContent = name;
@@ -77,49 +83,46 @@ function updateUserDisplay(profile) {
         );
     }
 
-    /*
-     * Show System Command Center only to Managers.
-     * Accepts "manager" or "Manager".
-     */
-function updateManagerCommandCenter(profile) {
-    const commandCenterButton = document.getElementById(
-        "systemCommandCenterBtn"
-    );
-
-    if (!commandCenterButton) {
-        console.warn(
-            "System Command Center button was not found in the header."
-        );
-        return;
-    }
-
-    const role = String(
-        profile?.role ||
-        window.currentUserProfile?.role ||
-        ""
-    ).trim().toLowerCase();
-
-    const isManager =
-        role === "manager" ||
-        role === "admin" ||
-        role === "administrator";
-
-    if (isManager) {
-        commandCenterButton.removeAttribute("hidden");
-        commandCenterButton.style.display = "flex";
-    } else {
-        commandCenterButton.setAttribute("hidden", "");
-        commandCenterButton.style.display = "none";
-    }
-
-    console.log("Header role:", role);
-    console.log("System Command Center visible:", isManager);
-}
-
     const dashboardName = document.getElementById("currentUserName");
 
     if (dashboardName) {
         dashboardName.textContent = name;
+    }
+
+    /* ------------------------------------------------------------
+       System Command Center
+       Visible only to Managers
+       ------------------------------------------------------------ */
+
+    if (commandCenterButton) {
+        const isManager =
+            normalizedRole === "manager" ||
+            normalizedRole === "admin" ||
+            normalizedRole === "administrator";
+
+        if (isManager) {
+            commandCenterButton.hidden = false;
+            commandCenterButton.removeAttribute("hidden");
+            commandCenterButton.style.display = "flex";
+        } else {
+            commandCenterButton.hidden = true;
+            commandCenterButton.setAttribute("hidden", "");
+            commandCenterButton.style.display = "none";
+        }
+
+        console.log(
+            "SYSTEM COMMAND CENTER BUTTON:",
+            commandCenterButton
+        );
+
+        console.log(
+            "SYSTEM COMMAND CENTER VISIBLE:",
+            isManager
+        );
+    } else {
+        console.warn(
+            "System Command Center button was not found in the header."
+        );
     }
 }
 
