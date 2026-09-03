@@ -72,7 +72,7 @@
 
     async function loadApprovedUsers() {
         const db = getDb();
-        if (!db) return;
+        if (!db) { console.error("Admin: Firebase/Firestore is not initialized."); toast("Firebase is not initialized."); return; }
         try {
             const snapshot = await db.collection(USERS_COLLECTION).get();
             approvedUsers = snapshot.docs.map(doc => {
@@ -82,14 +82,14 @@
             $("userCount").textContent = approvedUsers.length;
             if ($("workspaceTitle")?.textContent === "User Management") render("users");
         } catch (error) {
-            console.error("Unable to load approved users:", error);
-            toast("Unable to load approved users. Check Firestore permissions.");
+            console.error("Unable to load approved users:", error.code || "unknown", error.message || error);
+            toast(error.code === "permission-denied" ? "Firestore permission denied for approved_users." : "Unable to load approved users.");
         }
     }
 
     async function saveRole(docId, role) {
         const db = getDb();
-        if (!db) return;
+        if (!db) { console.error("Admin: Firebase/Firestore is not initialized."); toast("Firebase is not initialized."); return; }
         try {
             await db.collection(USERS_COLLECTION).doc(docId).update({ role: role });
             const user = approvedUsers.find(item => item.id === docId);
@@ -97,8 +97,8 @@
             toast(`Role updated to ${role}.`);
             render("users");
         } catch (error) {
-            console.error("Unable to update user role:", error);
-            toast("Role update failed. Check Firestore rules.");
+            console.error("Unable to update user role:", error.code || "unknown", error.message || error);
+            toast(error.code === "permission-denied" ? "Firestore denied this role update." : "Role update failed.");
         }
     }
 
@@ -131,7 +131,7 @@
 
     async function loadCounts() {
         const db = getDb();
-        if (!db) return;
+        if (!db) { console.error("Admin: Firebase/Firestore is not initialized."); toast("Firebase is not initialized."); return; }
         try {
             const [users, templates] = await Promise.all([db.collection(USERS_COLLECTION).get(), db.collection(TEMPLATE_COLLECTION).get()]);
             $("userCount").textContent = users.size;
