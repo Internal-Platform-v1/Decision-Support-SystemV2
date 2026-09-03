@@ -164,18 +164,31 @@ function updateManagerCommandCenter(profile) {
             return;
         }
 
-        const data = userDoc.data() || {};
+const data = userDoc.data() || {};
 
-        console.log("APPROVED USERS DOCUMENT:", data);
-        console.log("APPROVED USERS ROLE FIELD:", data.role);
+console.log("APPROVED USERS DOCUMENT:", data);
+console.log("APPROVED USERS KEYS:", Object.keys(data));
 
-        const displayName =
-            data.displayName ||
-            data.name ||
-            user.displayName ||
-            user.email;
+/*
+ * Read the role while ignoring accidental spaces or capitalization
+ * in the Firestore field name.
+ */
+const roleKey = Object.keys(data).find(
+    key => key.trim().toLowerCase() === "role"
+);
 
-        const role = String(data.role || "").trim();
+const role = roleKey
+    ? String(data[roleKey] || "").trim()
+    : "";
+
+console.log("ROLE FIELD NAME FOUND:", roleKey);
+console.log("APPROVED USERS ROLE FIELD:", role);
+
+const displayName =
+    data.displayName ||
+    data.name ||
+    user.displayName ||
+    user.email;
 
         window.currentUserProfile = {
             uid: user.uid,
