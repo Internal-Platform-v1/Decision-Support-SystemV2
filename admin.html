@@ -129,6 +129,141 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- User Add/Edit Modal -->
+<div
+    class="admin-modal"
+    id="userModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="userModalTitle"
+>
+    <div class="admin-modal-card">
+
+        <div class="admin-modal-header">
+            <div>
+                <span class="admin-section-label">USER MANAGEMENT</span>
+                <h2 id="userModalTitle">Add User</h2>
+                <p id="userModalDescription">
+                    Add a new employee to the approved users list.
+                </p>
+            </div>
+
+            <button
+                class="admin-modal-close"
+                id="userModalClose"
+                type="button"
+                aria-label="Close modal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="userForm">
+
+            <div class="admin-form-grid">
+
+                <div class="admin-form-field admin-form-field-full">
+                    <label for="userName">
+                        Full Name
+                    </label>
+
+                    <input
+                        id="userName"
+                        name="name"
+                        type="text"
+                        placeholder="Enter employee's full name"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-field admin-form-field-full">
+                    <label for="userEmail">
+                        Email Address
+                    </label>
+
+                    <input
+                        id="userEmail"
+                        name="email"
+                        type="email"
+                        placeholder="employee@fedex.com"
+                        required
+                    >
+
+                    <small>
+                        Email addresses are used as the user document ID.
+                    </small>
+                </div>
+
+                <div class="admin-form-field">
+                    <label for="userRole">
+                        Role
+                    </label>
+
+                    <select id="userRole" name="role">
+                        <option value="User">User</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Team Leader">Team Leader</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-field">
+                    <label for="userRegion">
+                        Region
+                    </label>
+
+                    <input
+                        id="userRegion"
+                        name="region"
+                        type="text"
+                        placeholder="All regions"
+                        value="All regions"
+                    >
+                </div>
+
+                <div class="admin-form-field admin-form-field-full">
+                    <label class="admin-checkbox-field">
+                        <input
+                            id="userActive"
+                            name="active"
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span>
+                            <strong>Active User</strong>
+                            <small>
+                                Allow this user to remain active in the system.
+                            </small>
+                        </span>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="admin-modal-footer">
+                <button
+                    class="admin-modal-cancel"
+                    id="userModalCancel"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    class="admin-modal-save"
+                    id="userModalSave"
+                    type="submit"
+                >
+                    <i class="fa-solid fa-user-plus"></i>
+                    Add User
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
