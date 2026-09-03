@@ -146,6 +146,97 @@
         document.querySelectorAll(".admin-side-tab").forEach(button => button.onclick = () => render(button.dataset.section));
         document.querySelectorAll(".admin-hero-actions [data-section]").forEach(button => button.onclick = () => { render(button.dataset.section); $("workspaceContent").scrollIntoView({ behavior: "smooth", block: "start" }); });
         $("refreshBtn")?.addEventListener("click", () => { loadCounts(); loadApprovedUsers(); $("lastUpdated").textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`; toast("Admin dashboard refreshed."); });
-        $("workspaceAction")?.addEventListener("click", () => toast("Select a management module to continue."));
+        $("workspaceAction")?.addEventListener("click", async () => {
+  // Add User is only available inside User Management
+  if (currentSection !== "users") {
+    toast("Open User Management first.");
+    return;
+  }
+
+  const name = prompt("Enter the employee's full name:");
+  if (name === null) return;
+
+  const email = prompt("Enter the employee's email address:");
+  if (email === null) return;
+
+  const roleInput = prompt(
+    "Enter the employee's role:\n\nUser\nManager\nTeam Leader",
+    "User"
+  );
+  if (roleInput === null) return;
+
+  const region = prompt(
+    "Enter the employee's region:",
+    "All regions"
+  );
+  if (region === null) return;
+
+  const cleanName = name.trim();
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanRole = roleInput.trim();
+  const cleanRegion = region.trim();
+
+  if (!cleanName) {
+    toast("Employee name is required.");
+    return;
+  }
+
+  if (!cleanEmail || !cleanEmail.includes("@")) {
+    toast("Enter a valid email address.");
+    return;
+  }
+
+  const allowedRoles = ["User", "Manager", "Team Leader"];
+
+  if (!allowedRoles.includes(cleanRole)) {
+    toast("Role must be User, Manager, or Team Leader.");
+    return;
+  }
+
+  try {
+    const db = getDb();
+
+    if (!db) {
+      toast("Firebase is not initialized.");
+      return;
+    }
+
+    const userRef = db
+      .collection(USERS_COLLECTION)
+      .doc(cleanEmail);
+
+    // Check whether the employee already exists
+    const existingUser = await userRef.get();
+
+    if (existingUser.exists) {
+      toast("This employee already exists.");
+      return;
+    }
+
+    // Create the employee record
+    await userRef.set({
+      email: cleanEmail,
+      name: cleanName,
+      role: cleanRole,
+      region: cleanRegion || "All regions",
+      active: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    toast("Employee added successfully.");
+
+    // Refresh the User Management list
+    await loadApprovedUsers();
+    render("users");
+
+  } catch (error) {
+    console.error("Add user failed:", error);
+
+    toast(
+      "Unable to add employee. Check Firestore permissions."
+    );
+  }
+});
     });
 })();
