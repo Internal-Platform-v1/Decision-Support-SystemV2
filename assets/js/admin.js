@@ -9,6 +9,7 @@
     let approvedUsers = [];
     let userSearch = "";
     let currentSection = "overview";
+    let editingUserId = null;
 
     const config = {
         overview: {
@@ -56,6 +57,7 @@
         target.classList.add("show");
 
         clearTimeout(toast.timer);
+
         toast.timer = setTimeout(() => {
             target.classList.remove("show");
         }, 2600);
@@ -153,7 +155,7 @@
                 user.email,
                 user.role,
                 user.region,
-                user.status
+                user.active ? "active" : "inactive"
             ].join(" ").toLowerCase();
 
             return !query || text.includes(query);
@@ -178,13 +180,13 @@
                             <th>Role</th>
                             <th>Region</th>
                             <th>Status</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         ${filtered.map(user => {
-                            const docId = encodeURIComponent(user.id);
-                            const role = String(user.role || "User").toLowerCase();
+                            const encodedId = encodeURIComponent(user.id);
 
                             return `
                                 <tr>
@@ -198,20 +200,9 @@
                                     </td>
 
                                     <td>
-                                        <select
-                                            class="admin-role-select"
-                                            data-user-id="${docId}"
-                                        >
-                                            <option value="Team Leader" ${role === "team leader" ? "selected" : ""}>
-                                                Team Leader
-                                            </option>
-                                            <option value="Manager" ${role === "manager" ? "selected" : ""}>
-                                                Manager
-                                            </option>
-                                            <option value="User" ${role === "user" ? "selected" : ""}>
-                                                User
-                                            </option>
-                                        </select>
+                                        <span class="admin-role-badge">
+                                            ${escapeHtml(user.role || "User")}
+                                        </span>
                                     </td>
 
                                     <td>
@@ -225,13 +216,27 @@
                                     </td>
 
                                     <td>
-                                        <button
-                                            class="admin-save-role"
-                                            type="button"
-                                            data-user-id="${docId}"
-                                        >
-                                            Save role
-                                        </button>
+                                        <div class="admin-user-actions">
+                                            <button
+                                                class="admin-edit-user"
+                                                type="button"
+                                                data-user-id="${encodedId}"
+                                                title="Edit user"
+                                            >
+                                                <i class="fa-solid fa-pen"></i>
+                                                Edit
+                                            </button>
+
+                                            <button
+                                                class="admin-delete-user"
+                                                type="button"
+                                                data-user-id="${encodedId}"
+                                                title="Delete user"
+                                            >
+                                                <i class="fa-solid fa-trash"></i>
+                                                Delete
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             `;
@@ -315,11 +320,167 @@
         }
     }
 
-    async function saveRole(docId, role) {
+    function openUserModal(user = null) {
+        const modal = $("userModal");
+        const form = $("userForm");
+
+        if (!modal || !form) {
+            toast("User modal is missing from the HTML.");
+            return;
+        }
+
+        editingUserId = user ? user.id : null;
+
+        $("userModalTitle").textContent = user
+            ? "Edit User"
+            : "Add User";
+
+        $("userModalDescription").textContent = user
+            ? "Update the employee's information and account access."
+            : "Add a new employee to the approved users list.";
+
+        $("userName").value = user?.name || "";
+        $("userEmail").value = user?.email || "";
+        $("userRole").value = user?.role || "User";
+        $("userRegion").value = user?.region || "All regions";
+        $("userActive").checked = user
+            ? user.active !== false
+            : true;
+
+        $("userEmail").disabled = Boolean(user);
+
+        $("userModalSave").innerHTML = user
+            ? `<i class="fa-solid fa-floppy-disk"></i> Save Changes`
+            : `<i class="fa-solid fa-user-plus"></i> Add User`;
+
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+
+        setTimeout(() => {
+            $("userName")?.focus();
+        }, 100);
+    }
+
+    function closeUserModal() {
+        const modal = $("userModal");
+
+        if (!modal) return;
+
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+
+        editingUserId = null;
+    }
+
+    async function saveUser(event) {
+        event.preventDefault();
+
         const db = getDb();
 
         if (!db) {
-            console.error("Admin: Firebase/Firestore is not initialized.");
+            toast("Firebase is not initialized.");
+            return;
+        }
+
+        const name = $("userName").value.trim();
+        const email = $("userEmail").value.trim().toLowerCase();
+        const role = $("userRole").value;
+        const region = $("userRegion").value.trim() || "All regions";
+        const active = $("userActive").checked;
+
+        if (!name) {
+            toast("Employee name is required.");
+            $("userName").focus();
+            return;
+        }
+
+        if (!email || !email.includes("@")) {
+            toast("Enter a valid email address.");
+            $("userEmail").focus();
+            return;
+        }
+
+        try {
+            $("userModalSave").disabled = true;
+
+            if (editingUserId) {
+                await db
+                    .collection(USERS_COLLECTION)
+                    .doc(editingUserId)
+                    .update({
+                        name,
+                        role,
+                        region,
+                        active,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                toast("User information updated successfully.");
+
+            } else {
+                const userRef = db
+                    .collection(USERS_COLLECTION)
+                    .doc(email);
+
+                const existingUser = await userRef.get();
+
+                if (existingUser.exists) {
+                    toast("This employee already exists.");
+                    return;
+                }
+
+                await userRef.set({
+                    email,
+                    name,
+                    role,
+                    region,
+                    active,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                toast("User added successfully.");
+            }
+
+            closeUserModal();
+            await loadApprovedUsers();
+            render("users");
+
+        } catch (error) {
+            console.error(
+                "Unable to save user:",
+                error.code || "unknown",
+                error.message || error
+            );
+
+            toast(
+                error.code === "permission-denied"
+                    ? "Firestore permission denied."
+                    : "Unable to save user information."
+            );
+
+        } finally {
+            $("userModalSave").disabled = false;
+        }
+    }
+
+    async function deleteUser(userId) {
+        const user = approvedUsers.find(item => item.id === userId);
+
+        if (!user) {
+            toast("User not found.");
+            return;
+        }
+
+        const confirmed = confirm(
+            `Delete this user?\n\n${user.name}\n${user.email}\n\nThis will permanently remove the approved user record.`
+        );
+
+        if (!confirmed) return;
+
+        const db = getDb();
+
+        if (!db) {
             toast("Firebase is not initialized.");
             return;
         }
@@ -327,32 +488,25 @@
         try {
             await db
                 .collection(USERS_COLLECTION)
-                .doc(docId)
-                .update({
-                    role: role,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                .doc(userId)
+                .delete();
 
-            const user = approvedUsers.find(item => item.id === docId);
+            toast("User deleted successfully.");
 
-            if (user) {
-                user.role = role;
-            }
-
-            toast(`Role updated to ${role}.`);
+            await loadApprovedUsers();
             render("users");
 
         } catch (error) {
             console.error(
-                "Unable to update user role:",
+                "Unable to delete user:",
                 error.code || "unknown",
                 error.message || error
             );
 
             toast(
                 error.code === "permission-denied"
-                    ? "Firestore denied this role update."
-                    : "Role update failed."
+                    ? "Firestore permission denied."
+                    : "Unable to delete user."
             );
         }
     }
@@ -373,18 +527,21 @@
             }
         });
 
-        document.querySelectorAll(".admin-save-role").forEach(button => {
+        document.querySelectorAll(".admin-edit-user").forEach(button => {
             button.addEventListener("click", () => {
-                const encodedId = button.dataset.userId;
-                const docId = decodeURIComponent(encodedId);
+                const userId = decodeURIComponent(button.dataset.userId);
+                const user = approvedUsers.find(item => item.id === userId);
 
-                const select = document.querySelector(
-                    `.admin-role-select[data-user-id="${encodedId}"]`
-                );
-
-                if (select) {
-                    saveRole(docId, select.value);
+                if (user) {
+                    openUserModal(user);
                 }
+            });
+        });
+
+        document.querySelectorAll(".admin-delete-user").forEach(button => {
+            button.addEventListener("click", () => {
+                const userId = decodeURIComponent(button.dataset.userId);
+                deleteUser(userId);
             });
         });
     }
@@ -429,7 +586,6 @@
         const db = getDb();
 
         if (!db) {
-            console.error("Admin: Firebase/Firestore is not initialized.");
             toast("Firebase is not initialized.");
             return;
         }
@@ -445,105 +601,6 @@
 
         } catch (error) {
             console.warn("Admin counts unavailable:", error);
-        }
-    }
-
-    async function addUser() {
-        if (currentSection !== "users") {
-            toast("Open User Management first.");
-            return;
-        }
-
-        const name = prompt("Enter the employee's full name:");
-        if (name === null) return;
-
-        const email = prompt("Enter the employee's email address:");
-        if (email === null) return;
-
-        const roleInput = prompt(
-            "Enter the employee's role:\n\nUser\nManager\nTeam Leader",
-            "User"
-        );
-        if (roleInput === null) return;
-
-        const region = prompt(
-            "Enter the employee's region:",
-            "All regions"
-        );
-        if (region === null) return;
-
-        const cleanName = name.trim();
-        const cleanEmail = email.trim().toLowerCase();
-        const cleanRole = roleInput.trim();
-        const cleanRegion = region.trim();
-
-        if (!cleanName) {
-            toast("Employee name is required.");
-            return;
-        }
-
-        if (!cleanEmail || !cleanEmail.includes("@")) {
-            toast("Enter a valid email address.");
-            return;
-        }
-
-        const allowedRoles = [
-            "User",
-            "Manager",
-            "Team Leader"
-        ];
-
-        if (!allowedRoles.includes(cleanRole)) {
-            toast("Role must be User, Manager, or Team Leader.");
-            return;
-        }
-
-        try {
-            const db = getDb();
-
-            if (!db) {
-                toast("Firebase is not initialized.");
-                return;
-            }
-
-            const userRef = db
-                .collection(USERS_COLLECTION)
-                .doc(cleanEmail);
-
-            const existingUser = await userRef.get();
-
-            if (existingUser.exists) {
-                toast("This employee already exists.");
-                return;
-            }
-
-            await userRef.set({
-                email: cleanEmail,
-                name: cleanName,
-                role: cleanRole,
-                region: cleanRegion || "All regions",
-                active: true,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            toast("Employee added successfully.");
-
-            await loadApprovedUsers();
-            render("users");
-
-        } catch (error) {
-            console.error(
-                "Add user failed:",
-                error.code || "unknown",
-                error.message || error
-            );
-
-            toast(
-                error.code === "permission-denied"
-                    ? "Firestore permission denied."
-                    : "Unable to add employee."
-            );
         }
     }
 
@@ -580,7 +637,30 @@
             toast("Admin dashboard refreshed.");
         });
 
-        $("workspaceAction")?.addEventListener("click", addUser);
+        $("workspaceAction")?.addEventListener("click", () => {
+            if (currentSection === "users") {
+                openUserModal();
+            } else {
+                toast("This management module is not connected yet.");
+            }
+        });
+
+        $("userForm")?.addEventListener("submit", saveUser);
+
+        $("userModalClose")?.addEventListener("click", closeUserModal);
+        $("userModalCancel")?.addEventListener("click", closeUserModal);
+
+        $("userModal")?.addEventListener("click", event => {
+            if (event.target.id === "userModal") {
+                closeUserModal();
+            }
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape") {
+                closeUserModal();
+            }
+        });
     });
 
 })();
