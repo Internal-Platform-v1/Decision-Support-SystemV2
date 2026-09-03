@@ -123,39 +123,60 @@ function updateManagerCommandCenter(profile) {
     }
 }
 
-    async function loadUser(user) {
-        const fb = getFirebase();
-        if (!fb || !user) return;
+   async function loadUser(user) {
+    if (!user) {
+        console.warn("V2 Header: No authenticated user.");
+        return;
+    }
+
+    try {
+        const db = firebase.firestore();
 
         const email = String(user.email || "").trim().toLowerCase();
-        let displayName = user.displayName || email.split("@")[0] || "User";
-        let role = "";
 
-        try {
-            const snapshot = await fb.firestore()
-                .collection("approved_users")
-                .where("email", "==", email)
-                .limit(1)
-                .get();
-
-            if (!snapshot.empty) {
-                const data = snapshot.docs[0].data() || {};
-
-                if (data.name) {
-                    displayName = String(data.name)
-                        .replace(/\s+vndr$/i, "")
-                        .trim();
-                }
-
-                if (data.role) {
-                    role = String(data.role).trim();
-                }
-            }
-        } catch (error) {
-            console.error("V2 Header: approved_users lookup failed:", error);
+        if (!email) {
+            console.warn("V2 Header: Authenticated user has no email.");
+            return;
         }
 
-        window.currentUser = user;
+        /*
+         * The approved_users document ID is the user's email.
+         * Example:
+         * approved_users/julan.guinto.vndr@fedexfreight.com
+         */
+        const userRef = db.collection("approved_users").doc(email);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            console.warn(
+                "V2 Header: No approved_users document found for:",
+                email
+            );
+
+            window.currentUserProfile = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || user.email,
+                role: ""
+            };
+
+            updateUserDisplay(window.currentUserProfile);
+            return;
+        }
+
+        const data = userDoc.data() || {};
+
+        console.log("APPROVED USERS DOCUMENT:", data);
+        console.log("APPROVED USERS ROLE FIELD:", data.role);
+
+        const displayName =
+            data.displayName ||
+            data.name ||
+            user.displayName ||
+            user.email;
+
+        const role = String(data.role || "").trim();
+
         window.currentUserProfile = {
             uid: user.uid,
             email: user.email,
@@ -163,18 +184,36 @@ function updateManagerCommandCenter(profile) {
             role: role
         };
 
+        console.log(
+            "CURRENT USER PROFILE:",
+            window.currentUserProfile
+        );
+
+        console.log(
+            "CURRENT USER ROLE:",
+            window.currentUserProfile.role
+        );
+
         updateUserDisplay(window.currentUserProfile);
 
-       console.log("CURRENT USER PROFILE:", window.currentUserProfile);
-      console.log("CURRENT USER ROLE:", window.currentUserProfile.role);
+        document.dispatchEvent(
+            new CustomEvent("currentUserProfileLoaded", {
+                detail: window.currentUserProfile
+            })
+        );
 
-        document.dispatchEvent(new CustomEvent("currentUserProfileLoaded", {
-            detail: window.currentUserProfile
-        }));
+        console.log(
+            "V2 Header: current user loaded:",
+            window.currentUserProfile
+        );
 
-        console.log("V2 Header: current user loaded:", window.currentUserProfile);
+    } catch (error) {
+        console.error(
+            "V2 Header: Failed to load current user profile:",
+            error
+        );
     }
-
+}
     /* ------------------------------------------------------------
        Profile dropdown
        ------------------------------------------------------------ */
