@@ -1,23 +1,457 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Workspace | Decision Support System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="admin.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Workspace | Decision Support System</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Admin stylesheet -->
+    <link rel="stylesheet" href="assets/css/admin.css">
 </head>
+
 <body>
-<div class="app-shell">
-<header class="topbar">
-<a class="brand" href="index-main.html"><span class="brand-mark"><span>Fed</span><b>Ex</b></span><span class="brand-divider"></span><span class="brand-name">Decision Support<br><small>Administration</small></span></a>
-<nav class="main-nav"><a href="index-main.html" class="nav-item"><i class="fa-solid fa-house"></i> Home</a><a href="index-main.html#guides" class="nav-item"><i class="fa-solid fa-book-open"></i> Guide Library</a><a href="admin.html" class="nav-item active"><i class="fa-solid fa-shield-halved"></i> Admin</a></nav>
-<div class="top-actions"><button class="icon-button" id="refreshBtn"><i class="fa-solid fa-arrows-rotate"></i></button><button class="icon-button"><i class="fa-regular fa-bell"></i><span class="notification-dot"></span></button><div class="profile-pill"><span class="avatar">AD</span><span class="profile-copy"><strong id="profileName">Administrator</strong><small>System Admin</small></span><i class="fa-solid fa-chevron-down"></i></div></div>
-</header>
-<main>
-<section class="admin-hero"><div class="hero-copy"><div class="eyebrow"><i class="fa-solid fa-lock"></i> SECURE ADMINISTRATION</div><h1>System <span>Command Center</span></h1><p>Manage users, announcements, templates, guides, permissions and the operational settings behind your Decision Support System.</p><div class="hero-actions"><button class="primary-button" data-section="users"><i class="fa-solid fa-users-gear"></i> Manage Users</button><button class="secondary-button" data-section="templates"><i class="fa-solid fa-file-lines"></i> Manage Templates</button></div><div class="status-row"><span><i class="status-dot green"></i> Firebase Connected</span><span><i class="status-dot purple"></i> Admin Session Active</span><span><i class="status-dot orange"></i> Changes Require Review</span></div></div><div class="hero-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="floating-card card-main"><i class="fa-solid fa-sliders"></i><strong>System Controls</strong><span>One workspace. Every operation.</span></div><div class="floating-card card-small"><i class="fa-solid fa-check-double"></i><strong>Protected</strong><span>Admin access</span></div><div class="hero-cube"><i class="fa-solid fa-cube"></i></div></div></section>
-<section class="content-wrap"><div class="section-heading"><div><span class="section-label">ADMINISTRATIVE OVERVIEW</span><h2>System at a glance</h2></div><span class="last-updated" id="lastUpdated">Updated just now</span></div>
-<section class="kpi-grid"><article class="kpi-card"><div class="kpi-icon blue"><i class="fa-solid fa-users"></i></div><div><label>Total Users</label><h3 id="userCount">—</h3><p>Registered system users</p></div><span class="kpi-trend">Live</span></article><article class="kpi-card"><div class="kpi-icon orange"><i class="fa-solid fa-file-lines"></i></div><div><label>Templates</label><h3 id="templateCount">—</h3><p>Comments, CORR and email</p></div><span class="kpi-trend">Live</span></article><article class="kpi-card"><div class="kpi-icon red"><i class="fa-solid fa-bullhorn"></i></div><div><label>Announcements</label><h3 id="announcementCount">—</h3><p>Published system notices</p></div><span class="kpi-trend">Active</span></article><article class="kpi-card"><div class="kpi-icon green"><i class="fa-solid fa-shield-halved"></i></div><div><label>System Health</label><h3>100%</h3><p>Core services operational</p></div><span class="kpi-trend healthy">Healthy</span></article></section>
-<div class="workspace-layout"><aside class="sidebar-panel"><div class="panel-caption">ADMINISTRATION</div><button class="side-tab active" data-section="overview"><i class="fa-solid fa-grid-2"></i><span>Overview</span></button><button class="side-tab" data-section="users"><i class="fa-solid fa-users"></i><span>User Management</span></button><button class="side-tab" data-section="templates"><i class="fa-solid fa-file-lines"></i><span>Template Manager</span></button><button class="side-tab" data-section="announcements"><i class="fa-solid fa-bullhorn"></i><span>Announcements</span></button><button class="side-tab" data-section="guides"><i class="fa-solid fa-book-open"></i><span>Guide Management</span></button><button class="side-tab" data-section="permissions"><i class="fa-solid fa-user-shield"></i><span>Roles & Permissions</span></button><button class="side-tab" data-section="settings"><i class="fa-solid fa-gear"></i><span>System Settings</span></button><div class="sidebar-status"><i class="fa-solid fa-circle-check"></i><div><strong>All systems operational</strong><small>Last checked just now</small></div></div></aside>
-<section class="workspace-panel"><div class="workspace-header"><div><span class="section-label">MANAGEMENT MODULE</span><h2 id="workspaceTitle">Administrative Workspace</h2><p id="workspaceDescription">Select a module to manage your Decision Support System.</p></div><button class="outline-button" id="workspaceAction"><i class="fa-solid fa-plus"></i> New Item</button></div><div id="workspaceContent" class="workspace-content"></div></section></div></section>
-</main><footer class="footer"><span>Decision Support System</span><span>Administrative Workspace <b>•</b> Secure access</span></footer></div><div class="toast" id="toast"></div><script src="admin.js"></script></body></html>
+
+    <div class="app-shell">
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+        <header class="topbar">
+
+            <a class="brand" href="index-main.html">
+                <span class="brand-mark">
+                    <span>Fed</span><b>Ex</b>
+                </span>
+
+                <span class="brand-divider"></span>
+
+                <span class="brand-name">
+                    Decision Support<br>
+                    <small>Administration</small>
+                </span>
+            </a>
+
+            <nav class="main-nav" aria-label="Main navigation">
+                <a href="index-main.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+
+                <a href="index-main.html#guides" class="nav-item">
+                    <i class="fa-solid fa-book-open"></i>
+                    Guide Library
+                </a>
+
+                <a href="admin.html" class="nav-item active">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Admin
+                </a>
+            </nav>
+
+            <div class="top-actions">
+
+                <button
+                    class="icon-button"
+                    id="refreshBtn"
+                    type="button"
+                    aria-label="Refresh dashboard"
+                >
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+
+                <button
+                    class="icon-button"
+                    type="button"
+                    aria-label="Notifications"
+                >
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="profile-pill">
+                    <span class="avatar">AD</span>
+
+                    <span class="profile-copy">
+                        <strong id="profileName">Administrator</strong>
+                        <small id="profileRole">System Admin</small>
+                    </span>
+
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+
+            </div>
+        </header>
+
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+        <main>
+
+            <!-- HERO -->
+            <section class="admin-hero">
+
+                <div class="hero-copy">
+
+                    <div class="eyebrow">
+                        <i class="fa-solid fa-lock"></i>
+                        SECURE ADMINISTRATION
+                    </div>
+
+                    <h1>
+                        System <span>Command Center</span>
+                    </h1>
+
+                    <p>
+                        Manage users, announcements, templates, guides,
+                        permissions and the operational settings behind
+                        your Decision Support System.
+                    </p>
+
+                    <div class="hero-actions">
+
+                        <button
+                            class="primary-button"
+                            type="button"
+                            data-section="users"
+                        >
+                            <i class="fa-solid fa-users-gear"></i>
+                            Manage Users
+                        </button>
+
+                        <button
+                            class="secondary-button"
+                            type="button"
+                            data-section="templates"
+                        >
+                            <i class="fa-solid fa-file-lines"></i>
+                            Manage Templates
+                        </button>
+
+                    </div>
+
+                    <div class="status-row">
+                        <span>
+                            <i class="status-dot green"></i>
+                            Firebase Connected
+                        </span>
+
+                        <span>
+                            <i class="status-dot purple"></i>
+                            Admin Session Active
+                        </span>
+
+                        <span>
+                            <i class="status-dot orange"></i>
+                            Changes Require Review
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="hero-art">
+
+                    <div class="orbit orbit-one"></div>
+                    <div class="orbit orbit-two"></div>
+
+                    <div class="floating-card card-main">
+                        <i class="fa-solid fa-sliders"></i>
+                        <strong>System Controls</strong>
+                        <span>One workspace. Every operation.</span>
+                    </div>
+
+                    <div class="floating-card card-small">
+                        <i class="fa-solid fa-check-double"></i>
+                        <strong>Protected</strong>
+                        <span>Admin access</span>
+                    </div>
+
+                    <div class="hero-cube">
+                        <i class="fa-solid fa-cube"></i>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ADMINISTRATIVE OVERVIEW -->
+            <section class="content-wrap">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            ADMINISTRATIVE OVERVIEW
+                        </span>
+
+                        <h2>System at a glance</h2>
+                    </div>
+
+                    <span
+                        class="last-updated"
+                        id="lastUpdated"
+                    >
+                        Updated just now
+                    </span>
+
+                </div>
+
+
+                <!-- KPI CARDS -->
+                <section class="kpi-grid">
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-icon blue">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+
+                        <div>
+                            <label>Total Users</label>
+                            <h3 id="userCount">—</h3>
+                            <p>Registered system users</p>
+                        </div>
+
+                        <span class="kpi-trend">Live</span>
+
+                    </article>
+
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-icon orange">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+
+                        <div>
+                            <label>Templates</label>
+                            <h3 id="templateCount">—</h3>
+                            <p>Comments, CORR and email</p>
+                        </div>
+
+                        <span class="kpi-trend">Live</span>
+
+                    </article>
+
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-icon red">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+
+                        <div>
+                            <label>Announcements</label>
+                            <h3 id="announcementCount">—</h3>
+                            <p>Published system notices</p>
+                        </div>
+
+                        <span class="kpi-trend">Active</span>
+
+                    </article>
+
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-icon green">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+
+                        <div>
+                            <label>System Health</label>
+                            <h3>100%</h3>
+                            <p>Core services operational</p>
+                        </div>
+
+                        <span class="kpi-trend healthy">Healthy</span>
+
+                    </article>
+
+                </section>
+
+
+                <!-- WORKSPACE -->
+                <div class="workspace-layout">
+
+                    <!-- SIDEBAR -->
+                    <aside class="sidebar-panel">
+
+                        <div class="panel-caption">
+                            ADMINISTRATION
+                        </div>
+
+                        <button
+                            class="side-tab active"
+                            type="button"
+                            data-section="overview"
+                        >
+                            <i class="fa-solid fa-grid-2"></i>
+                            <span>Overview</span>
+                        </button>
+
+                        <button
+                            class="side-tab"
+                            type="button"
+                            data-section="users"
+                        >
+                            <i class="fa-solid fa-users"></i>
+                            <span>User Management</span>
+                        </button>
+
+                        <button
+                            class="side-tab"
+                            type="button"
+                            data-section="templates"
+                        >
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>Template Manager</span>
+                        </button>
+
+                        <button
+                            class="side-tab"
+                            type="button"
+                            data-section="announcements"
+                        >
+                            <i class="fa-solid fa-bullhorn"></i>
+                            <span>Announcements</span>
+                        </button>
+
+                        <button
+                            class="side-tab"
+                            type="button"
+                            data-section="guides"
+                        >
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>Guide Management</span>
+                        </button>
+
+                        <button
+                            class="side-tab"
+                            type="button"
+                            data-section="permissions"
+                        >
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>Roles &amp; Permissions</span>
+                        </button>
+
+                        <button
+                            class="side-tab"
+                            type="button"
+                            data-section="settings"
+                        >
+                            <i class="fa-solid fa-gear"></i>
+                            <span>System Settings</span>
+                        </button>
+
+                        <div class="sidebar-status">
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            <div>
+                                <strong>All systems operational</strong>
+                                <small>Last checked just now</small>
+                            </div>
+                        </div>
+
+                    </aside>
+
+
+                    <!-- WORKSPACE PANEL -->
+                    <section class="workspace-panel">
+
+                        <div class="workspace-header">
+
+                            <div>
+                                <span class="section-label">
+                                    MANAGEMENT MODULE
+                                </span>
+
+                                <h2 id="workspaceTitle">
+                                    Administrative Workspace
+                                </h2>
+
+                                <p id="workspaceDescription">
+                                    Select a module to manage your
+                                    Decision Support System.
+                                </p>
+                            </div>
+
+                            <button
+                                class="outline-button"
+                                id="workspaceAction"
+                                type="button"
+                            >
+                                <i class="fa-solid fa-plus"></i>
+                                New Item
+                            </button>
+
+                        </div>
+
+                        <div
+                            id="workspaceContent"
+                            class="workspace-content"
+                        ></div>
+
+                    </section>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- =====================================================
+             FOOTER
+             ===================================================== -->
+        <footer class="footer">
+            <span>Decision Support System</span>
+
+            <span>
+                Administrative Workspace
+                <b>•</b>
+                Secure access
+            </span>
+        </footer>
+
+    </div>
+
+
+    <!-- Toast -->
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- =====================================================
+         FIREBASE SDK
+         ===================================================== -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+
+    <!-- =====================================================
+         ADMIN JAVASCRIPT
+         ===================================================== -->
+    <script src="assets/js/admin.js"></script>
+
+</body>
+</html>
