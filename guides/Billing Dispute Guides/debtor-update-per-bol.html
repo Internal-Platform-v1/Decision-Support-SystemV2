@@ -661,8 +661,16 @@
 
 
 <!-- =========================================================
+     DEBTOR UPDATE PER BOL FLOW
+     Contains the guide configuration and decision nodes.
+     Must load before guide.js.
+     ========================================================= -->
+<script src="assets/js/guide-flows/debtor-update-per-bol.js"></script>
+
+
+<!-- =========================================================
      GUIDE ENGINE
-     Contains the actual decision-flow functionality.
+     Contains the reusable decision-flow functionality.
      ========================================================= -->
 <script src="assets/js/guide.js"></script>
 
@@ -671,11 +679,7 @@
      PAGE LOADER
      ========================================================= -->
 <script src="assets/js/page-loader.js"></script>
-
-
-<!-- =========================================================
-     USER READY EVENT
-     ========================================================= -->
+  
 <script>
   window.bdToolsUserReady = function () {
     window.dispatchEvent(
