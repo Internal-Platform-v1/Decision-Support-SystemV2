@@ -45,28 +45,54 @@
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
 
-    function updateUserDisplay(profile) {
-        const name = profile && profile.displayName
-            ? profile.displayName
-            : "User";
+function updateUserDisplay(profile) {
+    const name = profile && profile.displayName
+        ? profile.displayName
+        : "User";
 
-        const profileName = document.getElementById("profileName");
-        const profileButton = document.getElementById("profileBtn");
+    const role = profile && profile.role
+        ? String(profile.role).trim()
+        : "";
 
-        if (profileName) {
-            profileName.textContent = name;
-        }
+    const profileName = document.getElementById("profileName");
+    const profileRole = document.getElementById("profileRole");
+    const profileButton = document.getElementById("profileBtn");
+    const commandCenterButton = document.getElementById(
+        "systemCommandCenterBtn"
+    );
 
-        if (profileButton) {
-            profileButton.textContent = initialsFromName(name);
-            profileButton.setAttribute("aria-label", "Open profile for " + name);
-        }
-
-        const dashboardName = document.getElementById("currentUserName");
-        if (dashboardName) {
-            dashboardName.textContent = name;
-        }
+    if (profileName) {
+        profileName.textContent = name;
     }
+
+    if (profileRole) {
+        profileRole.textContent = role || "BD Tools User";
+    }
+
+    if (profileButton) {
+        profileButton.textContent = initialsFromName(name);
+        profileButton.setAttribute(
+            "aria-label",
+            "Open profile for " + name
+        );
+    }
+
+    /*
+     * Show System Command Center only to Managers.
+     * Accepts "manager" or "Manager".
+     */
+    const isManager = role.toLowerCase() === "manager";
+
+    if (commandCenterButton) {
+        commandCenterButton.hidden = !isManager;
+    }
+
+    const dashboardName = document.getElementById("currentUserName");
+
+    if (dashboardName) {
+        dashboardName.textContent = name;
+    }
+}
 
     async function loadUser(user) {
         const fb = getFirebase();
@@ -121,60 +147,101 @@
        Profile dropdown
        ------------------------------------------------------------ */
     function setupProfile() {
-        const button = document.getElementById("profileBtn");
-        const chevron = document.getElementById("profileChevron");
-        const menu = document.getElementById("profileMenu");
+    const button = document.getElementById("profileBtn");
+    const chevron = document.getElementById("profileChevron");
+    const menu = document.getElementById("profileMenu");
 
-        if (!button || !menu) {
-            console.error("V2 Header: profile elements were not found.");
-            return;
+    const commandCenterButton = document.getElementById(
+        "systemCommandCenterBtn"
+    );
+
+    if (!button || !menu) {
+        console.error("V2 Header: profile elements were not found.");
+        return;
+    }
+
+    const toggle = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const open = menu.classList.toggle("open");
+
+        button.setAttribute("aria-expanded", String(open));
+
+        if (chevron) {
+            chevron.setAttribute("aria-expanded", String(open));
         }
+    };
 
-        const toggle = function (event) {
+    button.addEventListener("click", toggle);
+
+    if (chevron) {
+        chevron.addEventListener("click", toggle);
+    }
+
+    /*
+     * System Command Center
+     */
+    if (commandCenterButton) {
+        commandCenterButton.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
 
-            const open = menu.classList.toggle("open");
-            button.setAttribute("aria-expanded", String(open));
+            const profile = window.currentUserProfile;
+            const role = profile && profile.role
+                ? String(profile.role).trim().toLowerCase()
+                : "";
 
-            if (chevron) {
-                chevron.setAttribute("aria-expanded", String(open));
+            /*
+             * Security check before navigation.
+             * The button is also hidden for non-Managers.
+             */
+            if (role !== "manager") {
+                console.warn(
+                    "V2 Header: unauthorized System Command Center access."
+                );
+                return;
             }
-        };
 
-        button.addEventListener("click", toggle);
-
-        if (chevron) {
-            chevron.addEventListener("click", toggle);
-        }
-
-        menu.querySelectorAll("button").forEach(function (item) {
-            item.addEventListener("click", function (event) {
-                event.stopPropagation();
-
-                const action = this.textContent.trim().toLowerCase();
-
-                if (action.includes("logout")) {
-                    const fb = getFirebase();
-                    if (fb) {
-                        fb.auth().signOut().then(function () {
-                            window.location.href = "index.html";
-                        }).catch(function (error) {
-                            console.error("Logout failed:", error);
-                        });
-                    }
-                }
-            });
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!event.target.closest(".header-actions")) {
-                menu.classList.remove("open");
-                button.setAttribute("aria-expanded", "false");
-                if (chevron) chevron.setAttribute("aria-expanded", "false");
-            }
+            window.location.href = "admin.html";
         });
     }
+
+    /*
+     * Profile menu buttons
+     */
+    menu.querySelectorAll("button").forEach(function (item) {
+        item.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            const action = this.textContent.trim().toLowerCase();
+
+            if (action.includes("logout")) {
+                const fb = getFirebase();
+
+                if (fb) {
+                    fb.auth().signOut().then(function () {
+                        window.location.href = "index.html";
+                    }).catch(function (error) {
+                        console.error("Logout failed:", error);
+                    });
+                }
+            }
+        });
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".header-actions")) {
+            menu.classList.remove("open");
+
+            button.setAttribute("aria-expanded", "false");
+
+            if (chevron) {
+                chevron.setAttribute("aria-expanded", "false");
+            }
+        }
+    });
+}
 
     /* ------------------------------------------------------------
        Case Directory dropdown
