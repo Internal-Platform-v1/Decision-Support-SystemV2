@@ -23,8 +23,8 @@
 
   const CATALOG = [
     /* ========================= BILLING DISPUTE — 6 ========================= */
-    ["Debtor Update per BOL", "guides/Billing%20Dispute%20Guides/BD%20GENERAL%20GUIDE.html", "Follow BOL terms to determine the correct debtor and ensure accurate billing setup.", "billing", "fa-file-invoice-dollar"],
-    ["Debtor Update per LOA", "guides/Billing%20Dispute%20Guides/Rebill%20per%20LOA%20General%20Guide.html", "Use LOA to evaluate debtor update requests and determine the correct billing action.", "billing", "fa-file-signature"],
+    ["Debtor Update per BOL", "guides/Billing%20Dispute%20Guides/debtor-update-per-bol.html", "Follow BOL terms to determine the correct debtor and ensure accurate billing setup.", "billing", "fa-file-invoice-dollar"],
+    ["Debtor Update per LOA", "guides/Billing%20Dispute%20Guides/debtor-update-per-loa.html", "Use LOA to evaluate debtor update requests and determine the correct billing action.", "billing", "fa-file-signature"],
     ["Debtor Update per Reversal/Refusal", "guides/Billing%20Dispute%20Guides/rvsl-guide.html", "Evaluate reversal or refusal cases and determine the correct debtor and billing action.", "billing", "fa-right-left"],
     ["Weight Update per BOL", "guides/Billing%20Dispute%20Guides/weight-update-per-bol-guide.html", "Evaluate BOL-based weight and pallet discrepancies to determine the correct action or routing.", "billing", "fa-weight-scale"],
     ["Service Level/Type Update per BOL", "guides/Billing%20Dispute%20Guides/service-level-type-guide.html", "Evaluate service level disputes to confirm correct rating based on BOL details.", "billing", "fa-truck-fast"],
