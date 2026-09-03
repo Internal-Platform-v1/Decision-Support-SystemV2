@@ -453,3 +453,4 @@
     final_noterms_shipping_true3pty_collect: { text: "Check if account/account information per BOL was previously billed.\n\nIf no, look for a billing account using the account information then proceed with rebilling the account no. per BOL. Update the terms if necessary. Example: Update to Collect if account is related to the Consignee or True 3rd party. Check if account is ABT of the Consignee.\n\nIf yes, bill it to shipper in attempt of payment.", choices: [] },
     final_noterms_shipping_true3pty_account_noted: { text: "Check if this is the first time they are making a dispute.\n\nIf yes, educate the customer that this is billing correctly.\n\nIf no, bill it to shipper in attempt of payment.", choices: [] }
   };
+  })();
