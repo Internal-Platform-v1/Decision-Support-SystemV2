@@ -54,18 +54,12 @@ function updateUserDisplay(profile) {
         ? String(profile.role).trim()
         : "";
 
-    const normalizedRole = role.toLowerCase();
-
     const profileName = document.getElementById("profileName");
     const profileRole = document.getElementById("profileRole");
     const profileButton = document.getElementById("profileBtn");
     const commandCenterButton = document.getElementById(
         "systemCommandCenterBtn"
     );
-
-    /* ------------------------------------------------------------
-       User name, role, and avatar
-       ------------------------------------------------------------ */
 
     if (profileName) {
         profileName.textContent = name;
@@ -83,116 +77,76 @@ function updateUserDisplay(profile) {
         );
     }
 
+    /*
+     * Show System Command Center only to Managers.
+     * Accepts "manager" or "Manager".
+     */
+    const isManager = role.toLowerCase() === "manager";
+
+    if (commandCenterButton) {
+        commandCenterButton.hidden = !isManager;
+    }
+
     const dashboardName = document.getElementById("currentUserName");
 
     if (dashboardName) {
         dashboardName.textContent = name;
     }
-
-    /* ------------------------------------------------------------
-       System Command Center
-       Visible only to Managers
-       ------------------------------------------------------------ */
-
-    if (commandCenterButton) {
-        const isManager =
-            normalizedRole === "manager" ||
-            normalizedRole === "admin" ||
-            normalizedRole === "administrator";
-
-        if (isManager) {
-            commandCenterButton.hidden = false;
-            commandCenterButton.removeAttribute("hidden");
-            commandCenterButton.style.display = "flex";
-        } else {
-            commandCenterButton.hidden = true;
-            commandCenterButton.setAttribute("hidden", "");
-            commandCenterButton.style.display = "none";
-        }
-
-        console.log(
-            "SYSTEM COMMAND CENTER BUTTON:",
-            commandCenterButton
-        );
-
-        console.log(
-            "SYSTEM COMMAND CENTER VISIBLE:",
-            isManager
-        );
-    } else {
-        console.warn(
-            "System Command Center button was not found in the header."
-        );
-    }
 }
 
-   async function loadUser(user) {
-    if (!user) {
-        console.warn("V2 Header: No authenticated user.");
-        return;
-    }
-
-    try {
-        const db = firebase.firestore();
+    async function loadUser(user) {
+        const fb = getFirebase();
+        if (!fb || !user) return;
 
         const email = String(user.email || "").trim().toLowerCase();
+        let displayName = user.displayName || email.split("@")[0] || "User";
+        let role = "";
+        let profileData = {};
 
-        if (!email) {
-            console.warn("V2 Header: Authenticated user has no email.");
-            return;
-        }
+        try {
+            const db = fb.firestore();
+            const collection = db.collection("approved_users");
 
-        /*
-         * The approved_users document ID is the user's email.
-         * Example:
-         * approved_users/julan.guinto.vndr@fedexfreight.com
-         */
-        const userRef = db.collection("approved_users").doc(email);
-        const userDoc = await userRef.get();
+            /* Primary lookup: the approved_users document ID is the email. */
+            const directDoc = await collection.doc(email).get();
 
-        if (!userDoc.exists) {
-            console.warn(
-                "V2 Header: No approved_users document found for:",
-                email
+            if (directDoc.exists) {
+                profileData = directDoc.data() || {};
+            } else {
+                /* Fallback for collections where email is stored as a field. */
+                const snapshot = await collection
+                    .where("email", "==", email)
+                    .limit(1)
+                    .get();
+
+                if (!snapshot.empty) {
+                    profileData = snapshot.docs[0].data() || {};
+                }
+            }
+
+            displayName = String(
+                profileData.name ||
+                profileData.displayName ||
+                user.displayName ||
+                email.split("@")[0] ||
+                "User"
+            ).replace(/\s+vndr$/i, "").trim();
+
+            const roleKey = Object.keys(profileData).find(
+                key => key.trim().toLowerCase() === "role"
             );
 
-            window.currentUserProfile = {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName || user.email,
-                role: ""
-            };
+            role = roleKey
+                ? String(profileData[roleKey] || "").trim()
+                : "";
 
-            updateUserDisplay(window.currentUserProfile);
-            return;
+            console.log("V2 Header: approved user profile data:", profileData);
+            console.log("V2 Header: resolved role:", role);
+        } catch (error) {
+            console.error("V2 Header: approved_users lookup failed:", error);
         }
 
-const data = userDoc.data() || {};
-
-console.log("APPROVED USERS DOCUMENT:", data);
-console.log("APPROVED USERS KEYS:", Object.keys(data));
-
-/*
- * Read the role while ignoring accidental spaces or capitalization
- * in the Firestore field name.
- */
-const roleKey = Object.keys(data).find(
-    key => key.trim().toLowerCase() === "role"
-);
-
-const role = roleKey
-    ? String(data[roleKey] || "").trim()
-    : "";
-
-console.log("ROLE FIELD NAME FOUND:", roleKey);
-console.log("APPROVED USERS ROLE FIELD:", role);
-
-const displayName =
-    data.displayName ||
-    data.name ||
-    user.displayName ||
-    user.email;
-
+        window.currentUser = user;
         window.currentUserProfile = {
             uid: user.uid,
             email: user.email,
@@ -200,36 +154,15 @@ const displayName =
             role: role
         };
 
-        console.log(
-            "CURRENT USER PROFILE:",
-            window.currentUserProfile
-        );
-
-        console.log(
-            "CURRENT USER ROLE:",
-            window.currentUserProfile.role
-        );
-
         updateUserDisplay(window.currentUserProfile);
 
-        document.dispatchEvent(
-            new CustomEvent("currentUserProfileLoaded", {
-                detail: window.currentUserProfile
-            })
-        );
+        document.dispatchEvent(new CustomEvent("currentUserProfileLoaded", {
+            detail: window.currentUserProfile
+        }));
 
-        console.log(
-            "V2 Header: current user loaded:",
-            window.currentUserProfile
-        );
-
-    } catch (error) {
-        console.error(
-            "V2 Header: Failed to load current user profile:",
-            error
-        );
+        console.log("V2 Header: current user loaded:", window.currentUserProfile);
     }
-}
+
     /* ------------------------------------------------------------
        Profile dropdown
        ------------------------------------------------------------ */
