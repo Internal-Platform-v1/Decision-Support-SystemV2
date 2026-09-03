@@ -945,3 +945,7 @@
         animation: none;
     }
 }
+
+#systemCommandCenterBtn[hidden] {
+    display: none !important;
+}
