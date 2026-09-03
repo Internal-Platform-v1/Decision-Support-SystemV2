@@ -170,14 +170,40 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="shared/include.js"></script>
-  <script src="assets/js/all-guides.js"></script>
-  <script src="assets/js/page-loader.js"></script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <script>
-    window.bdToolsUserReady = function () {
-      window.dispatchEvent(new Event("bdtools:user-ready"));
-    };
-  </script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  window.db = firebase.firestore();
+  window.auth = firebase.auth();
+</script>
+
+<!-- Shared header/footer and profile -->
+<script src="shared/include.js"></script>
+
+<!-- Page scripts -->
+<script src="assets/js/all-guides.js"></script>
+<script src="assets/js/page-loader.js"></script>
+
+<script>
+  window.bdToolsUserReady = function () {
+    window.dispatchEvent(new Event("bdtools:user-ready"));
+  };
+</script>
 </body>
 </html>
