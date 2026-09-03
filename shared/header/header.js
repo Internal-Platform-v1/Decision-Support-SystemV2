@@ -163,7 +163,6 @@ function updateManagerCommandCenter(profile) {
             role: role
         };
 
-        updateManagerCommandCenter(window.currentUserProfile);
         updateUserDisplay(window.currentUserProfile);
 
        console.log("CURRENT USER PROFILE:", window.currentUserProfile);
