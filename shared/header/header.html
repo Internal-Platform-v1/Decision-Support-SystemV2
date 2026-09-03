@@ -57,13 +57,32 @@
             <span class="bell-icon"></span>
             <b class="notification-dot">3</b>
         </button>
-        <button class="avatar-btn" id="profileBtn" aria-label="Open profile">JD</button>
+<button class="avatar-btn" id="profileBtn" aria-label="Open profile">JD</button>
+
 <div class="profile-menu" id="profileMenu">
-            <div class="profile-name" id="profileName">User</div>
-            <div class="profile-role">BD Tools User</div>
-            <button><span>👤</span> Profile</button>
-            <button><span>⚙️</span> Settings</button>
-            <button><span>🚪</span> Logout</button>
-        </div>
+    <div class="profile-name" id="profileName">User</div>
+    <div class="profile-role" id="profileRole">BD Tools User</div>
+
+    <button id="profileMenuBtn" type="button">
+        <span>👤</span> Profile
+    </button>
+
+    <!-- Visible only when the current user's role is Manager -->
+    <button
+        id="systemCommandCenterBtn"
+        type="button"
+        hidden
+    >
+        <span>🛡️</span> System Command Center
+    </button>
+
+    <button id="settingsMenuBtn" type="button">
+        <span>⚙️</span> Settings
+    </button>
+
+    <button id="logoutMenuBtn" type="button">
+        <span>🚪</span> Logout
+    </button>
+</div>
     </div>
 </header>
