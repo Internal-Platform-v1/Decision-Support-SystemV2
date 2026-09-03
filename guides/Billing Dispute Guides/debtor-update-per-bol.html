@@ -627,34 +627,61 @@
        SHARED COMPONENTS
        ========================================================= -->
 
-  <!-- Header / Footer / shared DSS components -->
-  <script src="shared/include.js"></script>
+ <!-- =========================================================
+     FIREBASE SDK
+     ========================================================= -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  window.db = firebase.firestore();
+  window.auth = firebase.auth();
+</script>
 
 
-  <!-- =========================================================
-       GUIDE ENGINE
-       Contains the actual decision-flow functionality.
-       ========================================================= -->
-  <script src="assets/js/guide.js"></script>
+<!-- =========================================================
+     SHARED COMPONENTS
+     Header / Footer / Profile
+     ========================================================= -->
+<script src="shared/include.js"></script>
 
 
-  <!-- =========================================================
-       PAGE LOADER
-       ========================================================= -->
-  <script src="assets/js/page-loader.js"></script>
+<!-- =========================================================
+     GUIDE ENGINE
+     Contains the actual decision-flow functionality.
+     ========================================================= -->
+<script src="assets/js/guide.js"></script>
 
 
+<!-- =========================================================
+     PAGE LOADER
+     ========================================================= -->
+<script src="assets/js/page-loader.js"></script>
 
-  <!-- =========================================================
-       USER READY EVENT
-       ========================================================= -->
-  <script>
-    window.bdToolsUserReady = function () {
-      window.dispatchEvent(
-        new Event("bdtools:user-ready")
-      );
-    };
-  </script>
 
+<!-- =========================================================
+     USER READY EVENT
+     ========================================================= -->
+<script>
+  window.bdToolsUserReady = function () {
+    window.dispatchEvent(
+      new Event("bdtools:user-ready")
+    );
+  };
+</script>
 </body>
 </html>
