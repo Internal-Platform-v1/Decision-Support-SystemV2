@@ -81,11 +81,40 @@ function updateUserDisplay(profile) {
      * Show System Command Center only to Managers.
      * Accepts "manager" or "Manager".
      */
-    const isManager = role.toLowerCase() === "manager";
+function updateManagerCommandCenter(profile) {
+    const commandCenterButton = document.getElementById(
+        "systemCommandCenterBtn"
+    );
 
-    if (commandCenterButton) {
-        commandCenterButton.hidden = !isManager;
+    if (!commandCenterButton) {
+        console.warn(
+            "System Command Center button was not found in the header."
+        );
+        return;
     }
+
+    const role = String(
+        profile?.role ||
+        window.currentUserProfile?.role ||
+        ""
+    ).trim().toLowerCase();
+
+    const isManager =
+        role === "manager" ||
+        role === "admin" ||
+        role === "administrator";
+
+    if (isManager) {
+        commandCenterButton.removeAttribute("hidden");
+        commandCenterButton.style.display = "flex";
+    } else {
+        commandCenterButton.setAttribute("hidden", "");
+        commandCenterButton.style.display = "none";
+    }
+
+    console.log("Header role:", role);
+    console.log("System Command Center visible:", isManager);
+}
 
     const dashboardName = document.getElementById("currentUserName");
 
@@ -134,7 +163,11 @@ function updateUserDisplay(profile) {
             role: role
         };
 
+        updateManagerCommandCenter(window.currentUserProfile);
         updateUserDisplay(window.currentUserProfile);
+
+       console.log("CURRENT USER PROFILE:", window.currentUserProfile);
+      console.log("CURRENT USER ROLE:", window.currentUserProfile.role);
 
         document.dispatchEvent(new CustomEvent("currentUserProfileLoaded", {
             detail: window.currentUserProfile
