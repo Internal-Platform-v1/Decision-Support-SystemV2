@@ -1,6 +1,5 @@
 /* ============================================================
-   LEGACY CASE DIRECTORY — VERSION 2
-   Clean layout stylesheet
+   LEGACY CASE DIRECTORY — CLEAN LAYOUT
    ============================================================ */
 
 * {
@@ -8,30 +7,27 @@
 }
 
 .case-page {
+    background: #ffffff;
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
-    background: #ffffff;
 }
 
-/* ============================================================
+/* ------------------------------------------------------------
    HERO
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .case-hero {
-    position: relative;
     height: 220px;
+    position: relative;
     overflow: hidden;
-
-    display: block;
-
-    padding: 34px 7.2% 28px;
-
+    padding: 34px 7.2%;
     background:
         #f8f7ff
         url("../images/hero-background.png")
         center 94% / cover
         no-repeat;
+    display: block;
 }
 
 .hero-copy {
@@ -42,36 +38,32 @@
 
 .eyebrow,
 .section-kicker {
-    color: #6b20d0;
     font-size: 9px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: .08em;
     text-transform: uppercase;
+    color: #6b20d0;
 }
 
 .eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-
     padding: 7px 11px;
-
     background: #ffffff;
     border: 1px solid #e7ddff;
     border-radius: 20px;
-
     letter-spacing: 0;
     text-transform: none;
 }
 
 .case-hero h1 {
     margin: 13px 0 8px;
-
     color: #10134f;
     font-size: 31px;
-    font-weight: 800;
     line-height: 1.08;
     letter-spacing: -1px;
+    font-weight: 800;
 }
 
 .case-hero h1 span {
@@ -79,9 +71,8 @@
 }
 
 .case-hero p {
-    max-width: 540px;
     margin: 0;
-
+    max-width: 540px;
     color: #45466e;
     font-size: 11px;
     line-height: 1.5;
@@ -97,43 +88,37 @@
 .secondary-btn {
     height: 32px;
     padding: 0 14px;
-
     border: 1px solid #5b17c5;
     border-radius: 6px;
-
     font-size: 10px;
     font-weight: 700;
     cursor: pointer;
 }
 
 .primary-btn {
-    color: #ffffff;
     background: #5b17c5;
+    color: #ffffff;
 }
 
 .secondary-btn {
-    color: #4d148c;
     background: #ffffff;
+    color: #4d148c;
     border-color: #e1d9f4;
 }
 
-/* Remove all decorative icons/cards from the hero */
-.hero-visual,
-.visual-card,
-.visual-circle {
-    display: none !important;
-}
-
-/* ============================================================
+/* ------------------------------------------------------------
    STAT CARDS
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 /*
-   The directory uses:
-   width: 85.6%;
-   margin-left/right: 7.2%;
+   The cards use the EXACT same horizontal boundaries
+   as .directory-main.
 
-   The cards use exactly the same content width.
+   Page content width:
+   100% - 14.4%
+
+   Left and right spacing:
+   7.2%
 */
 
 .stats-row {
@@ -144,100 +129,88 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 
-    width: 85.6%;
-    max-width: none;
-
-    margin: 0 auto;
+    width: calc(100% - 14.4%);
+    margin: 0 7.2%;
     padding: 0;
 
-    transform: translateY(0);
+    box-sizing: border-box;
 }
 
 .stat-card {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-
     width: 100%;
     min-width: 0;
     height: 58px;
 
-    margin: 0;
-    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
 
-    overflow: hidden;
+    padding: 0 13px;
+    margin: 0;
 
     background: #ffffff;
     border: 1px solid #e8e9f2;
     border-radius: 7px;
     box-shadow: 0 5px 20px #30266f12;
+
+    overflow: hidden;
 }
 
 .stat-icon {
+    width: 34px;
+    height: 34px;
     flex: 0 0 34px;
 
     display: grid;
     place-items: center;
-
-    width: 34px;
-    height: 34px;
 
     border-radius: 9px;
     font-size: 17px;
 }
 
 .stat-icon.purple {
-    color: #6d2ce0;
     background: #f0e9ff;
+    color: #6d2ce0;
 }
 
 .stat-icon.orange {
-    color: #ff7218;
     background: #fff0e4;
+    color: #ff7218;
 }
 
 .stat-icon.blue {
-    color: #3564e5;
     background: #edf2ff;
+    color: #3564e5;
 }
 
 .stat-icon.green {
-    color: #3e9346;
     background: #e8f7e7;
+    color: #3e9346;
 }
 
 .stat-card > div:last-child {
-    flex: 1 1 auto;
     min-width: 0;
+    flex: 1;
     overflow: hidden;
 }
 
 .stat-card strong {
     display: block;
-
-    overflow: hidden;
-
     color: #10134f;
     font-size: 16px;
-    font-weight: 700;
     line-height: 17px;
-
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .stat-card small {
     display: block;
-
-    overflow: hidden;
-
     margin-top: 3px;
-
     color: #777a99;
     font-size: 9px;
-    line-height: 1.2;
-
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -245,76 +218,61 @@
     font-size: 11px;
 }
 
-/* ============================================================
-   DIRECTORY CONTAINER
-   ============================================================ */
+/* ------------------------------------------------------------
+   DIRECTORY TABLE
+   ------------------------------------------------------------ */
 
 .directory-main {
-    display: flex;
-    flex-direction: column;
-
-    width: 85.6%;
+    width: calc(100% - 14.4%);
     height: calc(100vh - 430px);
     min-height: 300px;
 
-    margin: 12px auto 14px;
+    margin: 10px 7.2% 14px;
 
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
     background: #ffffff;
     border: 1px solid #e4e5ef;
     border-radius: 9px;
     box-shadow: 0 5px 20px #30266f0d;
-}
 
-/* ============================================================
-   DIRECTORY HEADER
-   ============================================================ */
+    overflow: hidden;
+}
 
 .directory-heading {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
+    align-items: flex-start;
 
     padding: 17px 20px 12px;
-
     border-bottom: 1px solid #f0f0f5;
 }
 
 .directory-heading h2 {
     margin: 5px 0;
-
     color: #10134f;
     font-size: 18px;
-    font-weight: 800;
 }
 
 .directory-heading p {
     margin: 0;
-
     color: #777a99;
     font-size: 10px;
 }
 
 .icon-action,
 .close-action {
-    display: grid;
-    place-items: center;
-
     width: 31px;
     height: 31px;
 
-    color: #5b17c5;
-    background: #ffffff;
     border: 1px solid #e3def2;
     border-radius: 6px;
+    background: #ffffff;
+    color: #5b17c5;
 
     cursor: pointer;
 }
-
-/* ============================================================
-   DIRECTORY TOOLBAR
-   ============================================================ */
 
 .directory-toolbar {
     display: flex;
@@ -323,23 +281,20 @@
     gap: 15px;
 
     padding: 11px 20px;
-
     border-bottom: 1px solid #f0f0f5;
 }
 
 .directory-search {
-    display: flex;
-    align-items: center;
-    gap: 0;
-
     width: min(560px, 65%);
     height: 34px;
 
-    padding: 0 10px;
+    display: flex;
+    align-items: center;
 
-    color: #8a8da8;
+    padding: 0 10px;
     border: 1px solid #dedfeb;
     border-radius: 6px;
+    color: #8a8da8;
 }
 
 .directory-search input {
@@ -347,29 +302,24 @@
     min-width: 0;
 
     padding: 0 8px;
+    border: 0;
+    outline: 0;
 
     color: #10134f;
     font-size: 10px;
-
-    border: 0;
-    outline: 0;
-    background: transparent;
 }
 
 .directory-search button {
     display: none;
-
-    color: #9b9db4;
-    background: transparent;
     border: 0;
-
+    background: transparent;
+    color: #9b9db4;
     cursor: pointer;
 }
 
 .toolbar-meta {
     display: flex;
     gap: 14px;
-
     color: #777a99;
     font-size: 9px;
 }
@@ -378,23 +328,16 @@
     color: #4d148c;
 }
 
-/* ============================================================
-   DIRECTORY TABLE
-   ============================================================ */
-
 .table-wrap {
     position: relative;
-
     flex: 1;
     min-height: 0;
-
     overflow: auto;
 }
 
 table {
     width: 100%;
     min-width: 900px;
-
     border-collapse: collapse;
     table-layout: fixed;
 }
@@ -405,30 +348,24 @@ th {
     z-index: 1;
 
     padding: 11px 12px;
+    border-bottom: 1px solid #e7e8f3;
 
-    color: #5b17c5;
     background: #faf9ff;
-
+    color: #5b17c5;
     text-align: left;
     font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-
-    border-bottom: 1px solid #e7e8f3;
+    letter-spacing: .04em;
 }
 
 td {
     padding: 12px;
+    border-bottom: 1px solid #eeeef5;
 
     vertical-align: top;
-
     color: #303258;
     font-size: 10px;
     line-height: 1.45;
-
     white-space: pre-line;
-
-    border-bottom: 1px solid #eeeef5;
 }
 
 th:nth-child(1) {
@@ -451,10 +388,18 @@ th:nth-child(5) {
     width: 18%;
 }
 
+/* ------------------------------------------------------------
+   MODAL AND OTHER EXISTING STYLES
+   ------------------------------------------------------------ */
+
 .queue-link {
     color: #4d148c;
     font-weight: 700;
     cursor: pointer;
+}
+
+.queue-link:hover {
+    text-decoration: underline;
 }
 
 .queue-link i {
@@ -462,53 +407,38 @@ th:nth-child(5) {
     font-size: 8px;
 }
 
-.queue-link:hover {
-    text-decoration: underline;
-}
-
 td pre {
     margin: 0;
-
     font: inherit;
     white-space: pre-line;
 }
 
 .search-highlight {
-    color: inherit;
     background: #fff0b8;
+    color: inherit;
 }
 
 .empty-state {
     display: none;
-
     padding: 45px 15px;
-
     color: #777a99;
-    font-size: 11px;
     text-align: center;
+    font-size: 11px;
 }
 
 .empty-state i {
     display: block;
-
     margin-bottom: 10px;
-
     color: #b9a8e8;
     font-size: 30px;
 }
 
 .empty-state strong {
     display: block;
-
     margin-bottom: 4px;
-
     color: #303258;
     font-size: 13px;
 }
-
-/* ============================================================
-   CASE DETAILS MODAL
-   ============================================================ */
 
 .case-modal {
     position: fixed;
@@ -520,14 +450,12 @@ td pre {
     justify-content: center;
 
     padding: 20px;
-
     background: #10134f55;
 }
 
 .modal-panel {
     width: min(760px, 100%);
     max-height: 90vh;
-
     overflow: auto;
 
     background: #ffffff;
@@ -540,13 +468,11 @@ td pre {
     justify-content: space-between;
 
     padding: 18px 20px;
-
     border-bottom: 1px solid #eeeef5;
 }
 
 .modal-header h2 {
     margin: 5px 0 0;
-
     color: #10134f;
     font-size: 19px;
 }
@@ -574,10 +500,9 @@ td pre {
 .detail-card,
 .premium-card {
     padding: 12px;
-
-    background: #ffffff;
     border: 1px solid #e8e9f2;
     border-radius: 7px;
+    background: #ffffff;
 }
 
 .detail-card.full,
@@ -588,9 +513,7 @@ td pre {
 .detail-card small,
 .premium-card small {
     display: block;
-
     margin-bottom: 6px;
-
     color: #777a99;
     font-size: 9px;
 }
@@ -598,7 +521,6 @@ td pre {
 .detail-card p,
 .premium-card p {
     margin: 0;
-
     color: #303258;
     font-size: 11px;
     white-space: pre-line;
@@ -616,10 +538,6 @@ td pre {
     display: grid;
 }
 
-/* ============================================================
-   TOAST / PAGE
-   ============================================================ */
-
 .toast {
     position: fixed;
     right: 25px;
@@ -627,11 +545,10 @@ td pre {
     z-index: 150;
 
     padding: 10px 14px;
-
-    color: #ffffff;
-    background: #21145b;
     border-radius: 7px;
 
+    background: #21145b;
+    color: #ffffff;
     font-size: 10px;
 }
 
@@ -643,9 +560,9 @@ body.modal-open {
     overflow: hidden;
 }
 
-/* ============================================================
+/* ------------------------------------------------------------
    RESPONSIVE
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 @media (max-width: 900px) {
     .case-hero {
@@ -655,13 +572,16 @@ body.modal-open {
     }
 
     .stats-row {
+        width: calc(100% - 10%);
+        margin-left: 5%;
+        margin-right: 5%;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-
-        width: 90%;
     }
 
     .directory-main {
-        width: 90%;
+        width: calc(100% - 10%);
+        margin-left: 5%;
+        margin-right: 5%;
         height: calc(100vh - 390px);
     }
 
@@ -676,14 +596,6 @@ body.modal-open {
     .directory-toolbar {
         display: block;
     }
-
-    .directory-search {
-        margin-bottom: 8px;
-    }
-
-    .case-hero h1 {
-        font-size: 26px;
-    }
 }
 
 @media (max-width: 520px) {
@@ -691,21 +603,21 @@ body.modal-open {
         height: 390px;
     }
 
+    .case-hero h1 {
+        font-size: 26px;
+    }
+
     .stats-row {
+        width: calc(100% - 8%);
+        margin-left: 4%;
+        margin-right: 4%;
         grid-template-columns: 1fr;
-        width: 92%;
     }
 
     .directory-main {
-        width: 92%;
-    }
-
-    .directory-heading {
-        padding: 14px;
-    }
-
-    .directory-toolbar {
-        padding: 10px 14px;
+        width: calc(100% - 8%);
+        margin-left: 4%;
+        margin-right: 4%;
     }
 
     .detail-grid,
