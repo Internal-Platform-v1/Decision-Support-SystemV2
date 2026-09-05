@@ -1,15 +1,54 @@
-(function(){
-"use strict";
-const DATA_BASE=(document.querySelector('base')?.getAttribute('href')||'');
-let fbc=[],ebs=[];
-const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
-const tokens=s=>new Set(norm(s).split(' ').filter(x=>x.length>2));
-function score(a,b){let A=tokens(a),B=tokens(b),n=0; A.forEach(x=>{if(B.has(x))n++}); return n;}
-function put(id,text){const e=document.getElementById(id); if(e){e.textContent=text||'No matching reference found.'; e.classList.toggle('empty',!text)}}
-async function load(){try{[fbc,ebs]=await Promise.all([fetch(DATA_BASE+'assets/data/fbc-comments.json').then(r=>r.json()),fetch(DATA_BASE+'assets/data/ebs-responses.json').then(r=>r.json())])}catch(e){console.error('Reference loading failed',e)}}
-function bestFbc(query){let best=null,bs=0; for(const r of fbc){let s=score(query,(r['Queue Type']||'')+' '+(r.Action||'')+' '+(r['Recommended Comment']||'')); if(s>bs){bs=s;best=r}} return bs?best:null}
-function bestEbs(query){let best=null,bs=0; for(const r of ebs){let s=score(query,(r.Concern||'')+' '+(r.Description||'')+' '+(r.Type||'')); if(s>bs){bs=s;best=r}} return bs?best:null}
-function corr(query){let q=norm(query); const rules=[['weight','YEAR'],['nmfc','NACC'],['description','EACC'],['handling unit','EHUN'],['service type','EPDC'],['reference number','EREF'],['accessorial','ACC'],['account code','ECD'],['terms','CAE'],['debtor','ECD'],['pricing','PRCE'],['class','NACC']]; for(const x of rules)if(q.includes(x[0]))return x[1]; return 'Review Correction Code Guide';}
-window.addEventListener('guide-final-recommendation',async ev=>{await load(); const d=ev.detail||{}; const query=[d.recommendation||'',...(d.path||[]).map(x=>x.label||x.text||x)].join(' '); const f=bestFbc(query),e=bestEbs(query); put('suggestedComment',f&& (f['Recommended Comment']||f['2x4 Comment '])); put('suggestedCorrCode',corr(query)); put('suggestedEmail',e&&e['Response Template']);});
-load();
+(function () {
+  "use strict";
+
+  const EMPTY = "No matching reference found.";
+  const text = v => String(v || "").trim();
+  const normalize = v => text(v).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const pathText = path => (path || []).map(x => typeof x === "string" ? x : (x.label || x.text || x.value || "")).join(" ");
+  const setOutput = (id, value) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = value || EMPTY;
+    el.classList.toggle("empty", !value);
+  };
+
+  function findComment(recommendation, path) {
+    const haystack = normalize(recommendation + " " + pathText(path));
+    const rows = window.FBC_COMMENT_REFERENCE || [];
+    let best = null, score = 0;
+    rows.forEach(row => {
+      const terms = [row.action, row.queueType, row.comment2x4].filter(Boolean);
+      const s = terms.reduce((n, term) => n + (haystack.includes(normalize(term)) ? normalize(term).split(" ").length : 0), 0);
+      if (s > score && row.recommendedComment) { score = s; best = row; }
+    });
+    return best ? best.recommendedComment : "";
+  }
+
+  function findEmail(recommendation, path) {
+    const haystack = normalize(recommendation + " " + pathText(path));
+    const rows = window.EBS_RESPONSE_REFERENCE || [];
+    let best = null, score = 0;
+    rows.forEach(row => {
+      const terms = [row.concern, row.description, row.type].filter(Boolean);
+      const s = terms.reduce((n, term) => n + (haystack.includes(normalize(term)) ? normalize(term).split(" ").length : 0), 0);
+      if (s > score && row.responseTemplate) { score = s; best = row; }
+    });
+    if (best) return best.responseTemplate;
+    const approved = rows.find(r => normalize(r.concern) === "all request approved");
+    return approved ? approved.responseTemplate : "";
+  }
+
+  function findCorrCode(recommendation, path) {
+    const value = text(recommendation + " " + pathText(path));
+    const codes = ["CUSI", "CAE", "RQE", "SYSM", "ACCR", "ECD", "ETMS", "OPSO", "OPSD", "EPDC", "EREF", "ACC", "EADL", "NACC", "EACC", "EXPR", "PRCE", "PROT", "PRHA", "SSDY", "YEAR"];
+    const found = codes.find(code => new RegExp("\\b" + code + "\\b", "i").test(value));
+    return found || "";
+  }
+
+  window.addEventListener("guide-final-recommendation", event => {
+    const detail = event.detail || {};
+    setOutput("suggestedComment", findComment(detail.recommendation, detail.path));
+    setOutput("suggestedCorrCode", findCorrCode(detail.recommendation, detail.path));
+    setOutput("suggestedEmail", findEmail(detail.recommendation, detail.path));
+  });
 })();
