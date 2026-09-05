@@ -1,0 +1,1 @@
+(function(){ "use strict"; const set=(id,v)=>{const e=document.getElementById(id);if(e){e.textContent=v||"No matching reference found.";e.classList.toggle("empty",!v);}}; window.addEventListener("guide-final-recommendation",e=>{set("suggestedComment","");set("suggestedCorrCode","");set("suggestedEmail","");});})();

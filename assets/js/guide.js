@@ -243,6 +243,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     renderPath();
     updateRecommendation(text, true);
     loadTemplates(text);
+    window.dispatchEvent(new CustomEvent("guide-final-recommendation", { detail: { guideId: GUIDE_CONFIG.id, recommendation: text, path: state.path.slice() } }));
 
     $("stageCard").innerHTML = `
       <div class="stage-top">
