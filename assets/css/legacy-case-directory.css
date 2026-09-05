@@ -69,3 +69,43 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   V2 CASE DIRECTORY — STAT CARDS POSITIONING
+   ============================================================ */
+
+/* Center the four cards as one group */
+.stats-grid {
+    width: min(100% - 48px, 868px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    transform: translateY(0);
+}
+
+/* Keep all four cards the same height */
+.stats-card {
+    min-width: 0;
+    height: 64px;
+    padding: 12px 14px;
+    box-sizing: border-box;
+}
+
+/* Reduce the space below the cards */
+.directory-section {
+    margin-top: 24px;
+}
+
+/* Keep the cards centered on smaller screens */
+@media (max-width: 900px) {
+    .stats-grid {
+        width: calc(100% - 32px);
+    }
+}
+
+@media (max-width: 700px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
