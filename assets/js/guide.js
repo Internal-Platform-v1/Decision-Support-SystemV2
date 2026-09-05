@@ -242,8 +242,16 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     progress();
     renderPath();
     updateRecommendation(text, true);
-    loadTemplates(text);
-    window.dispatchEvent(new CustomEvent("guide-final-recommendation", { detail: { guideId: GUIDE_CONFIG.id, recommendation: text, path: state.path.slice() } }));
+    // Static JavaScript references generate the three outputs.
+    // Do not call the old Firestore template loader here because it clears
+    // the generated values and replaces them with blank values.
+    window.dispatchEvent(new CustomEvent("guide-final-recommendation", {
+      detail: {
+        guideId: GUIDE_CONFIG.id,
+        recommendation: text,
+        path: state.path.slice()
+      }
+    }));
 
     $("stageCard").innerHTML = `
       <div class="stage-top">
