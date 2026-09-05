@@ -1,0 +1,1 @@
+window.CORRECTION_CODE_REFERENCE = [];
