@@ -1,134 +1,141 @@
 (function () {
   "use strict";
 
-  const EMPTY = "No matching reference found.";
-  const clean = value => String(value ?? "").trim();
-  const normalize = value => clean(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  // Automatic output generation is intentionally disabled until the
+  // reference mappings have been verified with the employees.
+  const ENABLE_AUTOMATIC_OUTPUTS = false;
+  const EMPTY = "";
 
-  const words = value => normalize(value).split(" ").filter(word => word.length > 2);
+  const text = value => String(value || "").trim();
+  const normalize = value =>
+    text(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
-  function pathText(path) {
-    return (Array.isArray(path) ? path : []).map(step => {
-      if (typeof step === "string") return step;
-      return [step.question, step.answer, step.label, step.text]
-        .filter(Boolean)
-        .join(" ");
-    }).join(" ");
-  }
+  const pathText = path =>
+    (path || [])
+      .map(item =>
+        typeof item === "string"
+          ? item
+          : item?.label || item?.text || item?.value || ""
+      )
+      .join(" ");
 
-  function setOutput(id, value) {
+  const setOutput = (id, value = EMPTY) => {
     const element = document.getElementById(id);
     if (!element) return;
-    const result = clean(value);
-    element.textContent = result || EMPTY;
-    element.classList.toggle("empty", !result);
-  }
+    element.textContent = value;
+    element.classList.toggle("empty", !value);
+  };
 
-  function rowValue(row, names) {
-    for (const name of names) {
-      if (row && row[name] != null && clean(row[name])) return clean(row[name]);
-    }
-    return "";
-  }
-
-  function matchScore(query, candidate) {
-    const q = new Set(words(query));
-    const c = new Set(words(candidate));
+  // Kept for the future verified-reference implementation.
+  function findComment(recommendation, path) {
+    const haystack = normalize(`${recommendation} ${pathText(path)}`);
+    const rows = window.FBC_COMMENT_REFERENCE || [];
+    let best = null;
     let score = 0;
-    q.forEach(word => { if (c.has(word)) score += word.length > 5 ? 2 : 1; });
-    return score;
-  }
-
-  function findFbc(query) {
-    const rows = Array.isArray(window.FBC_COMMENT_REFERENCE)
-      ? window.FBC_COMMENT_REFERENCE : [];
-    let best = null;
-    let bestScore = 0;
 
     rows.forEach(row => {
-      const candidate = [
-        rowValue(row, ["Queue Type", "queueType"]),
-        rowValue(row, ["Action", "action"]),
-        rowValue(row, ["2x4 Comment ", "2x4 Comment", "comment2x4"]),
-        rowValue(row, ["Recommended Comment", "recommendedComment"])
-      ].join(" ");
-      const score = matchScore(query, candidate);
-      if (score > bestScore) {
-        bestScore = score;
+      const terms = [row.action, row.queueType, row.comment2x4].filter(Boolean);
+      const currentScore = terms.reduce((total, term) => {
+        const normalizedTerm = normalize(term);
+        return total +
+          (normalizedTerm && haystack.includes(normalizedTerm)
+            ? normalizedTerm.split(" ").length
+            : 0);
+      }, 0);
+
+      if (currentScore > score && row.recommendedComment) {
+        score = currentScore;
         best = row;
       }
     });
 
-    if (!best || bestScore < 2) return "";
-    return rowValue(best, ["Recommended Comment", "recommendedComment", "2x4 Comment ", "2x4 Comment"]);
+    return best ? best.recommendedComment : "";
   }
 
-  function findEbs(query) {
-    const rows = Array.isArray(window.EBS_RESPONSE_REFERENCE)
-      ? window.EBS_RESPONSE_REFERENCE : [];
+  // Kept for the future verified-reference implementation.
+  function findEmail(recommendation, path) {
+    const haystack = normalize(`${recommendation} ${pathText(path)}`);
+    const rows = window.EBS_RESPONSE_REFERENCE || [];
     let best = null;
-    let bestScore = 0;
+    let score = 0;
 
     rows.forEach(row => {
-      const candidate = [
-        rowValue(row, ["Concern", "concern"]),
-        rowValue(row, ["Description", "description"]),
-        rowValue(row, ["Type", "type"]),
-        rowValue(row, ["Note", "note"]),
-        rowValue(row, ["Response Template", "responseTemplate"])
-      ].join(" ");
-      const score = matchScore(query, candidate);
-      if (score > bestScore) {
-        bestScore = score;
+      const terms = [row.concern, row.description, row.type].filter(Boolean);
+      const currentScore = terms.reduce((total, term) => {
+        const normalizedTerm = normalize(term);
+        return total +
+          (normalizedTerm && haystack.includes(normalizedTerm)
+            ? normalizedTerm.split(" ").length
+            : 0);
+      }, 0);
+
+      if (currentScore > score && row.responseTemplate) {
+        score = currentScore;
         best = row;
       }
     });
 
-    if (best && bestScore >= 2) {
-      return rowValue(best, ["Response Template", "responseTemplate"]);
+    return best ? best.responseTemplate : "";
+  }
+
+  // Kept for the future verified Correction Code Guide integration.
+  function findCorrCode(recommendation, path) {
+    const haystack = normalize(`${recommendation} ${pathText(path)}`);
+    const reference = window.CORRECTION_CODE_REFERENCE;
+
+    if (typeof reference === "function") {
+      return text(reference({ recommendation, path }));
     }
 
-    const approved = rows.find(row => normalize(rowValue(row, ["Concern", "concern"])) === "all request approved");
-    return approved ? rowValue(approved, ["Response Template", "responseTemplate"]) : "";
+    if (reference && typeof reference.findCode === "function") {
+      return text(reference.findCode({ recommendation, path }));
+    }
+
+    return text(haystack && "");
   }
 
-  function findCorrectionCode(query) {
-    const rules = Array.isArray(window.CORRECTION_CODE_REFERENCE)
-      ? window.CORRECTION_CODE_REFERENCE : [];
-    const normalizedQuery = normalize(query);
-
-    let best = null;
-    let bestScore = 0;
-    rules.forEach(rule => {
-      const terms = Array.isArray(rule.terms) ? rule.terms : [];
-      const score = terms.reduce((total, term) => {
-        const normalizedTerm = normalize(term);
-        return total + (normalizedTerm && normalizedQuery.includes(normalizedTerm) ? words(term).length + 1 : 0);
-      }, 0);
-      if (score > bestScore) {
-        bestScore = score;
-        best = rule;
-      }
-    });
-
-    return best && best.code ? best.code : "Review Correction Code Guide";
+  function clearSuggestedTemplates() {
+    setOutput("suggestedComment");
+    setOutput("suggestedCorrCode");
+    setOutput("suggestedEmail");
   }
 
-  function generateFinalOutputs(detail) {
-    const recommendation = clean(detail && detail.recommendation);
-    const query = [recommendation, pathText(detail && detail.path)].filter(Boolean).join(" ");
-
-    setOutput("suggestedComment", findFbc(query));
-    setOutput("suggestedCorrCode", findCorrectionCode(query));
-    setOutput("suggestedEmail", findEbs(query));
+  function hideSuggestedTemplates() {
+    const card = document.querySelector(".templates-card");
+    if (!card) return;
+    card.hidden = true;
+    card.setAttribute("aria-hidden", "true");
   }
 
-  window.generateFinalOutputs = generateFinalOutputs;
-  window.addEventListener("guide-final-recommendation", event => {
-    generateFinalOutputs(event.detail || {});
-  });
+  function handleFinalRecommendation(event) {
+    const detail = event.detail || {};
+
+    // Do not expose unverified generated content to employees.
+    clearSuggestedTemplates();
+
+    if (!ENABLE_AUTOMATIC_OUTPUTS) {
+      hideSuggestedTemplates();
+      return;
+    }
+
+    setOutput("suggestedComment", findComment(detail.recommendation, detail.path));
+    setOutput("suggestedCorrCode", findCorrCode(detail.recommendation, detail.path));
+    setOutput("suggestedEmail", findEmail(detail.recommendation, detail.path));
+  }
+
+  window.addEventListener("guide-final-recommendation", handleFinalRecommendation);
+  window.addEventListener("DOMContentLoaded", hideSuggestedTemplates);
+
+  // Keep the generator functions available for the later verified mapping work.
+  window.DSSOutputGenerator = {
+    findComment,
+    findCorrCode,
+    findEmail,
+    clearSuggestedTemplates,
+    enable: () => {
+      // Deliberately not enabled automatically. Set the constant to true only
+      // after the reference mappings have been verified.
+      console.warn("DSS automatic outputs are disabled pending reference verification.");
+    }
+  };
 })();
