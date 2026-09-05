@@ -10,15 +10,16 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-<link href="assets/css/header-footer-style.css" rel="stylesheet"/>
-<link href="assets/css/guide-themes.css" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/page-loader.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
 </script>
 
 <link href="assets/css/legacy-case-directory.css" rel="stylesheet"/></head>
-<body class="theme-fedex" data-page="legacy-case-directory">
-<div class="page">
-<div id="site-header"></div>
+<body data-waits-for-user="true" data-page="legacy-case-directory">
+<div class="page-loader" id="pageLoader" role="status" aria-live="polite"><div class="page-loader-inner"><div class="page-loader-mark"><span class="page-loader-ring"></span><span class="page-loader-dot"></span></div><p class="page-loader-text">Loading BD Tools…</p></div></div>
+<div class="app-shell">
+<div id="header-placeholder"></div>
 <main>
 <section class="hero">
 <div class="container">
@@ -179,7 +180,7 @@
 </div>
 </section>
 </main>
-<div id="site-footer"></div>
+<div id="footer-placeholder"></div>
 </div>
 <div id="toast">Copied!</div>
 <!-- =========================================================
@@ -288,14 +289,8 @@
 <script>
     window.SITE_BASE = "";
   </script>
-<script src="assets/js/header-loader.js">
-</script>
-<script src="assets/js/header.js">
-</script>
-<script src="assets/js/footer-loader.js">
-</script>
-<script src="assets/js/theme-loader.js">
-</script>
+<script src="shared/include.js"></script>
+<script src="assets/js/page-loader.js"></script>
 
 <script src="assets/js/legacy-case-directory.js"></script></body>
 </html>
