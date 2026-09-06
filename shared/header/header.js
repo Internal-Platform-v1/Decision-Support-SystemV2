@@ -308,9 +308,6 @@ function updateUserDisplay(profile) {
         });
     }
 
-    /* ------------------------------------------------------------
-       Main navigation
-       ------------------------------------------------------------ */
 /* ------------------------------------------------------------
    Main navigation
    ------------------------------------------------------------ */
@@ -322,9 +319,6 @@ function setupNavigation() {
         .pop()
         .toLowerCase();
 
-    /*
-     * Case Directory remains highlighted on both directory pages.
-     */
     const caseDirectoryPages = [
         "legacy-case-directory.html",
         "shine-case-directory.html"
@@ -333,15 +327,47 @@ function setupNavigation() {
     const caseDirectoryButton =
         document.getElementById("caseDirectoryBtn");
 
+    /*
+     * IMPORTANT:
+     * Remove active from EVERY navigation item first.
+     * This prevents Home and Case Directory from both
+     * being highlighted.
+     */
+    navItems.forEach(function (nav) {
+        nav.classList.remove("active");
+    });
+
+    /*
+     * Highlight Case Directory only on its two pages.
+     */
     if (
         caseDirectoryButton &&
         caseDirectoryPages.includes(currentPage)
     ) {
         caseDirectoryButton.classList.add("active");
+    } else {
+        /*
+         * Highlight the correct regular navigation item.
+         */
+        navItems.forEach(function (item) {
+            const destination = {
+                home: "index-main.html",
+                ebs: "ebs-response-template.html",
+                fbc: "fbc-comments-guide.html",
+                links: "links.html"
+            }[item.dataset.nav];
+
+            if (
+                destination &&
+                currentPage === destination.toLowerCase()
+            ) {
+                item.classList.add("active");
+            }
+        });
     }
 
     /*
-     * Keep the existing navigation behavior for other buttons.
+     * Keep the existing navigation behavior.
      */
     navItems.forEach(function (item) {
         if (item.id === "caseDirectoryBtn") return;
@@ -366,7 +392,6 @@ function setupNavigation() {
         });
     });
 }
-
     /* ------------------------------------------------------------
        Global Search — DSS V2
 
