@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   
@@ -20,13 +20,13 @@
     <div id="header-placeholder"></div>
 
     <main>
-      <section class="case-hero">
+      <section class="case-hero ebs-hero">
         <div class="ebs-container">
           <div class="hero-copy">
             <div class="hero-copy">
               <div class="hero-copy">
                 <div class="eyebrow"><i class="fa-solid fa-envelope-circle-check"></i> Premium response workspace</div>
-                <h1 class="ebs-hero-title">Find the right response faster and send the right message with less effort.</h1>
+                <h1 class="ebs-hero-title">EBS Response</h1>
                 <p>
                   Select the correct concern and response type, review the description, then copy or launch a clean customer-ready reply without extra formatting work.
                 </p>
@@ -36,61 +36,23 @@
                   <button class="secondary-btn" type="button" onclick="scrollToBuilder()">Open builder <i class="fa-solid fa-envelope"></i></button>
                 </div>
 
-                <div class="hero-metrics">
-                  <div class="metric">
+                <div class="stats-row hero-metrics">
+                  <div class="stat-card metric">
                     <strong id="heroConcernCount">—</strong>
                     <span>Available concerns ready to use in the EBS response tool.</span>
                   </div>
-                  <div class="metric">
+                  <div class="stat-card metric">
                     <strong id="heroTypeCount">—</strong>
                     <span>Response types available for the currently selected concern.</span>
                   </div>
-                  <div class="metric">
+                  <div class="stat-card metric">
                     <strong>Live</strong>
                     <span>Copy, feedback, and time tools stay available while you work.</span>
                   </div>
                 </div>
-              </div>
             </div>
 
-            <aside class="ebs-side-stack">
-              <div class="focus-card reveal delay-2">
-                <div class="card-label">
-                  <span><i class="fa-solid fa-compass"></i> How to use</span>
-                  <i class="fa-solid fa-route"></i>
-                </div>
-                <h2>Select the concern, then use the right response type.</h2>
-                <p>Use the response builder to load the correct customer-ready wording and confirm the note before copying.</p>
 
-                <div class="mini-list">
-                  <div class="mini-item">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <div><strong>Select the concern</strong><span>Start with the case topic so the tool can show the right response types.</span></div>
-                  </div>
-                  <div class="mini-item">
-                    <i class="fa-solid fa-list-check"></i>
-                    <div><strong>Choose the correct type</strong><span>Use the response category that matches the case handling.</span></div>
-                  </div>
-                  <div class="mini-item">
-                    <i class="fa-solid fa-eye"></i>
-                    <div><strong>Review the output</strong><span>Check the description, response template, and any extra note shown.</span></div>
-                  </div>
-                  <div class="mini-item">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    <div><strong>Copy or launch Outlook</strong><span>Send the response faster once the correct wording is ready.</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="focus-card dark reveal delay-3">
-                <div class="card-label">
-                  <span><i class="fa-solid fa-shield-halved"></i> Builder ready</span>
-                  <i class="fa-solid fa-truck-fast"></i>
-                </div>
-                <h2>Everything you need is ready in one place.</h2>
-                <p>Use the concern list and template builder to create the right response faster. Reword when needed and avoid sending duplicate responses on reopened cases.</p>
-              </div>
-            </aside>
           </div>
         </div>
       </section>
@@ -143,7 +105,7 @@
                   </div>
                 </div>
 
-                <div style="margin-bottom:14px;">
+                <div class="description-field">
                   <label class="field-label">Description</label>
                   <div id="descBox" class="info-box empty">Select a concern to view the description.</div>
                 </div>
@@ -207,7 +169,7 @@
     <div id="footer-placeholder"></div>
   </div>
 
-  <div id="toast">Copied!</div>
+  <div id="toast" class="toast">Copied!</div>
 
 
 
