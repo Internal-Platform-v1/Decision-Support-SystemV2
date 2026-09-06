@@ -8,11 +8,11 @@
 }
 
 .case-hero{
-    height:300px;
+    height:28    0px;
     position:relative;
     overflow:hidden;
     padding:34px 7.2%;
-    background:#f8f7ff url("../images/hero-background.png") center 74% / cover no-repeat;
+    background:#f8f7ff url("../images/hero-background.png") center 80% / cover no-repeat;
     display:flex;
     justify-content:space-between;
 }
