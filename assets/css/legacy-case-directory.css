@@ -651,3 +651,70 @@ body.modal-open {
         grid-column: auto;
     }
 }
+
+/* =========================================================
+   FINAL ALIGNMENT — CARDS MUST MATCH DIRECTORY EXACTLY
+========================================================= */
+
+.stats-row {
+    position: relative;
+    z-index: 3;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+
+    width: 85.6%;
+    max-width: none;
+
+    margin: 14px auto 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+}
+
+.directory-main {
+    width: 85.6%;
+    max-width: none;
+
+    margin: 12px auto 14px !important;
+    padding: 0;
+
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+}
+
+.stats-row .stat-card {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+}
+
+/* =========================================================
+   RESPONSIVE ALIGNMENT
+========================================================= */
+
+@media (max-width: 900px) {
+    .stats-row {
+        width: 90%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .directory-main {
+        width: 90%;
+    }
+}
+
+@media (max-width: 520px) {
+    .stats-row {
+        width: 92%;
+        grid-template-columns: 1fr;
+    }
+
+    .directory-main {
+        width: 92%;
+    }
+}
