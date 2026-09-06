@@ -99,7 +99,7 @@
     gap:12px;
     width:85.6%;
     max-width:none;
-    margin:-40px auto 0 !important;
+    margin:-70px auto 0 !important;
     padding:0 !important;
     transform:none !important;
     left:auto !important;
@@ -185,7 +185,7 @@
 .directory-main{
     height:calc(100vh - 420px);
     min-height:300px;
-    margin:14px auto 14px !important;
+    margin:5px auto 14px !important;
     display:flex;
     flex-direction:column;
     background:#ffffff;
