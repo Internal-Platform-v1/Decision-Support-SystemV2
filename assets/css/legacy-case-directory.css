@@ -1,30 +1,12 @@
 /* ============================================================
-   LEGACY CASE DIRECTORY — CLEAN VERSION 2 LAYOUT
+   LEGACY CASE DIRECTORY — CLEAN V2 STYLES
    ============================================================ */
 
 * {
     box-sizing: border-box;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-}
-
-body {
-    overflow-x: hidden;
-}
-
-.app-shell {
-    min-height: 100vh;
-    width: 100%;
-}
-
 .case-page {
-    width: 100%;
     background: #ffffff;
     flex: 1 1 auto;
     min-height: 0;
@@ -36,9 +18,8 @@ body {
    ============================================================ */
 
 .case-hero {
-    position: relative;
-    width: 100%;
     height: 220px;
+    position: relative;
     overflow: hidden;
 
     padding: 34px 7.2%;
@@ -137,19 +118,77 @@ body {
 }
 
 /* ============================================================
-   STATS CARDS
+   HERO VISUAL
+   ============================================================ */
+
+.hero-visual {
+    width: 330px;
+    position: relative;
+    margin-right: 5%;
+    opacity: 0.95;
+}
+
+.visual-card {
+    position: absolute;
+
+    width: 64px;
+    height: 64px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 15px;
+
+    color: #ffffff;
+    font-size: 25px;
+
+    box-shadow: 0 10px 25px #4d148c20;
+}
+
+.visual-card.purple {
+    top: 10px;
+    right: 170px;
+    background: #6420df;
+}
+
+.visual-card.orange {
+    top: 70px;
+    right: 65px;
+    background: #ff7218;
+}
+
+.visual-circle {
+    position: absolute;
+
+    right: 120px;
+    bottom: -45px;
+
+    width: 180px;
+    height: 180px;
+
+    display: grid;
+    place-items: center;
+
+    border: 18px solid #ffffff66;
+    border-radius: 50%;
+
+    background: #ffffff99;
+    color: #6b20d0;
+    font-size: 48px;
+}
+
+/* ============================================================
+   STATISTICS CARDS
    IMPORTANT:
-   The cards and directory use the same 7.2% alignment.
+   Same width and same horizontal alignment as .directory-main
    ============================================================ */
 
 .stats-row {
     position: relative;
     z-index: 3;
 
-    width: 85.6%;
-    height: 58px;
-
-    margin: 14px 7.2% 0;
+    width: calc(100% - 14.4%);
+    margin: 14px auto 0;
     padding: 0;
 
     display: grid;
@@ -157,11 +196,6 @@ body {
     gap: 12px;
 
     align-items: stretch;
-    justify-content: stretch;
-
-    transform: none;
-    left: auto;
-    right: auto;
 }
 
 .stat-card {
@@ -169,12 +203,12 @@ body {
     min-width: 0;
     height: 58px;
 
-    margin: 0;
-    padding: 0 13px;
-
     display: flex;
     align-items: center;
     gap: 11px;
+
+    margin: 0;
+    padding: 0 13px;
 
     background: #ffffff;
     border: 1px solid #e8e9f2;
@@ -186,10 +220,10 @@ body {
 }
 
 .stat-icon {
-    flex: 0 0 34px;
-
     width: 34px;
     height: 34px;
+
+    flex: 0 0 34px;
 
     display: grid;
     place-items: center;
@@ -220,7 +254,7 @@ body {
 
 .stat-card > div:last-child {
     min-width: 0;
-    flex: 1 1 auto;
+    flex: 1;
     overflow: hidden;
 }
 
@@ -255,18 +289,16 @@ body {
 
 /* ============================================================
    DIRECTORY WORKSPACE
-   Uses the exact same width and alignment as the cards.
+   IMPORTANT:
+   Uses the exact same width as .stats-row
    ============================================================ */
 
 .directory-main {
-    position: relative;
-
-    width: 85.6%;
+    width: calc(100% - 14.4%);
     height: calc(100vh - 430px);
     min-height: 300px;
 
-    margin: 12px 7.2% 14px;
-    padding: 0;
+    margin: 12px auto 14px;
 
     display: flex;
     flex-direction: column;
@@ -278,10 +310,6 @@ body {
     box-shadow: 0 5px 20px #30266f0d;
 
     overflow: hidden;
-
-    transform: none;
-    left: auto;
-    right: auto;
 }
 
 /* ============================================================
@@ -312,12 +340,22 @@ body {
     font-size: 10px;
 }
 
-.section-kicker {
-    font-size: 9px;
+.icon-action,
+.close-action {
+    width: 31px;
+    height: 31px;
+
+    border: 1px solid #e3def2;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #5b17c5;
+
+    cursor: pointer;
 }
 
 /* ============================================================
-   TOOLBAR
+   SEARCH TOOLBAR
    ============================================================ */
 
 .directory-toolbar {
@@ -340,15 +378,15 @@ body {
 
     padding: 0 10px;
 
-    color: #8a8da8;
-
     border: 1px solid #dedfeb;
     border-radius: 6px;
+
+    color: #8a8da8;
 }
 
 .directory-search input {
-    min-width: 0;
     flex: 1;
+    min-width: 0;
 
     padding: 0 8px;
 
@@ -387,7 +425,6 @@ body {
 
 .table-wrap {
     position: relative;
-
     flex: 1;
     min-height: 0;
 
@@ -410,27 +447,26 @@ th {
     padding: 11px 12px;
 
     background: #faf9ff;
-    color: #5b17c5;
+    border-bottom: 1px solid #e7e8f3;
 
+    color: #5b17c5;
     text-align: left;
     font-size: 9px;
     letter-spacing: 0.04em;
-
-    border-bottom: 1px solid #e7e8f3;
 }
 
 td {
+    padding: 12px;
+
     vertical-align: top;
 
-    padding: 12px;
+    border-bottom: 1px solid #eeeef5;
 
     color: #303258;
     font-size: 10px;
     line-height: 1.45;
 
     white-space: pre-line;
-
-    border-bottom: 1px solid #eeeef5;
 }
 
 th:nth-child(1) {
@@ -490,9 +526,8 @@ td pre {
     padding: 45px 15px;
 
     color: #777a99;
-    font-size: 11px;
-
     text-align: center;
+    font-size: 11px;
 }
 
 .empty-state i {
@@ -511,28 +546,6 @@ td pre {
 
     color: #303258;
     font-size: 13px;
-}
-
-/* ============================================================
-   ACTION BUTTONS
-   ============================================================ */
-
-.icon-action,
-.close-action {
-    width: 31px;
-    height: 31px;
-
-    border: 1px solid #e3def2;
-    border-radius: 6px;
-
-    background: #ffffff;
-    color: #5b17c5;
-
-    cursor: pointer;
-}
-
-.close-action {
-    color: #777a99;
 }
 
 /* ============================================================
@@ -586,6 +599,10 @@ td pre {
     gap: 7px;
 }
 
+.close-action {
+    color: #777a99;
+}
+
 .modal-content {
     padding: 18px 20px;
 }
@@ -627,7 +644,6 @@ td pre {
 
     color: #303258;
     font-size: 11px;
-
     white-space: pre-line;
 }
 
@@ -656,11 +672,14 @@ td pre {
     padding: 10px 14px;
 
     background: #21145b;
-    color: #ffffff;
-
     border-radius: 7px;
 
+    color: #ffffff;
     font-size: 10px;
+}
+
+.app-shell {
+    min-height: 100vh;
 }
 
 body.modal-open {
@@ -672,42 +691,40 @@ body.modal-open {
    ============================================================ */
 
 @media (max-width: 900px) {
+    .stats-row,
+    .directory-main {
+        width: calc(100% - 10%);
+    }
+
+    .stats-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .directory-main {
+        margin-top: 12px;
+    }
+}
+
+@media (max-width: 800px) {
     .case-hero {
         height: 240px;
         padding-left: 5%;
-        padding-right: 5%;
     }
 
     .hero-visual {
         display: none;
     }
 
-    .stats-row {
-        width: 90%;
-        margin-left: 5%;
-        margin-right: 5%;
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .directory-main {
-        width: 90%;
-        margin-left: 5%;
-        margin-right: 5%;
-
-        height: calc(100vh - 390px);
-    }
-
-    .toolbar-meta {
-        display: none;
+    .directory-toolbar {
+        display: block;
     }
 
     .directory-search {
         width: 100%;
     }
 
-    .directory-toolbar {
-        display: block;
+    .toolbar-meta {
+        display: none;
     }
 
     .case-hero h1 {
@@ -716,27 +733,21 @@ body.modal-open {
 }
 
 @media (max-width: 520px) {
-    .stats-row {
-        width: 92%;
-        margin-left: 4%;
-        margin-right: 4%;
+    .stats-row,
+    .directory-main {
+        width: calc(100% - 8%);
+    }
 
+    .stats-row {
         grid-template-columns: 1fr;
     }
 
     .directory-main {
-        width: 92%;
-        margin-left: 4%;
-        margin-right: 4%;
+        margin-top: 12px;
     }
 
     .detail-grid,
     .premium-grid {
         grid-template-columns: 1fr;
-    }
-
-    .detail-card.full,
-    .premium-card.full {
-        grid-column: auto;
     }
 }
