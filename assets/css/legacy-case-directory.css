@@ -1,6 +1,7 @@
-/* ============================================================
-   LEGACY CASE DIRECTORY — CLEAN V2 STYLES
-   ============================================================ */
+/* =========================================================
+   LEGACY CASE DIRECTORY — VERSION 2
+   Cards and directory use the exact same centered width
+   ========================================================= */
 
 * {
     box-sizing: border-box;
@@ -13,25 +14,22 @@
     overflow: hidden;
 }
 
-/* ============================================================
+/* =========================================================
    HERO
-   ============================================================ */
+   ========================================================= */
 
 .case-hero {
     height: 220px;
     position: relative;
     overflow: hidden;
-
     padding: 34px 7.2%;
-
     background:
         #f8f7ff
         url("../images/hero-background.png")
-        center 94% / cover no-repeat;
-
+        center 94% / cover
+        no-repeat;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
 }
 
 .hero-copy {
@@ -44,7 +42,7 @@
 .section-kicker {
     font-size: 9px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: .08em;
     text-transform: uppercase;
     color: #6b20d0;
 }
@@ -53,20 +51,16 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-
-    padding: 7px 11px;
-
     background: #ffffff;
     border: 1px solid #e7ddff;
     border-radius: 20px;
-
+    padding: 7px 11px;
     letter-spacing: 0;
     text-transform: none;
 }
 
 .case-hero h1 {
     margin: 13px 0 8px;
-
     color: #10134f;
     font-size: 31px;
     line-height: 1.08;
@@ -79,9 +73,8 @@
 }
 
 .case-hero p {
-    max-width: 540px;
     margin: 0;
-
+    max-width: 540px;
     color: #45466e;
     font-size: 11px;
     line-height: 1.5;
@@ -97,10 +90,8 @@
 .secondary-btn {
     height: 32px;
     padding: 0 14px;
-
-    border: 1px solid #5b17c5;
     border-radius: 6px;
-
+    border: 1px solid #5b17c5;
     font-size: 10px;
     font-weight: 700;
     cursor: pointer;
@@ -117,85 +108,35 @@
     border-color: #e1d9f4;
 }
 
-/* ============================================================
-   HERO VISUAL
-   ============================================================ */
+/* =========================================================
+   IMPORTANT ALIGNMENT CONTAINER
+   Both sections use this exact width:
+   calc(100% - 14.4%)
+   ========================================================= */
 
-.hero-visual {
-    width: 330px;
-    position: relative;
-    margin-right: 5%;
-    opacity: 0.95;
+.stats-row,
+.directory-main {
+    width: calc(100% - 14.4%);
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.visual-card {
-    position: absolute;
-
-    width: 64px;
-    height: 64px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 15px;
-
-    color: #ffffff;
-    font-size: 25px;
-
-    box-shadow: 0 10px 25px #4d148c20;
-}
-
-.visual-card.purple {
-    top: 10px;
-    right: 170px;
-    background: #6420df;
-}
-
-.visual-card.orange {
-    top: 70px;
-    right: 65px;
-    background: #ff7218;
-}
-
-.visual-circle {
-    position: absolute;
-
-    right: 120px;
-    bottom: -45px;
-
-    width: 180px;
-    height: 180px;
-
-    display: grid;
-    place-items: center;
-
-    border: 18px solid #ffffff66;
-    border-radius: 50%;
-
-    background: #ffffff99;
-    color: #6b20d0;
-    font-size: 48px;
-}
-
-/* ============================================================
-   STATISTICS CARDS
-   IMPORTANT:
-   Same width and same horizontal alignment as .directory-main
-   ============================================================ */
+/* =========================================================
+   STAT CARDS
+   ========================================================= */
 
 .stats-row {
     position: relative;
     z-index: 3;
 
-    width: calc(100% - 14.4%);
-    margin: 14px auto 0;
-    padding: 0;
-
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 
-    align-items: stretch;
+    margin-top: 14px;
+    margin-bottom: 0;
+
+    padding: 0;
 }
 
 .stat-card {
@@ -207,13 +148,12 @@
     align-items: center;
     gap: 11px;
 
-    margin: 0;
     padding: 0 13px;
+    margin: 0;
 
     background: #ffffff;
     border: 1px solid #e8e9f2;
     border-radius: 7px;
-
     box-shadow: 0 5px 20px #30266f12;
 
     overflow: hidden;
@@ -222,7 +162,6 @@
 .stat-icon {
     width: 34px;
     height: 34px;
-
     flex: 0 0 34px;
 
     display: grid;
@@ -260,11 +199,9 @@
 
 .stat-card strong {
     display: block;
-
     color: #10134f;
     font-size: 16px;
     line-height: 17px;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -272,12 +209,9 @@
 
 .stat-card small {
     display: block;
-
     margin-top: 3px;
-
     color: #777a99;
     font-size: 9px;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -287,18 +221,16 @@
     font-size: 11px;
 }
 
-/* ============================================================
-   DIRECTORY WORKSPACE
-   IMPORTANT:
-   Uses the exact same width as .stats-row
-   ============================================================ */
+/* =========================================================
+   DIRECTORY PANEL
+   ========================================================= */
 
 .directory-main {
-    width: calc(100% - 14.4%);
     height: calc(100vh - 430px);
     min-height: 300px;
 
-    margin: 12px auto 14px;
+    margin-top: 12px;
+    margin-bottom: 14px;
 
     display: flex;
     flex-direction: column;
@@ -306,15 +238,10 @@
     background: #ffffff;
     border: 1px solid #e4e5ef;
     border-radius: 9px;
-
     box-shadow: 0 5px 20px #30266f0d;
 
     overflow: hidden;
 }
-
-/* ============================================================
-   DIRECTORY HEADER
-   ============================================================ */
 
 .directory-heading {
     display: flex;
@@ -322,20 +249,17 @@
     align-items: flex-start;
 
     padding: 17px 20px 12px;
-
     border-bottom: 1px solid #f0f0f5;
 }
 
 .directory-heading h2 {
     margin: 5px 0;
-
     color: #10134f;
     font-size: 18px;
 }
 
 .directory-heading p {
     margin: 0;
-
     color: #777a99;
     font-size: 10px;
 }
@@ -350,13 +274,12 @@
 
     background: #ffffff;
     color: #5b17c5;
-
     cursor: pointer;
 }
 
-/* ============================================================
+/* =========================================================
    SEARCH TOOLBAR
-   ============================================================ */
+   ========================================================= */
 
 .directory-toolbar {
     display: flex;
@@ -365,7 +288,6 @@
     gap: 15px;
 
     padding: 11px 20px;
-
     border-bottom: 1px solid #f0f0f5;
 }
 
@@ -403,7 +325,6 @@
     border: 0;
     background: transparent;
     color: #9b9db4;
-
     cursor: pointer;
 }
 
@@ -419,22 +340,20 @@
     color: #4d148c;
 }
 
-/* ============================================================
+/* =========================================================
    TABLE
-   ============================================================ */
+   ========================================================= */
 
 .table-wrap {
     position: relative;
     flex: 1;
     min-height: 0;
-
     overflow: auto;
 }
 
 table {
     width: 100%;
     min-width: 900px;
-
     border-collapse: collapse;
     table-layout: fixed;
 }
@@ -452,12 +371,11 @@ th {
     color: #5b17c5;
     text-align: left;
     font-size: 9px;
-    letter-spacing: 0.04em;
+    letter-spacing: .04em;
 }
 
 td {
     padding: 12px;
-
     vertical-align: top;
 
     border-bottom: 1px solid #eeeef5;
@@ -465,7 +383,6 @@ td {
     color: #303258;
     font-size: 10px;
     line-height: 1.45;
-
     white-space: pre-line;
 }
 
@@ -495,18 +412,17 @@ th:nth-child(5) {
     cursor: pointer;
 }
 
+.queue-link:hover {
+    text-decoration: underline;
+}
+
 .queue-link i {
     margin-left: 3px;
     font-size: 8px;
 }
 
-.queue-link:hover {
-    text-decoration: underline;
-}
-
 td pre {
     margin: 0;
-
     font: inherit;
     white-space: pre-line;
 }
@@ -516,13 +432,8 @@ td pre {
     color: inherit;
 }
 
-/* ============================================================
-   EMPTY STATE
-   ============================================================ */
-
 .empty-state {
     display: none;
-
     padding: 45px 15px;
 
     color: #777a99;
@@ -532,25 +443,21 @@ td pre {
 
 .empty-state i {
     display: block;
-
     margin-bottom: 10px;
-
     color: #b9a8e8;
     font-size: 30px;
 }
 
 .empty-state strong {
     display: block;
-
     margin-bottom: 4px;
-
     color: #303258;
     font-size: 13px;
 }
 
-/* ============================================================
+/* =========================================================
    MODAL
-   ============================================================ */
+   ========================================================= */
 
 .case-modal {
     position: fixed;
@@ -562,19 +469,16 @@ td pre {
     justify-content: center;
 
     padding: 20px;
-
     background: #10134f55;
 }
 
 .modal-panel {
     width: min(760px, 100%);
     max-height: 90vh;
-
     overflow: auto;
 
     background: #ffffff;
     border-radius: 10px;
-
     box-shadow: 0 20px 60px #10134f30;
 }
 
@@ -583,13 +487,11 @@ td pre {
     justify-content: space-between;
 
     padding: 18px 20px;
-
     border-bottom: 1px solid #eeeef5;
 }
 
 .modal-header h2 {
     margin: 5px 0 0;
-
     color: #10134f;
     font-size: 19px;
 }
@@ -631,9 +533,7 @@ td pre {
 .detail-card small,
 .premium-card small {
     display: block;
-
     margin-bottom: 6px;
-
     color: #777a99;
     font-size: 9px;
 }
@@ -641,7 +541,6 @@ td pre {
 .detail-card p,
 .premium-card p {
     margin: 0;
-
     color: #303258;
     font-size: 11px;
     white-space: pre-line;
@@ -659,9 +558,9 @@ td pre {
     display: grid;
 }
 
-/* ============================================================
+/* =========================================================
    TOAST
-   ============================================================ */
+   ========================================================= */
 
 .toast {
     position: fixed;
@@ -686,11 +585,16 @@ body.modal-open {
     overflow: hidden;
 }
 
-/* ============================================================
+/* =========================================================
    RESPONSIVE
-   ============================================================ */
+   ========================================================= */
 
 @media (max-width: 900px) {
+    .case-hero {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
     .stats-row,
     .directory-main {
         width: calc(100% - 10%);
@@ -700,25 +604,6 @@ body.modal-open {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .directory-main {
-        margin-top: 12px;
-    }
-}
-
-@media (max-width: 800px) {
-    .case-hero {
-        height: 240px;
-        padding-left: 5%;
-    }
-
-    .hero-visual {
-        display: none;
-    }
-
-    .directory-toolbar {
-        display: block;
-    }
-
     .directory-search {
         width: 100%;
     }
@@ -726,13 +611,23 @@ body.modal-open {
     .toolbar-meta {
         display: none;
     }
+}
+
+@media (max-width: 520px) {
+    .case-hero {
+        height: 240px;
+        padding-left: 4%;
+        padding-right: 4%;
+    }
 
     .case-hero h1 {
         font-size: 26px;
     }
-}
 
-@media (max-width: 520px) {
+    .hero-visual {
+        display: none;
+    }
+
     .stats-row,
     .directory-main {
         width: calc(100% - 8%);
@@ -742,12 +637,17 @@ body.modal-open {
         grid-template-columns: 1fr;
     }
 
-    .directory-main {
-        margin-top: 12px;
+    .directory-toolbar {
+        display: block;
     }
 
     .detail-grid,
     .premium-grid {
         grid-template-columns: 1fr;
+    }
+
+    .detail-card.full,
+    .premium-card.full {
+        grid-column: auto;
     }
 }
