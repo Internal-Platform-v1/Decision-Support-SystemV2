@@ -1,5 +1,5 @@
 *{box-sizing:border-box}
-.case-page{background:#ffffff;flex:1 1 auto;min-height:0;overflow:hidden}
+.case-page{background:#ffffff;flex:0 0 auto;min-height:0;overflow:visible}
 .case-hero{height:220px;position:relative;overflow:hidden;padding:34px 7.2%;background:#f8f7ff url("../images/hero-background.png") center 105% / cover no-repeat;display:flex;justify-content:space-between}
 .hero-copy{position:relative;z-index:2;max-width:620px}
 .eyebrow,.section-kicker{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6b20d0}
@@ -22,7 +22,7 @@
 .stat-card strong{display:block;color:#10134f;font-size:16px;line-height:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat-card small{display:block;margin-top:3px;color:#777a99;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status-stat strong{font-size:11px}
-.directory-main{height:450px;min-height:270px;margin:6px auto 14px !important;display:flex;flex-direction:column;background:#ffffff;border:1px solid #e4e5ef;border-radius:9px;box-shadow:0 5px 20px #30266f0d;overflow:hidden;width:85.6%;max-width:none;padding:0 !important;transform:none !important;left:auto !important;right:auto !important}
+.directory-main{height:480px;min-height:270px;margin:6px auto 14px !important;display:flex;flex-direction:column;background:#ffffff;border:1px solid #e4e5ef;border-radius:9px;box-shadow:0 5px 20px #30266f0d;overflow:hidden;width:85.6%;max-width:none;padding:0 !important;transform:none !important;left:auto !important;right:auto !important}
 .directory-heading{display:flex;justify-content:space-between;align-items:flex-start;padding:17px 20px 12px;border-bottom:1px solid #f0f0f5}
 .directory-heading h2{margin:5px 0;color:#10134f;font-size:18px}
 .directory-heading p{margin:0;color:#777a99;font-size:10px}
