@@ -1,10 +1,5 @@
 
 
-    html.page-protected,
-    html.page-protected body{
-      visibility:hidden;
-    }
-
     :root{
       --cream:#f7f8fb;
       --cream-2:#edf0f6;
