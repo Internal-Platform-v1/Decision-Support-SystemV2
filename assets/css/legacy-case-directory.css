@@ -183,7 +183,7 @@
 }
 
 .directory-main{
-    height:calc(100vh - 400px);
+    height:calc(100vh - 350px);
     min-height:380px;
     margin:5px auto 14px !important;
     display:flex;
