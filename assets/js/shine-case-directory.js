@@ -287,7 +287,7 @@
       }
 
       function updateCounts(rows) {
-        const uniqueQueues = [...new Set(CASES.map(r => (r["QUEUE/ Request"] || "").trim()).filter(Boolean))];
+        const uniqueQueues = [...new Set(CASES.map(r => (r["ISELL QUEUE"] || "").trim()).filter(Boolean))];
         heroCaseCount.textContent = CASES.length || "0";
         totalRowsValue.textContent = CASES.length || "0";
         heroQueueCount.textContent = uniqueQueues.length || "0";
@@ -334,14 +334,14 @@
             <tr>
               <td>
                 <span class="queue-link" data-original-index="${idx}">
-                  ${highlightText(r["QUEUE/ Request"], query)}
+                  ${highlightText(r["ISELL QUEUE"], query)}
                   <i class="fa-solid fa-up-right-from-square"></i>
                 </span>
               </td>
-              <td style="white-space:pre-line">${highlightText(r["Concern"], query)}</td>
-              <td style="white-space:pre-line">${highlightText(r["ACTION"], query)}</td>
-              <td>${highlightText(r["Email Address"], query)}</td>
-              <td><pre>${highlightText(r["Case Assignment/Email"], query)}</pre></td>
+              <td style="white-space:pre-line">${highlightText(r["CASE RECORD TYPE"], query)}</td>
+              <td style="white-space:pre-line">${highlightText(r["Automatic Case Owner"], query)}</td>
+              <td>${highlightText(r["CORRECT CASE OWNER"], query)}</td>
+              <td><pre>${highlightText(r["Additional Information Required When Moving"], query)}</pre></td>
             </tr>
           `;
         }).join("");
@@ -362,11 +362,11 @@
         const otherMatches = [];
 
         CASES.forEach(r => {
-          const queue = (r["QUEUE/ Request"] || "").toLowerCase().trim();
-          const concern = (r["Concern"] || "").toLowerCase().trim();
-          const action = (r["ACTION"] || "").toLowerCase().trim();
-          const email = (r["Email Address"] || "").toLowerCase().trim();
-          const assignment = (r["Case Assignment/Email"] || "").toLowerCase().trim();
+          const queue = (r["ISELL QUEUE"] || "").toLowerCase().trim();
+          const concern = (r["CASE RECORD TYPE"] || "").toLowerCase().trim();
+          const action = (r["Automatic Case Owner"] || "").toLowerCase().trim();
+          const email = (r["CORRECT CASE OWNER"] || "").toLowerCase().trim();
+          const assignment = (r["Additional Information Required When Moving"] || "").toLowerCase().trim();
 
           if (queue.startsWith(query)) {
             startsWithQueue.push(r);
