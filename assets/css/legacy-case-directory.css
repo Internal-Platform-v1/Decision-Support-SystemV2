@@ -184,7 +184,7 @@
 
 .directory-main{
     height:calc(100vh - 470px);
-    min-height:380px;
+    min-height:350px;
     margin:5px auto 14px !important;
     display:flex;
     flex-direction:column;
