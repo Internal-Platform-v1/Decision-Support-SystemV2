@@ -311,32 +311,61 @@ function updateUserDisplay(profile) {
     /* ------------------------------------------------------------
        Main navigation
        ------------------------------------------------------------ */
-    function setupNavigation() {
-        const navItems = document.querySelectorAll(".brand-nav .nav-item");
+/* ------------------------------------------------------------
+   Main navigation
+   ------------------------------------------------------------ */
+function setupNavigation() {
+    const navItems = document.querySelectorAll(".brand-nav .nav-item");
 
-        navItems.forEach(function (item) {
-            if (item.id === "caseDirectoryBtn") return;
+    const currentPage = window.location.pathname
+        .split("/")
+        .pop()
+        .toLowerCase();
 
-            item.addEventListener("click", function () {
-                navItems.forEach(function (nav) {
-                    nav.classList.remove("active");
-                });
+    /*
+     * Case Directory remains highlighted on both directory pages.
+     */
+    const caseDirectoryPages = [
+        "legacy-case-directory.html",
+        "shine-case-directory.html"
+    ];
 
-                this.classList.add("active");
+    const caseDirectoryButton =
+        document.getElementById("caseDirectoryBtn");
 
-                const destination = {
-                    home: "index-main.html",
-                    ebs: "ebs-response-template.html",
-                    fbc: "fbc-comments-guide.html",
-                    links: "links.html"
-                }[this.dataset.nav];
-
-                if (destination) {
-                    window.location.href = destination;
-                }
-            });
-        });
+    if (
+        caseDirectoryButton &&
+        caseDirectoryPages.includes(currentPage)
+    ) {
+        caseDirectoryButton.classList.add("active");
     }
+
+    /*
+     * Keep the existing navigation behavior for other buttons.
+     */
+    navItems.forEach(function (item) {
+        if (item.id === "caseDirectoryBtn") return;
+
+        item.addEventListener("click", function () {
+            navItems.forEach(function (nav) {
+                nav.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const destination = {
+                home: "index-main.html",
+                ebs: "ebs-response-template.html",
+                fbc: "fbc-comments-guide.html",
+                links: "links.html"
+            }[this.dataset.nav];
+
+            if (destination) {
+                window.location.href = destination;
+            }
+        });
+    });
+}
 
     /* ------------------------------------------------------------
        Global Search — DSS V2
