@@ -96,3 +96,34 @@ td pre{margin:0;font:inherit;white-space:pre-line}
 body.modal-open{overflow:hidden}
 @media(max-width:900px){.case-hero{padding-left:5%;padding-right:5%}.stats-row,.directory-main{width:90%}.stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}.directory-search{width:100%}.toolbar-meta{display:none}}
 @media(max-width:520px){.case-hero{height:240px;padding-left:4%;padding-right:4%}.case-hero h1{font-size:26px}.hero-visual{display:none}.stats-row,.directory-main{width:92%}.stats-row{grid-template-columns:1fr}.directory-toolbar{display:block}.detail-grid,.premium-grid{grid-template-columns:1fr}.detail-card.full,.premium-card.full{grid-column:auto}}
+
+/* Keep the webpage fixed */
+html,
+body{
+    height:100%;
+    overflow:hidden;
+}
+
+/* Keep the main page within the viewport */
+.app-shell{
+    height:100vh;
+    min-height:0;
+    overflow:hidden;
+}
+
+/* The directory card fills the available space */
+.directory-main{
+    flex:1 1 auto;
+    min-height:0;
+    overflow:hidden;
+}
+
+/* Only the Excel results area scrolls */
+.directory-main .table-wrap,
+.directory-main .table-container,
+.directory-main .results-container,
+.directory-main .case-table-wrap{
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:auto;
+}
