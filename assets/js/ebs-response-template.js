@@ -211,6 +211,8 @@ function initEbsPage() {
 
   function setStatus(label) {
     statusPill.textContent = label;
+    const top = document.getElementById("statusPillTop");
+    if (top) top.textContent = label;
   }
 
   window.scrollToBuilder = function () {
@@ -437,3 +439,5 @@ document.addEventListener("headerLoaded", () => {
   initRatingStars();
   initEbsPage();
 });
+
+window.focusEbsConcern = function(){ document.getElementById("concernSelect")?.focus(); };
