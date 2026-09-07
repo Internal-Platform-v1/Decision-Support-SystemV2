@@ -19,12 +19,9 @@
   <div class="app-shell">
     <div id="header-placeholder"></div>
 
-    <main>
-      <section class="case-hero ebs-hero">
-        <div class="ebs-container">
+    <main class="case-page">
+      <section class="case-hero">
           <div class="hero-copy">
-            <div class="hero-copy">
-              <div class="hero-copy">
                 <div class="eyebrow"><i class="fa-solid fa-envelope-circle-check"></i> Premium response workspace</div>
                 <h1 class="ebs-hero-title">EBS Response</h1>
                 <p>
@@ -32,40 +29,27 @@
                 </p>
 
                 <div class="hero-actions">
-                  <button class="primary-btn" type="button" onclick="scrollToBuilder()">Explore EBS Response Builder <i class="fa-solid fa-arrow-down"></i></button>
-                  <button class="secondary-btn" type="button" onclick="scrollToBuilder()">Open builder <i class="fa-solid fa-envelope"></i></button>
+                  <button class="primary-btn" type="button" onclick="scrollToBuilder()">Explore EBS Response <i class="fa-solid fa-arrow-down"></i></button>
+                  <button class="secondary-btn" type="button" onclick="scrollToBuilder()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-
-                <div class="stats-row hero-metrics">
-                  <div class="stat-card metric">
-                    <strong id="heroConcernCount">—</strong>
-                    <span>Available concerns ready to use in the EBS response tool.</span>
-                  </div>
-                  <div class="stat-card metric">
-                    <strong id="heroTypeCount">—</strong>
-                    <span>Response types available for the currently selected concern.</span>
-                  </div>
-                  <div class="stat-card metric">
-                    <strong>Live</strong>
-                    <span>Copy, feedback, and time tools stay available while you work.</span>
-                  </div>
-                </div>
-            </div>
-
-
           </div>
-        </div>
+      </section>
+
+      <section class="stats-row">
+        <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-table-list"></i></div><div><strong id="heroTemplateCount">—</strong><small>Response templates</small></div></div>
+        <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-layer-group"></i></div><div><strong id="heroConcernCount">—</strong><small>Concerns</small></div></div>
+        <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-filter"></i></div><div><strong id="heroTypeCount">—</strong><small>Response types</small></div></div>
+        <div class="stat-card status-stat"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><strong id="statusPill">Ready</strong><small>Latest update</small></div></div>
       </section>
 
       <section id="ebsBuilder" class="directory-main ebs-workspace">
-        <div class="ebs-container">
           <div class="ebs-builder-frame">
             <section class="ebs-builder-main">
               <div class="builder-top">
                 <div class="builder-title-block">
                   <div class="section-kicker"><i class="fa-solid fa-layer-group"></i> Response workspace</div>
-                  <h2>EBS Response Builder</h2>
-                  <p>Select the concern and type below. The tool will load the matching template, show the related description, and keep the next action clear.</p>
+                  <h2>EBS Response</h2>
+                  <p>Select a concern and type to view the recommended EBS response template.</p>
                 </div>
 
                 <div class="status-pill" id="statusPillWrap">
@@ -162,7 +146,6 @@
               </div>
             </aside>
           </div>
-        </div>
       </section>
     </main>
 
