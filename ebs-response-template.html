@@ -1,169 +1,22 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BD Tools — EBS Response</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-  
-  <link rel="stylesheet" href="assets/css/ebs-response-template.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BD Tools — EBS Response</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/page-loader.css">
+<link rel="stylesheet" href="assets/css/ebs-response-template.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
-<body data-page="ebs-response" >
-  <div class="app-shell">
-    <div id="header-placeholder"></div>
-
-    <main class="case-page">
-      <section class="case-hero">
-          <div class="hero-copy">
-                <div class="eyebrow"><i class="fa-solid fa-envelope-circle-check"></i> Premium response workspace</div>
-                <h1 class="ebs-hero-title">EBS Response</h1>
-                <p>
-                  Select the correct concern and response type, review the description, then copy or launch a clean customer-ready reply without extra formatting work.
-                </p>
-
-                <div class="hero-actions">
-                  <button class="primary-btn" type="button" onclick="scrollToBuilder()">Explore EBS Response <i class="fa-solid fa-arrow-down"></i></button>
-                  <button class="secondary-btn" type="button" onclick="scrollToBuilder()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
-                </div>
-          </div>
-      </section>
-
-      <section class="stats-row">
-        <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-table-list"></i></div><div><strong id="heroTemplateCount">—</strong><small>Response templates</small></div></div>
-        <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-layer-group"></i></div><div><strong id="heroConcernCount">—</strong><small>Concerns</small></div></div>
-        <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-filter"></i></div><div><strong id="heroTypeCount">—</strong><small>Response types</small></div></div>
-        <div class="stat-card status-stat"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><strong id="statusPill">Ready</strong><small>Latest update</small></div></div>
-      </section>
-
-      <section id="ebsBuilder" class="directory-main ebs-workspace">
-          <div class="ebs-builder-frame">
-            <section class="ebs-builder-main">
-              <div class="builder-top">
-                <div class="builder-title-block">
-                  <div class="section-kicker"><i class="fa-solid fa-layer-group"></i> Response workspace</div>
-                  <h2>EBS Response</h2>
-                  <p>Select a concern and type to view the recommended EBS response template.</p>
-                </div>
-
-                <div class="status-pill" id="statusPillWrap">
-                  <i class="fa-solid fa-bolt"></i>
-                  <span id="statusPill">Ready</span>
-                </div>
-              </div>
-<div class="template-card">
-                <div class="template-head">
-                  <div>
-                    <div class="template-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> Template builder</div>
-                    <h3 class="template-title">Build the correct customer-ready response</h3>
-                    <p class="template-lead">Choose a concern and type to load the matching template and copy it when ready.</p>
-                  </div>
-                  <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
-                </div>
-
-                <div class="select-grid">
-                  <div>
-                    <label class="field-label">Concern</label>
-                    <div class="select-wrap">
-                      <select id="concernSelect">
-                        <option value="">Select Concern</option>
-                      </select>
-                      <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="field-label">Type</label>
-                    <div class="select-wrap">
-                      <select id="typeSelect" disabled>
-                        <option value="">Select Type</option>
-                      </select>
-                      <i class="fa-solid fa-chevron-down"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="description-field">
-                  <label class="field-label">Description</label>
-                  <div id="descBox" class="info-box empty">Select a concern to view the description.</div>
-                </div>
-
-                <div>
-                  <label class="field-label">Response Template</label>
-                  <textarea id="responseBox" class="response-box" readonly placeholder="The response template will appear here."></textarea>
-                </div>
-
-                <div class="action-row">
-                  <button class="btn btn-primary" type="button" onclick="copyResponse()"><i class="fa-solid fa-copy"></i> Copy Response</button>
-                  <a id="outlookLink" class="btn btn-dark" target="_blank"><i class="fa-solid fa-paper-plane"></i> Open in Outlook</a>
-                </div>
-
-                <div id="noteBox" class="note-box" style="display:none;"></div>
-              </div>
-            </section>
-
-            <aside class="ebs-builder-side">
-              <div class="builder-side-card reminder">
-                <div class="side-card-head"><i class="fa-solid fa-triangle-exclamation"></i> Important note</div>
-                <ul class="helper-list">
-                  <li>Avoid sending duplicate responses on reopened cases.</li>
-                  <li>Reword the message when possible and add more useful context.</li>
-                  <li>If the customer continues to reject the decision, consult your Team Lead or Training Team.</li>
-                  <li>Use Outlook launch only after confirming the correct wording is loaded.</li>
-                </ul>
-              </div>
-
-              <div class="builder-side-card">
-                <div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick status</div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Selected Concern</span>
-                  <span class="quick-value" id="selectedConcernValue">—</span>
-                </div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Selected Type</span>
-                  <span class="quick-value" id="selectedTypeValue">—</span>
-                </div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Template Status</span>
-                  <span class="quick-value" id="templateStatusValue">Waiting</span>
-                </div>
-              </div>
-
-              <div class="builder-side-card">
-                <div class="side-card-head"><i class="fa-solid fa-lightbulb"></i> Handling tip</div>
-                <div class="helper-text">
-                  Keep the response specific to the current case. If the case reopens, avoid sending the same exact wording again without any added explanation.
-                </div>
-              </div>
-            </aside>
-          </div>
-      </section>
-    </main>
-
-    <div id="footer-placeholder"></div>
-  </div>
-
-  <div id="toast" class="toast">Copied!</div>
-
-
-
-
-
-<script src="assets/js/header-loader.js"></script>
-<script src="assets/js/header.js"></script>
-<script src="shared/include.js"></script>
-<script src="assets/js/theme-loader.js"></script>
-
-
-    <script src="assets/js/ebs-response-template.js"></script>
-</body>
-  </html>
+<body data-page="ebs-response">
+<div class="page-loader" id="pageLoader" role="status" aria-live="polite"><div class="page-loader-inner"><div class="page-loader-mark"><span class="page-loader-ring"></span><span class="page-loader-dot"></span></div><p class="page-loader-text">Loading BD Tools…</p></div></div>
+<div class="app-shell"><div id="header-placeholder"></div><main class="case-page">
+<section class="case-hero"><div class="hero-copy"><div class="eyebrow"><i class="fa-solid fa-envelope"></i> EBS Response</div><h1>EBS <span>Response</span></h1><p>Select a concern and response type to load the correct customer-ready template.</p><div class="hero-actions"><button class="primary-btn" type="button" onclick="scrollToBuilder()">Explore EBS Response <i class="fa-solid fa-arrow-down"></i></button><button class="secondary-btn" type="button" onclick="focusEbsConcern()">Search now <i class="fa-solid fa-magnifying-glass"></i></button></div></div></section>
+<section class="stats-row"><div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-layer-group"></i></div><div><strong id="heroConcernCount">—</strong><small>Available concerns</small></div></div><div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-list-check"></i></div><div><strong id="heroTypeCount">—</strong><small>Types for selection</small></div></div><div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-file-lines"></i></div><div><strong id="templateStatusValue">Waiting</strong><small>Template status</small></div></div><div class="stat-card status-stat"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><strong id="statusPill">Ready</strong><small>Builder status</small></div></div></section>
+<section class="directory-main" id="ebsBuilder"><div class="ebs-builder"><div class="builder-top"><div><div class="section-kicker"><i class="fa-solid fa-envelope"></i> Response workspace</div><h2>EBS Response Builder</h2><p>Select the concern and type below to load the matching response.</p></div><div class="ebs-status"><i class="fa-solid fa-bolt"></i><span id="statusPillTop">Ready</span></div></div><div class="ebs-content"><section class="ebs-card"><h3>Build the customer-ready response</h3><p class="lead">Choose a concern and type to load the matching description, template, and note.</p><div class="ebs-select-grid"><div class="ebs-field"><label for="concernSelect">Concern</label><div class="ebs-select-wrap"><select id="concernSelect"><option value="">Select Concern</option></select><i class="fa-solid fa-chevron-down"></i></div></div><div class="ebs-field"><label for="typeSelect">Type</label><div class="ebs-select-wrap"><select id="typeSelect" disabled><option value="">Select Type</option></select><i class="fa-solid fa-chevron-down"></i></div></div></div><div class="ebs-field"><label>Description</label><div id="descBox" class="ebs-info-box empty">Select a concern to view the description.</div></div><div class="ebs-field"><label for="responseBox">Response Template</label><textarea id="responseBox" class="ebs-response" readonly placeholder="The response template will appear here."></textarea></div><div class="ebs-actions"><button class="ebs-btn primary" type="button" onclick="copyResponse()"><i class="fa-solid fa-copy"></i> Copy Response</button><a id="outlookLink" class="ebs-btn dark" target="_blank" rel="noopener"><i class="fa-solid fa-paper-plane"></i> Open in Outlook</a></div><div id="noteBox" class="ebs-note" style="display:none"></div></section><aside class="ebs-side"><div class="ebs-card"><h4><i class="fa-solid fa-triangle-exclamation"></i> Important note</h4><ul><li>Avoid sending duplicate responses on reopened cases.</li><li>Reword the message when possible and add useful context.</li><li>Consult your Team Lead or Training Team when needed.</li></ul></div><div class="ebs-card"><h4><i class="fa-solid fa-chart-simple"></i> Quick status</h4><div class="ebs-kv"><small>Selected Concern</small><strong id="selectedConcernValue">—</strong></div><div class="ebs-kv"><small>Selected Type</small><strong id="selectedTypeValue">—</strong></div></div></aside></div></div></section></main><div id="footer-placeholder"></div></div><div class="toast" id="toast"></div>
+<script src="shared/include.js"></script><script src="assets/js/ebs-response-template.js"></script><script src="assets/js/page-loader.js"></script>
+</body></html>
