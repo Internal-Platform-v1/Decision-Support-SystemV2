@@ -119,6 +119,14 @@ function initFbcCommentsPage() {
   }
 
   window.generateFbcComment = function () {
+    if (sessionStorage.getItem('fbcReminderAcknowledged') !== 'true') {
+      openReminderModal(true);
+      return;
+    }
+    generateFbcCommentNow();
+  };
+
+  function generateFbcCommentNow() {
     const row = getSelectedRow();
     const caseNumber = caseNumberInput.value.trim();
 
@@ -212,3 +220,39 @@ function initFbcCommentsPage() {
 
 document.addEventListener('DOMContentLoaded', initFbcCommentsPage);
 document.addEventListener('headerLoaded', initFbcCommentsPage);
+
+
+function openReminderModal(fromGenerate = false) {
+  const modal = document.getElementById('reminderModal');
+  if (!modal) return;
+  modal.dataset.fromGenerate = fromGenerate ? 'true' : 'false';
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function closeReminderModal() {
+  const modal = document.getElementById('reminderModal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
+function acknowledgeReminder() {
+  const check = document.getElementById('reminderReadCheck');
+  if (!check || !check.checked) {
+    showToast('Please confirm that you read the reminder.');
+    return;
+  }
+  sessionStorage.setItem('fbcReminderAcknowledged', 'true');
+  const modal = document.getElementById('reminderModal');
+  const continueToGenerate = modal && modal.dataset.fromGenerate === 'true';
+  closeReminderModal();
+  if (continueToGenerate) generateFbcComment();
+}
+
+document.addEventListener('click', event => {
+  const modal = document.getElementById('reminderModal');
+  if (modal && event.target === modal) closeReminderModal();
+});
