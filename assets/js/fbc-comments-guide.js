@@ -256,3 +256,17 @@ document.addEventListener('click', event => {
   const modal = document.getElementById('reminderModal');
   if (modal && event.target === modal) closeReminderModal();
 });
+
+
+let currentFbiStep = 0;
+let fbiAutoPlayTimer = null;
+function getFbiSteps(){return Array.from(document.querySelectorAll('#fbiModal .fbi-step'));}
+function updateFbiProgress(){const steps=getFbiSteps(), total=steps.length||1, current=currentFbiStep+1; const t=document.getElementById('fbiStepCounter'), pct=document.getElementById('fbiProgressPercent'), fill=document.getElementById('fbiProgressFill'), prev=document.getElementById('fbiPrevBtn'), next=document.getElementById('fbiNextBtn'); if(t)t.textContent=`Step ${current} of ${total}`; if(pct)pct.textContent=`${Math.round(current/total*100)}% Complete`; if(fill)fill.style.width=`${current/total*100}%`; if(prev)prev.disabled=currentFbiStep===0; if(next)next.textContent=current===total?'Finish':'Next'; document.querySelectorAll('.fbi-dot').forEach((d,i)=>d.classList.toggle('active',i===currentFbiStep));}
+function showFbiStep(i){const a=getFbiSteps();if(!a.length)return;currentFbiStep=Math.max(0,Math.min(i,a.length-1));a.forEach((x,n)=>x.classList.toggle('active',n===currentFbiStep));updateFbiProgress();}
+function openFbiModal(){const m=document.getElementById('fbiModal');if(!m)return;m.classList.add('show');m.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');showFbiStep(0);}
+function closeFbiModal(){const m=document.getElementById('fbiModal');if(!m)return;m.classList.remove('show');m.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');}
+function nextFbiStep(){if(currentFbiStep>=getFbiSteps().length-1)closeFbiModal();else showFbiStep(currentFbiStep+1);}
+function prevFbiStep(){showFbiStep(currentFbiStep-1);}
+function goToFbiStep(i){showFbiStep(i);}
+function zoomFbiImage(img){const m=document.getElementById('imageZoomModal'),z=document.getElementById('zoomedFbiImage');if(!m||!z)return;z.src=img.src;m.classList.add('show');}
+function closeFbiZoom(){document.getElementById('imageZoomModal')?.classList.remove('show');}
