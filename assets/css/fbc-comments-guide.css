@@ -614,3 +614,270 @@ body.modal-open{overflow:hidden}
 @media(max-width:520px){.section-head{gap:10px;flex-wrap:wrap}.reminder-button{margin-left:auto}.reminder-modal-header,.reminder-modal-content,.reminder-modal-footer{padding-left:14px;padding-right:14px}}
 
 .reminder-image-wrap{margin-top:12px;border:1px solid #e8e9f2;border-radius:7px;overflow:hidden;background:#faf9ff;text-align:center}.reminder-image-wrap img{display:block;width:100%;max-height:240px;object-fit:contain}.reminder-image-wrap span{display:none;padding:20px;color:#777a99;font-size:10px}.reminder-image-wrap.image-missing span{display:block}.fbi-modal,.image-zoom-modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:20px;background:#10134f99}.fbi-modal.show,.image-zoom-modal.show{display:flex}.fbi-modal-content{width:min(820px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:10px}.fbi-modal-header{display:flex;justify-content:space-between;gap:15px;padding:18px 20px;border-bottom:1px solid #eeeef5}.fbi-modal-header h2{margin:5px 0;color:#10134f;font-size:19px}.fbi-modal-header p{margin:0;color:#777a99;font-size:10px}.fbi-progress-wrap{padding:12px 20px;color:#777a99;font-size:10px}.fbi-progress-wrap>span+span{float:right}.fbi-progress-track{height:5px;margin-top:8px;background:#eee9fb;border-radius:5px;overflow:hidden}.fbi-progress-track div{height:100%;width:25%;background:#5b17c5}.fbi-steps-shell{padding:0 20px}.fbi-step{display:none;grid-template-columns:1fr 1fr;gap:15px;align-items:center}.fbi-step.active{display:grid}.fbi-step-text{font-size:11px;color:#303258;line-height:1.5}.fbi-step-number{display:inline-grid;place-items:center;width:28px;height:28px;margin-right:8px;border-radius:50%;background:#f0e9ff;color:#6d2ce0;font-weight:800}.fbi-step img{width:100%;max-height:300px;object-fit:contain;border:1px solid #e8e9f2;border-radius:7px;cursor:zoom-in}.fbi-controls{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-top:1px solid #eeeef5;margin-top:15px}.fbi-dot{width:8px;height:8px;border:0;border-radius:50%;background:#d8d0ed;margin:0 3px;cursor:pointer}.fbi-dot.active{background:#5b17c5}.image-zoom-modal img{max-width:95vw;max-height:90vh;object-fit:contain;background:#fff;border-radius:8px}@media(max-width:600px){.fbi-step.active{grid-template-columns:1fr}.fbi-step img{max-height:220px}}
+
+/* ============================================================
+   FBC COMMENT GENERATOR — DSS V2 FINAL LAYOUT FIX
+   Matches Case Directory and EBS Response layout
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   Page shell
+   ------------------------------------------------------------ */
+
+html,
+body{
+    width:100%;
+    height:100%;
+    min-height:0;
+    margin:0;
+    overflow:hidden !important;
+}
+
+.app-shell{
+    width:100%;
+    height:100vh !important;
+    min-height:0 !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* Header and footer must not shrink */
+#header-placeholder,
+#footer-placeholder{
+    flex:0 0 auto;
+}
+
+/* ------------------------------------------------------------
+   Main page area
+   ------------------------------------------------------------ */
+
+.case-page{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden !important;
+    background:#ffffff;
+}
+
+/* ------------------------------------------------------------
+   Hero
+   ------------------------------------------------------------ */
+
+.case-hero{
+    flex:0 0 290px;
+    height:290px;
+    min-height:290px;
+}
+
+/* ------------------------------------------------------------
+   Four statistic cards
+   ------------------------------------------------------------ */
+
+.stats-row{
+    flex:0 0 auto;
+    margin:-50px auto 0 !important;
+}
+
+/* ------------------------------------------------------------
+   FBC workspace
+   ------------------------------------------------------------ */
+
+.fbc-workspace{
+    width:85.6%;
+    max-width:none;
+    flex:1 1 auto;
+    min-height:0;
+    height:auto;
+    margin:14px auto 0;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* Main white FBC panel */
+.fbc-panel{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding:20px;
+}
+
+/* ------------------------------------------------------------
+   Generator heading
+   ------------------------------------------------------------ */
+
+.section-head{
+    flex:0 0 auto;
+}
+
+/* ------------------------------------------------------------
+   Generator content becomes the scrolling area
+   ------------------------------------------------------------ */
+
+.content-grid{
+    flex:1 1 auto;
+    min-height:0;
+    height:auto;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(260px,330px);
+    gap:14px;
+    align-items:stretch;
+    overflow:hidden;
+}
+
+/* Left generator card */
+.work-card{
+    min-width:0;
+    min-height:0;
+    height:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
+/* Right snapshot and handling-tip cards */
+.side-stack{
+    min-width:0;
+    min-height:0;
+    height:100%;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
+/* ------------------------------------------------------------
+   Scrollbars
+   ------------------------------------------------------------ */
+
+.fbc-workspace::-webkit-scrollbar,
+.fbc-panel::-webkit-scrollbar,
+.work-card::-webkit-scrollbar,
+.side-stack::-webkit-scrollbar{
+    width:8px;
+}
+
+.fbc-workspace::-webkit-scrollbar-track,
+.fbc-panel::-webkit-scrollbar-track,
+.work-card::-webkit-scrollbar-track,
+.side-stack::-webkit-scrollbar-track{
+    background:#faf9ff;
+}
+
+.fbc-workspace::-webkit-scrollbar-thumb,
+.fbc-panel::-webkit-scrollbar-thumb,
+.work-card::-webkit-scrollbar-thumb,
+.side-stack::-webkit-scrollbar-thumb{
+    background:#d8ccef;
+    border-radius:10px;
+}
+
+.fbc-workspace::-webkit-scrollbar-thumb:hover,
+.fbc-panel::-webkit-scrollbar-thumb:hover,
+.work-card::-webkit-scrollbar-thumb:hover,
+.side-stack::-webkit-scrollbar-thumb:hover{
+    background:#b9a4e8;
+}
+
+/* ------------------------------------------------------------
+   Footer
+   ------------------------------------------------------------ */
+
+#footer-placeholder{
+    flex:0 0 auto;
+    margin-top:0 !important;
+}
+
+/* Prevent footer from being pushed below the viewport */
+#footer-placeholder > *{
+    flex:0 0 auto;
+}
+
+/* ------------------------------------------------------------
+   Reminder and image modals
+   ------------------------------------------------------------ */
+
+.reminder-modal,
+.fbi-modal,
+.image-zoom-modal{
+    position:fixed;
+    inset:0;
+    z-index:300;
+}
+
+/* ------------------------------------------------------------
+   Responsive layout
+   ------------------------------------------------------------ */
+
+@media(max-width:900px){
+
+    .case-hero{
+        flex:0 0 290px;
+        height:290px;
+        min-height:290px;
+    }
+
+    .fbc-workspace{
+        width:90%;
+    }
+
+    .fbc-panel{
+        padding:16px;
+    }
+
+    .content-grid{
+        grid-template-columns:1fr;
+        overflow-y:auto;
+        overflow-x:hidden;
+    }
+
+    .work-card,
+    .side-stack{
+        height:auto;
+        overflow:visible;
+    }
+
+    .side-stack{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+
+@media(max-width:520px){
+
+    .case-hero{
+        flex:0 0 240px;
+        height:240px;
+        min-height:240px;
+    }
+
+    .fbc-workspace{
+        width:92%;
+    }
+
+    .fbc-panel{
+        padding:14px;
+    }
+
+    .content-grid{
+        display:block;
+        overflow-y:auto;
+    }
+
+    .work-card,
+    .side-stack{
+        height:auto;
+        overflow:visible;
+    }
+
+    .side-stack{
+        display:flex;
+        flex-direction:column;
+    }
+
+}
