@@ -1,7 +1,7 @@
 
 window.SITE_BASE = "";
 
-if (!firebase.apps.length) {
+if (typeof firebase !== "undefined" && !firebase.apps.length) {
   firebase.initializeApp({
     apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
     authDomain: "bdgg-database.firebaseapp.com",
@@ -12,8 +12,8 @@ if (!firebase.apps.length) {
   });
 }
 
-window.auth = firebase.auth();
-window.db = firebase.firestore();
+window.auth = typeof firebase !== "undefined" ? firebase.auth() : null;
+window.db = typeof firebase !== "undefined" ? firebase.firestore() : null;
 
 
 
