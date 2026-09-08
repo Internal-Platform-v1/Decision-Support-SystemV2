@@ -46,6 +46,7 @@
               <p>Select the queue type and action taken, then enter the case number. The tool will generate the recommended FBC comment automatically.</p>
             </div>
             <div class="section-note"><i class="fa-solid fa-bolt"></i><span id="generatorStatusPill">Ready</span></div>
+            <button class="reminder-button" type="button" onclick="openReminderModal()"><i class="fa-solid fa-circle-info"></i> View Reminders</button>
           </div>
 
           <div class="content-grid">
@@ -147,69 +148,6 @@
       </div>
     </section>
 
-    <section class="fbc-workspace">
-      <div class="fbc-container">
-        <div class="fbc-panel">
-          <div class="section-head">
-            <div class="section-head-left">
-              <div class="section-overline"><i class="fa-solid fa-circle-info"></i> Reminder and guide</div>
-              <h3>FBC Comment</h3>
-              <p>Review the reminder below, then use the generator to build the correct comment format based on the FBC comment workbook.</p>
-            </div>
-          </div>
-
-          <div class="reminder-grid">
-            <div class="side-card reminder-card">
-              <div class="work-top">
-                <div>
-                  <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
-                  <h4 class="reminder-title">Important FBC comment reminder</h4>
-                </div>
-                <div class="guide-icon"><i class="fa-solid fa-bell"></i></div>
-              </div>
-
-              <ol class="reminder-list">
-                <li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
-                <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
-              </ol>
-
-              <a class="inline-link" href="#" onclick="return false;">
-                <i class="fa-solid fa-link"></i>
-                Click here for the steps on how to add comment in FBI
-              </a>
-
-              <div class="note-box" style="margin-top:6px;">
-                <strong>For the Case #</strong> — Enter the case number of the actual case you are working. Example: if a clone case is assigned to you, in your FBC comment, enter the case number of the actual clone case you are working.
-              </div>
-
-              <div class="warning-copy">
-                NOTE: This is just a template that serves as your guide. You can always make a revision on it to suit the resolution on the case.
-              </div>
-
-              <div class="note-box" style="margin-top:14px;">
-                Effective immediately, the structure below will guide the 2x4 comment format to help eliminate confusion on what 2x4 comment should be used whenever agents work on PROs and to remove unnecessary 2x4 comments previously used.
-              </div>
-
-              <div class="guide-image-wrap">
-                <div class="work-top" style="margin-bottom:0;">
-                  <div>
-                    <div class="badge"><i class="fa-solid fa-image"></i> Guide image</div>
-                    <h4>Reference screenshot</h4>
-                  </div>
-                  <div class="guide-icon"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></div>
-                </div>
-                <img id="guidePreviewImage" class="guide-image" src="assets/images/fbc-comments-guide-reference.png" alt="FBC comments guide reference image" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';">
-                <div id="guideImagePlaceholder" class="guide-image-placeholder" style="display:none;">
-                  Add your reference screenshot here.<br>
-                  Save the screenshot as <strong>assets/images/fbc-comments-guide-reference.png</strong>
-                </div>
-                <div class="helper-text">The reference screenshot is intentionally kept with the effective-immediately reminder so agents can read the instruction and view the structure in one place.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
 
   </main>
@@ -217,6 +155,26 @@
 </div>
 
 <div class="case-modal" id="caseDetailModal" style="display:none"><div class="modal-panel"><div class="modal-header"><div><span class="section-kicker"><i class="fa-solid fa-circle-info"></i> Case details</span><h2>Routing details</h2></div><div class="modal-actions"><button id="viewToggleBtn" class="icon-action" type="button" onclick="toggleView()" title="Switch to premium view"><i class="fa-solid fa-wand-magic-sparkles"></i></button><button class="close-action" type="button" onclick="closeCaseDetail()"><i class="fa-solid fa-xmark"></i></button></div></div><div id="caseDetailModalContent" class="modal-content"><div class="detail-grid"><div class="detail-card"><small>Queue / Request</small><p id="detailQueue"></p></div><div class="detail-card"><small>Concern</small><p id="detailConcern"></p></div><div class="detail-card"><small>Action</small><p id="detailAction"></p></div><div class="detail-card"><small>Email Address</small><p id="detailEmail"></p></div><div class="detail-card full"><small>Case Assignment / Email</small><p id="detailAssignment"></p></div></div><div class="premium-grid"><div class="premium-card"><small>Queue / Request</small><p id="premiumDetailQueue"></p></div><div class="premium-card"><small>Concern</small><p id="premiumDetailConcern"></p></div><div class="premium-card"><small>Action</small><p id="premiumDetailAction"></p></div><div class="premium-card"><small>Email Address</small><p id="premiumDetailEmail"></p></div><div class="premium-card full"><small>Case Assignment / Email</small><p id="premiumDetailAssignment"></p></div></div></div></div></div>
+
+<div class="reminder-modal" id="reminderModal" role="dialog" aria-modal="true" aria-labelledby="reminderModalTitle" aria-hidden="true">
+  <div class="reminder-modal-panel">
+    <div class="reminder-modal-header">
+      <div><div class="section-overline"><i class="fa-solid fa-triangle-exclamation"></i> Reminder and guide</div><h2 id="reminderModalTitle">Important FBC Comment Reminder</h2></div>
+      <button class="close-action" type="button" onclick="closeReminderModal()" aria-label="Close reminders"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="reminder-modal-content">
+      <ol class="reminder-list">
+        <li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
+        <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
+      </ol>
+      <div class="note-box"><strong>For the Case #</strong> — Enter the case number of the actual case you are working. If a clone case is assigned to you, enter the case number of the actual clone case you are working.</div>
+      <div class="warning-copy">NOTE: This generated template serves as a guide. Revise it when needed so the final comment accurately reflects the case resolution.</div>
+      <div class="note-box reminder-format-note">Effective immediately, the 2x4 comment structure below is intended to reduce confusion and remove unnecessary 2x4 comments previously used.</div>
+      <label class="reminder-confirm"><input type="checkbox" id="reminderReadCheck"> I have read and understood the reminder.</label>
+    </div>
+    <div class="reminder-modal-footer"><button class="btn btn-dark" type="button" onclick="closeReminderModal()">Close</button><button class="btn btn-primary" type="button" onclick="acknowledgeReminder()">Continue to Generator</button></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script>const firebaseConfig={apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",authDomain:"bdgg-database.firebaseapp.com",projectId:"bdgg-database",storageBucket:"bdgg-database.appspot.com",messagingSenderId:"43574975434",appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"};if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);</script>
