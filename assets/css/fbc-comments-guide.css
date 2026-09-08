@@ -597,3 +597,18 @@ html,body{height:auto!important;min-height:100%;margin:0;overflow-x:hidden!impor
 #footer-placeholder{margin-top:14px;}
 @media(max-width:900px){.fbc-workspace{width:90%;}.content-grid{grid-template-columns:1fr;}.select-grid{grid-template-columns:1fr;}}
 @media(max-width:520px){.fbc-workspace{width:92%;}.fbc-panel{padding:14px;}.action-row{justify-content:stretch;}.action-row .btn{flex:1;}}
+
+/* Reminder modal */
+.reminder-button{height:31px;padding:0 11px;border:1px solid #e1d9f4;border-radius:6px;background:#fff;color:#4d148c;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap}
+.reminder-button:hover{background:#faf9ff}
+.reminder-modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:#10134f55}
+.reminder-modal-panel{width:min(620px,100%);max-height:90vh;overflow:auto;background:#fff;border:1px solid #e4e5ef;border-radius:9px;box-shadow:0 20px 60px #10134f30}
+.reminder-modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;padding:18px 20px 14px;border-bottom:1px solid #f0f0f5}
+.reminder-modal-header h2{margin:5px 0 0;color:#10134f;font-size:18px;line-height:1.2}
+.reminder-modal-content{padding:18px 20px}
+.reminder-modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid #f0f0f5}
+.reminder-confirm{display:flex;align-items:center;gap:8px;margin-top:16px;color:#303258;font-size:10px;font-weight:700}
+.reminder-confirm input{accent-color:#5b17c5}
+.reminder-format-note{margin-top:14px}
+body.modal-open{overflow:hidden}
+@media(max-width:520px){.section-head{gap:10px;flex-wrap:wrap}.reminder-button{margin-left:auto}.reminder-modal-header,.reminder-modal-content,.reminder-modal-footer{padding-left:14px;padding-right:14px}}
