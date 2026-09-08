@@ -783,3 +783,59 @@ body {
     width: 92% !important;
   }
 }
+
+
+/* ------------------------------------------------------------
+   DSS V2 FBC Comment hero — follows the Case Directory template
+   ------------------------------------------------------------ */
+.case-hero{
+    height:290px;
+    position:relative;
+    overflow:hidden;
+    padding:25px 7.2%;
+    background:#f8f7ff url("../images/hero-background.png") center 83% / cover no-repeat;
+    display:flex;
+    justify-content:space-between;
+}
+.case-hero .hero-copy{
+    position:relative;
+    z-index:2;
+    max-width:620px;
+}
+.case-hero h1{
+    margin:13px 0 8px;
+    color:#10134f;
+    font-size:31px;
+    line-height:1.08;
+    letter-spacing:-1px;
+    font-weight:800;
+    max-width:none;
+}
+.case-hero h1 span{color:#ff6600;}
+.case-hero p{
+    margin:0;
+    max-width:540px;
+    color:#45466e;
+    font-size:11px;
+    line-height:1.5;
+}
+.case-hero .hero-actions{display:flex;gap:8px;margin-top:16px;}
+.case-hero .primary-btn,.case-hero .secondary-btn{
+    height:32px;padding:0 14px;border-radius:6px;border:1px solid #5b17c5;font-size:10px;font-weight:700;cursor:pointer;
+}
+.case-hero .primary-btn{background:#5b17c5;color:#fff;}
+.case-hero .secondary-btn{background:#fff;color:#4d148c;border-color:#e1d9f4;}
+.stats-row{
+    position:relative;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:85.6%;max-width:none;margin:-50px auto 0!important;padding:0!important;transform:none!important;left:auto!important;right:auto!important;
+}
+.stats-row .stat-card{
+    width:100%;min-width:0;height:58px;display:flex;align-items:center;gap:11px;padding:0 13px;margin:0;background:#fff;border:1px solid #e8e9f2;border-radius:7px;box-shadow:0 5px 20px #30266f12;overflow:hidden;
+}
+.stats-row .stat-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:9px;font-size:17px;}
+.stats-row .stat-icon.purple{background:#f0e9ff;color:#6d2ce0}.stats-row .stat-icon.orange{background:#fff0e4;color:#ff7218}.stats-row .stat-icon.blue{background:#edf2ff;color:#3564e5}.stats-row .stat-icon.green{background:#e8f7e7;color:#3e9346}
+.stats-row .stat-card>div:last-child{min-width:0;flex:1;overflow:hidden;}
+.stats-row .stat-card strong{display:block;color:#10134f;font-size:16px;line-height:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stats-row .stat-card small{display:block;margin-top:3px;color:#777a99;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stats-row .status-stat strong{font-size:11px;}
+@media(max-width:900px){.case-hero{padding-left:5%;padding-right:5%;}.stats-row{width:90%;grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:520px){.case-hero{height:240px;padding-left:4%;padding-right:4%;}.case-hero h1{font-size:26px;}.stats-row{width:92%;grid-template-columns:1fr;}}
