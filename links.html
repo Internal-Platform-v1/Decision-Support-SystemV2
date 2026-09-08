@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BD Tools — Links Hub</title>
+  <title>Tools &amp; Links Hub</title>
 
   
 
@@ -19,10 +19,13 @@
  
   </style>
   <link rel="stylesheet" href="assets/css/links.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body data-page="links" class="theme-fedex">
   <div class="page">
-    <div id="site-header"></div>
+    <div id="header-placeholder"></div>
 
     <main>
       <section class="hero">
@@ -31,7 +34,7 @@
             <div class="hero-card reveal delay-1">
               <div class="hero-content">
                 <div class="pill"><i class="fa-solid fa-link"></i> Premium tools workspace</div>
-                <h1 class="links-hero-title">Find the right tool faster and open the right link with less effort.</h1>
+                <h1 class="links-hero-title">Tools <span>&amp; Links Hub</span></h1>
                 <p>
                   Search tools, preview link details, copy system URLs, save favorites, and quickly identify which resources require the iSPI browser.
                 </p>
@@ -237,7 +240,7 @@
       </section>
     </main>
 
-    <div id="site-footer"></div>
+    <div id="footer-placeholder"></div>
   </div>
 
   <div id="oneclickModal">
@@ -354,6 +357,7 @@
 
 
 
+  <script src="shared/include.js"></script>
   <script src="assets/js/links.js"></script>
 </body>
 </html>
