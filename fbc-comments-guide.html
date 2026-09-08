@@ -16,70 +16,24 @@
 <div class="page-loader" id="pageLoader" role="status" aria-live="polite"><div class="page-loader-inner"><div class="page-loader-mark"><span class="page-loader-ring"></span><span class="page-loader-dot"></span></div><p class="page-loader-text">Loading BD Tools…</p></div></div>
 <div class="app-shell">
   <div id="header-placeholder"></div>
-  <main class="case-page"><section class="case-hero">
-      <div class="fbc-container">
-        <div class="hero">
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <div class="eyebrow"><i class="fa-solid fa-comments"></i> Premium comment workspace</div>
-              <h1>Build the correct FBC comment faster with the right queue and action.</h1>
-              <p>Use this page to review the FBC reminder, keep the structure consistent, and generate a ready-to-copy comment based on the queue type, action taken, and case number.</p>
-              <div class="hero-stats">
-                <div class="stat-card">
-                  <div class="stat-value" id="heroQueueCount">—</div>
-                  <div class="stat-label">Queue types available from the FBC comment file.</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-value" id="heroActionCount">—</div>
-                  <div class="stat-label">Available actions for the selected queue type.</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-value">Ready</div>
-                  <div class="stat-label">Generator, copy action, and guide preview stay available while you work.</div>
-                </div>
-              </div>
-              <div style="margin-top:18px;">
-                <button class="hero-cta" onclick="scrollToBuilder()">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
-              </div>
-            </div>
-            <div class="hero-side">
-              <div class="quick-panel">
-                <div>
-                  <div class="panel-title">
-                    <span>How to use</span>
-                    <span>4 steps</span>
-                  </div>
-                  <ul class="quick-list">
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-layer-group"></i></div>
-                      <div><strong>Select the queue type</strong><span>Choose the matching queue first so the correct actions appear.</span></div>
-                    </li>
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-list-check"></i></div>
-                      <div><strong>Choose the action taken</strong><span>Pick the exact action that matches the handling on the PRO.</span></div>
-                    </li>
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-hashtag"></i></div>
-                      <div><strong>Enter the case number</strong><span>Use the actual case number you are working, not the clone reference.</span></div>
-                    </li>
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-copy"></i></div>
-                      <div><strong>Copy the generated comment</strong><span>Review the final format, then copy it directly into your FBC comment.</span></div>
-                    </li>
-                  </ul>
-                </div>
-                <div class="live-strip">
-                  <div>
-                    <strong>Workspace ready</strong>
-                    <span>FBC reminders and comment generator are available.</span>
-                  </div>
-                  <div class="pulse"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <main class="case-page">
+    <section class="case-hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><i class="fa-solid fa-comments"></i> FBC Comment</div>
+        <h1>FBC <span>Comment Generator</span></h1>
+        <p>Use the FBC comment generator to select the correct queue and action, enter the case number, and create a ready-to-copy comment.</p>
+        <div class="hero-actions">
+          <button class="primary-btn" type="button" onclick="scrollToBuilder()">Open FBC Comment Generator <i class="fa-solid fa-arrow-down"></i></button>
+          <button class="secondary-btn" type="button" onclick="document.getElementById('fbcBuilder')?.scrollIntoView({behavior:'smooth'})">Start now <i class="fa-solid fa-arrow-right"></i></button>
         </div>
       </div>
+    </section>
+
+    <section class="stats-row">
+      <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-layer-group"></i></div><div><strong id="heroQueueCount">—</strong><small>Queue types available</small></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-list-check"></i></div><div><strong id="heroActionCount">—</strong><small>Available actions</small></div></div>
+      <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-copy"></i></div><div><strong id="heroTemplateCount">—</strong><small>Comment templates</small></div></div>
+      <div class="stat-card status-stat"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><strong id="statusPill">Ready</strong><small>Generator status</small></div></div>
     </section>
 
     <section class="fbc-workspace">
