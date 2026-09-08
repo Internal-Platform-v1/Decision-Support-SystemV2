@@ -1,396 +1,268 @@
-<!DOCTYPE html>
-
-<html lang="en">
+<!doctype html>
+<html lang="en" class="page-protected">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BD Tools — FBC Comment</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-<link href="assets/css/header-footer-style.css" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/page-loader.css">
+<link rel="stylesheet" href="assets/css/fbc-comments-guide.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-<link href="assets/css/fbc-comments-guide.css" rel="stylesheet"/></head>
-<body data-page="fbc-comments">
-<div class="page">
-<div id="site-header"></div>
-<main>
-<section class="hero">
-<div class="container">
-<div class="hero-shell">
-<div class="hero-card reveal delay-1">
-<div class="hero-content">
-<div class="pill"><i class="fa-solid fa-comments"></i> Premium comment workspace</div>
-<h1 class="fbc-hero-title">Build the correct FBC comment faster with the right queue and action.</h1>
-<p>
-                  Review the FBC reminder, keep the structure consistent, and generate a ready-to-copy comment based on the queue type, action taken, and case number.
-                </p>
-<div class="hero-actions">
-<button class="hero-main-btn" onclick="scrollToBuilder()" type="button">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
-</div>
-<div class="hero-metrics">
-<div class="metric">
-<strong id="heroQueueCount">—</strong>
-<span>Queue types available from the FBC comment file.</span>
-</div>
-<div class="metric">
-<strong id="heroActionCount">—</strong>
-<span>Available actions for the selected queue type.</span>
-</div>
-<div class="metric">
-<strong>Ready</strong>
-<span>Generator, copy action, and guide preview stay available while you work.</span>
-</div>
-</div>
-</div>
-</div>
-<aside class="side-stack">
-<div class="focus-card reveal delay-2">
-<div class="card-label">
-<span><i class="fa-solid fa-compass"></i> How to use</span>
-<i class="fa-solid fa-route"></i>
-</div>
-<h2>Select the queue and action, then generate the approved comment.</h2>
-<p>Use the builder to keep the comment structure clean and confirm the case number before copying.</p>
-<div class="mini-list">
-<div class="mini-item">
-<i class="fa-solid fa-layer-group"></i>
-<div><strong>Select the queue type</strong><span>Choose the matching queue first so the correct actions appear.</span></div>
-</div>
-<div class="mini-item">
-<i class="fa-solid fa-list-check"></i>
-<div><strong>Choose the action taken</strong><span>Pick the exact action that matches the handling on the PRO.</span></div>
-</div>
-<div class="mini-item">
-<i class="fa-solid fa-hashtag"></i>
-<div><strong>Enter the case number</strong><span>Use the actual case number you are working, not the clone reference.</span></div>
-</div>
-<div class="mini-item">
-<i class="fa-solid fa-copy"></i>
-<div><strong>Copy the generated comment</strong><span>Review the final format, then copy it directly into your FBC comment.</span></div>
-</div>
-</div>
-</div>
-<div class="focus-card dark reveal delay-3">
-<div class="card-label">
-<span><i class="fa-solid fa-shield-halved"></i> Builder ready</span>
-<i class="fa-solid fa-truck-fast"></i>
-</div>
-<h2>Everything you need is ready in one place.</h2>
-<p>Use the reminder, reference image, and smart builder to generate the right comment. Revise when needed so the final comment accurately reflects the case resolution.</p>
-</div>
-</aside>
-</div>
-</div>
-</section>
-<section class="fbc-workspace reveal delay-2">
-<div class="container">
-<div class="fbc-reference-panel">
-<div class="fbc-top">
-<div class="fbc-title-block">
-<div class="section-kicker"><i class="fa-solid fa-circle-info"></i> Reminder and guide</div>
-<h2>FBC Comments Guide</h2>
-<p>Review the reminder below, then use the generator to build the correct comment format based on the FBC comment workbook.</p>
-</div>
-</div>
-<div class="fbc-frame">
-<section class="comment-card">
-<div class="comment-head">
-<div>
-<div class="comment-kicker"><i class="fa-solid fa-triangle-exclamation"></i> Important reminder</div>
-<h3 class="comment-title">Always add the correct FBC/FBI comment.</h3>
-<p class="comment-lead">Use the reminder below before building or copying the comment.</p>
-</div>
-<div class="comment-icon"><i class="fa-solid fa-bell"></i></div>
-</div>
-<ol class="helper-list">
-<li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
-<li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
-</ol>
-<a class="inline-link" href="#" onclick="openFbiModal(); return false;">
-<i class="fa-solid fa-link"></i>
-                  Click here for the steps on how to add comment in FBI
-                </a>
-<div class="note-box" style="margin-top:6px;">
-<strong>For the Case #</strong> — Enter the case number of the actual case you are working. Example: if a clone case is assigned to you, in your FBC comment, enter the case number of the actual clone case you are working.
+</head>
+<body data-waits-for-user="true" data-page="fbc-comments-guide">
+<div class="page-loader" id="pageLoader" role="status" aria-live="polite"><div class="page-loader-inner"><div class="page-loader-mark"><span class="page-loader-ring"></span><span class="page-loader-dot"></span></div><p class="page-loader-text">Loading BD Tools…</p></div></div>
+<div class="app-shell">
+  <div id="header-placeholder"></div>
+  <main class="case-page"><section class="case-hero">
+      <div class="fbc-container">
+        <div class="hero">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <div class="eyebrow"><i class="fa-solid fa-comments"></i> Premium comment workspace</div>
+              <h1>Build the correct FBC comment faster with the right queue and action.</h1>
+              <p>Use this page to review the FBC reminder, keep the structure consistent, and generate a ready-to-copy comment based on the queue type, action taken, and case number.</p>
+              <div class="hero-stats">
+                <div class="stat-card">
+                  <div class="stat-value" id="heroQueueCount">—</div>
+                  <div class="stat-label">Queue types available from the FBC comment file.</div>
                 </div>
-<div class="warning-copy">
-                  Note: This generated template serves as a guide. You may revise the comment as needed to accurately reflect the resolution of the case.
+                <div class="stat-card">
+                  <div class="stat-value" id="heroActionCount">—</div>
+                  <div class="stat-label">Available actions for the selected queue type.</div>
                 </div>
-</section>
-<aside class="fbc-side-card">
-<div class="side-card-head"><i class="fa-solid fa-image"></i> FBC Comment Table</div>
-<div class="helper-text" style="margin-bottom:12px;">
-                  Effective immediately, the structure below will guide the 2x4 comment format and help remove unnecessary 2x4 comments previously used.
+                <div class="stat-card">
+                  <div class="stat-value">Ready</div>
+                  <div class="stat-label">Generator, copy action, and guide preview stay available while you work.</div>
                 </div>
-<button class="view-table-btn" onclick="openFbcTableModal()" type="button">
-<i class="fa-solid fa-eye"></i>
-                  View FBC Comment Table
-                </button>
-<div class="guide-image-wrap">
-<img alt="FBC comments guide reference image" class="guide-image" id="guidePreviewImage" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';" src="assets/images/fbc-comments-guide-images/fbc-comments-guide-image.png"/>
-<div class="guide-image-placeholder" id="guideImagePlaceholder" style="display:none;">
-                    Add your next guide image here.<br/>
-                    Save the screenshot as <strong>fbc-comments-guide-images/fbc-comments-guide-image.png</strong>
-</div>
-</div>
-</aside>
-</div>
-</div>
-</div>
-</section>
-<section class="fbc-workspace reveal delay-3" id="fbcBuilder">
-<div class="container">
-<div class="fbc-frame">
-<section class="fbc-main">
-<div class="fbc-top">
-<div class="fbc-title-block">
-<div class="section-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> AI-assisted comment generator</div>
-<h2>FBC Comment Builder</h2>
-<p>Select the queue type and action taken, enter the case number, then let the assistant improve the comment while keeping the approved 2x4 format.</p>
-</div>
-<div class="status-pill">
-<i class="fa-solid fa-bolt"></i>
-<span id="statusPill">Ready</span>
-</div>
-</div>
-<div class="comment-card">
-<div class="comment-head">
-<div>
-<div class="comment-kicker"><i class="fa-solid fa-robot"></i> Smart builder</div>
-<h3 class="comment-title">Build your FBC comment</h3>
-<p class="comment-lead">Choose a queue, select the action, enter the case number, then generate the comment.</p>
-</div>
-<div class="comment-icon"><i class="fa-solid fa-comments"></i></div>
-</div>
-<div class="select-grid">
-<div>
-<label class="field-label">Queue Type</label>
-<div class="select-wrap">
-<select id="queueTypeSelect"><option value="">Select Queue Type</option></select>
-<i class="fa-solid fa-chevron-down"></i>
-</div>
-</div>
-<div>
-<label class="field-label">Action Taken</label>
-<div class="select-wrap">
-<select disabled="" id="actionTakenSelect"><option value="">Select Action Taken</option></select>
-<i class="fa-solid fa-chevron-down"></i>
-</div>
-</div>
-</div>
-<div class="ai-grid">
-<div>
-<label class="field-label">Case #</label>
-<input id="caseNumberInput" placeholder="Enter Case #" type="text"/>
-<div class="case-warning" id="caseWarning">Case # should only contain numbers.</div>
-</div>
-<div class="generate-inline-wrap">
-<button class="btn btn-primary" onclick="generateFbcComment()" type="button"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Comment</button>
-</div>
-</div>
-<div class="ai-panel">
-<div class="ai-panel-title">
-<strong><i class="fa-solid fa-sparkles"></i> Assistant Enhancer</strong>
-<span class="comment-kicker" style="margin-bottom:0;"><i class="fa-solid fa-shield-halved"></i> Local only</span>
-</div>
-<div class="ai-control-row">
-<div>
-<label class="field-label">Optional case context</label>
-<textarea id="aiContextInput" placeholder="Optional: Add short context, such as customer dispute reason, update completed, PRO status, or why no update was needed."></textarea>
-</div>
-<div>
-<label class="field-label">Assistant Checks</label>
-<div class="ai-helper-box" id="assistantChecks">Select Queue Type, Action Taken, and Case # to view smart checks.</div>
-<div class="ai-suggestions" id="aiSuggestions"></div>
-</div>
-</div>
-<div class="ai-toggle-row">
-<label class="toggle-pill"><input checked="" id="autoCopyToggle" type="checkbox"/> Auto-copy after generate</label>
-<label class="toggle-pill"><input id="editModeToggle" type="checkbox"/> Allow editing before copy</label>
-<label class="toggle-pill"><input checked="" id="includeContextToggle" type="checkbox"/> Add optional context</label>
-</div>
-</div>
-<div>
-<div class="generated-toolbar">
-<label class="field-label" style="margin-bottom:0;">Generated FBC Comment</label>
-<span class="mini-status" id="generatedMiniStatus"><i class="fa-solid fa-circle"></i> Waiting</span>
-</div>
-<div class="generated-output-wrap">
-<span class="copied-badge" id="copiedBadge"><i class="fa-solid fa-check"></i> Copied</span>
-<textarea class="response-box" id="generatedCommentBox" placeholder="Your generated FBC comment will appear here after clicking Generate Comment." readonly=""></textarea>
-</div>
-</div>
-<div class="action-row right">
-<button class="btn btn-dark" onclick="copyGeneratedComment()" type="button"><i class="fa-solid fa-copy"></i> Copy Comment</button>
-<button class="btn btn-dark" onclick="clearFbcBuilder()" type="button"><i class="fa-solid fa-rotate-left"></i> Clear</button>
-</div>
-<div class="note-box" id="fbcNoteBox">
-                  Format: <strong>2x4 Comment - Case# - Recommended Comment</strong>. The assistant keeps the approved workbook comment as the base and highlights the case number for easier review.
+              </div>
+              <div style="margin-top:18px;">
+                <button class="hero-cta" onclick="scrollToBuilder()">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
+              </div>
+            </div>
+            <div class="hero-side">
+              <div class="quick-panel">
+                <div>
+                  <div class="panel-title">
+                    <span>How to use</span>
+                    <span>4 steps</span>
+                  </div>
+                  <ul class="quick-list">
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-layer-group"></i></div>
+                      <div><strong>Select the queue type</strong><span>Choose the matching queue first so the correct actions appear.</span></div>
+                    </li>
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-list-check"></i></div>
+                      <div><strong>Choose the action taken</strong><span>Pick the exact action that matches the handling on the PRO.</span></div>
+                    </li>
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-hashtag"></i></div>
+                      <div><strong>Enter the case number</strong><span>Use the actual case number you are working, not the clone reference.</span></div>
+                    </li>
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-copy"></i></div>
+                      <div><strong>Copy the generated comment</strong><span>Review the final format, then copy it directly into your FBC comment.</span></div>
+                    </li>
+                  </ul>
                 </div>
-</div>
-</section>
-<aside class="fbc-side">
-<div class="fbc-side-card">
-<div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick status</div>
-<div class="quick-stat">
-<span class="quick-label">Selected Queue</span>
-<span class="quick-value" id="selectedQueueValue">—</span>
-</div>
-<div class="quick-stat">
-<span class="quick-label">Selected Action</span>
-<span class="quick-value" id="selectedActionValue">—</span>
-</div>
-<div class="quick-stat">
-<span class="quick-label">2x4 Comment</span>
-<span class="quick-value" id="selectedCodeValue">—</span>
-</div>
-<div class="quick-stat">
-<span class="quick-label">Generator Status</span>
-<span class="quick-value" id="generatorStatusValue">Waiting</span>
-</div>
-</div>
-<div class="fbc-side-card">
-<div class="side-card-head"><i class="fa-solid fa-clock-rotate-left"></i> Recent comments</div>
-<div class="recent-list" id="recentCommentsList">
-<div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div>
-</div>
-<div class="recent-actions">
-<button onclick="clearRecentComments()" type="button"><i class="fa-solid fa-trash-can"></i> Clear history</button>
-</div>
-</div>
-<div class="fbc-side-card reminder">
-<div class="side-card-head"><i class="fa-solid fa-lightbulb"></i> Best practice</div>
-<ul class="helper-list">
-<li>Use the actual case number that you are actively working.</li>
-<li>Use the generated preview to double-check the number before pasting.</li>
-<li>Click any recent comment to restore it instantly.</li>
-<li>The assistant does not send data anywhere. It only formats text inside this page.</li>
-</ul>
-</div>
-</aside>
-</div>
-</div>
-</section>
-</main>
-<div id="site-footer"></div>
-</div>
-<div class="image-zoom-modal" id="fbcTableModal">
-<div class="image-zoom-card">
-<div class="image-zoom-head">
-<div>
-<h3>FBC Comment Table</h3>
-<p>Use this enlarged view to review the comment table more clearly.</p>
-</div>
-<button class="image-zoom-close" onclick="closeFbcTableModal()" type="button">×</button>
-</div>
-<div class="image-zoom-body">
-<img alt="FBC Comment Table enlarged view" src="assets/images/fbc-comments-guide-images/fbc-comments-guide-image.png"/>
-</div>
-</div>
-</div>
-<div id="toast">Copied!</div>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+                <div class="live-strip">
+                  <div>
+                    <strong>Workspace ready</strong>
+                    <span>FBC reminders and comment generator are available.</span>
+                  </div>
+                  <div class="pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<script src="assets/js/header-loader.js"></script>
-<script src="assets/js/header.js"></script>
-<script src="assets/js/footer-loader.js"></script>
+    <section class="fbc-workspace">
+      <div class="fbc-container">
+        <div class="fbc-panel">
+          <div class="section-head">
+            <div class="section-head-left">
+              <div class="section-overline"><i class="fa-solid fa-circle-info"></i> Reminder and guide</div>
+              <h3>FBC Comments Guide</h3>
+              <p>Review the reminder below, then use the generator to build the correct comment format based on the FBC comment workbook.</p>
+            </div>
+          </div>
 
+          <div class="reminder-grid">
+            <div class="side-card reminder-card">
+              <div class="work-top">
+                <div>
+                  <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+                  <h4 class="reminder-title">Important FBC comment reminder</h4>
+                </div>
+                <div class="guide-icon"><i class="fa-solid fa-bell"></i></div>
+              </div>
 
+              <ol class="reminder-list">
+                <li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
+                <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
+              </ol>
 
-<div class="fbi-modal" id="fbiModal" onclick="if(event.target === this) closeFbiModal();">
-<div class="fbi-modal-content" onclick="event.stopPropagation();">
-<div class="fbi-modal-header">
-<div class="fbi-modal-title">
-<h3><i class="fa-solid fa-circle-info"></i> How to Add Comment in FBI</h3>
-<p>Follow the guided steps below. Use Auto for a walkthrough, or click each image to zoom.</p>
-</div>
-<button aria-label="Close FBI instructions" class="fbi-close-btn" onclick="closeFbiModal()" type="button">
-<i class="fa-solid fa-xmark"></i>
-</button>
-</div>
-<div class="fbi-progress-wrap">
-<div class="fbi-progress-top">
-<span class="fbi-step-pill"><i class="fa-solid fa-route"></i> <span id="fbiStepCounter">Step 1 of 4</span></span>
-<span class="fbi-progress-percent" id="fbiProgressPercent">25% Complete</span>
-</div>
-<div class="fbi-progress-track">
-<div class="fbi-progress-fill" id="fbiProgressFill"></div>
-</div>
-</div>
-<div class="fbi-modal-body">
-<div class="fbi-steps-shell">
-<div class="fbi-step active">
-<div class="fbi-step-text">
-<span class="fbi-step-number">1</span>
-<div><strong>Open the PRO in FBI.</strong><br/>Start by opening the shipment or PRO where the FBC/FBI comment needs to be added.</div>
-</div>
-<div class="fbi-image-wrap" onclick="zoomFbiImage(this.querySelector('img'))" style="--cursor-x:23%;--cursor-y:13%;">
-<img alt="Step 1 - Open the PRO in FBI" src="assets/images/fbc-comments-guide-images/fbi-step1.png"/>
-<span class="fbi-cursor"></span>
-<span class="fbi-click-ring"></span>
-</div>
-</div>
-<div class="fbi-step">
-<div class="fbi-step-text">
-<span class="fbi-step-number">2</span>
-<div><strong>Click the Paper and Pencil icon.</strong><br/>This opens the comment-related action area for the selected PRO.</div>
-</div>
-<div class="fbi-image-wrap" onclick="zoomFbiImage(this.querySelector('img'))" style="--cursor-x:67%;--cursor-y:7%;">
-<img alt="Step 2 - Click the Paper and Pencil icon" src="assets/images/fbc-comments-guide-images/fbi-step2.png"/>
-<span class="fbi-cursor"></span>
-<span class="fbi-click-ring"></span>
-</div>
-</div>
-<div class="fbi-step">
-<div class="fbi-step-text">
-<span class="fbi-step-number">3</span>
-<div><strong>Click Add Comments.</strong><br/>A new window will open where you can place the generated comment.</div>
-</div>
-<div class="fbi-image-wrap" onclick="zoomFbiImage(this.querySelector('img'))" style="--cursor-x:24%;--cursor-y:89%;">
-<img alt="Step 3 - Click Add Comments" src="assets/images/fbc-comments-guide-images/fbi-step3.png"/>
-<span class="fbi-cursor"></span>
-<span class="fbi-click-ring"></span>
-</div>
-</div>
-<div class="fbi-step">
-<div class="fbi-step-text">
-<span class="fbi-step-number">4</span>
-<div><strong>Type or paste your comment, then click ADD.</strong><br/>Review the comment first, then save it to complete the FBI/FBC comment entry.</div>
-</div>
-<div class="fbi-image-wrap" onclick="zoomFbiImage(this.querySelector('img'))" style="--cursor-x:91%;--cursor-y:43%;">
-<img alt="Step 4 - Type comment and click ADD" src="assets/images/fbc-comments-guide-images/fbi-step4.png"/>
-<span class="fbi-cursor"></span>
-<span class="fbi-click-ring"></span>
-</div>
-</div>
-</div>
-</div>
-<div class="fbi-controls">
-<div class="fbi-control-group">
-<button class="fbi-control-btn light" id="fbiPrevBtn" onclick="prevFbiStep()" type="button"><i class="fa-solid fa-arrow-left"></i> Back</button>
-<button class="fbi-control-btn primary" id="fbiNextBtn" onclick="nextFbiStep()" type="button">Next <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-<div aria-label="FBI step progress" class="fbi-dots">
-<button aria-label="Go to step 1" class="fbi-dot active" onclick="goToFbiStep(0)" type="button"></button>
-<button aria-label="Go to step 2" class="fbi-dot" onclick="goToFbiStep(1)" type="button"></button>
-<button aria-label="Go to step 3" class="fbi-dot" onclick="goToFbiStep(2)" type="button"></button>
-<button aria-label="Go to step 4" class="fbi-dot" onclick="goToFbiStep(3)" type="button"></button>
-</div>
-<div class="fbi-control-group">
-<button class="fbi-control-btn dark" id="fbiAutoBtn" onclick="toggleFbiAutoPlay()" type="button"><i class="fa-solid fa-play"></i> Auto</button>
-</div>
-</div>
-</div>
-</div>
-<div class="image-zoom-modal" id="imageZoomModal" onclick="closeFbiZoom()">
-<img alt="Zoomed FBI instruction image" id="zoomedFbiImage" src=""/>
+              <a class="inline-link" href="#" onclick="return false;">
+                <i class="fa-solid fa-link"></i>
+                Click here for the steps on how to add comment in FBI
+              </a>
+
+              <div class="note-box" style="margin-top:6px;">
+                <strong>For the Case #</strong> — Enter the case number of the actual case you are working. Example: if a clone case is assigned to you, in your FBC comment, enter the case number of the actual clone case you are working.
+              </div>
+
+              <div class="warning-copy">
+                NOTE: This is just a template that serves as your guide. You can always make a revision on it to suit the resolution on the case.
+              </div>
+
+              <div class="note-box" style="margin-top:14px;">
+                Effective immediately, the structure below will guide the 2x4 comment format to help eliminate confusion on what 2x4 comment should be used whenever agents work on PROs and to remove unnecessary 2x4 comments previously used.
+              </div>
+
+              <div class="guide-image-wrap">
+                <div class="work-top" style="margin-bottom:0;">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-image"></i> Guide image</div>
+                    <h4>Reference screenshot</h4>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></div>
+                </div>
+                <img id="guidePreviewImage" class="guide-image" src="assets/images/fbc-comments-guide-reference.png" alt="FBC comments guide reference image" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';">
+                <div id="guideImagePlaceholder" class="guide-image-placeholder" style="display:none;">
+                  Add your reference screenshot here.<br>
+                  Save the screenshot as <strong>assets/images/fbc-comments-guide-reference.png</strong>
+                </div>
+                <div class="helper-text">The reference screenshot is intentionally kept with the effective-immediately reminder so agents can read the instruction and view the structure in one place.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fbcBuilder" class="fbc-workspace">
+      <div class="fbc-container">
+        <div class="fbc-panel">
+          <div class="section-head">
+            <div class="section-head-left">
+              <div class="section-overline"><i class="fa-solid fa-wand-magic-sparkles"></i> Comment generator</div>
+              <h3>FBC Comment Builder</h3>
+              <p>Select the queue type and action taken, then enter the case number. The tool will generate the recommended FBC comment automatically.</p>
+            </div>
+            <div class="section-note"><i class="fa-solid fa-bolt"></i><span id="statusPill">Ready</span></div>
+          </div>
+
+          <div class="content-grid">
+            <div class="work-card">
+              <div class="work-top">
+                <div>
+                  <div class="badge"><i class="fa-solid fa-pen-to-square"></i> Generator</div>
+                  <h4>Build your FBC comment</h4>
+                </div>
+                <div class="guide-icon"><i class="fa-solid fa-comments"></i></div>
+              </div>
+
+              <div class="select-grid">
+                <div>
+                  <label class="field-label">Queue Type</label>
+                  <div class="select-wrap">
+                    <select id="queueTypeSelect">
+                      <option value="">Select Queue Type</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="field-label">Action Taken</label>
+                  <div class="select-wrap">
+                    <select id="actionTakenSelect" disabled>
+                      <option value="">Select Action Taken</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-bottom:14px;">
+                <label class="field-label">Case #</label>
+                <input id="caseNumberInput" type="text" placeholder="Enter Case #">
+              </div>
+
+              <div>
+                <label class="field-label">Generated FBC Comment</label>
+                <textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here."></textarea>
+              </div>
+
+              <div class="action-row right">
+                <button class="btn btn-primary btn-wide" type="button" onclick="generateFbcComment()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Comment</button>
+                <button class="btn btn-dark btn-wide" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button>
+                <button class="btn btn-dark btn-wide" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+              </div>
+
+              <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong></div>
+            </div>
+
+            <div class="side-stack">
+              <div class="side-card">
+                <div class="work-top">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-chart-simple"></i> Snapshot</div>
+                    <h4>Quick status</h4>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">Selected Queue</span>
+                  <span class="quick-value" id="selectedQueueValue">—</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">Selected Action</span>
+                  <span class="quick-value" id="selectedActionValue">—</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">2x4 Comment</span>
+                  <span class="quick-value" id="selectedCodeValue">—</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">Generator Status</span>
+                  <span class="quick-value" id="generatorStatusValue">Waiting</span>
+                </div>
+              </div>
+
+              <div class="side-card">
+                <div class="work-top">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-lightbulb"></i> Best practice</div>
+                    <h4>Handling tip</h4>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+                <ul class="helper-list">
+                  <li>Use the actual case number that you are actively working.</li>
+                  <li>Review the generated comment before pasting it in case wording needs a small revision.</li>
+                  <li>If the workbook row already contains a 2x4 code, the builder uses that code automatically.</li>
+                  <li>If you want to force a fixed prefix like <strong>VS-BLER</strong>, you only need to change one line in the script.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
 </div>
 
-
-<script src="assets/js/fbc-comments-guide.js"></script></body>
-</html>
+<div class="case-modal" id="caseDetailModal" style="display:none"><div class="modal-panel"><div class="modal-header"><div><span class="section-kicker"><i class="fa-solid fa-circle-info"></i> Case details</span><h2>Routing details</h2></div><div class="modal-actions"><button id="viewToggleBtn" class="icon-action" type="button" onclick="toggleView()" title="Switch to premium view"><i class="fa-solid fa-wand-magic-sparkles"></i></button><button class="close-action" type="button" onclick="closeCaseDetail()"><i class="fa-solid fa-xmark"></i></button></div></div><div id="caseDetailModalContent" class="modal-content"><div class="detail-grid"><div class="detail-card"><small>Queue / Request</small><p id="detailQueue"></p></div><div class="detail-card"><small>Concern</small><p id="detailConcern"></p></div><div class="detail-card"><small>Action</small><p id="detailAction"></p></div><div class="detail-card"><small>Email Address</small><p id="detailEmail"></p></div><div class="detail-card full"><small>Case Assignment / Email</small><p id="detailAssignment"></p></div></div><div class="premium-grid"><div class="premium-card"><small>Queue / Request</small><p id="premiumDetailQueue"></p></div><div class="premium-card"><small>Concern</small><p id="premiumDetailConcern"></p></div><div class="premium-card"><small>Action</small><p id="premiumDetailAction"></p></div><div class="premium-card"><small>Email Address</small><p id="premiumDetailEmail"></p></div><div class="premium-card full"><small>Case Assignment / Email</small><p id="premiumDetailAssignment"></p></div></div></div></div></div>
+<div class="toast" id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>const firebaseConfig={apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",authDomain:"bdgg-database.firebaseapp.com",projectId:"bdgg-database",storageBucket:"bdgg-database.appspot.com",messagingSenderId:"43574975434",appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"};if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);</script>
+<script src="shared/include.js"></script><script src="assets/js/fbc-comments-guide.js"></script><script src="assets/js/page-loader.js"></script>
+</body></html>
