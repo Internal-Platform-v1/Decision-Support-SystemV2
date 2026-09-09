@@ -444,7 +444,11 @@ function renderLinks(){
 
   document.getElementById("heroLinkCount").textContent = LINKS.length;
   document.getElementById("heroFavoriteCount").textContent = favs.length;
-  document.getElementById("statusPill").textContent = links.length ? `${links.length} Result${links.length > 1 ? "s" : ""}` : "No Match";
+  const resultLabel = links.length ? `${links.length} Result${links.length > 1 ? "s" : ""}` : "No Match";
+  const resultStatus = document.getElementById("statusPill");
+  if (resultStatus) resultStatus.textContent = resultLabel;
+  const workspaceStatus = document.getElementById("linksWorkspaceStatus");
+  if (workspaceStatus) workspaceStatus.textContent = links.length ? "Ready" : "No Match";
 
   grid.innerHTML = "";
 
@@ -544,7 +548,10 @@ function renderPreview(){
 function updateSnapshot(){
   document.getElementById("selectedToolValue").textContent = selectedLink?.name || "—";
   document.getElementById("selectedCategoryValue").textContent = selectedLink?.cat || "—";
-  document.getElementById("resultStatusValue").textContent = selectedLink ? "Ready" : "No Match";
+  const resultStatusValue = document.getElementById("resultStatusValue");
+  if (resultStatusValue) resultStatusValue.textContent = selectedLink ? "Ready" : "No Match";
+  const selectedResultStatusValue = document.getElementById("selectedResultStatusValue");
+  if (selectedResultStatusValue) selectedResultStatusValue.textContent = selectedLink ? "Ready" : "No Match";
 }
 
 function updateAiSuggestion(best){
