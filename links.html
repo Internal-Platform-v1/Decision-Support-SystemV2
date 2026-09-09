@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="assets/css/page-loader.css">
 <link rel="stylesheet" href="assets/css/links.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body data-waits-for-user="true" data-page="links">
@@ -20,7 +20,7 @@
       <div class="hero-copy">
         <div class="eyebrow"><i class="fa-solid fa-link"></i> Tools &amp; Links</div>
         <h1>Tools <span>&amp; Links Hub</span></h1>
-        <p>Search, preview, copy, and open the tools and internal resources you use every day.</p>
+        <p>Search tools, preview link details, copy system URLs, save favorites, and quickly identify which resources require the iSPI browser.</p>
         <div class="hero-actions">
           <button class="primary-btn" type="button" onclick="scrollToLinksBuilder()">Explore Links Hub <i class="fa-solid fa-arrow-down"></i></button>
           <button class="secondary-btn" type="button" onclick="openOneclickModal()">Open Oneclick <i class="fa-solid fa-bolt"></i></button>
@@ -30,261 +30,212 @@
     <section class="stats-row">
       <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-link"></i></div><div><strong id="heroLinkCount">—</strong><small>Available links</small></div></div>
       <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-star"></i></div><div><strong id="heroFavoriteCount">—</strong><small>Saved favorites</small></div></div>
-      <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-magnifying-glass"></i></div><div><strong>Ready</strong><small>Search status</small></div></div>
+      <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-magnifying-glass"></i></div><div><strong id="resultStatusValue">Ready</strong><small>Search status</small></div></div>
       <div class="stat-card status-stat"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><strong id="statusPill">Ready</strong><small>Hub status</small></div></div>
     </section>
-    <section class="directory-main links-directory-main" id="linksBuilder">
-      <div class="links-search-panel">
-            <div class="links-search-top">
-              <div class="links-search-copy">
-                <h2>Search Links</h2>
-                <p>Type a tool name, keyword, or command like “open racf”, “copy ispi”, or “service center”.</p>
-              </div>
-
-              <div class="chip-row">
-                <button class="chip active" type="button" onclick="filterCategory('all', event)"><i class="fa-solid fa-layer-group"></i> All</button>
-                <button class="chip" type="button" onclick="filterCategory('favorites', event)"><i class="fa-solid fa-star"></i> Favorites</button>
-                <button class="chip" type="button" onclick="filterCategory('system', event)"><i class="fa-solid fa-server"></i> System</button>
-                <button class="chip" type="button" onclick="filterCategory('tools', event)"><i class="fa-solid fa-toolbox"></i> Tools</button>
-                <button class="chip" type="button" onclick="filterCategory('directory', event)"><i class="fa-solid fa-address-book"></i> Directory</button>
-                <button class="chip" type="button" onclick="filterCategory('dashboard', event)"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
-                <button class="chip" type="button" onclick="filterCategory('ispi', event)"><i class="fa-solid fa-globe"></i> Needs iSPI</button>
-              </div>
-            </div>
-
-            <div class="links-search-row">
-              <div class="search-input-wrap">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="linkSearch" type="text" placeholder="Search or ask for a tool...">
-                <button id="clearSearchBtn" type="button" onclick="clearLinkSearch()">×</button>
-              </div>
-
-              <button class="links-search-btn" type="button" onclick="runAiCommand()">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <section class="directory-main links-directory-main" id="directoryWorkspace">
+      <section class="links-workspace reveal delay-2">
+<div class="container">
+<div class="links-search-panel">
+<div class="links-search-top">
+<div class="links-search-copy">
+<h2>Search Links</h2>
+<p>Type a tool name, keyword, or command like “open racf”, “copy ispi”, or “service center”.</p>
+</div>
+<div class="chip-row">
+<button class="chip active" onclick="filterCategory('all', event)" type="button"><i class="fa-solid fa-layer-group"></i> All</button>
+<button class="chip" onclick="filterCategory('favorites', event)" type="button"><i class="fa-solid fa-star"></i> Favorites</button>
+<button class="chip" onclick="filterCategory('system', event)" type="button"><i class="fa-solid fa-server"></i> System</button>
+<button class="chip" onclick="filterCategory('tools', event)" type="button"><i class="fa-solid fa-toolbox"></i> Tools</button>
+<button class="chip" onclick="filterCategory('directory', event)" type="button"><i class="fa-solid fa-address-book"></i> Directory</button>
+<button class="chip" onclick="filterCategory('dashboard', event)" type="button"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+<button class="chip" onclick="filterCategory('ispi', event)" type="button"><i class="fa-solid fa-globe"></i> Needs iSPI</button>
+</div>
+</div>
+<div class="links-search-row">
+<div class="search-input-wrap">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="linkSearch" placeholder="Search or ask for a tool..." type="text"/>
+<button id="clearSearchBtn" onclick="clearLinkSearch()" type="button">×</button>
+</div>
+<button class="links-search-btn" onclick="runAiCommand()" type="button">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
                 Run AI Action
               </button>
-            </div>
-          </div>
-        </div>
-      <div class="links-frame">
-            <section class="links-main">
-              <div class="links-top">
-                <div class="links-title-block">
-                  <div class="section-kicker"><i class="fa-solid fa-link"></i> Links workspace</div>
-                  <h2>Tools & Links Hub</h2>
-                  <p>Select a tool from the list. The preview panel shows the system description, category, URL/path, and safest next action.</p>
-                </div>
-
-                <div class="status-pill">
-                  <i class="fa-solid fa-bolt"></i>
-                  <span id="statusPill">Ready</span>
-                </div>
-              </div>
-
-              <div class="link-library-card">
-                <div class="link-library-head">
-                  <div>
-                    <div class="link-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> Link library</div>
-                    <h3 class="link-library-title">Choose a tool or use AI action words</h3>
-                    <p class="link-library-lead" id="aiSuggestion">
+</div>
+</div>
+</div>
+</section>
+      <section class="links-workspace reveal delay-3" id="linksBuilder">
+<div class="container">
+<div class="links-frame">
+<section class="links-main">
+<div class="links-top">
+<div class="links-title-block">
+<div class="section-kicker"><i class="fa-solid fa-link"></i> Links workspace</div>
+<h2>Tools &amp; Links Hub</h2>
+<p>Select a tool from the list. The preview panel shows the system description, category, URL/path, and safest next action.</p>
+</div>
+<div class="status-pill">
+<i class="fa-solid fa-bolt"></i>
+<span id="statusPill">Ready</span>
+</div>
+</div>
+<div class="link-library-card">
+<div class="link-library-head">
+<div>
+<div class="link-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> Link library</div>
+<h3 class="link-library-title">Choose a tool or use AI action words</h3>
+<p class="link-library-lead" id="aiSuggestion">
                       AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.
                     </p>
-                  </div>
-                  <div class="link-library-icon"><i class="fa-solid fa-link"></i></div>
-                </div>
-
-                <div id="linksGrid" class="links-grid"></div>
-              </div>
-            </section>
-
-            <aside class="links-side">
-              <div class="links-side-card">
-                <div class="side-card-head"><i class="fa-solid fa-eye"></i> Preview</div>
-                <h3 class="link-library-title" id="previewTitle" style="font-size:20px;">Select a link</h3>
-
-                <div class="helper-text" id="previewDesc" style="margin-top:10px;">
+</div>
+<div class="link-library-icon"><i class="fa-solid fa-link"></i></div>
+</div>
+<div class="links-grid" id="linksGrid"></div>
+</div>
+</section>
+<aside class="links-side">
+<div class="links-side-card">
+<div class="side-card-head"><i class="fa-solid fa-eye"></i> Preview</div>
+<h3 class="link-library-title" id="previewTitle" style="font-size:20px;">Select a link</h3>
+<div class="helper-text" id="previewDesc" style="margin-top:10px;">
                   Choose a tool from the list to preview details and actions.
                 </div>
-
-                <div id="previewTags" class="link-badges"></div>
-
-                <div id="previewUrl" class="preview-url">
+<div class="link-badges" id="previewTags"></div>
+<div class="preview-url" id="previewUrl">
                   No link selected.
                 </div>
-
-                <div class="preview-actions">
-                  <button class="link-action-btn primary" type="button" onclick="openSelectedLink()">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+<div class="preview-actions">
+<button class="link-action-btn primary" onclick="openSelectedLink()" type="button">
+<i class="fa-solid fa-arrow-up-right-from-square"></i> Open
                   </button>
-
-                  <button class="link-action-btn dark" type="button" onclick="copySelectedLink()">
-                    <i class="fa-solid fa-copy"></i> Copy
+<button class="link-action-btn dark" onclick="copySelectedLink()" type="button">
+<i class="fa-solid fa-copy"></i> Copy
                   </button>
-                </div>
-
-                <div class="ai-note" id="previewAiNote">
+</div>
+<div class="ai-note" id="previewAiNote">
                   AI recommendation will appear after you search or select a link.
                 </div>
-
-                <div id="previewFrameWrap"></div>
-              </div>
-
-              <div class="links-side-card reminder">
-                <div class="side-card-head"><i class="fa-solid fa-triangle-exclamation"></i> Opening internal tools</div>
-                <ul class="helper-list">
-                  <li>Some tools may require iSPI Browser or company network access.</li>
-                  <li>Internal shared-drive paths are copied instead of opened directly.</li>
-                  <li>If preview does not load, use the Open button.</li>
-                  <li>Favorites are saved only in your current browser.</li>
-                </ul>
-              </div>
-
-              <div class="links-side-card">
-                <div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick status</div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Selected Tool</span>
-                  <span class="quick-value" id="selectedToolValue">—</span>
-                </div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Category</span>
-                  <span class="quick-value" id="selectedCategoryValue">—</span>
-                </div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Result Status</span>
-                  <span class="quick-value" id="resultStatusValue">Waiting</span>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </div>
+<div id="previewFrameWrap"></div>
+</div>
+<div class="links-side-card reminder">
+<div class="side-card-head"><i class="fa-solid fa-triangle-exclamation"></i> Opening internal tools</div>
+<ul class="helper-list">
+<li>Some tools may require iSPI Browser or company network access.</li>
+<li>Internal shared-drive paths are copied instead of opened directly.</li>
+<li>If preview does not load, use the Open button.</li>
+<li>Favorites are saved only in your current browser.</li>
+</ul>
+</div>
+<div class="links-side-card">
+<div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick status</div>
+<div class="quick-stat">
+<span class="quick-label">Selected Tool</span>
+<span class="quick-value" id="selectedToolValue">—</span>
+</div>
+<div class="quick-stat">
+<span class="quick-label">Category</span>
+<span class="quick-value" id="selectedCategoryValue">—</span>
+</div>
+<div class="quick-stat">
+<span class="quick-label">Result Status</span>
+<span class="quick-value" id="resultStatusValue">Waiting</span>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</section>
     </section>
   </main>
   <div id="footer-placeholder"></div>
 </div>
-  <div id="oneclickModal">
-    <div class="oneclick-modal-card">
-      <div class="oneclick-head">
-        <div class="oneclick-title-wrap">
-          <div class="oneclick-logo">
-            <i class="fa-solid fa-bolt"></i>
-          </div>
-
-          <div>
-            <h3>Oneclick Launcher</h3>
-            <p>
+<div id="oneclickModal">
+<div class="oneclick-modal-card">
+<div class="oneclick-head">
+<div class="oneclick-title-wrap">
+<div class="oneclick-logo">
+<i class="fa-solid fa-bolt"></i>
+</div>
+<div>
+<h3>Oneclick Launcher</h3>
+<p>
               Choose the tools you usually open together. Your selected Oneclick list is saved on this PC/browser and will stay after restart or relaunch.
             </p>
-          </div>
-        </div>
-
-        <button class="oneclick-close" type="button" onclick="closeOneclickModal()">×</button>
-      </div>
-
-      <div class="oneclick-body">
-        <div class="oneclick-main">
-          <div class="oneclick-panel">
-            <div class="oneclick-panel-title">
-              <h4>Select links to add</h4>
-              <span class="oneclick-mini-badge">
-                <i class="fa-solid fa-layer-group"></i>
+</div>
+</div>
+<button class="oneclick-close" onclick="closeOneclickModal()" type="button">×</button>
+</div>
+<div class="oneclick-body">
+<div class="oneclick-main">
+<div class="oneclick-panel">
+<div class="oneclick-panel-title">
+<h4>Select links to add</h4>
+<span class="oneclick-mini-badge">
+<i class="fa-solid fa-layer-group"></i>
                 Tools Library
               </span>
-            </div>
-
-            <div class="oneclick-search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input id="oneclickSearch" type="text" placeholder="Search tools to add in Oneclick...">
-            </div>
-
-            <div class="oneclick-tabs" id="oneclickTabs"></div>
-            <div id="oneclickOptions"></div>
-          </div>
-        </div>
-
-        <div class="oneclick-side">
-          <div class="oneclick-panel">
-            <div class="oneclick-panel-title">
-              <h4>Oneclick list</h4>
-              <span class="oneclick-mini-badge">
-                <i class="fa-solid fa-floppy-disk"></i>
+</div>
+<div class="oneclick-search-wrap">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="oneclickSearch" placeholder="Search tools to add in Oneclick..." type="text"/>
+</div>
+<div class="oneclick-tabs" id="oneclickTabs"></div>
+<div id="oneclickOptions"></div>
+</div>
+</div>
+<div class="oneclick-side">
+<div class="oneclick-panel">
+<div class="oneclick-panel-title">
+<h4>Oneclick list</h4>
+<span class="oneclick-mini-badge">
+<i class="fa-solid fa-floppy-disk"></i>
                 Saved locally
               </span>
-            </div>
-
-            <div id="oneclickSelectedList" class="oneclick-selected-list"></div>
-
-            <div class="oneclick-actions">
-              <button class="oneclick-btn orange" type="button" onclick="openOneclickLinks()">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+</div>
+<div class="oneclick-selected-list" id="oneclickSelectedList"></div>
+<div class="oneclick-actions">
+<button class="oneclick-btn orange" onclick="openOneclickLinks()" type="button">
+<i class="fa-solid fa-arrow-up-right-from-square"></i>
                 Open All
               </button>
-
-              <button class="oneclick-btn light" type="button" onclick="clearOneclickLinks()">
-                <i class="fa-solid fa-trash"></i>
+<button class="oneclick-btn light" onclick="clearOneclickLinks()" type="button">
+<i class="fa-solid fa-trash"></i>
                 Clear
               </button>
-            </div>
-
-            <div class="oneclick-note">
+</div>
+<div class="oneclick-note">
               Some browsers may ask permission or block multiple tabs. Allow pop-ups for this site if Oneclick does not open all links.
             </div>
-          </div>
-
-          <div class="oneclick-panel" style="margin-top:20px;">
-            <div class="oneclick-panel-title">
-              <h4>Manual link</h4>
-              <span class="oneclick-mini-badge">
-                <i class="fa-solid fa-plus"></i>
+</div>
+<div class="oneclick-panel" style="margin-top:20px;">
+<div class="oneclick-panel-title">
+<h4>Manual link</h4>
+<span class="oneclick-mini-badge">
+<i class="fa-solid fa-plus"></i>
                 Custom
               </span>
-            </div>
-
-            <div class="oneclick-manual-form">
-              <input id="manualOneclickName" class="oneclick-input" type="text" placeholder="Display name, example: My Report">
-              <input id="manualOneclickUrl" class="oneclick-input" type="text" placeholder="Paste URL, example: https://example.com">
-
-              <button class="oneclick-btn primary" type="button" onclick="addManualOneclickLink()">
-                <i class="fa-solid fa-plus"></i>
+</div>
+<div class="oneclick-manual-form">
+<input class="oneclick-input" id="manualOneclickName" placeholder="Display name, example: My Report" type="text"/>
+<input class="oneclick-input" id="manualOneclickUrl" placeholder="Paste URL, example: https://example.com" type="text"/>
+<button class="oneclick-btn primary" onclick="addManualOneclickLink()" type="button">
+<i class="fa-solid fa-plus"></i>
                 Add Manual Link
               </button>
-            </div>
-
-            <div class="oneclick-note">
+</div>
+<div class="oneclick-note">
               Manual links are also saved on this PC/browser. Use full links when possible.
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="toast">Copied!</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="toast" id="toast"></div>
+</div>
+</div>
+</div>
+</div>
+</div><div id="toast">Copied!</div>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script>const firebaseConfig={apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",authDomain:"bdgg-database.firebaseapp.com",projectId:"bdgg-database",storageBucket:"bdgg-database.appspot.com",messagingSenderId:"43574975434",appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"};if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);</script>
-<script src="shared/include.js"></script>
-<script src="assets/js/links.js"></script>
-<script src="assets/js/page-loader.js"></script>
+<script src="shared/include.js"></script><script src="assets/js/links.js"></script><script src="assets/js/page-loader.js"></script>
 </body></html>
