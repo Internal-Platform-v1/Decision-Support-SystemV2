@@ -593,3 +593,38 @@ body{
     #oneclickModal .oneclick-body{grid-template-columns:1fr;}
     #oneclickModal .oneclick-options{grid-template-columns:1fr;}
 }
+
+
+/* Final controlled layout corrections — preserve the working V2 template. */
+.links-directory-main {
+    flex: 0 0 auto;
+}
+.links-directory-main > .links-workspace:first-child {
+    flex: 0 0 auto;
+}
+.links-directory-main > .links-workspace#linksBuilder {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+.links-directory-main .links-frame {
+    min-height: 100%;
+    align-items: start;
+}
+#oneclickModal .oneclick-panel h4 {
+    margin: 0;
+    color: #10134f;
+    font-size: 13px;
+    line-height: 1.2;
+}
+#oneclickModal .oneclick-panel-title h4 {
+    margin: 0;
+}
+#oneclickModal button,
+#oneclickModal input {
+    font-family: Inter, Arial, sans-serif;
+}
+#oneclickModal .oneclick-modal-card {
+    scrollbar-width: thin;
+    scrollbar-color: #9d91b8 #f8f7ff;
+}
