@@ -1076,15 +1076,28 @@ td pre{
 }
 
 /* =========================================================
-   FINAL LINKS V2 CONTENT + ONECLICK MODAL FIX
-   Uses the same Case Directory V2 visual language.
+   FINAL LINKS V2 CONTENT + ONECLICK MODAL / CARD POLISH
+   Uses the Case Directory V2 + styles.css visual language.
+   CSS ONLY — no HTML/JS changes required.
    ========================================================= */
 
-/* Remove the extra blank area before the footer. */
+/* ---------------------------------------------------------
+   PAGE / WORKSPACE HEIGHT
+   --------------------------------------------------------- */
+
 html,
 body{
     height:100%;
     margin:0;
+    overflow:hidden;
+}
+
+body{
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    color:#10134f;
+}
+
+body.modal-open{
     overflow:hidden;
 }
 
@@ -1101,127 +1114,992 @@ body{
     overflow:hidden;
 }
 
-.links-directory-main{
-    height:calc(100vh - 470px);
-    min-height:250px;
-    margin:14px auto 0 !important;
-    padding:0 !important;
-    overflow:hidden;
+#footer-placeholder{
+    flex:0 0 auto;
+    margin-top:0 !important;
+    padding-top:0 !important;
 }
 
-.links-directory-main>.links-workspace#linksBuilder{
+.links-directory-main{
+    height:calc(100vh - 470px) !important;
+    min-height:250px !important;
+    margin:14px auto 0 !important;
+    padding:0 !important;
+
+    display:flex;
+    flex-direction:column;
+
+    width:85.6%;
+    max-width:none;
+
+    background:#fff;
+    border:1px solid #e4e5ef;
+    border-radius:9px;
+    box-shadow:0 5px 20px rgba(48,38,111,.06);
+
+    overflow:hidden !important;
+}
+
+.links-directory-main > .links-workspace{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.links-directory-main > .links-workspace:first-child{
+    flex:0 0 auto;
+}
+
+.links-directory-main > .links-workspace#linksBuilder{
+    flex:1 1 auto;
     min-height:0;
     overflow:auto;
     scrollbar-width:thin;
-    scrollbar-color:#9d91b8 transparent;
+    scrollbar-color:#b5aacb transparent;
 }
 
-.links-directory-main>.links-workspace#linksBuilder::-webkit-scrollbar,
-#oneclickModal .oneclick-modal-card::-webkit-scrollbar{
-    width:8px;
-    height:8px;
+.links-directory-main > .links-workspace#linksBuilder::-webkit-scrollbar{
+    width:7px;
+    height:7px;
 }
 
-.links-directory-main>.links-workspace#linksBuilder::-webkit-scrollbar-thumb,
-#oneclickModal .oneclick-modal-card::-webkit-scrollbar-thumb{
-    background:#9d91b8;
+.links-directory-main > .links-workspace#linksBuilder::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.links-directory-main > .links-workspace#linksBuilder::-webkit-scrollbar-thumb{
+    background:#b5aacb;
     border-radius:10px;
 }
 
-/* Oneclick modal shell */
+/* ---------------------------------------------------------
+   SEARCH / FILTER PANEL
+   --------------------------------------------------------- */
+
+.links-directory-main .container{
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:0;
+}
+
+.links-directory-main .links-search-panel{
+    flex:0 0 auto;
+
+    margin:0;
+    padding:13px 20px 11px;
+
+    background:#fff;
+    border:0;
+    border-bottom:1px solid #f0f0f5;
+    border-radius:0;
+    box-shadow:none;
+}
+
+.links-directory-main .links-search-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+}
+
+.links-directory-main .links-search-copy{
+    min-width:0;
+}
+
+.links-directory-main .links-search-copy h2{
+    margin:3px 0 4px;
+    color:#10134f;
+    font-size:16px;
+    line-height:1.2;
+    font-weight:700;
+    letter-spacing:-.2px;
+}
+
+.links-directory-main .links-search-copy p{
+    margin:0;
+    color:#777a99;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.links-directory-main .chip-row{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    gap:5px;
+    max-width:610px;
+}
+
+.links-directory-main .chip{
+    height:22px;
+    padding:0 8px;
+
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+
+    border:1px solid #dedfeb;
+    border-radius:20px;
+    background:#fff;
+    color:#45466e;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:600;
+
+    cursor:pointer;
+    transition:.15s ease;
+}
+
+.links-directory-main .chip i{
+    font-size:8px;
+}
+
+.links-directory-main .chip:hover{
+    border-color:#bca6e9;
+    color:#5b17c5;
+    background:#faf8ff;
+}
+
+.links-directory-main .chip.active{
+    background:#4d148c;
+    border-color:#4d148c;
+    color:#fff;
+    box-shadow:0 3px 8px rgba(77,20,140,.12);
+}
+
+.links-directory-main .links-search-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+}
+
+.links-directory-main .search-input-wrap{
+    height:32px;
+    flex:1;
+    min-width:0;
+
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:0 9px;
+
+    background:#fff;
+    border:1px solid #dedfeb;
+    border-radius:6px;
+    color:#8a8da8;
+
+    transition:.15s ease;
+}
+
+.links-directory-main .search-input-wrap:focus-within{
+    border-color:#9b7ad7;
+    box-shadow:0 0 0 3px rgba(107,32,208,.06);
+}
+
+.links-directory-main .search-input-wrap > i{
+    flex:0 0 auto;
+    font-size:10px;
+    color:#8a8da8;
+}
+
+.links-directory-main .search-input-wrap input{
+    flex:1;
+    min-width:0;
+
+    height:100%;
+    padding:0 3px;
+
+    border:0;
+    outline:0;
+    background:transparent;
+
+    color:#10134f;
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:9px;
+    font-weight:400;
+}
+
+.links-directory-main .search-input-wrap input::placeholder{
+    color:#a0a2b6;
+}
+
+.links-directory-main .search-input-wrap button{
+    width:20px;
+    height:20px;
+    flex:0 0 20px;
+
+    display:grid;
+    place-items:center;
+
+    padding:0;
+    border:0;
+    background:transparent;
+    color:#a0a2b6;
+
+    font-size:16px;
+    line-height:1;
+    cursor:pointer;
+}
+
+.links-directory-main .search-input-wrap button:hover{
+    color:#4d148c;
+}
+
+.links-directory-main .links-search-btn{
+    height:32px;
+    padding:0 12px;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    border:1px solid #ff6600;
+    border-radius:6px;
+    background:#ff6600;
+    color:#fff;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:9px;
+    font-weight:700;
+
+    cursor:pointer;
+    white-space:nowrap;
+
+    box-shadow:0 3px 9px rgba(255,102,0,.12);
+    transition:.15s ease;
+}
+
+.links-directory-main .links-search-btn:hover{
+    background:#e95d00;
+    border-color:#e95d00;
+    transform:translateY(-1px);
+}
+
+/* ---------------------------------------------------------
+   MAIN LINKS FRAME
+   --------------------------------------------------------- */
+
+.links-directory-main .links-frame{
+    width:100%;
+    min-height:100%;
+
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 245px;
+    align-items:start;
+    gap:12px;
+
+    padding:13px 20px 16px;
+
+    background:#fff;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+
+    overflow:visible;
+}
+
+.links-directory-main .links-main{
+    min-width:0;
+    min-height:0;
+    overflow:visible;
+}
+
+.links-directory-main .links-side{
+    min-width:0;
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+
+    overflow:visible;
+}
+
+/* ---------------------------------------------------------
+   WORKSPACE HEADER
+   --------------------------------------------------------- */
+
+.links-directory-main .links-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+
+    margin:0 0 10px;
+}
+
+.links-directory-main .links-title-block{
+    min-width:0;
+}
+
+.links-directory-main .section-kicker,
+.links-directory-main .link-kicker,
+.links-directory-main .side-card-head{
+    color:#6b20d0;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.06em;
+    line-height:1.2;
+    text-transform:uppercase;
+}
+
+.links-directory-main .section-kicker i,
+.links-directory-main .link-kicker i,
+.links-directory-main .side-card-head i{
+    margin-right:4px;
+}
+
+.links-directory-main .links-title-block h2{
+    margin:4px 0 4px;
+    color:#10134f;
+    font-size:16px;
+    line-height:1.2;
+    font-weight:700;
+    letter-spacing:-.2px;
+}
+
+.links-directory-main .links-title-block p{
+    max-width:700px;
+    margin:0;
+    color:#777a99;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.links-directory-main .status-pill{
+    flex:0 0 auto;
+
+    min-height:24px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+
+    padding:0 9px;
+
+    border:1px solid #dcefe0;
+    border-radius:20px;
+    background:#f1fbf3;
+    color:#3e9346;
+
+    font-size:8px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.links-directory-main .status-pill i{
+    font-size:8px;
+}
+
+/* ---------------------------------------------------------
+   LINK LIBRARY CONTAINER
+   --------------------------------------------------------- */
+
+.links-directory-main .link-library-card,
+.links-directory-main .links-side-card{
+    background:#fff;
+    border:1px solid #e8e9f2;
+    border-radius:7px;
+}
+
+.links-directory-main .link-library-card{
+    padding:12px;
+}
+
+.links-directory-main .link-library-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.links-directory-main .link-library-title{
+    margin:4px 0;
+    color:#10134f;
+    font-size:12px;
+    line-height:1.25;
+    font-weight:700;
+}
+
+.links-directory-main .link-library-lead,
+.links-directory-main .helper-text{
+    margin:0;
+    color:#777a99;
+    font-size:8px;
+    line-height:1.45;
+}
+
+.links-directory-main .link-library-lead strong{
+    color:#5b17c5;
+    font-weight:700;
+}
+
+.links-directory-main .link-library-icon{
+    width:29px;
+    height:29px;
+    flex:0 0 29px;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid #e4d8ff;
+    border-radius:8px;
+    background:#f0e9ff;
+    color:#6d2ce0;
+
+    font-size:13px;
+}
+
+/* ---------------------------------------------------------
+   LINK CARDS — MAIN FIX
+   --------------------------------------------------------- */
+
+.links-directory-main .links-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+}
+
+.links-directory-main .link-card{
+    position:relative;
+    min-width:0;
+    min-height:118px;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:10px 10px 9px;
+
+    background:#fff;
+    border:1px solid #e5e6ef;
+    border-radius:7px;
+
+    cursor:pointer;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .15s ease,
+        background .15s ease;
+}
+
+.links-directory-main .link-card:hover{
+    border-color:#bba4e8;
+    background:#fff;
+    box-shadow:0 5px 15px rgba(48,38,111,.08);
+    transform:translateY(-1px);
+}
+
+.links-directory-main .link-card.active,
+.links-directory-main .link-card.selected{
+    border-color:#6b20d0;
+    background:#fcfaff;
+    box-shadow:
+        0 0 0 1px rgba(107,32,208,.08),
+        0 5px 15px rgba(77,20,140,.08);
+}
+
+.links-directory-main .link-card-top{
+    width:100%;
+    min-height:30px;
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+}
+
+/* Actual tool icon */
+.links-directory-main .link-icon{
+    width:31px;
+    height:31px;
+    flex:0 0 31px;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid #e1d8f7;
+    border-radius:8px;
+    background:#f0e9ff;
+    color:#6b20d0;
+
+    font-size:13px;
+    line-height:1;
+
+    box-shadow:0 2px 6px rgba(77,20,140,.06);
+}
+
+.links-directory-main .link-icon i{
+    display:block;
+    font-size:13px;
+    line-height:1;
+}
+
+/* Give the cards the same restrained V2 color rotation
+   used by styles.css while keeping Font Awesome icons. */
+.links-directory-main .link-card:nth-child(4n+2) .link-icon{
+    background:#fff0e4;
+    border-color:#ffe0cc;
+    color:#ff6d17;
+}
+
+.links-directory-main .link-card:nth-child(4n+3) .link-icon{
+    background:#edf2ff;
+    border-color:#dce5ff;
+    color:#3564e5;
+}
+
+.links-directory-main .link-card:nth-child(4n+4) .link-icon{
+    background:#e8f7e7;
+    border-color:#d6edd4;
+    color:#3e9346;
+}
+
+/* Favorite star — remove the ugly browser-default square */
+.links-directory-main .favorite-star{
+    width:26px;
+    height:26px;
+    flex:0 0 26px;
+
+    display:grid;
+    place-items:center;
+
+    padding:0;
+
+    border:1px solid #e3def2;
+    border-radius:6px;
+    background:#fff;
+    color:#c2c4d1;
+
+    font-size:11px;
+    line-height:1;
+
+    cursor:pointer;
+    transition:.15s ease;
+}
+
+.links-directory-main .favorite-star i{
+    font-size:10px;
+    line-height:1;
+}
+
+.links-directory-main .favorite-star:hover{
+    border-color:#f0c46b;
+    background:#fffaf0;
+    color:#f1a919;
+}
+
+.links-directory-main .favorite-star.active{
+    border-color:#f2d18b;
+    background:#fff6de;
+    color:#f1a919;
+}
+
+/* Card title */
+.links-directory-main .link-card h5{
+    min-width:0;
+
+    margin:8px 0 4px;
+
+    color:#10134f;
+    font-size:10px;
+    line-height:1.25;
+    font-weight:700;
+    letter-spacing:-.05px;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* Card description */
+.links-directory-main .link-card > p{
+    margin:0;
+
+    color:#777a99;
+    font-size:8px;
+    line-height:1.45;
+
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    overflow:hidden;
+}
+
+/* Card tags */
+.links-directory-main .link-card .link-badges{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:4px;
+
+    margin-top:auto;
+    padding-top:7px;
+}
+
+.links-directory-main .link-card .link-tag{
+    display:inline-flex;
+    align-items:center;
+
+    min-height:17px;
+    padding:2px 6px;
+
+    border:1px solid #e4d8ff;
+    border-radius:10px;
+
+    background:#f0e9ff;
+    color:#5b17c5;
+
+    font-size:7px;
+    line-height:1;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.links-directory-main .link-card .link-tag.orange{
+    border-color:#ffe0cb;
+    background:#fff0e4;
+    color:#ff6d17;
+}
+
+/* No results */
+.links-directory-main .no-results{
+    grid-column:1 / -1;
+
+    min-height:110px;
+    display:grid;
+    place-items:center;
+
+    border:1px dashed #dedfeb;
+    border-radius:7px;
+    background:#fcfbff;
+
+    color:#777a99;
+    font-size:9px;
+}
+
+/* ---------------------------------------------------------
+   PREVIEW SIDEBAR
+   --------------------------------------------------------- */
+
+.links-directory-main .links-side-card{
+    padding:11px;
+}
+
+.links-directory-main .links-side-card .side-card-head{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    margin-bottom:8px;
+}
+
+.links-directory-main .links-side-card h3.link-library-title{
+    margin:7px 0 0;
+    color:#10134f;
+    font-size:13px !important;
+    line-height:1.2;
+    font-weight:700;
+}
+
+.links-directory-main .link-badges{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:4px;
+}
+
+.links-directory-main .links-side-card .link-badges{
+    margin-top:8px;
+}
+
+.links-directory-main .links-side-card .link-badges span{
+    display:inline-flex;
+    align-items:center;
+
+    min-height:17px;
+    padding:2px 6px;
+
+    border:1px solid #e4d8ff;
+    border-radius:10px;
+    background:#f0e9ff;
+    color:#5b17c5;
+
+    font-size:7px;
+    line-height:1;
+    font-weight:700;
+}
+
+.links-directory-main .links-side-card .link-badges span.orange{
+    border-color:#ffe0cb;
+    background:#fff0e4;
+    color:#ff6d17;
+}
+
+.links-directory-main .preview-url{
+    margin-top:8px;
+    padding:8px;
+
+    border:1px solid #eeeef5;
+    border-radius:5px;
+    background:#faf9ff;
+
+    color:#777a99;
+    font-size:8px;
+    line-height:1.45;
+    word-break:break-word;
+}
+
+.links-directory-main .ai-note{
+    margin-top:8px;
+    padding:8px 9px;
+
+    border-left:2px solid #ff6600;
+    border-radius:0 5px 5px 0;
+    background:#fff8f1;
+
+    color:#777a99;
+    font-size:8px;
+    line-height:1.45;
+}
+
+.links-directory-main .preview-actions{
+    display:flex;
+    gap:6px;
+    margin-top:8px;
+}
+
+.links-directory-main .link-action-btn{
+    height:27px;
+    padding:0 9px;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+
+    border:1px solid transparent;
+    border-radius:5px;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:700;
+
+    cursor:pointer;
+    transition:.15s ease;
+}
+
+.links-directory-main .link-action-btn.primary{
+    background:#5b17c5;
+    border-color:#5b17c5;
+    color:#fff;
+}
+
+.links-directory-main .link-action-btn.primary:hover{
+    background:#4d148c;
+    border-color:#4d148c;
+}
+
+.links-directory-main .link-action-btn.dark{
+    background:#21145b;
+    border-color:#21145b;
+    color:#fff;
+}
+
+.links-directory-main .link-action-btn.dark:hover{
+    background:#10134f;
+    border-color:#10134f;
+}
+
+.links-directory-main .helper-list{
+    margin:8px 0 0;
+    padding-left:14px;
+
+    color:#777a99;
+    font-size:8px;
+    line-height:1.55;
+}
+
+.links-directory-main .helper-list li{
+    margin:2px 0;
+}
+
+.links-directory-main .quick-stat{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+
+    padding:7px 0;
+    border-bottom:1px solid #eeeef5;
+
+    font-size:8px;
+    line-height:1.35;
+}
+
+.links-directory-main .quick-stat:last-child{
+    border-bottom:0;
+}
+
+.links-directory-main .quick-label{
+    color:#777a99;
+}
+
+.links-directory-main .quick-value{
+    max-width:58%;
+
+    color:#303258;
+    font-weight:700;
+    text-align:right;
+    word-break:break-word;
+}
+
+/* ---------------------------------------------------------
+   ONECLICK MODAL — CASE DIRECTORY V2 STYLE
+   --------------------------------------------------------- */
+
 #oneclickModal{
     position:fixed;
     inset:0;
     z-index:200;
+
     display:none;
     align-items:center;
     justify-content:center;
+
     padding:20px;
-    background:rgba(16,19,79,.34);
-    backdrop-filter:blur(3px);
+
+    background:rgba(16,19,79,.42);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
 }
 
 #oneclickModal .oneclick-modal-card{
-    width:min(900px,100%);
-    max-height:min(720px,90vh);
+    width:min(760px,calc(100vw - 40px));
+    max-height:min(690px,86vh);
+
     overflow:auto;
+
     background:#fff;
-    border:1px solid #e4e5ef;
-    border-radius:10px;
-    box-shadow:0 20px 60px rgba(16,19,79,.20);
+    border:1px solid #e2e1ec;
+    border-radius:9px;
+
+    box-shadow:0 20px 60px rgba(16,19,79,.24);
+
+    scrollbar-width:thin;
+    scrollbar-color:#b5aacb #f8f7ff;
 }
 
+#oneclickModal .oneclick-modal-card::-webkit-scrollbar{
+    width:7px;
+    height:7px;
+}
+
+#oneclickModal .oneclick-modal-card::-webkit-scrollbar-track{
+    background:#f8f7ff;
+}
+
+#oneclickModal .oneclick-modal-card::-webkit-scrollbar-thumb{
+    background:#b5aacb;
+    border-radius:10px;
+}
+
+/* Modal header */
 #oneclickModal .oneclick-head{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:16px;
-    padding:17px 20px 14px;
-    border-bottom:1px solid #eeeef5;
+    gap:12px;
+
+    padding:13px 16px 11px;
+
     background:#fff;
+    border-bottom:1px solid #eeeef5;
 }
 
 #oneclickModal .oneclick-title-wrap{
     display:flex;
     align-items:center;
-    gap:11px;
+    gap:9px;
     min-width:0;
 }
 
 #oneclickModal .oneclick-logo{
-    width:34px;
-    height:34px;
-    flex:0 0 34px;
+    width:31px;
+    height:31px;
+    flex:0 0 31px;
+
     display:grid;
     place-items:center;
-    border-radius:9px;
+
+    border:1px solid #e4d8ff;
+    border-radius:8px;
     background:#f0e9ff;
     color:#6d2ce0;
-    font-size:17px;
+
+    font-size:14px;
 }
 
 #oneclickModal .oneclick-head h2,
 #oneclickModal .oneclick-head h3{
     margin:0;
+
     color:#10134f;
-    font-size:18px;
-    line-height:1.15;
-    font-weight:800;
+    font-size:15px;
+    line-height:1.2;
+    font-weight:700;
 }
 
 #oneclickModal .oneclick-head p{
-    margin:4px 0 0;
+    max-width:540px;
+    margin:3px 0 0;
+
     color:#777a99;
-    font-size:10px;
-    line-height:1.45;
+    font-size:8px;
+    line-height:1.4;
 }
 
 #oneclickModal .oneclick-close{
-    width:31px;
-    height:31px;
-    flex:0 0 31px;
+    width:28px;
+    height:28px;
+    flex:0 0 28px;
+
     display:grid;
     place-items:center;
+
+    padding:0;
+
     border:1px solid #e3def2;
     border-radius:6px;
     background:#fff;
     color:#777a99;
-    font-size:20px;
+
+    font-size:17px;
     line-height:1;
+
     cursor:pointer;
+    transition:.15s ease;
 }
 
 #oneclickModal .oneclick-close:hover{
     border-color:#6b20d0;
-    color:#6b20d0;
     background:#f7f3ff;
+    color:#6b20d0;
 }
 
+/* Modal body */
 #oneclickModal .oneclick-body{
     display:grid;
-    grid-template-columns:minmax(0,1fr) 290px;
-    gap:14px;
-    padding:16px 20px 20px;
+    grid-template-columns:minmax(0,1fr) 225px;
+    gap:10px;
+
+    padding:12px 16px 15px;
+
     background:#fff;
 }
 
@@ -1233,12 +2111,15 @@ body{
 #oneclickModal .oneclick-side{
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:10px;
 }
 
+/* Modal panels */
 #oneclickModal .oneclick-panel{
     min-width:0;
-    padding:14px;
+
+    padding:11px;
+
     border:1px solid #e8e9f2;
     border-radius:7px;
     background:#fff;
@@ -1246,77 +2127,122 @@ body{
 
 #oneclickModal .oneclick-panel-title{
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     justify-content:space-between;
-    gap:10px;
-    margin-bottom:11px;
+    gap:8px;
+
+    margin-bottom:8px;
+
     color:#10134f;
-    font-size:13px;
-    font-weight:800;
 }
 
-#oneclickModal .oneclick-panel-title small{
-    display:block;
-    margin-top:4px;
-    color:#777a99;
-    font-size:9px;
-    font-weight:400;
-    line-height:1.45;
+#oneclickModal .oneclick-panel-title h4{
+    margin:0;
+
+    color:#10134f;
+    font-size:11px;
+    line-height:1.2;
+    font-weight:700;
 }
 
 #oneclickModal .oneclick-mini-badge{
-    width:29px;
-    height:29px;
-    flex:0 0 29px;
+    width:26px;
+    height:26px;
+    flex:0 0 26px;
+
     display:grid;
     place-items:center;
-    border-radius:8px;
+
+    border:1px solid #e4d8ff;
+    border-radius:7px;
     background:#f0e9ff;
     color:#6d2ce0;
-    font-size:14px;
+
+    font-size:11px;
 }
 
+/* Modal search */
 #oneclickModal .oneclick-search-wrap{
-    height:34px;
+    height:30px;
+
     display:flex;
     align-items:center;
-    gap:8px;
-    padding:0 10px;
+    gap:7px;
+
+    padding:0 8px;
+
+    margin-bottom:8px;
+
     border:1px solid #dedfeb;
-    border-radius:6px;
+    border-radius:5px;
+    background:#fff;
     color:#8a8da8;
-    margin-bottom:10px;
+
+    transition:.15s ease;
+}
+
+#oneclickModal .oneclick-search-wrap:focus-within{
+    border-color:#9b7ad7;
+    box-shadow:0 0 0 3px rgba(107,32,208,.06);
+}
+
+#oneclickModal .oneclick-search-wrap i{
+    font-size:9px;
 }
 
 #oneclickModal .oneclick-search-wrap input{
     width:100%;
     min-width:0;
+    height:100%;
+
+    padding:0;
+
     border:0;
     outline:0;
+    background:transparent;
+
     color:#10134f;
-    font:10px Inter,Arial,sans-serif;
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
 }
 
+#oneclickModal .oneclick-search-wrap input::placeholder{
+    color:#a0a2b6;
+}
+
+/* Modal category tabs */
 #oneclickModal .oneclick-tabs{
     display:flex;
     flex-wrap:wrap;
-    gap:6px;
-    margin-bottom:12px;
+    gap:4px;
+
+    margin-bottom:9px;
 }
 
 #oneclickModal .oneclick-tab{
-    height:24px;
-    padding:0 9px;
+    height:20px;
+    padding:0 7px;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
     border:1px solid #dedfeb;
     border-radius:20px;
     background:#fff;
     color:#45466e;
-    font:700 9px Inter,Arial,sans-serif;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:7px;
+    font-weight:700;
+
     cursor:pointer;
+    transition:.15s ease;
 }
 
 #oneclickModal .oneclick-tab:hover{
-    border-color:#6b20d0;
+    border-color:#bca6e9;
+    background:#faf8ff;
     color:#5b17c5;
 }
 
@@ -1326,56 +2252,70 @@ body{
     color:#fff;
 }
 
+/* Modal option groups */
 #oneclickModal .oneclick-group{
-    margin-top:12px;
+    margin-top:9px;
 }
 
 #oneclickModal .oneclick-group-title{
-    margin:0 0 7px;
+    margin:0 0 5px;
+
     color:#6b20d0;
-    font-size:9px;
+    font-size:7px;
+    line-height:1.2;
     font-weight:800;
-    letter-spacing:.05em;
+    letter-spacing:.06em;
     text-transform:uppercase;
 }
 
 #oneclickModal .oneclick-options{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:7px;
+    gap:5px;
 }
 
 #oneclickModal .oneclick-option{
+    min-width:0;
+
     display:flex;
     align-items:flex-start;
-    gap:9px;
-    min-width:0;
-    padding:10px;
+    gap:6px;
+
+    padding:7px;
+
     border:1px solid #e8e9f2;
-    border-radius:7px;
+    border-radius:6px;
     background:#fff;
+
     cursor:pointer;
+
     transition:.15s ease;
 }
 
 #oneclickModal .oneclick-option:hover,
 #oneclickModal .oneclick-option.active{
-    border-color:#6b20d0;
+    border-color:#9b7ad7;
     background:#faf8ff;
-    box-shadow:0 4px 14px rgba(77,20,140,.07);
+    box-shadow:0 3px 10px rgba(77,20,140,.06);
 }
 
 #oneclickModal .oneclick-check{
-    width:18px;
-    height:18px;
-    flex:0 0 18px;
+    width:15px;
+    height:15px;
+    flex:0 0 15px;
+
     display:grid;
     place-items:center;
-    border:1px solid #d8d9e6;
-    border-radius:4px;
+
+    margin-top:1px;
+
+    border:1px solid #d5d7e3;
+    border-radius:3px;
     background:#fff;
     color:#fff;
-    font-size:11px;
+
+    font-size:8px;
+    line-height:1;
 }
 
 #oneclickModal .oneclick-option.active .oneclick-check{
@@ -1385,102 +2325,157 @@ body{
 
 #oneclickModal .oneclick-option-title{
     min-width:0;
+
     color:#10134f;
-    font-size:10px;
-    font-weight:800;
-    line-height:1.35;
+    font-size:8px;
+    line-height:1.3;
+    font-weight:700;
 }
 
 #oneclickModal .oneclick-option-description{
-    margin-top:3px;
+    margin-top:2px;
+
     color:#777a99;
-    font-size:9px;
+    font-size:7px;
+    line-height:1.35;
     font-weight:400;
-    line-height:1.4;
 }
 
 #oneclickModal .oneclick-empty{
-    padding:18px 10px;
+    padding:15px 8px;
+
     border:1px dashed #dedfeb;
-    border-radius:6px;
+    border-radius:5px;
+    background:#fcfbff;
+
     color:#777a99;
     text-align:center;
-    font-size:10px;
+    font-size:8px;
 }
 
+/* Selected Oneclick list */
 #oneclickModal .oneclick-selected-list{
     display:flex;
     flex-direction:column;
-    gap:7px;
-    max-height:250px;
+    gap:5px;
+
+    max-height:205px;
     overflow:auto;
+
+    scrollbar-width:thin;
+    scrollbar-color:#c1b5d4 transparent;
+}
+
+#oneclickModal .oneclick-selected-list::-webkit-scrollbar{
+    width:5px;
+}
+
+#oneclickModal .oneclick-selected-list::-webkit-scrollbar-thumb{
+    background:#c1b5d4;
+    border-radius:10px;
 }
 
 #oneclickModal .oneclick-selected-item{
+    min-width:0;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:8px;
-    padding:9px 10px;
+    gap:6px;
+
+    padding:7px 8px;
+
     border:1px solid #e8e9f2;
-    border-radius:6px;
+    border-radius:5px;
     background:#faf9ff;
 }
 
 #oneclickModal .oneclick-selected-info{
     min-width:0;
+
     color:#10134f;
-    font-size:10px;
+    font-size:8px;
+    line-height:1.3;
     font-weight:700;
-    line-height:1.35;
+
+    overflow:hidden;
 }
 
 #oneclickModal .oneclick-selected-info small{
     display:block;
+
     margin-top:2px;
+
     color:#777a99;
-    font-size:8px;
+    font-size:7px;
+    line-height:1.3;
     font-weight:400;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 #oneclickModal .oneclick-selected-actions{
     display:flex;
-    gap:5px;
+    gap:3px;
     flex:0 0 auto;
 }
 
 #oneclickModal .oneclick-remove-btn,
 #oneclickModal .oneclick-delete-manual-btn{
-    width:25px;
-    height:25px;
+    width:22px;
+    height:22px;
+    flex:0 0 22px;
+
     display:grid;
     place-items:center;
+
+    padding:0;
+
     border:1px solid #e3def2;
-    border-radius:5px;
+    border-radius:4px;
     background:#fff;
     color:#777a99;
+
+    font-size:8px;
+
     cursor:pointer;
+    transition:.15s ease;
 }
 
 #oneclickModal .oneclick-remove-btn:hover,
 #oneclickModal .oneclick-delete-manual-btn:hover{
-    border-color:#ff6600;
+    border-color:#ffb38a;
+    background:#fff8f1;
     color:#ff6600;
 }
 
+/* Modal action buttons */
 #oneclickModal .oneclick-actions{
     display:flex;
-    gap:7px;
-    margin-top:12px;
+    gap:5px;
+    margin-top:8px;
 }
 
 #oneclickModal .oneclick-btn{
-    height:30px;
-    padding:0 11px;
+    height:27px;
+    padding:0 9px;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+
     border:1px solid transparent;
-    border-radius:6px;
-    font:700 9px Inter,Arial,sans-serif;
+    border-radius:5px;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:700;
+
     cursor:pointer;
+    transition:.15s ease;
 }
 
 #oneclickModal .oneclick-btn.primary{
@@ -1489,10 +2484,20 @@ body{
     color:#fff;
 }
 
+#oneclickModal .oneclick-btn.primary:hover{
+    background:#4d148c;
+    border-color:#4d148c;
+}
+
 #oneclickModal .oneclick-btn.orange{
     background:#ff6600;
     border-color:#ff6600;
     color:#fff;
+}
+
+#oneclickModal .oneclick-btn.orange:hover{
+    background:#e95d00;
+    border-color:#e95d00;
 }
 
 #oneclickModal .oneclick-btn.light{
@@ -1501,79 +2506,213 @@ body{
     color:#4d148c;
 }
 
-#oneclickModal .oneclick-btn:hover{
-    filter:brightness(.96);
+#oneclickModal .oneclick-btn.light:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
 }
 
 #oneclickModal .oneclick-note{
-    margin-top:12px;
-    padding:10px;
+    margin-top:8px;
+    padding:8px;
+
     border-left:2px solid #ff6600;
+    border-radius:0 4px 4px 0;
     background:#fff8f1;
+
     color:#777a99;
-    font-size:9px;
-    line-height:1.5;
+    font-size:7px;
+    line-height:1.45;
 }
 
+/* Manual link form */
 #oneclickModal .oneclick-manual-form{
     display:flex;
     flex-direction:column;
-    gap:7px;
+    gap:5px;
 }
 
 #oneclickModal .oneclick-input{
     width:100%;
-    height:32px;
-    padding:0 9px;
+    height:28px;
+
+    padding:0 8px;
+
     border:1px solid #dedfeb;
-    border-radius:6px;
+    border-radius:5px;
     outline:0;
+    background:#fff;
+
     color:#10134f;
-    font:10px Inter,Arial,sans-serif;
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
 }
 
-#oneclickModal .oneclick-input:focus,
-#oneclickModal .oneclick-search-wrap:focus-within{
-    border-color:#6b20d0;
-    box-shadow:0 0 0 3px rgba(107,32,208,.08);
+#oneclickModal .oneclick-input::placeholder{
+    color:#a0a2b6;
+}
+
+#oneclickModal .oneclick-input:focus{
+    border-color:#9b7ad7;
+    box-shadow:0 0 0 3px rgba(107,32,208,.06);
+}
+
+#oneclickModal button,
+#oneclickModal input{
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+}
+
+/* ---------------------------------------------------------
+   TOAST
+   --------------------------------------------------------- */
+
+#toast,
+.toast{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    z-index:300;
+
+    padding:9px 12px;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:6px;
+
+    background:#21145b;
+    color:#fff;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:600;
+
+    opacity:0;
+    transform:translateY(8px);
+    pointer-events:none;
+
+    transition:.2s ease;
+    box-shadow:0 8px 25px rgba(23,15,67,.25);
+}
+
+#toast.show,
+.toast.show{
+    opacity:1;
+    transform:none;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media(max-width:1050px){
+    .links-directory-main{
+        width:88%;
+    }
+
+    .links-directory-main .links-frame{
+        grid-template-columns:minmax(0,1fr) 230px;
+    }
+
+    .links-directory-main .chip-row{
+        max-width:500px;
+    }
+}
+
+@media(max-width:900px){
+    .links-directory-main{
+        width:90%;
+    }
+
+    .links-directory-main .links-search-top{
+        display:block;
+    }
+
+    .links-directory-main .chip-row{
+        justify-content:flex-start;
+        max-width:none;
+        margin-top:8px;
+    }
+
+    .links-directory-main .links-frame{
+        grid-template-columns:minmax(0,1fr) 220px;
+    }
+
+    #oneclickModal .oneclick-modal-card{
+        width:min(720px,calc(100vw - 30px));
+    }
 }
 
 @media(max-width:760px){
-    #oneclickModal .oneclick-body{grid-template-columns:1fr;}
-    #oneclickModal .oneclick-options{grid-template-columns:1fr;}
+    .links-directory-main .links-frame{
+        grid-template-columns:1fr;
+    }
+
+    .links-directory-main .links-side{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        align-items:start;
+    }
+
+    #oneclickModal{
+        padding:12px;
+    }
+
+    #oneclickModal .oneclick-body{
+        grid-template-columns:1fr;
+    }
+
+    #oneclickModal .oneclick-side{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        align-items:start;
+    }
 }
 
+@media(max-width:560px){
+    .links-directory-main .links-search-panel,
+    .links-directory-main .links-frame{
+        padding-left:12px;
+        padding-right:12px;
+    }
 
-/* Final controlled layout corrections — preserve the working V2 template. */
-.links-directory-main {
-    flex: 0 0 auto;
+    .links-directory-main .links-search-row{
+        display:block;
+    }
+
+    .links-directory-main .links-search-btn{
+        width:100%;
+        margin-top:7px;
+    }
+
+    .links-directory-main .links-grid{
+        grid-template-columns:1fr;
+    }
+
+    .links-directory-main .links-side{
+        grid-template-columns:1fr;
+    }
+
+    #oneclickModal .oneclick-side{
+        grid-template-columns:1fr;
+    }
+
+    #oneclickModal .oneclick-options{
+        grid-template-columns:1fr;
+    }
 }
-.links-directory-main > .links-workspace:first-child {
-    flex: 0 0 auto;
+
+@media(max-width:800px){
+    .app-shell{
+        min-width:760px;
+    }
 }
-.links-directory-main > .links-workspace#linksBuilder {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-}
-.links-directory-main .links-frame {
-    min-height: 100%;
-    align-items: start;
-}
-#oneclickModal .oneclick-panel h4 {
-    margin: 0;
-    color: #10134f;
-    font-size: 13px;
-    line-height: 1.2;
-}
-#oneclickModal .oneclick-panel-title h4 {
-    margin: 0;
-}
-#oneclickModal button,
-#oneclickModal input {
-    font-family: Inter, Arial, sans-serif;
-}
-#oneclickModal .oneclick-modal-card {
-    scrollbar-width: thin;
-    scrollbar-color: #9d91b8 #f8f7ff;
+
+@media(max-width:800px){
+    body{
+        padding:0;
+    }
+
+    .app-shell{
+        width:100%;
+        min-width:760px;
+        border-radius:0;
+    }
 }
