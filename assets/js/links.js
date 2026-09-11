@@ -1214,6 +1214,132 @@ function openOneclickLinks(){
   }
 }
 
+
+/* =========================================================
+   LINKS HUB — PAGE-BODY FULL SCREEN
+   Expands only the Links workspace area between the
+   existing header and footer. The browser itself is NOT
+   placed into Fullscreen API mode, so header/footer stay
+   visible and do not move.
+   ========================================================= */
+
+function getLinksFullscreenBounds(){
+  const shell = document.querySelector(".app-shell");
+  const header = document.getElementById("header-placeholder");
+  const footer = document.getElementById("footer-placeholder");
+
+  if(!shell) return null;
+
+  const shellRect = shell.getBoundingClientRect();
+  const headerRect = header ? header.getBoundingClientRect() : null;
+  const footerRect = footer ? footer.getBoundingClientRect() : null;
+
+  const top = headerRect
+    ? Math.max(shellRect.top, headerRect.bottom)
+    : shellRect.top;
+
+  const bottom = footerRect
+    ? Math.min(shellRect.bottom, footerRect.top)
+    : shellRect.bottom;
+
+  return {
+    top,
+    bottom: Math.max(top, bottom),
+    left: shellRect.left,
+    width: shellRect.width
+  };
+}
+
+function syncLinksFullscreenBounds(){
+  const workspace = document.getElementById("directoryWorkspace");
+  if(!workspace || !workspace.classList.contains("links-fullscreen")) return;
+
+  const bounds = getLinksFullscreenBounds();
+  if(!bounds) return;
+
+  workspace.style.setProperty("--links-fullscreen-top", `${bounds.top}px`);
+  workspace.style.setProperty("--links-fullscreen-bottom", `${bounds.bottom}px`);
+  workspace.style.setProperty("--links-fullscreen-left", `${bounds.left}px`);
+  workspace.style.setProperty("--links-fullscreen-width", `${bounds.width}px`);
+}
+
+function updateLinksFullscreenButton(){
+  const button = document.getElementById("linksFullscreenBtn");
+  if(!button) return;
+
+  const workspace = document.getElementById("directoryWorkspace");
+  const active = workspace?.classList.contains("links-fullscreen");
+
+  button.classList.toggle("active", !!active);
+  button.setAttribute("aria-pressed", active ? "true" : "false");
+
+  button.innerHTML = active
+    ? `<i class="fa-solid fa-compress"></i><span>Exit Full Screen</span>`
+    : `<i class="fa-solid fa-expand"></i><span>Full Screen</span>`;
+
+  button.title = active
+    ? "Return Links Hub to the normal page layout"
+    : "Expand Links Hub to the page body";
+}
+
+function toggleLinksFullscreen(){
+  const workspace = document.getElementById("directoryWorkspace");
+  if(!workspace) return;
+
+  const entering = !workspace.classList.contains("links-fullscreen");
+
+  if(entering){
+    const bounds = getLinksFullscreenBounds();
+
+    if(bounds){
+      workspace.style.setProperty("--links-fullscreen-top", `${bounds.top}px`);
+      workspace.style.setProperty("--links-fullscreen-bottom", `${bounds.bottom}px`);
+      workspace.style.setProperty("--links-fullscreen-left", `${bounds.left}px`);
+      workspace.style.setProperty("--links-fullscreen-width", `${bounds.width}px`);
+    }
+
+    workspace.classList.add("links-fullscreen");
+    document.documentElement.classList.add("links-fullscreen-active");
+    document.body.classList.add("links-fullscreen-active");
+
+    updateLinksFullscreenButton();
+    syncLinksFullscreenBounds();
+
+    setTimeout(() => {
+      syncLinksFullscreenBounds();
+    }, 50);
+  }else{
+    workspace.classList.remove("links-fullscreen");
+    document.documentElement.classList.remove("links-fullscreen-active");
+    document.body.classList.remove("links-fullscreen-active");
+
+    workspace.style.removeProperty("--links-fullscreen-top");
+    workspace.style.removeProperty("--links-fullscreen-bottom");
+    workspace.style.removeProperty("--links-fullscreen-left");
+    workspace.style.removeProperty("--links-fullscreen-width");
+
+    updateLinksFullscreenButton();
+  }
+}
+
+window.toggleLinksFullscreen = toggleLinksFullscreen;
+
+window.addEventListener("resize", syncLinksFullscreenBounds);
+
+document.addEventListener("keydown", (event) => {
+  if(event.key === "Escape"){
+    const workspace = document.getElementById("directoryWorkspace");
+    if(workspace?.classList.contains("links-fullscreen")){
+      toggleLinksFullscreen();
+    }
+  }
+});
+
+document.addEventListener("headerLoaded", () => {
+  syncLinksFullscreenBounds();
+  updateLinksFullscreenButton();
+});
+
 function initLinksPage(){
   if(linksPageInitialized) return;
   linksPageInitialized = true;
