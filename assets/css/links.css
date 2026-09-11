@@ -3313,3 +3313,87 @@ body.modal-open{
         grid-template-columns:1fr !important;
     }
 }
+
+/* =========================================================
+   FINAL FIX — KEEP CARD DIMENSIONS FIXED + ENABLE WORKSPACE SCROLL
+   ========================================================= */
+
+/* The cards must NOT stretch when the workspace gets wider. */
+.links-directory-main .links-grid,
+.links-directory-main.links-fullscreen .links-grid{
+    grid-template-columns:repeat(4,174px) !important;
+    grid-auto-rows:194px;
+    gap:10px !important;
+    justify-content:start;
+    align-content:start;
+}
+
+.links-directory-main .link-card,
+.links-directory-main.links-fullscreen .link-card{
+    width:174px !important;
+    height:194px !important;
+    min-width:174px !important;
+    max-width:174px !important;
+    min-height:194px !important;
+    max-height:194px !important;
+    box-sizing:border-box;
+}
+
+/* Keep the library area scrollable so lower rows remain selectable. */
+.links-directory-main > .links-workspace#linksBuilder{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+}
+
+.links-directory-main > .links-workspace#linksBuilder > .container{
+    min-height:0;
+}
+
+.links-directory-main .links-frame{
+    min-height:max-content;
+}
+
+.links-directory-main .links-main{
+    min-height:0;
+    overflow:visible;
+}
+
+/* In Full Screen the left library keeps the exact same card size.
+   Only the available workspace grows. */
+.links-directory-main.links-fullscreen .links-frame{
+    height:auto !important;
+    min-height:max-content !important;
+    overflow:visible !important;
+}
+
+.links-directory-main.links-fullscreen #linksBuilder{
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+}
+
+.links-directory-main.links-fullscreen .links-main{
+    overflow:visible !important;
+}
+
+@media(max-width:900px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(3,174px) !important;
+    }
+}
+
+@media(max-width:700px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(2,174px) !important;
+    }
+}
+
+@media(max-width:390px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:174px !important;
+    }
+}
