@@ -3196,3 +3196,120 @@ body.modal-open{
 .links-directory-main.links-fullscreen .links-grid{
     grid-template-columns:repeat(3,minmax(0,1fr));
 }
+
+/* =========================================================
+   FINAL LINKS HUB LAYOUT CORRECTION
+   Use the full workspace width. Full Screen must enlarge only
+   the workspace area; header/footer and card dimensions stay
+   unchanged. Cards use the dashboard quick-card proportions.
+   ========================================================= */
+
+.links-directory-main .links-frame{
+    grid-template-columns:minmax(0,1fr) 245px !important;
+}
+
+.links-directory-main .links-main{
+    width:auto !important;
+    max-width:none !important;
+    flex:none;
+}
+
+.links-directory-main .link-library-card{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.links-directory-main .links-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:10px !important;
+    margin-top:13px;
+}
+
+.links-directory-main .link-card{
+    height:194px !important;
+    min-height:194px !important;
+    box-sizing:border-box;
+    padding:14px 12px 10px !important;
+    border:1px solid #e8e9f2;
+    border-bottom:2px solid #d9d7ef;
+    border-radius:9px;
+    background:#fff;
+    box-shadow:0 3px 11px rgba(41,32,94,.045);
+    transition:.18s transform,.18s box-shadow;
+}
+
+.links-directory-main .link-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(41,32,94,.1);
+}
+
+.links-directory-main .link-card::after{
+    content:"";
+    position:absolute;
+    bottom:-2px;
+    left:15%;
+    right:15%;
+    height:2px;
+    border-radius:4px;
+}
+
+.links-directory-main .link-card:nth-child(6n+1)::after,
+.links-directory-main .link-card:nth-child(6n+2)::after,
+.links-directory-main .link-card:nth-child(6n+3)::after{
+    background:#d7c9ff;
+}
+
+.links-directory-main .link-card:nth-child(6n+4)::after{
+    background:#ffd4bd;
+}
+
+.links-directory-main .link-card:nth-child(6n+5)::after{
+    background:#c9dcff;
+}
+
+.links-directory-main .link-card:nth-child(6n)::after{
+    background:#d0f0d2;
+}
+
+.links-directory-main .link-card .link-icon,
+.links-directory-main .link-card .link-icon-wrap{
+    width:44px;
+    height:44px;
+    flex:0 0 44px;
+    border-radius:50%;
+}
+
+/* Full Screen: expand the workspace, not the cards themselves. */
+.links-directory-main.links-fullscreen .links-frame{
+    grid-template-columns:minmax(0,1fr) 245px !important;
+}
+
+.links-directory-main.links-fullscreen .links-main{
+    width:auto !important;
+    max-width:none !important;
+}
+
+.links-directory-main.links-fullscreen .links-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+
+@media(max-width:1050px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    }
+}
+
+@media(max-width:760px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+}
+
+@media(max-width:520px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:1fr !important;
+    }
+}
