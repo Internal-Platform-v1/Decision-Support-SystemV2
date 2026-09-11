@@ -2716,3 +2716,229 @@ body.modal-open{
         border-radius:0;
     }
 }
+
+
+/* =========================================================
+   LINKS CARDS — MATCH MAIN DASHBOARD QUICK ACCESS
+   ========================================================= */
+
+/* Main dashboard uses 6 narrow cards across.
+   Links keeps 3 columns because the preview panel occupies
+   the right side, but each card uses the same proportions,
+   spacing, typography and visual treatment. */
+
+.links-directory-main .links-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    margin-top:13px;
+}
+
+.links-directory-main .link-card{
+    height:194px;
+    min-height:194px;
+
+    padding:14px 12px 10px;
+
+    border:1px solid #e8e9f2;
+    border-bottom:2px solid #d9d7ef;
+    border-radius:9px;
+
+    background:#fff;
+
+    box-shadow:0 3px 11px rgba(41,32,94,.045);
+
+    transition:.18s transform,.18s box-shadow;
+
+    position:relative;
+    overflow:hidden;
+}
+
+.links-directory-main .link-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(41,32,94,.1);
+}
+
+/* Dashboard-style bottom accent */
+.links-directory-main .link-card::after{
+    content:"";
+    position:absolute;
+    bottom:-2px;
+    left:15%;
+    right:15%;
+    height:2px;
+    border-radius:4px;
+    background:#d7c9ff;
+    pointer-events:none;
+}
+
+.links-directory-main .link-card:nth-child(6n+2)::after{
+    background:#ffd4bd;
+}
+
+.links-directory-main .link-card:nth-child(6n+3)::after{
+    background:#c9dcff;
+}
+
+.links-directory-main .link-card:nth-child(6n+4)::after{
+    background:#d0f0d2;
+}
+
+.links-directory-main .link-card:nth-child(6n+5)::after{
+    background:#c5c9ff;
+}
+
+.links-directory-main .link-card:nth-child(6n+6)::after{
+    background:#ffd0df;
+}
+
+/* Exact dashboard icon dimensions */
+.links-directory-main .link-icon{
+    width:44px;
+    height:44px;
+    flex:0 0 44px;
+
+    border:0;
+    border-radius:50%;
+
+    display:grid;
+    place-items:center;
+
+    margin:0 0 12px;
+
+    box-shadow:none;
+
+    font-size:22px;
+}
+
+.links-directory-main .link-icon i{
+    font-size:17px;
+    line-height:1;
+}
+
+/* Exact dashboard icon palette */
+.links-directory-main .link-card:nth-child(6n+1) .link-icon{
+    background:#f1eaff;
+    color:#7131dc;
+}
+
+.links-directory-main .link-card:nth-child(6n+2) .link-icon{
+    background:#fff0e4;
+    color:#ff6d17;
+}
+
+.links-directory-main .link-card:nth-child(6n+3) .link-icon{
+    background:#eaf0ff;
+    color:#3865df;
+}
+
+.links-directory-main .link-card:nth-child(6n+4) .link-icon{
+    background:#e8f7e7;
+    color:#3e9346;
+}
+
+.links-directory-main .link-card:nth-child(6n+5) .link-icon{
+    background:#eef0ff;
+    color:#4a56d6;
+}
+
+.links-directory-main .link-card:nth-child(6n+6) .link-icon{
+    background:#ffeaf0;
+    color:#ec3970;
+}
+
+/* Exact dashboard title sizing */
+.links-directory-main .link-card h5{
+    margin:0 0 6px;
+
+    color:#10134f;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:11px;
+    line-height:1.2;
+    font-weight:700;
+    letter-spacing:-.2px;
+
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+}
+
+/* Exact dashboard description sizing */
+.links-directory-main .link-card > p{
+    margin:0;
+
+    color:#7a7c98;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    line-height:1.4;
+    font-weight:400;
+
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:3;
+    overflow:hidden;
+}
+
+/* Dashboard-like tag sizing */
+.links-directory-main .link-card .link-badges{
+    gap:4px;
+    margin-top:auto;
+    padding-top:8px;
+}
+
+.links-directory-main .link-card .link-tag{
+    min-height:17px;
+    padding:2px 6px;
+
+    border-radius:10px;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:7px;
+    line-height:1;
+    font-weight:700;
+}
+
+/* Dashboard-style star control */
+.links-directory-main .favorite-star{
+    width:25px;
+    height:25px;
+    flex:0 0 25px;
+
+    border:1px solid #e8e9f2;
+    border-radius:6px;
+
+    background:#fff;
+    color:#c2c4d1;
+
+    box-shadow:none;
+}
+
+.links-directory-main .favorite-star i{
+    font-size:10px;
+}
+
+.links-directory-main .favorite-star.active{
+    border-color:#f2d18b;
+    background:#fff6de;
+    color:#f1a919;
+}
+
+/* Keep the main dashboard card density on smaller screens */
+@media(max-width:1050px){
+    .links-directory-main .links-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:700px){
+    .links-directory-main .links-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:520px){
+    .links-directory-main .links-grid{
+        grid-template-columns:1fr;
+    }
+}
