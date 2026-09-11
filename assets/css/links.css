@@ -2945,3 +2945,233 @@ body.modal-open{
         grid-template-columns:1fr;
     }
 }
+
+
+/* =========================================================
+   LINKS HUB — SEARCH BAR + CATEGORY ROW
+   Search is intentionally narrower so the category buttons
+   sit on the same horizontal line to its right.
+   ========================================================= */
+
+.links-directory-main .links-search-top{
+    align-items:center;
+}
+
+.links-directory-main .workspace-fullscreen-btn{
+    flex:0 0 auto;
+
+    height:28px;
+    padding:0 10px;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    border:1px solid #dedfeb;
+    border-radius:6px;
+
+    background:#ffffff;
+    color:#4d148c;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.15s ease;
+}
+
+.links-directory-main .workspace-fullscreen-btn i{
+    font-size:9px;
+}
+
+.links-directory-main .workspace-fullscreen-btn:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
+    color:#5b17c5;
+}
+
+.links-directory-main .workspace-fullscreen-btn.active{
+    border-color:#4d148c;
+    background:#4d148c;
+    color:#ffffff;
+}
+
+
+/* Search | Run AI Action | Categories */
+
+.links-directory-main .links-search-row{
+    display:grid;
+    grid-template-columns:minmax(280px, 40%) auto minmax(0, 1fr);
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+}
+
+.links-directory-main .links-search-row .search-input-wrap{
+    width:100%;
+    min-width:0;
+    flex:none;
+}
+
+.links-directory-main .links-search-row .links-search-btn{
+    flex:0 0 auto;
+}
+
+.links-directory-main .links-search-row .chip-row{
+    min-width:0;
+    max-width:none;
+
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex-wrap:nowrap;
+    gap:4px;
+
+    overflow:hidden;
+}
+
+.links-directory-main .links-search-row .chip{
+    flex:0 0 auto;
+
+    height:22px;
+    padding:0 6px;
+
+    gap:3px;
+
+    font-size:7px;
+    white-space:nowrap;
+}
+
+.links-directory-main .links-search-row .chip i{
+    font-size:7px;
+}
+
+
+/* =========================================================
+   LINKS HUB — PAGE-BODY FULL SCREEN
+   Only the area between header and footer is expanded.
+   Header and footer remain exactly where they are.
+   ========================================================= */
+
+.links-directory-main.links-fullscreen{
+    position:fixed !important;
+
+    top:var(--links-fullscreen-top) !important;
+    left:var(--links-fullscreen-left) !important;
+
+    width:var(--links-fullscreen-width) !important;
+    height:calc(
+        var(--links-fullscreen-bottom) -
+        var(--links-fullscreen-top)
+    ) !important;
+
+    min-height:0 !important;
+
+    margin:0 !important;
+
+    z-index:40;
+
+    border-radius:0 !important;
+
+    box-shadow:none;
+
+    overflow:hidden !important;
+}
+
+.links-directory-main.links-fullscreen .links-workspace{
+    min-height:0;
+}
+
+.links-directory-main.links-fullscreen .links-search-panel{
+    flex:0 0 auto;
+}
+
+.links-directory-main.links-fullscreen #linksBuilder{
+    flex:1 1 auto;
+    min-height:0;
+    overflow:hidden;
+}
+
+.links-directory-main.links-fullscreen #linksBuilder > .container{
+    height:100%;
+    min-height:0;
+}
+
+.links-directory-main.links-fullscreen .links-frame{
+    height:100%;
+    min-height:0;
+    overflow:hidden;
+}
+
+.links-directory-main.links-fullscreen .links-main,
+.links-directory-main.links-fullscreen .links-side{
+    min-height:0;
+}
+
+.links-directory-main.links-fullscreen .links-main{
+    overflow:auto;
+}
+
+.links-directory-main.links-fullscreen .links-side{
+    overflow:auto;
+}
+
+
+/* =========================================================
+   FULL SCREEN — RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1050px){
+    .links-directory-main .links-search-row{
+        grid-template-columns:minmax(250px, 38%) auto minmax(0,1fr);
+    }
+
+    .links-directory-main .links-search-row .chip{
+        padding-left:5px;
+        padding-right:5px;
+    }
+}
+
+@media(max-width:900px){
+    .links-directory-main .links-search-row{
+        grid-template-columns:minmax(230px, 35%) auto minmax(0,1fr);
+    }
+
+    .links-directory-main .links-search-row .chip{
+        font-size:7px;
+        padding:0 4px;
+    }
+
+    .links-directory-main .links-search-row .chip i{
+        display:none;
+    }
+}
+
+@media(max-width:560px){
+    .links-directory-main .links-search-row{
+        display:flex;
+        flex-wrap:wrap;
+    }
+
+    .links-directory-main .links-search-row .search-input-wrap{
+        flex:1 1 100%;
+    }
+
+    .links-directory-main .links-search-row .links-search-btn{
+        flex:0 0 auto;
+    }
+
+    .links-directory-main .links-search-row .chip-row{
+        flex:1 1 auto;
+        min-width:0;
+        overflow-x:auto;
+        justify-content:flex-start;
+    }
+
+    .links-directory-main .links-search-row .chip{
+        flex:0 0 auto;
+    }
+}
