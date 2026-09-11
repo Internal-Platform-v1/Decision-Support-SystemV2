@@ -38,31 +38,35 @@
 <div class="container">
 <div class="links-search-panel">
 <div class="links-search-top">
-<div class="links-search-copy">
-<h2>Search Links</h2>
-<p>Type a tool name, keyword, or command like “open racf”, “copy ispi”, or “service center”.</p>
-</div>
-<div class="chip-row">
-<button class="chip active" onclick="filterCategory('all', event)" type="button"><i class="fa-solid fa-layer-group"></i> All</button>
-<button class="chip" onclick="filterCategory('favorites', event)" type="button"><i class="fa-solid fa-star"></i> Favorites</button>
-<button class="chip" onclick="filterCategory('system', event)" type="button"><i class="fa-solid fa-server"></i> System</button>
-<button class="chip" onclick="filterCategory('tools', event)" type="button"><i class="fa-solid fa-toolbox"></i> Tools</button>
-<button class="chip" onclick="filterCategory('directory', event)" type="button"><i class="fa-solid fa-address-book"></i> Directory</button>
-<button class="chip" onclick="filterCategory('dashboard', event)" type="button"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
-<button class="chip" onclick="filterCategory('ispi', event)" type="button"><i class="fa-solid fa-globe"></i> Needs iSPI</button>
-</div>
-</div>
-<div class="links-search-row">
-<div class="search-input-wrap">
-<i class="fa-solid fa-magnifying-glass"></i>
-<input id="linkSearch" placeholder="Search or ask for a tool..." type="text"/>
-<button id="clearSearchBtn" onclick="clearLinkSearch()" type="button">×</button>
-</div>
-<button class="links-search-btn" onclick="runAiCommand()" type="button">
-<i class="fa-solid fa-wand-magic-sparkles"></i>
-                Run AI Action
-              </button>
-</div>
+ <div class="links-search-copy">
+ <h2>Search Links</h2>
+ <p>Type a tool name, keyword, or command like “open racf”, “copy ispi”, or “service center”.</p>
+ </div>
+ <button class="workspace-fullscreen-btn" id="linksFullscreenBtn" onclick="toggleLinksFullscreen()" type="button" title="Expand Links Hub to the page body">
+   <i class="fa-solid fa-expand"></i>
+   <span>Full Screen</span>
+ </button>
+ </div>
+ <div class="links-search-row">
+ <div class="search-input-wrap">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <input id="linkSearch" placeholder="Search or ask for a tool..." type="text"/>
+ <button id="clearSearchBtn" onclick="clearLinkSearch()" type="button">×</button>
+ </div>
+ <button class="links-search-btn" onclick="runAiCommand()" type="button">
+ <i class="fa-solid fa-wand-magic-sparkles"></i>
+                 Run AI Action
+               </button>
+ <div class="chip-row">
+ <button class="chip active" onclick="filterCategory('all', event)" type="button"><i class="fa-solid fa-layer-group"></i> All</button>
+ <button class="chip" onclick="filterCategory('favorites', event)" type="button"><i class="fa-solid fa-star"></i> Favorites</button>
+ <button class="chip" onclick="filterCategory('system', event)" type="button"><i class="fa-solid fa-server"></i> System</button>
+ <button class="chip" onclick="filterCategory('tools', event)" type="button"><i class="fa-solid fa-toolbox"></i> Tools</button>
+ <button class="chip" onclick="filterCategory('directory', event)" type="button"><i class="fa-solid fa-address-book"></i> Directory</button>
+ <button class="chip" onclick="filterCategory('dashboard', event)" type="button"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+ <button class="chip" onclick="filterCategory('ispi', event)" type="button"><i class="fa-solid fa-globe"></i> Needs iSPI</button>
+ </div>
+ </div>
 </div>
 </div>
 </section>
