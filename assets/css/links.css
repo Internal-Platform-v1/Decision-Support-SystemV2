@@ -2848,13 +2848,13 @@ body.modal-open{
 
 /* Exact dashboard title sizing */
 .links-directory-main .link-card h5{
-    margin:0 0 6px;
-
+    margin:0 0 10px;
+    letter-spacing:-.2px;
     color:#10134f;
 
     font-family:"Inter","Segoe UI",Arial,sans-serif;
-    font-size:11px;
-    line-height:1.2;
+    font-size:13px;
+    line-height:1.25;
     font-weight:700;
     letter-spacing:-.2px;
 
@@ -2870,8 +2870,8 @@ body.modal-open{
     color:#7a7c98;
 
     font-family:"Inter","Segoe UI",Arial,sans-serif;
-    font-size:8px;
-    line-height:1.4;
+    font-size:9px;
+    line-height:1.55;
     font-weight:400;
 
     display:-webkit-box;
