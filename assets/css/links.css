@@ -3175,3 +3175,24 @@ body.modal-open{
         flex:0 0 auto;
     }
 }
+
+/* =========================================================
+   FULL SCREEN — PRESERVE NORMAL CARD DIMENSIONS
+   Full Screen expands the page-body workspace only.
+   The Links main column stays the same width it has in the
+   normal 85.6% directory layout, so link cards do not stretch.
+   ========================================================= */
+
+.links-directory-main.links-fullscreen .links-frame{
+    grid-template-columns:calc(85.6% - 297px) 245px;
+}
+
+.links-directory-main.links-fullscreen .links-main{
+    width:calc(85.6% - 297px);
+    max-width:calc(85.6% - 297px);
+    flex:none;
+}
+
+.links-directory-main.links-fullscreen .links-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+}
