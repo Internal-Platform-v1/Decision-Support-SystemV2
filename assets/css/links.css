@@ -813,16 +813,19 @@ td pre{
 }
 
 .links-directory-main .link-card h3{
-    margin:8px 0 5px;
-    color:#10134f;
     font-size:11px;
+    line-height:1.2;
+    margin:0 0 6px;
+    letter-spacing:-.2px;
+    font-weight:600;
 }
 
 .links-directory-main .link-card p{
+    font-size:10px;
+    line-height:1.5;
+    color:#7a7c98;
     margin:0;
-    color:#777a99;
-    font-size:9px;
-    line-height:1.45;
+    font-weight:400;
 }
 
 .links-directory-main .link-card .category{
@@ -1560,52 +1563,59 @@ body.modal-open{
    LINK CARDS — MAIN FIX
    --------------------------------------------------------- */
 
+.links-directory-main .links-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+}
+
 .links-directory-main .link-card{
-    height:194px;
-    border:1px solid #e8e9f2;
-    border-bottom:2px solid #d9d7ef;
-    border-radius:9px;
-    padding:14px 12px 10px;
     position:relative;
+    min-width:0;
+    min-height:118px;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:10px 10px 9px;
+
     background:#fff;
-    box-shadow:0 3px 11px rgba(41,32,94,.045);
-    transition:.18s transform,.18s box-shadow;
+    border:1px solid #e5e6ef;
+    border-radius:7px;
+
     cursor:pointer;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .15s ease,
+        background .15s ease;
 }
 
 .links-directory-main .link-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(41,32,94,.1);
+    border-color:#bba4e8;
+    background:#fff;
+    box-shadow:0 5px 15px rgba(48,38,111,.08);
+    transform:translateY(-1px);
 }
 
-.links-directory-main .link-icon{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    display:grid;
-    place-items:center;
-    margin-bottom:12px;
+.links-directory-main .link-card.active,
+.links-directory-main .link-card.selected{
+    border-color:#6b20d0;
+    background:#fcfaff;
+    box-shadow:
+        0 0 0 1px rgba(107,32,208,.08),
+        0 5px 15px rgba(77,20,140,.08);
 }
 
-.links-directory-main .link-icon svg{
-    width:22px;
-    height:22px;
-}
+.links-directory-main .link-card-top{
+    width:100%;
+    min-height:30px;
 
-.links-directory-main .link-card h3{
-    font-size:11px;
-    line-height:1.2;
-    margin:0 0 6px;
-    letter-spacing:-.2px;
-    font-weight:600;
-}
-
-.links-directory-main .link-card p{
-    font-size:10px;
-    line-height:1.5;
-    color:#7a7c98;
-    margin:0;
-    font-weight:400;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
 }
 
 /* Actual tool icon */
