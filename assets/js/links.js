@@ -514,8 +514,13 @@ function renderPreview(){
     return;
   }
 
+  // Resolve by name against the master record before reading the URL.
+  // This guarantees the preview always uses the canonical link definition.
+  const canonicalLink = LINKS.find(x => x.name === selectedLink.name) || selectedLink;
+  selectedLink = canonicalLink;
+
   const selectedUrl = String(
-    selectedLink.url || selectedLink.path || selectedLink.href || ""
+    canonicalLink.url || canonicalLink.path || canonicalLink.href || ""
   ).trim();
 
   const canFrame = selectedUrl && !selectedLink.internal && /^https:\/\//i.test(selectedUrl);
@@ -605,21 +610,35 @@ function runAiCommand(){
 }
 
 function selectLink(name){
-  const match = LINKS.find(x => x.name === name);
+  // Always resolve the selected item from the master LINKS array.
+  // This prevents a filtered/rendered card object from losing its URL.
+  const match = LINKS.find(x => normalize(x.name) === normalize(name));
   if(!match) return;
 
   selectedLink = match;
 
-  // Update selection styling without clearing/rebuilding the preview first.
+  // Update selection styling without rebuilding the grid.
   document.querySelectorAll("#linksGrid .link-card").forEach(card => {
     const title = card.querySelector("h5")?.textContent?.trim();
-    card.classList.toggle("active", title === match.name);
-    card.classList.toggle("selected", title === match.name);
+    const isSelected = normalize(title) === normalize(match.name);
+    card.classList.toggle("active", isSelected);
+    card.classList.toggle("selected", isSelected);
   });
 
+  // Update the preview immediately from the master record.
   renderPreview();
   updateSnapshot();
   updateAiSuggestion(match);
+
+  // Explicitly write the URL after rendering so the preview can never
+  // remain on the placeholder text after a card selection.
+  const previewUrl = document.getElementById("previewUrl");
+  if(previewUrl){
+    const url = String(match.url || match.path || match.href || "").trim();
+    previewUrl.textContent = url || "No URL available for this tool.";
+    previewUrl.dataset.selected = match.name;
+    previewUrl.title = url;
+  }
 }
 
 function openSelectedLink(){
