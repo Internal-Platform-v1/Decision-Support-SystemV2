@@ -1237,3 +1237,134 @@ body{
     }
 
 }
+
+
+/* ============================================================
+   FBC PAGE-BODY FULL SCREEN
+   Same behavior as the Tools & Links Hub:
+   header and footer remain visible; only the FBC workspace expands.
+   ============================================================ */
+
+.section-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:8px;
+    flex:0 0 auto;
+    margin-left:auto;
+}
+
+.fbc-fullscreen-btn{
+    height:31px;
+    padding:0 11px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid #e1d9f4;
+    border-radius:6px;
+    background:#ffffff;
+    color:#4d148c;
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:.15s ease;
+}
+
+.fbc-fullscreen-btn i{
+    font-size:9px;
+}
+
+.fbc-fullscreen-btn:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
+    color:#5b17c5;
+}
+
+.fbc-fullscreen-btn.active{
+    border-color:#4d148c;
+    background:#4d148c;
+    color:#ffffff;
+}
+
+/* Reminder attention remains until the user checks the acknowledgement. */
+.reminder-button.reminder-attention{
+    animation:fbcReminderBlink 1s ease-in-out infinite;
+}
+
+@keyframes fbcReminderBlink{
+    0%,100%{
+        opacity:1;
+        box-shadow:0 0 0 0 rgba(91,23,197,0);
+    }
+    50%{
+        opacity:.42;
+        box-shadow:0 0 0 4px rgba(91,23,197,.12);
+    }
+}
+
+/* Keep the header/dropdowns above the expanded workspace. */
+.app-shell > #header-placeholder{
+    position:relative;
+    z-index:100;
+}
+
+.app-shell > #footer-placeholder{
+    position:relative;
+    z-index:100;
+}
+
+.fbc-workspace.fbc-fullscreen{
+    position:fixed !important;
+    top:var(--fbc-fullscreen-top) !important;
+    left:var(--fbc-fullscreen-left) !important;
+    width:var(--fbc-fullscreen-width) !important;
+    height:calc(
+        var(--fbc-fullscreen-bottom) -
+        var(--fbc-fullscreen-top)
+    ) !important;
+    min-height:0 !important;
+    margin:0 !important;
+    z-index:40;
+    overflow:hidden !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-container,
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    height:100%;
+    min-height:0;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    border-radius:0;
+    box-shadow:none;
+}
+
+.fbc-workspace.fbc-fullscreen .content-grid{
+    min-height:0;
+    overflow:hidden;
+}
+
+.fbc-workspace.fbc-fullscreen .work-card{
+    min-height:0;
+    overflow:auto;
+}
+
+.fbc-workspace.fbc-fullscreen .side-stack{
+    min-height:0;
+    overflow:auto;
+}
+
+@media(max-width:900px){
+    .section-actions{
+        width:100%;
+        justify-content:flex-end;
+        margin-left:0;
+    }
+
+    .fbc-fullscreen-btn,
+    .reminder-button{
+        flex:0 0 auto;
+    }
+}
