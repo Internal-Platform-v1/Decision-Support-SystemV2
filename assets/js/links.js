@@ -500,7 +500,7 @@ function renderPreview(){
   const previewDesc = document.getElementById("previewDesc");
   const previewTags = document.getElementById("previewTags");
   const previewUrl = document.getElementById("previewUrl");
-  const previewAiNote = document.getElementById("previewAiNote");
+  const previewSearchNote = document.getElementById("previewSearchNote");
   const previewFrameWrap = document.getElementById("previewFrameWrap");
 
   if(!selectedLink){
@@ -509,7 +509,7 @@ function renderPreview(){
     if (previewDesc) previewDesc.textContent = "Choose a tool from the list to preview details and actions.";
     if (previewTags) previewTags.innerHTML = "";
     if (previewUrl) previewUrl.textContent = "No link selected.";
-    if (previewAiNote) previewAiNote.textContent = "AI recommendation will appear after you search or select a link.";
+    if (previewSearchNote) previewSearchNote.textContent = "Select a link to see its URL and the recommended way to open or copy it.";
     if (previewFrameWrap) previewFrameWrap.innerHTML = "";
     return;
   }
@@ -540,11 +540,11 @@ function renderPreview(){
     ${selectedLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
   `;
 
-  if (previewAiNote) previewAiNote.innerHTML = selectedLink.internal
-    ? "AI recommendation: This is an internal path. Copy it and open it through the company network."
+  if (previewSearchNote) previewSearchNote.innerHTML = selectedLink.internal
+    ? "Tip: This is an internal path. Copy it and open it through the company network."
     : selectedLink.ispi
-      ? "AI recommendation: This tool may require iSPI Browser or internal network access."
-      : "AI recommendation: This link can be opened directly if you have access.";
+      ? "Tip: This tool may require iSPI Browser or internal network access."
+      : "Tip: This link can be opened directly if you have access.";
 
   /*
    * Do not embed the target site in an iframe. Many internal systems
@@ -566,50 +566,51 @@ function updateSnapshot(){
   if (selectedResultStatusValue) selectedResultStatusValue.textContent = selectedLink ? "Ready" : "No Match";
 }
 
-function updateAiSuggestion(best){
+function updateSearchSuggestion(best){
   const input = document.getElementById("linkSearch");
-  const box = document.getElementById("aiSuggestion");
+  const box = document.getElementById("searchSuggestion");
   if(!input || !box) return;
 
   const text = input.value.trim();
 
   if(!text){
-    box.innerHTML = `AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.`;
+    box.innerHTML = `Search by tool name or keyword to quickly find a resource.`;
     return;
   }
 
   if(best){
-    box.innerHTML = `AI found: <strong>${escapeHtml(best.name)}</strong>. Press <strong>Run AI Action</strong> to follow your command.`;
+    box.innerHTML = `Search found: <strong>${escapeHtml(best.name)}</strong>.`;
   }else{
     box.innerHTML = `No matching tool found. Try a different keyword.`;
   }
 }
 
-function runAiCommand(){
+function runSearch(){
   const input = document.getElementById("linkSearch");
   const query = normalize(input ? input.value : "");
   const matches = getFilteredLinks();
 
   if(!matches.length){
+    selectedLink = null;
+    renderLinks();
     showToast("No matching tool found");
     return;
   }
 
-  const best = matches[0];
-  selectedLink = LINKS.find(x => x.name === best.name);
+  // Plain search: filter the library and select the first matching result.
+  selectedLink = LINKS.find(x => x.name === matches[0].name) || matches[0];
   renderLinks();
 
-  if(query.includes("copy")){
-    copySelectedLink();
-    return;
+  const previewUrl = document.getElementById("previewUrl");
+  if(previewUrl && selectedLink){
+    const url = String(selectedLink.url || selectedLink.path || selectedLink.href || "").trim();
+    previewUrl.textContent = url || "No URL available for this tool.";
+    previewUrl.dataset.selected = selectedLink.name || "";
+    previewUrl.title = url;
   }
 
-  if(query.includes("open") || query.includes("launch") || query.includes("go to")){
-    openSelectedLink();
-    return;
-  }
-
-  showToast(`${best.name} selected`);
+  updateSearchSuggestion(selectedLink);
+  showToast(query ? `${matches.length} result${matches.length === 1 ? "" : "s"} found` : `${matches.length} tools available`);
 }
 
 function selectLink(name){
@@ -631,7 +632,7 @@ function selectLink(name){
   // Update the preview immediately from the master record.
   renderPreview();
   updateSnapshot();
-  updateAiSuggestion(match);
+  updateSearchSuggestion(match);
 
   // Explicitly write the URL after rendering so the preview can never
   // remain on the placeholder text after a card selection.
@@ -728,7 +729,7 @@ function clearLinkSearch(){
 
   selectedLink = LINKS[0];
   renderLinks();
-  updateAiSuggestion(selectedLink);
+  updateSearchSuggestion(selectedLink);
 }
 
 function scrollToLinksBuilder(){
@@ -1394,15 +1395,15 @@ function initLinksPage(){
       if(matches.length) selectedLink = LINKS.find(x => x.name === matches[0].name);
 
       renderLinks();
-      updateAiSuggestion(matches[0]);
+      updateSearchSuggestion(matches[0]);
     });
   }
 
   renderLinks();
-  updateAiSuggestion(selectedLink);
+  updateSearchSuggestion(selectedLink);
 }
 
-window.runAiCommand = runAiCommand;
+window.runSearch = runSearch;
 window.filterCategory = filterCategory;
 window.openSelectedLink = openSelectedLink;
 window.copySelectedLink = copySelectedLink;
