@@ -869,7 +869,7 @@ td pre{
 }
 
 .links-directory-main .preview-url,
-.links-directory-main .ai-note{
+.links-directory-main .search-note{
     margin-top:10px;
     padding:10px;
     background:#faf9ff;
@@ -879,7 +879,7 @@ td pre{
     word-break:break-word;
 }
 
-.links-directory-main .ai-note{
+.links-directory-main .search-note{
     border-left:2px solid #ff6600;
     background:#fff8f1;
 }
@@ -1858,7 +1858,7 @@ body.modal-open{
     word-break:break-word;
 }
 
-.links-directory-main .ai-note{
+.links-directory-main .search-note{
     margin-top:8px;
     padding:8px 9px;
 
@@ -3000,7 +3000,7 @@ body.modal-open{
 }
 
 
-/* Search | Run AI Action | Categories */
+/* Search | Categories */
 
 .links-directory-main .links-search-row{
     display:grid;
