@@ -514,12 +514,17 @@ function renderPreview(){
     return;
   }
 
-  const canFrame = selectedLink.url && !selectedLink.internal && selectedLink.url.startsWith("https://");
+  const selectedUrl = String(
+    selectedLink.url || selectedLink.path || selectedLink.href || ""
+  ).trim();
 
-  previewTitle.textContent = selectedLink.name;
-  previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon}"></i>`;
-  previewDesc.textContent = selectedLink.desc;
-  previewUrl.textContent = selectedLink.url || "No link available.";
+  const canFrame = selectedUrl && !selectedLink.internal && /^https:\/\//i.test(selectedUrl);
+
+  previewTitle.textContent = selectedLink.name || "Selected link";
+  previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon || "fa-link"}"></i>`;
+  previewDesc.textContent = selectedLink.desc || "No description available.";
+  previewUrl.textContent = selectedUrl || "No link available.";
+  previewUrl.dataset.selected = selectedLink.name || "";
 
   previewTags.innerHTML = `
     <span class="link-tag">${escapeHtml(selectedLink.cat)}</span>
@@ -536,7 +541,7 @@ function renderPreview(){
   previewFrameWrap.innerHTML = canFrame
     ? `
       <div class="preview-frame">
-        <iframe src="${escapeAttr(selectedLink.url)}"></iframe>
+        <iframe src="${escapeAttr(selectedUrl)}" title="${escapeAttr(selectedLink.name || "Selected link")}"></iframe>
       </div>
       <div class="frame-note">Preview may be blocked by some internal systems. If it does not load, use the Open button.</div>
     `
@@ -601,8 +606,16 @@ function runAiCommand(){
 }
 
 function selectLink(name){
-  selectedLink = LINKS.find(x => x.name === name);
+  const match = LINKS.find(x => x.name === name);
+  if(!match) return;
+
+  selectedLink = match;
   renderLinks();
+
+  // Force the preview to use the exact card selection.
+  // This prevents stale preview text when the grid is re-rendered.
+  renderPreview();
+  updateSnapshot();
 }
 
 function openSelectedLink(){
