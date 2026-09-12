@@ -976,11 +976,12 @@ function renderOneclickOptions(){
                 ${active ? `<i class="fa-solid fa-check"></i>` : ""}
               </div>
 
-              <div class="oneclick-option-title">
-                <strong>
-                  <i class="fa-solid ${escapeAttr(item.icon)}"></i>
-                  ${escapeHtml(item.name)}
-                </strong>
+              <div class="oneclick-option-icon" aria-hidden="true">
+                <i class="fa-solid ${escapeAttr(item.icon || "fa-link")}"></i>
+              </div>
+
+              <div class="oneclick-option-copy">
+                <strong>${escapeHtml(item.name)}</strong>
                 <span>${escapeHtml(item.desc || item.url)}</span>
 
                 ${item.manual ? `
@@ -1015,11 +1016,12 @@ function renderOneclickSelected(){
 
   holder.innerHTML = selected.map(item => `
     <div class="oneclick-selected-item">
+      <div class="oneclick-selected-icon" aria-hidden="true">
+        <i class="fa-solid ${escapeAttr(item.icon || "fa-link")}"></i>
+      </div>
+
       <div class="oneclick-selected-info">
-        <strong>
-          <i class="fa-solid ${escapeAttr(item.icon || "fa-link")}"></i>
-          ${escapeHtml(item.name)}
-        </strong>
+        <strong>${escapeHtml(item.name)}</strong>
         <span>${escapeHtml(item.url)}</span>
       </div>
 
