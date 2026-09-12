@@ -3369,3 +3369,162 @@ body.modal-open{
         grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     }
 }
+
+/* =========================================================
+   LINKS HUB — FINAL LAYOUT FIX
+   Normal view = 4 fixed-size cards
+   Full Screen = 5 fixed-size cards
+   Card dimensions NEVER stretch.
+   ========================================================= */
+
+/* Keep the header above the page-body fullscreen layer so the
+   Case Directory dropdown can never disappear behind it. */
+#header-placeholder{
+    position:relative !important;
+    z-index:1000 !important;
+    flex:0 0 auto !important;
+}
+
+#header-placeholder .topbar{
+    position:relative !important;
+    z-index:1001 !important;
+}
+
+/* Normal Links workspace must scroll internally so every card,
+   including the bottom row, remains reachable and clickable. */
+.links-directory-main > .links-workspace#linksBuilder{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+.links-directory-main > .links-workspace#linksBuilder > .container{
+    height:100% !important;
+    min-height:0 !important;
+}
+
+.links-directory-main .links-frame{
+    height:100% !important;
+    min-height:0 !important;
+}
+
+.links-directory-main .links-main{
+    min-height:0 !important;
+    overflow:auto !important;
+    scrollbar-width:thin;
+}
+
+/* EXACT fixed card dimensions */
+.links-directory-main .links-grid{
+    grid-template-columns:repeat(4,174px) !important;
+    grid-auto-rows:194px !important;
+    gap:10px !important;
+    justify-content:start !important;
+    align-content:start !important;
+}
+
+.links-directory-main .link-card{
+    width:174px !important;
+    min-width:174px !important;
+    max-width:174px !important;
+    height:194px !important;
+    min-height:194px !important;
+    max-height:194px !important;
+    box-sizing:border-box !important;
+    flex:none !important;
+}
+
+/* Full Screen: only the number of columns changes.
+   Card width/height remain EXACTLY the same. */
+.links-directory-main.links-fullscreen{
+    z-index:40 !important;
+}
+
+.links-directory-main.links-fullscreen .links-frame{
+    height:100% !important;
+    min-height:0 !important;
+    grid-template-columns:minmax(0,1fr) 220px !important;
+}
+
+.links-directory-main.links-fullscreen .links-main{
+    width:auto !important;
+    max-width:none !important;
+    min-height:0 !important;
+    overflow:auto !important;
+}
+
+.links-directory-main.links-fullscreen .links-grid{
+    grid-template-columns:repeat(5,174px) !important;
+    grid-auto-rows:194px !important;
+    gap:10px !important;
+    justify-content:start !important;
+    align-content:start !important;
+}
+
+.links-directory-main.links-fullscreen .link-card{
+    width:174px !important;
+    min-width:174px !important;
+    max-width:174px !important;
+    height:194px !important;
+    min-height:194px !important;
+    max-height:194px !important;
+}
+
+/* Make the fullscreen builder itself scroll-safe. */
+.links-directory-main.links-fullscreen > .links-workspace#linksBuilder{
+    height:calc(100% - 1px) !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+.links-directory-main.links-fullscreen > .links-workspace#linksBuilder > .container{
+    height:100% !important;
+    min-height:0 !important;
+}
+
+/* Preview should remain visible while the tool library scrolls. */
+.links-directory-main .links-side{
+    min-height:0 !important;
+    overflow:auto !important;
+}
+
+/* Oneclick stays above the fullscreen workspace and uses the same
+   compact V2 spacing/proportions as the rest of the hub. */
+#oneclickModal{
+    z-index:2000 !important;
+}
+
+/* =========================================================
+   PREVIEW — FORCE THE SELECTED URL TO RENDER
+   ========================================================= */
+.links-directory-main #previewUrl{
+    display:block !important;
+    min-height:34px !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:break-word !important;
+}
+
+@media(max-width:1100px){
+    .links-directory-main .links-grid{
+        grid-template-columns:repeat(4,174px) !important;
+    }
+
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(5,174px) !important;
+    }
+}
+
+@media(max-width:900px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(3,174px) !important;
+    }
+}
+
+@media(max-width:600px){
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(2,174px) !important;
+    }
+}
