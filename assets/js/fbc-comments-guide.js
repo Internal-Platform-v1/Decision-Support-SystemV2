@@ -18,6 +18,19 @@ function scrollToBuilder() {
   window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
+function updateReminderAttention() {
+  const button = document.getElementById('viewRemindersBtn');
+  if (!button) return;
+  const acknowledged = sessionStorage.getItem('fbcReminderAcknowledged') === 'true';
+  button.classList.toggle('reminder-attention', !acknowledged);
+}
+
+function syncReminderCheckbox() {
+  const check = document.getElementById('reminderReadCheck');
+  if (!check) return;
+  check.checked = sessionStorage.getItem('fbcReminderAcknowledged') === 'true';
+}
+
 function initFbcCommentsPage() {
   if (fbcInitialized) return;
   fbcInitialized = true;
@@ -218,13 +231,124 @@ function initFbcCommentsPage() {
   })();
 }
 
-document.addEventListener('DOMContentLoaded', initFbcCommentsPage);
+function getFbcFullscreenBounds() {
+  const shell = document.querySelector('.app-shell');
+  const header = document.getElementById('header-placeholder');
+  const footer = document.getElementById('footer-placeholder');
+  if (!shell) return null;
+
+  const shellRect = shell.getBoundingClientRect();
+  const headerRect = header ? header.getBoundingClientRect() : null;
+  const footerRect = footer ? footer.getBoundingClientRect() : null;
+
+  const top = headerRect
+    ? Math.max(shellRect.top, headerRect.bottom)
+    : shellRect.top;
+
+  const bottom = footerRect
+    ? Math.min(shellRect.bottom, footerRect.top)
+    : shellRect.bottom;
+
+  return {
+    top,
+    bottom: Math.max(top, bottom),
+    left: shellRect.left,
+    width: shellRect.width
+  };
+}
+
+function syncFbcFullscreenBounds() {
+  const workspace = document.getElementById('fbcBuilder');
+  if (!workspace || !workspace.classList.contains('fbc-fullscreen')) return;
+
+  const bounds = getFbcFullscreenBounds();
+  if (!bounds) return;
+
+  workspace.style.setProperty('--fbc-fullscreen-top', `${bounds.top}px`);
+  workspace.style.setProperty('--fbc-fullscreen-bottom', `${bounds.bottom}px`);
+  workspace.style.setProperty('--fbc-fullscreen-left', `${bounds.left}px`);
+  workspace.style.setProperty('--fbc-fullscreen-width', `${bounds.width}px`);
+}
+
+function updateFbcFullscreenButton() {
+  const button = document.getElementById('fbcFullscreenBtn');
+  const workspace = document.getElementById('fbcBuilder');
+  if (!button || !workspace) return;
+
+  const active = workspace.classList.contains('fbc-fullscreen');
+  button.classList.toggle('active', active);
+  button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  button.innerHTML = active
+    ? '<i class="fa-solid fa-compress"></i><span>Exit Full Screen</span>'
+    : '<i class="fa-solid fa-expand"></i><span>Full Screen</span>';
+  button.title = active
+    ? 'Return FBC Comment Generator to the normal page layout'
+    : 'Expand FBC Comment Generator to the page body';
+}
+
+function toggleFbcFullscreen() {
+  const workspace = document.getElementById('fbcBuilder');
+  if (!workspace) return;
+
+  const entering = !workspace.classList.contains('fbc-fullscreen');
+
+  if (entering) {
+    const bounds = getFbcFullscreenBounds();
+    if (bounds) {
+      workspace.style.setProperty('--fbc-fullscreen-top', `${bounds.top}px`);
+      workspace.style.setProperty('--fbc-fullscreen-bottom', `${bounds.bottom}px`);
+      workspace.style.setProperty('--fbc-fullscreen-left', `${bounds.left}px`);
+      workspace.style.setProperty('--fbc-fullscreen-width', `${bounds.width}px`);
+    }
+
+    workspace.classList.add('fbc-fullscreen');
+    document.documentElement.classList.add('fbc-fullscreen-active');
+    document.body.classList.add('fbc-fullscreen-active');
+
+    updateFbcFullscreenButton();
+    syncFbcFullscreenBounds();
+
+    setTimeout(syncFbcFullscreenBounds, 50);
+  } else {
+    workspace.classList.remove('fbc-fullscreen');
+    document.documentElement.classList.remove('fbc-fullscreen-active');
+    document.body.classList.remove('fbc-fullscreen-active');
+
+    workspace.style.removeProperty('--fbc-fullscreen-top');
+    workspace.style.removeProperty('--fbc-fullscreen-bottom');
+    workspace.style.removeProperty('--fbc-fullscreen-left');
+    workspace.style.removeProperty('--fbc-fullscreen-width');
+
+    updateFbcFullscreenButton();
+  }
+}
+
+window.toggleFbcFullscreen = toggleFbcFullscreen;
+window.addEventListener('resize', syncFbcFullscreenBounds);
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    const workspace = document.getElementById('fbcBuilder');
+    if (workspace?.classList.contains('fbc-fullscreen')) {
+      toggleFbcFullscreen();
+    }
+  }
+});
+
+document.addEventListener('headerLoaded', () => {
+  updateReminderAttention();
+  syncFbcFullscreenBounds();
+  updateFbcFullscreenButton();
+});
+
+document.addEventListener('DOMContentLoaded', () => { initFbcCommentsPage(); updateReminderAttention(); });
 document.addEventListener('headerLoaded', initFbcCommentsPage);
 
 
 function openReminderModal(fromGenerate = false) {
   const modal = document.getElementById('reminderModal');
   if (!modal) return;
+  syncReminderCheckbox();
   modal.dataset.fromGenerate = fromGenerate ? 'true' : 'false';
   modal.style.display = 'flex';
   modal.setAttribute('aria-hidden', 'false');
@@ -246,11 +370,23 @@ function acknowledgeReminder() {
     return;
   }
   sessionStorage.setItem('fbcReminderAcknowledged', 'true');
+  updateReminderAttention();
   const modal = document.getElementById('reminderModal');
   const continueToGenerate = modal && modal.dataset.fromGenerate === 'true';
   closeReminderModal();
   if (continueToGenerate) generateFbcComment();
 }
+
+document.addEventListener('change', event => {
+  if (event.target && event.target.id === 'reminderReadCheck') {
+    if (event.target.checked) {
+      sessionStorage.setItem('fbcReminderAcknowledged', 'true');
+    } else {
+      sessionStorage.removeItem('fbcReminderAcknowledged');
+    }
+    updateReminderAttention();
+  }
+});
 
 document.addEventListener('click', event => {
   const modal = document.getElementById('reminderModal');
