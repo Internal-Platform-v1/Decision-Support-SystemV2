@@ -3467,3 +3467,72 @@ body.modal-open{
         grid-template-columns:repeat(3,minmax(0,1fr)) !important;
     }
 }
+
+/* =========================================================
+   V5 STABILITY PATCH — dropdown, scrolling, 4/5 columns
+   ========================================================= */
+#header-placeholder{
+    position:relative !important;
+    z-index:10000 !important;
+    overflow:visible !important;
+}
+#header-placeholder *{
+    overflow:visible;
+}
+#footer-placeholder{
+    position:relative !important;
+    z-index:1000 !important;
+}
+.links-directory-main.links-fullscreen{
+    z-index:100 !important;
+}
+
+/* Normal view = four columns. */
+.links-directory-main:not(.links-fullscreen) .links-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+}
+/* Full screen = five columns only. */
+.links-directory-main.links-fullscreen .links-grid{
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+}
+.links-directory-main .link-card{
+    height:194px !important;
+    min-height:194px !important;
+    max-height:194px !important;
+}
+
+/* One reliable vertical scroller for the entire results workspace. */
+.links-directory-main > #linksBuilder,
+.links-directory-main.links-fullscreen > #linksBuilder{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overscroll-behavior:contain;
+    scrollbar-gutter:stable;
+}
+.links-directory-main > #linksBuilder > .container,
+.links-directory-main.links-fullscreen > #linksBuilder > .container{
+    height:auto !important;
+    min-height:100% !important;
+    padding-bottom:32px !important;
+    box-sizing:border-box !important;
+}
+.links-directory-main.links-fullscreen .links-frame{
+    height:auto !important;
+    min-height:100% !important;
+    overflow:visible !important;
+}
+.links-directory-main.links-fullscreen .links-main,
+.links-directory-main.links-fullscreen .links-side{
+    overflow:visible !important;
+    height:auto !important;
+}
+
+/* Keep sidebar tight against the grid and aligned at the top. */
+.links-directory-main .links-frame,
+.links-directory-main.links-fullscreen .links-frame{
+    grid-template-columns:minmax(0,1fr) 260px !important;
+    gap:10px !important;
+    align-items:start !important;
+}
