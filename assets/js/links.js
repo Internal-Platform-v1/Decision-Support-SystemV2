@@ -503,66 +503,50 @@ function renderPreview(){
   const previewAiNote = document.getElementById("previewAiNote");
   const previewFrameWrap = document.getElementById("previewFrameWrap");
 
-  if(!previewTitle || !previewDesc || !previewTags || !previewUrl || !previewAiNote || !previewFrameWrap){
-    return;
-  }
-
   if(!selectedLink){
     previewTitle.textContent = "Select a link";
-    if(previewIcon) previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
+    previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
     previewDesc.textContent = "Choose a tool from the list to preview details and actions.";
     previewTags.innerHTML = "";
     previewUrl.textContent = "No link selected.";
-    previewUrl.dataset.selected = "";
-    previewUrl.dataset.url = "";
     previewAiNote.textContent = "AI recommendation will appear after you search or select a link.";
     previewFrameWrap.innerHTML = "";
     return;
   }
 
-  /* Always resolve the URL from the ORIGINAL LINKS record.
-     This avoids stale/cloned filtered objects causing the preview
-     URL to remain on the initial 'No link selected' text. */
-  const sourceLink = LINKS.find(item => item.name === selectedLink.name) || selectedLink;
   const selectedUrl = String(
-    sourceLink.url || sourceLink.path || sourceLink.href || ""
+    selectedLink.url || selectedLink.path || selectedLink.href || ""
   ).trim();
 
-  const canFrame = selectedUrl && !sourceLink.internal && /^https:\/\//i.test(selectedUrl);
+  const canFrame = selectedUrl && !selectedLink.internal && /^https:\/\//i.test(selectedUrl);
 
-  previewTitle.textContent = sourceLink.name || "Selected link";
-  if(previewIcon) previewIcon.innerHTML = `<i class="fa-solid ${sourceLink.icon || "fa-link"}"></i>`;
-  previewDesc.textContent = sourceLink.desc || "No description available.";
-
-  /* Write the visible URL explicitly, including data attributes used
-     by Open/Copy and debugging. Never leave the original placeholder. */
+  previewTitle.textContent = selectedLink.name || "Selected link";
+  previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon || "fa-link"}"></i>`;
+  previewDesc.textContent = selectedLink.desc || "No description available.";
   previewUrl.textContent = selectedUrl || "No link available.";
-  previewUrl.dataset.selected = sourceLink.name || "";
-  previewUrl.dataset.url = selectedUrl;
-  previewUrl.setAttribute("aria-label", selectedUrl ? `Selected link: ${sourceLink.name}. ${selectedUrl}` : "No link available");
+  previewUrl.dataset.selected = selectedLink.name || "";
 
   previewTags.innerHTML = `
-    <span class="link-tag">${escapeHtml(sourceLink.cat)}</span>
-    ${sourceLink.ispi ? `<span class="link-tag orange">Use iSPI Browser</span>` : ""}
-    ${sourceLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
+    <span class="link-tag">${escapeHtml(selectedLink.cat)}</span>
+    ${selectedLink.ispi ? `<span class="link-tag orange">Use iSPI Browser</span>` : ""}
+    ${selectedLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
   `;
 
-  previewAiNote.innerHTML = sourceLink.internal
+  previewAiNote.innerHTML = selectedLink.internal
     ? "AI recommendation: This is an internal path. Copy it and open it through the company network."
-    : sourceLink.ispi
+    : selectedLink.ispi
       ? "AI recommendation: This tool may require iSPI Browser or internal network access."
       : "AI recommendation: This link can be opened directly if you have access.";
 
-  previewFrameWrap.innerHTML = canFrame
-    ? `
-      <div class="preview-frame">
-        <iframe src="${escapeAttr(selectedUrl)}" title="${escapeAttr(sourceLink.name || "Selected link")}"></iframe>
-      </div>
-      <div class="frame-note">Preview may be blocked by some internal systems. If it does not load, use the Open button.</div>
-    `
-    : `
-      <div class="frame-note">Live preview is not available for internal paths, non-HTTPS links, or systems that block embedded preview. Use Open or Copy instead.</div>
-    `;
+  /*
+   * Do not embed the target site in an iframe. Many internal systems
+   * deliberately block framing with X-Frame-Options/CSP, which creates
+   * the broken-browser preview the user was seeing. The selected URL is
+   * already shown above, and Open/Copy operate on that exact URL.
+   */
+  previewFrameWrap.innerHTML = selectedUrl
+    ? `<div class="preview-safe-note"><strong>Link ready.</strong> This system opens in its own browser window rather than inside the hub. Use <strong>Open</strong> to launch it.</div>`
+    : `<div class="preview-safe-note">No URL is available for this tool.</div>`;
 }
 
 function updateSnapshot(){
