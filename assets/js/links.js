@@ -503,45 +503,60 @@ function renderPreview(){
   const previewAiNote = document.getElementById("previewAiNote");
   const previewFrameWrap = document.getElementById("previewFrameWrap");
 
+  if(!previewTitle || !previewDesc || !previewTags || !previewUrl || !previewAiNote || !previewFrameWrap){
+    return;
+  }
+
   if(!selectedLink){
     previewTitle.textContent = "Select a link";
-    previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
+    if(previewIcon) previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
     previewDesc.textContent = "Choose a tool from the list to preview details and actions.";
     previewTags.innerHTML = "";
     previewUrl.textContent = "No link selected.";
+    previewUrl.dataset.selected = "";
+    previewUrl.dataset.url = "";
     previewAiNote.textContent = "AI recommendation will appear after you search or select a link.";
     previewFrameWrap.innerHTML = "";
     return;
   }
 
+  /* Always resolve the URL from the ORIGINAL LINKS record.
+     This avoids stale/cloned filtered objects causing the preview
+     URL to remain on the initial 'No link selected' text. */
+  const sourceLink = LINKS.find(item => item.name === selectedLink.name) || selectedLink;
   const selectedUrl = String(
-    selectedLink.url || selectedLink.path || selectedLink.href || ""
+    sourceLink.url || sourceLink.path || sourceLink.href || ""
   ).trim();
 
-  const canFrame = selectedUrl && !selectedLink.internal && /^https:\/\//i.test(selectedUrl);
+  const canFrame = selectedUrl && !sourceLink.internal && /^https:\/\//i.test(selectedUrl);
 
-  previewTitle.textContent = selectedLink.name || "Selected link";
-  previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon || "fa-link"}"></i>`;
-  previewDesc.textContent = selectedLink.desc || "No description available.";
+  previewTitle.textContent = sourceLink.name || "Selected link";
+  if(previewIcon) previewIcon.innerHTML = `<i class="fa-solid ${sourceLink.icon || "fa-link"}"></i>`;
+  previewDesc.textContent = sourceLink.desc || "No description available.";
+
+  /* Write the visible URL explicitly, including data attributes used
+     by Open/Copy and debugging. Never leave the original placeholder. */
   previewUrl.textContent = selectedUrl || "No link available.";
-  previewUrl.dataset.selected = selectedLink.name || "";
+  previewUrl.dataset.selected = sourceLink.name || "";
+  previewUrl.dataset.url = selectedUrl;
+  previewUrl.setAttribute("aria-label", selectedUrl ? `Selected link: ${sourceLink.name}. ${selectedUrl}` : "No link available");
 
   previewTags.innerHTML = `
-    <span class="link-tag">${escapeHtml(selectedLink.cat)}</span>
-    ${selectedLink.ispi ? `<span class="link-tag orange">Use iSPI Browser</span>` : ""}
-    ${selectedLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
+    <span class="link-tag">${escapeHtml(sourceLink.cat)}</span>
+    ${sourceLink.ispi ? `<span class="link-tag orange">Use iSPI Browser</span>` : ""}
+    ${sourceLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
   `;
 
-  previewAiNote.innerHTML = selectedLink.internal
+  previewAiNote.innerHTML = sourceLink.internal
     ? "AI recommendation: This is an internal path. Copy it and open it through the company network."
-    : selectedLink.ispi
+    : sourceLink.ispi
       ? "AI recommendation: This tool may require iSPI Browser or internal network access."
       : "AI recommendation: This link can be opened directly if you have access.";
 
   previewFrameWrap.innerHTML = canFrame
     ? `
       <div class="preview-frame">
-        <iframe src="${escapeAttr(selectedUrl)}" title="${escapeAttr(selectedLink.name || "Selected link")}"></iframe>
+        <iframe src="${escapeAttr(selectedUrl)}" title="${escapeAttr(sourceLink.name || "Selected link")}"></iframe>
       </div>
       <div class="frame-note">Preview may be blocked by some internal systems. If it does not load, use the Open button.</div>
     `
