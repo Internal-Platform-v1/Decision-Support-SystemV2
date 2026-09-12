@@ -3645,3 +3645,74 @@ body.modal-open{
     overflow:hidden;
     text-overflow:ellipsis;
 }
+
+/* Oneclick header badges — horizontal, compact and aligned with the V2 Hub */
+#oneclickModal .oneclick-panel-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    min-width:0;
+}
+
+#oneclickModal .oneclick-panel-title h4{
+    min-width:0;
+    margin:0;
+}
+
+#oneclickModal .oneclick-mini-badge{
+    width:auto !important;
+    min-width:0 !important;
+    height:30px !important;
+    min-height:30px !important;
+    flex:0 0 auto !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    padding:0 8px !important;
+    box-sizing:border-box !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    border:1px solid #e4d8ff !important;
+    border-radius:7px !important;
+    background:#f1eaff !important;
+    color:#7131dc !important;
+    font-size:8px !important;
+    line-height:1 !important;
+    font-weight:700 !important;
+}
+
+#oneclickModal .oneclick-mini-badge i{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+    width:auto !important;
+    height:auto !important;
+    font-size:11px !important;
+    line-height:1 !important;
+}
+
+/* Keep the side/manual header badges consistent with the library badge. */
+#oneclickModal .oneclick-side .oneclick-panel-title .oneclick-mini-badge{
+    color:#7131dc !important;
+    background:#f1eaff !important;
+}
+
+@media(max-width:700px){
+    #oneclickModal .oneclick-panel-title{
+        gap:7px;
+    }
+
+    #oneclickModal .oneclick-mini-badge{
+        height:28px !important;
+        min-height:28px !important;
+        padding:0 7px !important;
+        font-size:7px !important;
+    }
+
+    #oneclickModal .oneclick-mini-badge i{
+        font-size:10px !important;
+    }
+}
