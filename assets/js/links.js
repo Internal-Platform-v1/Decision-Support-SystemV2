@@ -504,13 +504,13 @@ function renderPreview(){
   const previewFrameWrap = document.getElementById("previewFrameWrap");
 
   if(!selectedLink){
-    previewTitle.textContent = "Select a link";
-    previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
-    previewDesc.textContent = "Choose a tool from the list to preview details and actions.";
-    previewTags.innerHTML = "";
-    previewUrl.textContent = "No link selected.";
-    previewAiNote.textContent = "AI recommendation will appear after you search or select a link.";
-    previewFrameWrap.innerHTML = "";
+    if (previewTitle) previewTitle.textContent = "Select a link";
+    if (previewIcon) previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
+    if (previewDesc) previewDesc.textContent = "Choose a tool from the list to preview details and actions.";
+    if (previewTags) previewTags.innerHTML = "";
+    if (previewUrl) previewUrl.textContent = "No link selected.";
+    if (previewAiNote) previewAiNote.textContent = "AI recommendation will appear after you search or select a link.";
+    if (previewFrameWrap) previewFrameWrap.innerHTML = "";
     return;
   }
 
@@ -525,19 +525,22 @@ function renderPreview(){
 
   const canFrame = selectedUrl && !selectedLink.internal && /^https:\/\//i.test(selectedUrl);
 
-  previewTitle.textContent = selectedLink.name || "Selected link";
-  previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon || "fa-link"}"></i>`;
-  previewDesc.textContent = selectedLink.desc || "No description available.";
-  previewUrl.textContent = selectedUrl || "No link available.";
-  previewUrl.dataset.selected = selectedLink.name || "";
+  if (previewTitle) previewTitle.textContent = selectedLink.name || "Selected link";
+  if (previewIcon) previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon || "fa-link"}"></i>`;
+  if (previewDesc) previewDesc.textContent = selectedLink.desc || "No description available.";
+  if (previewUrl) {
+    previewUrl.textContent = selectedUrl || "No link available.";
+    previewUrl.dataset.selected = selectedLink.name || "";
+    previewUrl.title = selectedUrl;
+  }
 
-  previewTags.innerHTML = `
+  if (previewTags) previewTags.innerHTML = `
     <span class="link-tag">${escapeHtml(selectedLink.cat)}</span>
     ${selectedLink.ispi ? `<span class="link-tag orange">Use iSPI Browser</span>` : ""}
     ${selectedLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
   `;
 
-  previewAiNote.innerHTML = selectedLink.internal
+  if (previewAiNote) previewAiNote.innerHTML = selectedLink.internal
     ? "AI recommendation: This is an internal path. Copy it and open it through the company network."
     : selectedLink.ispi
       ? "AI recommendation: This tool may require iSPI Browser or internal network access."
@@ -549,7 +552,7 @@ function renderPreview(){
    * the broken-browser preview the user was seeing. The selected URL is
    * already shown above, and Open/Copy operate on that exact URL.
    */
-  previewFrameWrap.innerHTML = selectedUrl
+  if (previewFrameWrap) previewFrameWrap.innerHTML = selectedUrl
     ? `<div class="preview-safe-note"><strong>Link ready.</strong> This system opens in its own browser window rather than inside the hub. Use <strong>Open</strong> to launch it.</div>`
     : `<div class="preview-safe-note">No URL is available for this tool.</div>`;
 }
