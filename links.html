@@ -50,12 +50,12 @@
  <div class="links-search-row">
  <div class="search-input-wrap">
  <i class="fa-solid fa-magnifying-glass"></i>
- <input id="linkSearch" placeholder="Search or ask for a tool..." type="text"/>
+ <input id="linkSearch" placeholder="Search tools..." type="text"/>
  <button id="clearSearchBtn" onclick="clearLinkSearch()" type="button">×</button>
  </div>
- <button class="links-search-btn" onclick="runAiCommand()" type="button">
- <i class="fa-solid fa-wand-magic-sparkles"></i>
-                 Run AI Action
+ <button class="links-search-btn" onclick="runSearch()" type="button">
+ <i class="fa-solid fa-magnifying-glass"></i>
+                 Search
                </button>
  <div class="chip-row">
  <button class="chip active" onclick="filterCategory('all', event)" type="button"><i class="fa-solid fa-layer-group"></i> All</button>
@@ -88,10 +88,10 @@
 <div class="link-library-card">
 <div class="link-library-head">
 <div>
-<div class="link-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> Link library</div>
-<h3 class="link-library-title">Choose a tool or use AI action words</h3>
-<p class="link-library-lead" id="aiSuggestion">
-                      AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.
+<div class="link-kicker"><i class="fa-solid fa-link"></i> Link library</div>
+<h3 class="link-library-title">Choose a tool or search the library</h3>
+<p class="link-library-lead" id="searchSuggestion">
+                      Search by tool name or keyword to quickly find a resource.
                     </p>
 </div>
 <div class="link-library-icon"><i class="fa-solid fa-link"></i></div>
@@ -118,8 +118,8 @@
 <i class="fa-solid fa-copy"></i> Copy
                   </button>
 </div>
-<div class="ai-note" id="previewAiNote">
-                  AI recommendation will appear after you search or select a link.
+<div class="search-note" id="previewSearchNote">
+                  Select a link to see its URL and the recommended way to open or copy it.
                 </div>
 <div id="previewFrameWrap"></div>
 </div>
