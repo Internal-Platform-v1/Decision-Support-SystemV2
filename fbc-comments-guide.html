@@ -45,8 +45,10 @@
               <h3>FBC Comment Generator</h3>
               <p>Select the queue type and action taken, then enter the case number. The tool will generate the recommended FBC comment automatically.</p>
             </div>
-            <div class="section-note"><i class="fa-solid fa-bolt"></i><span id="generatorStatusPill">Ready</span></div>
-            <button class="reminder-button" type="button" onclick="openReminderModal()"><i class="fa-solid fa-circle-info"></i> View Reminders</button>
+            <div class="section-actions">
+              <button class="reminder-button" id="viewRemindersBtn" type="button" onclick="openReminderModal()"><i class="fa-solid fa-circle-info"></i> View Reminders</button>
+              <button class="fbc-fullscreen-btn" id="fbcFullscreenBtn" type="button" onclick="toggleFbcFullscreen()" aria-pressed="false" title="Expand FBC Comment Generator to the page body"><i class="fa-solid fa-expand"></i><span>Full Screen</span></button>
+            </div>
           </div>
 
           <div class="content-grid">
