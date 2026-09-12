@@ -3198,202 +3198,174 @@ body.modal-open{
 }
 
 /* =========================================================
-   FINAL LINKS HUB LAYOUT CORRECTION
-   Use the full workspace width. Full Screen must enlarge only
-   the workspace area; header/footer and card dimensions stay
-   unchanged. Cards use the dashboard quick-card proportions.
+   LINKS HUB V3 — 5 FIXED-DENSITY COLUMNS
+   Keep the dashboard card height exactly 194px.
+   The fifth column uses the available horizontal space
+   instead of leaving an unused card-sized gap.
    ========================================================= */
 
 .links-directory-main .links-frame{
-    grid-template-columns:minmax(0,1fr) 245px !important;
+    grid-template-columns:minmax(0,1fr) 220px !important;
+    gap:12px !important;
 }
 
 .links-directory-main .links-main{
-    width:auto !important;
+    min-width:0 !important;
+    width:100% !important;
     max-width:none !important;
-    flex:none;
-}
-
-.links-directory-main .link-library-card{
-    width:100%;
-    box-sizing:border-box;
 }
 
 .links-directory-main .links-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
     gap:10px !important;
-    margin-top:13px;
+    align-items:start !important;
 }
 
+/* Card dimensions stay fixed vertically; widths are determined
+   by the 5-column layout so the cards never grow when the page
+   workspace expands. */
 .links-directory-main .link-card{
     height:194px !important;
     min-height:194px !important;
-    box-sizing:border-box;
-    padding:14px 12px 10px !important;
-    border:1px solid #e8e9f2;
-    border-bottom:2px solid #d9d7ef;
-    border-radius:9px;
-    background:#fff;
-    box-shadow:0 3px 11px rgba(41,32,94,.045);
-    transition:.18s transform,.18s box-shadow;
+    max-height:194px !important;
+    box-sizing:border-box !important;
 }
 
-.links-directory-main .link-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(41,32,94,.1);
+/* Keep the card internals from stretching the fixed card. */
+.links-directory-main .link-card h5{
+    min-height:0 !important;
 }
 
-.links-directory-main .link-card::after{
-    content:"";
-    position:absolute;
-    bottom:-2px;
-    left:15%;
-    right:15%;
-    height:2px;
-    border-radius:4px;
+.links-directory-main .link-card > p{
+    max-height:42px !important;
 }
 
-.links-directory-main .link-card:nth-child(6n+1)::after,
-.links-directory-main .link-card:nth-child(6n+2)::after,
-.links-directory-main .link-card:nth-child(6n+3)::after{
-    background:#d7c9ff;
-}
-
-.links-directory-main .link-card:nth-child(6n+4)::after{
-    background:#ffd4bd;
-}
-
-.links-directory-main .link-card:nth-child(6n+5)::after{
-    background:#c9dcff;
-}
-
-.links-directory-main .link-card:nth-child(6n)::after{
-    background:#d0f0d2;
-}
-
-.links-directory-main .link-card .link-icon,
-.links-directory-main .link-card .link-icon-wrap{
-    width:44px;
-    height:44px;
-    flex:0 0 44px;
-    border-radius:50%;
-}
-
-/* Full Screen: expand the workspace, not the cards themselves. */
+/* Full Screen uses the same 5-column card grid. */
 .links-directory-main.links-fullscreen .links-frame{
-    grid-template-columns:minmax(0,1fr) 245px !important;
+    grid-template-columns:minmax(0,1fr) 220px !important;
 }
 
 .links-directory-main.links-fullscreen .links-main{
-    width:auto !important;
+    width:100% !important;
     max-width:none !important;
 }
 
 .links-directory-main.links-fullscreen .links-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-}
-
-@media(max-width:1050px){
-    .links-directory-main .links-grid,
-    .links-directory-main.links-fullscreen .links-grid{
-        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    }
-}
-
-@media(max-width:760px){
-    .links-directory-main .links-grid,
-    .links-directory-main.links-fullscreen .links-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    }
-}
-
-@media(max-width:520px){
-    .links-directory-main .links-grid,
-    .links-directory-main.links-fullscreen .links-grid{
-        grid-template-columns:1fr !important;
-    }
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
 }
 
 /* =========================================================
-   FINAL FIX — KEEP CARD DIMENSIONS FIXED + ENABLE WORKSPACE SCROLL
+   PREVIEW — always reflects the selected card
    ========================================================= */
 
-/* The cards must NOT stretch when the workspace gets wider. */
-.links-directory-main .links-grid,
-.links-directory-main.links-fullscreen .links-grid{
-    grid-template-columns:repeat(4,174px) !important;
-    grid-auto-rows:194px;
-    gap:10px !important;
-    justify-content:start;
-    align-content:start;
+.links-directory-main .links-side{
+    min-width:0 !important;
 }
 
-.links-directory-main .link-card,
-.links-directory-main.links-fullscreen .link-card{
-    width:174px !important;
-    height:194px !important;
-    min-width:174px !important;
-    max-width:174px !important;
-    min-height:194px !important;
-    max-height:194px !important;
+.links-directory-main .links-side-card:first-child{
+    overflow:hidden;
+}
+
+.links-directory-main .preview-url{
+    min-height:34px;
+    box-sizing:border-box;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+/* =========================================================
+   ONECLICK — aligned with the Links Hub V2 proportions
+   ========================================================= */
+
+#oneclickModal{
+    z-index:500 !important;
+    padding:24px !important;
+}
+
+#oneclickModal .oneclick-modal-card{
+    width:min(920px,calc(100vw - 48px)) !important;
+    max-height:min(700px,86vh) !important;
+    overflow:hidden !important;
+    display:flex !important;
+    flex-direction:column !important;
+    box-sizing:border-box !important;
+}
+
+#oneclickModal .oneclick-head{
+    flex:0 0 auto;
+}
+
+#oneclickModal .oneclick-body{
+    grid-template-columns:minmax(0,1fr) 270px !important;
+    gap:12px !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+#oneclickModal .oneclick-main{
+    min-width:0 !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+#oneclickModal .oneclick-main > .oneclick-panel{
+    max-height:540px;
+    overflow:auto;
+    scrollbar-width:thin;
+}
+
+#oneclickModal .oneclick-side{
+    min-width:0 !important;
+    min-height:0 !important;
+    overflow:auto !important;
+}
+
+#oneclickModal .oneclick-options{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:6px !important;
+}
+
+#oneclickModal .oneclick-option{
+    min-height:48px;
     box-sizing:border-box;
 }
 
-/* Keep the library area scrollable so lower rows remain selectable. */
-.links-directory-main > .links-workspace#linksBuilder{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
+#oneclickModal .oneclick-selected-list{
+    max-height:250px !important;
 }
 
-.links-directory-main > .links-workspace#linksBuilder > .container{
-    min-height:0;
-}
+@media(max-width:1100px){
+    .links-directory-main .links-frame,
+    .links-directory-main.links-fullscreen .links-frame{
+        grid-template-columns:minmax(0,1fr) 205px !important;
+    }
 
-.links-directory-main .links-frame{
-    min-height:max-content;
-}
-
-.links-directory-main .links-main{
-    min-height:0;
-    overflow:visible;
-}
-
-/* In Full Screen the left library keeps the exact same card size.
-   Only the available workspace grows. */
-.links-directory-main.links-fullscreen .links-frame{
-    height:auto !important;
-    min-height:max-content !important;
-    overflow:visible !important;
-}
-
-.links-directory-main.links-fullscreen #linksBuilder{
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-}
-
-.links-directory-main.links-fullscreen .links-main{
-    overflow:visible !important;
+    .links-directory-main .links-grid,
+    .links-directory-main.links-fullscreen .links-grid{
+        grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    }
 }
 
 @media(max-width:900px){
     .links-directory-main .links-grid,
     .links-directory-main.links-fullscreen .links-grid{
-        grid-template-columns:repeat(3,174px) !important;
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    }
+
+    #oneclickModal .oneclick-body{
+        grid-template-columns:1fr !important;
+        overflow:auto !important;
+    }
+
+    #oneclickModal .oneclick-main > .oneclick-panel{
+        max-height:none;
     }
 }
 
-@media(max-width:700px){
+@media(max-width:600px){
     .links-directory-main .links-grid,
     .links-directory-main.links-fullscreen .links-grid{
-        grid-template-columns:repeat(2,174px) !important;
-    }
-}
-
-@media(max-width:390px){
-    .links-directory-main .links-grid,
-    .links-directory-main.links-fullscreen .links-grid{
-        grid-template-columns:174px !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     }
 }
