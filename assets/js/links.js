@@ -609,12 +609,17 @@ function selectLink(name){
   if(!match) return;
 
   selectedLink = match;
-  renderLinks();
 
-  // Force the preview to use the exact card selection.
-  // This prevents stale preview text when the grid is re-rendered.
+  // Update selection styling without clearing/rebuilding the preview first.
+  document.querySelectorAll("#linksGrid .link-card").forEach(card => {
+    const title = card.querySelector("h5")?.textContent?.trim();
+    card.classList.toggle("active", title === match.name);
+    card.classList.toggle("selected", title === match.name);
+  });
+
   renderPreview();
   updateSnapshot();
+  updateAiSuggestion(match);
 }
 
 function openSelectedLink(){
