@@ -2957,55 +2957,6 @@ body.modal-open{
     align-items:center;
 }
 
-.links-directory-main .workspace-header-actions{
-     flex:0 0 auto;
-     display:flex;
-     align-items:center;
-     gap:6px;
-}
-
-.links-directory-main .workspace-oneclick-btn,
-.links-directory-main .workspace-fullscreen-btn{
-     flex:0 0 auto;
-     height:28px;
-     padding:0 10px;
-     display:inline-flex;
-     align-items:center;
-     justify-content:center;
-     gap:6px;
-     border:1px solid #dedfeb;
-     border-radius:6px;
-     background:#ffffff;
-     color:#4d148c;
-     font-family:"Inter","Segoe UI",Arial,sans-serif;
-     font-size:8px;
-     font-weight:700;
-     cursor:pointer;
-     transition:.15s ease;
-}
-
-.links-directory-main .workspace-oneclick-btn i,
-.links-directory-main .workspace-fullscreen-btn i{
-     font-size:9px;
-}
-
-.links-directory-main .workspace-oneclick-btn:hover,
-.links-directory-main .workspace-fullscreen-btn:hover{
-     border-color:#bca6e9;
-     background:#faf8ff;
-     color:#5b17c5;
-}
-
-.links-directory-main .workspace-oneclick-btn{
-     border-color:#eadcff;
-     background:#f8f4ff;
-}
-
-.links-directory-main .workspace-oneclick-btn:hover{
-     border-color:#cdb5f4;
-     background:#f1eaff;
-}
-
 .links-directory-main .workspace-fullscreen-btn{
     flex:0 0 auto;
 
@@ -3764,4 +3715,104 @@ body.modal-open{
     #oneclickModal .oneclick-mini-badge i{
         font-size:10px !important;
     }
+}
+
+/* =========================================================
+   LINKS HUB — ONECLICK BESIDE FULL SCREEN
+   This affects only the workspace header buttons.
+   ========================================================= */
+.links-directory-main .workspace-header-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px;
+    flex:0 0 auto;
+}
+
+.links-directory-main .workspace-oneclick-btn{
+    flex:0 0 auto;
+    height:28px;
+    padding:0 10px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid #e1d9f4;
+    border-radius:6px;
+    background:#ffffff;
+    color:#4d148c;
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s ease;
+}
+
+.links-directory-main .workspace-oneclick-btn i{
+    font-size:9px;
+}
+
+.links-directory-main .workspace-oneclick-btn:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
+    color:#5b17c5;
+}
+
+.links-directory-main .workspace-oneclick-btn:active{
+    transform:translateY(1px);
+}
+
+@media(max-width:700px){
+    .links-directory-main .workspace-header-actions{
+        gap:5px;
+    }
+
+    .links-directory-main .workspace-oneclick-btn,
+    .links-directory-main .workspace-fullscreen-btn{
+        padding:0 8px;
+    }
+}
+
+
+/* =========================================================
+   LINKS HUB — ONECLICK BESIDE FULL SCREEN
+   This affects only the workspace header buttons.
+   ========================================================= */
+.links-directory-main .workspace-header-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:6px;
+    flex:0 0 auto;
+}
+
+.links-directory-main .workspace-oneclick-btn{
+    flex:0 0 auto;
+    height:28px;
+    padding:0 10px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid #e1d9f4;
+    border-radius:6px;
+    background:#ffffff;
+    color:#4d148c;
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s ease;
+}
+.links-directory-main .workspace-oneclick-btn i{font-size:9px;}
+.links-directory-main .workspace-oneclick-btn:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
+    color:#5b17c5;
+}
+.links-directory-main .workspace-oneclick-btn:active{transform:translateY(1px);}
+@media(max-width:700px){
+    .links-directory-main .workspace-header-actions{gap:5px;}
+    .links-directory-main .workspace-oneclick-btn,
+    .links-directory-main .workspace-fullscreen-btn{padding:0 8px;}
 }
