@@ -1368,3 +1368,40 @@ body{
         flex:0 0 auto;
     }
 }
+
+/* =========================================================
+   FBC COMMENT GENERATOR — SMALL NORMAL-VIEW COMPRESSION
+   Paste at the very bottom of the CSS
+   ========================================================= */
+
+/* Main workspace panel */
+.fbc-panel {
+    padding: 16px !important;
+}
+
+/* Section header */
+.section-head {
+    padding: 0 0 10px !important;
+    margin: 0 0 10px !important;
+}
+
+/* Main generator + side cards */
+.work-card,
+.side-card {
+    padding: 14px !important;
+}
+
+/* Reduce spacing between the dropdowns */
+.select-grid {
+    gap: 10px !important;
+}
+
+/* Make the text areas slightly shorter */
+#fbcBuilder textarea {
+    min-height: 95px !important;
+}
+
+/* Tighten the action buttons area */
+.action-row {
+    margin-top: 9px !important;
+}
