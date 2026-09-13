@@ -1370,64 +1370,203 @@ body{
 }
 
 /* =========================================================
-   FBC — NORMAL VIEW FIT / NO INTERNAL SCROLL
+   FBC — FINAL FIT / FOOTER SAFE LAYOUT
    ========================================================= */
 
-/* Give the FBC workspace more vertical room */
-.fbc-workspace {
-    height: calc(100vh - 410px) !important;
-    min-height: 0 !important;
+/* Let the page body allocate the available space instead of
+   forcing the workspace beyond the footer. */
+.case-page{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
 }
 
-/* Slightly tighten the panel */
-.fbc-panel {
-    padding: 16px !important;
+.fbc-workspace{
+    flex:1 1 auto;
+    height:auto !important;
+    min-height:0 !important;
+    margin:14px auto 0 !important;
 }
 
-/* Tighten the section header */
-.section-head {
-    padding-bottom: 10px !important;
-    margin-bottom: 10px !important;
+.fbc-container{
+    flex:1 1 auto;
+    height:100%;
+    min-height:0;
 }
 
-/* Tighten cards */
+.fbc-panel{
+    padding:14px !important;
+}
+
+.section-head{
+    padding-bottom:9px !important;
+    margin-bottom:9px !important;
+}
+
 .work-card,
-.side-card {
-    padding: 14px !important;
+.side-card{
+    padding:13px !important;
 }
 
-/* Reduce spacing between Queue / Action */
-.select-grid {
-    gap: 10px !important;
-    margin-bottom: 10px !important;
+.work-top{
+    margin-bottom:8px !important;
 }
 
-/* Reduce spacing around the top of the generator */
-.work-top {
-    margin-bottom: 9px !important;
+.select-grid{
+    gap:9px !important;
+    margin-bottom:9px !important;
 }
 
-/* Make the Case # area tighter */
-.field-label {
-    margin-bottom: 4px !important;
+.work-card > div[style*="margin-bottom"]{
+    margin-bottom:9px !important;
 }
 
-/* Shorter generated comment box */
-#fbcBuilder textarea {
-    min-height: 80px !important;
+.field-label{
+    margin-bottom:4px !important;
 }
 
-/* Buttons closer to the comment box */
-.action-row {
-    margin-top: 8px !important;
+#fbcBuilder textarea{
+    min-height:76px !important;
 }
 
-/* Don't create another scrollbar inside the generator */
-.work-card {
-    overflow: hidden !important;
+.action-row{
+    margin-top:7px !important;
 }
 
-/* Let the side content use the additional workspace height */
-.side-stack {
-    overflow: hidden !important;
+.work-card{
+    overflow:hidden !important;
 }
+
+.side-stack{
+    overflow:hidden !important;
+}
+
+/* =========================================================
+   FULL SCREEN — REMINDER REFERENCE BELOW GENERATOR
+   ========================================================= */
+
+.fbc-workspace.fbc-fullscreen{
+    display:flex !important;
+    flex-direction:column !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-container{
+    display:flex !important;
+    flex-direction:column !important;
+    flex:1 1 auto !important;
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    flex:1 1 auto !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:14px !important;
+    border-radius:0;
+    box-shadow:none;
+    overflow:hidden !important;
+}
+
+.fbc-workspace.fbc-fullscreen .content-grid{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+.fbc-workspace.fbc-fullscreen .work-card,
+.fbc-workspace.fbc-fullscreen .side-stack{
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+.fbc-fullscreen-reminder{
+    flex:0 0 auto;
+    display:none;
+    margin-top:8px;
+    padding:9px 12px 10px;
+    background:#ffffff;
+    border:1px solid #e4e5ef;
+    border-radius:8px;
+    box-shadow:0 3px 12px rgba(48,38,111,.06);
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.fbc-fullscreen-reminder-head{
+    flex:0 0 310px;
+    min-width:0;
+}
+
+.fbc-fullscreen-reminder-title{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:5px;
+    color:#4d148c;
+    font-size:9px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+
+.fbc-fullscreen-reminder-title i{
+    color:#ff6600;
+    font-size:10px;
+}
+
+.fbc-fullscreen-reminder-note{
+    color:#555878;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.fbc-fullscreen-reminder-image{
+    flex:1 1 auto;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.fbc-fullscreen-reminder-image img{
+    display:block;
+    width:auto;
+    max-width:100%;
+    max-height:145px;
+    object-fit:contain;
+    border:1px solid #e8e9f2;
+    border-radius:6px;
+    background:#ffffff;
+}
+
+@media(max-width:900px){
+    .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .fbc-fullscreen-reminder-head{
+        flex:0 0 auto;
+    }
+
+    .fbc-fullscreen-reminder-image img{
+        max-height:130px;
+    }
+}
+
+/* =========================================================
+   FOOTER PROTECTION
+   ========================================================= */
+
+.app-shell > #footer-placeholder{
+    position:relative;
+    z-index:100;
+    flex:0 0 auto;
+}
+
