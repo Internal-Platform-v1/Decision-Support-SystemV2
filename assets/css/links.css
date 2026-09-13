@@ -3816,3 +3816,42 @@ body.modal-open{
     .links-directory-main .workspace-oneclick-btn,
     .links-directory-main .workspace-fullscreen-btn{padding:0 8px;}
 }
+
+/* Fullscreen-only Oneclick button */
+.workspace-oneclick-fullscreen-btn{
+    display:none;
+}
+
+.links-directory-main.links-fullscreen .workspace-oneclick-fullscreen-btn{
+    display:inline-flex;
+
+    height:28px;
+    padding:0 10px;
+
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    border:1px solid #dedfeb;
+    border-radius:6px;
+
+    background:#ffffff;
+    color:#4d148c;
+
+    font-family:"Inter","Segoe UI",Arial,sans-serif;
+    font-size:8px;
+    font-weight:700;
+
+    cursor:pointer;
+    transition:.15s ease;
+}
+
+.links-directory-main.links-fullscreen .workspace-oneclick-fullscreen-btn i{
+    font-size:9px;
+}
+
+.links-directory-main.links-fullscreen .workspace-oneclick-fullscreen-btn:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
+    color:#5b17c5;
+}
