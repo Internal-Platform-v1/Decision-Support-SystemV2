@@ -1370,38 +1370,64 @@ body{
 }
 
 /* =========================================================
-   FBC COMMENT GENERATOR — SMALL NORMAL-VIEW COMPRESSION
-   Paste at the very bottom of the CSS
+   FBC — NORMAL VIEW FIT / NO INTERNAL SCROLL
    ========================================================= */
 
-/* Main workspace panel */
+/* Give the FBC workspace more vertical room */
+.fbc-workspace {
+    height: calc(100vh - 410px) !important;
+    min-height: 0 !important;
+}
+
+/* Slightly tighten the panel */
 .fbc-panel {
     padding: 16px !important;
 }
 
-/* Section header */
+/* Tighten the section header */
 .section-head {
-    padding: 0 0 10px !important;
-    margin: 0 0 10px !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 10px !important;
 }
 
-/* Main generator + side cards */
+/* Tighten cards */
 .work-card,
 .side-card {
     padding: 14px !important;
 }
 
-/* Reduce spacing between the dropdowns */
+/* Reduce spacing between Queue / Action */
 .select-grid {
     gap: 10px !important;
+    margin-bottom: 10px !important;
 }
 
-/* Make the text areas slightly shorter */
+/* Reduce spacing around the top of the generator */
+.work-top {
+    margin-bottom: 9px !important;
+}
+
+/* Make the Case # area tighter */
+.field-label {
+    margin-bottom: 4px !important;
+}
+
+/* Shorter generated comment box */
 #fbcBuilder textarea {
-    min-height: 95px !important;
+    min-height: 80px !important;
 }
 
-/* Tighten the action buttons area */
+/* Buttons closer to the comment box */
 .action-row {
-    margin-top: 9px !important;
+    margin-top: 8px !important;
+}
+
+/* Don't create another scrollbar inside the generator */
+.work-card {
+    overflow: hidden !important;
+}
+
+/* Let the side content use the additional workspace height */
+.side-stack {
+    overflow: hidden !important;
 }
