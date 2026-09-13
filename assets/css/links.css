@@ -2957,6 +2957,55 @@ body.modal-open{
     align-items:center;
 }
 
+.links-directory-main .workspace-header-actions{
+     flex:0 0 auto;
+     display:flex;
+     align-items:center;
+     gap:6px;
+}
+
+.links-directory-main .workspace-oneclick-btn,
+.links-directory-main .workspace-fullscreen-btn{
+     flex:0 0 auto;
+     height:28px;
+     padding:0 10px;
+     display:inline-flex;
+     align-items:center;
+     justify-content:center;
+     gap:6px;
+     border:1px solid #dedfeb;
+     border-radius:6px;
+     background:#ffffff;
+     color:#4d148c;
+     font-family:"Inter","Segoe UI",Arial,sans-serif;
+     font-size:8px;
+     font-weight:700;
+     cursor:pointer;
+     transition:.15s ease;
+}
+
+.links-directory-main .workspace-oneclick-btn i,
+.links-directory-main .workspace-fullscreen-btn i{
+     font-size:9px;
+}
+
+.links-directory-main .workspace-oneclick-btn:hover,
+.links-directory-main .workspace-fullscreen-btn:hover{
+     border-color:#bca6e9;
+     background:#faf8ff;
+     color:#5b17c5;
+}
+
+.links-directory-main .workspace-oneclick-btn{
+     border-color:#eadcff;
+     background:#f8f4ff;
+}
+
+.links-directory-main .workspace-oneclick-btn:hover{
+     border-color:#cdb5f4;
+     background:#f1eaff;
+}
+
 .links-directory-main .workspace-fullscreen-btn{
     flex:0 0 auto;
 
