@@ -191,13 +191,29 @@ function initFbcCommentsPage() {
     updateState();
   });
 
+  function autoGenerateIfReady() {
+    if (!queueTypeSelect.value || !actionTakenSelect.value || !caseNumberInput.value.trim()) {
+      return;
+    }
+
+    if (sessionStorage.getItem('fbcReminderAcknowledged') !== 'true') {
+      openReminderModal(true);
+      return;
+    }
+
+    generateFbcCommentNow();
+  }
+
   actionTakenSelect.addEventListener('change', () => {
     generatedCommentBox.value = '';
     updateState();
+    autoGenerateIfReady();
   });
+
   caseNumberInput.addEventListener('input', () => {
     generatedCommentBox.value = '';
     updateState();
+    autoGenerateIfReady();
   });
 
   const workbookPaths = ['assets/references/FBC-comment.xlsx'];
