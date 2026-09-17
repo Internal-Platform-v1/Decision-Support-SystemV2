@@ -1675,3 +1675,99 @@ body{
 .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
     flex: 0 0 auto;
 }
+
+/* =========================================================
+   FULL SCREEN REMINDER
+   NORMAL VIEW: HIDDEN
+   ========================================================= */
+
+.fbc-fullscreen-reminder {
+    display: none;
+}
+
+
+/* =========================================================
+   FULL SCREEN ONLY
+   Reminder is a separate card below the generator.
+   Sidebar remains untouched.
+   ========================================================= */
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
+    display: flex;
+
+    width: calc(100% - 350px);
+    box-sizing: border-box;
+
+    margin-top: 10px;
+    padding: 12px 16px;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    background: #ffffff;
+    border: 1px solid #e7e8f3;
+    border-radius: 9px;
+
+    overflow: hidden;
+}
+
+
+/* Reminder text */
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-copy {
+    flex: 0 0 34%;
+    min-width: 0;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title {
+    margin-bottom: 7px;
+
+    color: #4d148c;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title i {
+    color: #ff6600;
+    margin-right: 5px;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-text {
+    color: #45466e;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+
+/* Reference image */
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image img {
+    display: block;
+
+    width: auto;
+    height: auto;
+
+    max-width: 100%;
+    max-height: 190px;
+
+    object-fit: contain;
+
+    border: 1px solid #e7e8f3;
+    border-radius: 6px;
+}
