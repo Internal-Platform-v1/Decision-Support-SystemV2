@@ -47,115 +47,278 @@
     </section>
 
     <section id="fbcBuilder" class="fbc-workspace">
-      <div class="fbc-container">
-        <div class="fbc-panel">
-          <div class="section-head">
-            <div class="section-head-left">
-              <div class="section-overline"><i class="fa-solid fa-wand-magic-sparkles"></i> Comment generator</div>
-              <h3>FBC Comment Generator</h3>
-              <p>Select the queue type and action taken, then enter the case number. The tool will generate the recommended FBC comment automatically.</p>
-            </div>
-            <div class="section-actions">
-              <button class="reminder-button" id="viewRemindersBtn" type="button" onclick="openReminderModal()"><i class="fa-solid fa-circle-info"></i> View Reminders</button>
-              <button class="fbc-fullscreen-btn" id="fbcFullscreenBtn" type="button" onclick="toggleFbcFullscreen()" aria-pressed="false" title="Expand FBC Comment Generator to the page body"><i class="fa-solid fa-expand"></i><span>Full Screen</span></button>
-            </div>
+  <div class="fbc-container">
+
+    <div class="fbc-panel">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-overline">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Comment generator
           </div>
 
-          <div class="content-grid">
-            <div class="work-card">
-              <div class="work-top">
-                <div>
-                  <div class="badge"><i class="fa-solid fa-pen-to-square"></i> Generator</div>
-                  <h4>Build your FBC comment</h4>
-                </div>
-                <div class="guide-icon"><i class="fa-solid fa-comments"></i></div>
-              </div>
+          <h3>FBC Comment Generator</h3>
 
-              <div class="select-grid">
-                <div>
-                  <label class="field-label">Queue Type</label>
-                  <div class="select-wrap">
-                    <select id="queueTypeSelect">
-                      <option value="">Select Queue Type</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </div>
-                </div>
+          <p>
+            Select the queue type and action taken, then enter the case number.
+            The tool will generate the recommended FBC comment automatically.
+          </p>
+        </div>
 
-                <div>
-                  <label class="field-label">Action Taken</label>
-                  <div class="select-wrap">
-                    <select id="actionTakenSelect" disabled>
-                      <option value="">Select Action Taken</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down"></i>
-                  </div>
-                </div>
-              </div>
+        <div class="section-actions">
+          <button
+            class="reminder-button"
+            id="viewRemindersBtn"
+            type="button"
+            onclick="openReminderModal()"
+          >
+            <i class="fa-solid fa-circle-info"></i>
+            View Reminders
+          </button>
 
-              <div style="margin-bottom:14px;">
-                <label class="field-label">Case #</label>
-                <input id="caseNumberInput" type="text" placeholder="Enter Case #">
-              </div>
-
-              <div>
-                <label class="field-label">Generated FBC Comment</label>
-                <textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here."></textarea>
-              </div>
-
-              <div class="action-row right">
-                <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong></div>
-                <button class="btn btn-dark btn-wide" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button>
-                <button class="btn btn-dark btn-wide" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button>
-              </div>
-            </div>
-
-            <div class="side-stack">
-              <div class="side-card">
-                <div class="work-top">
-                  <div>
-                    <div class="badge"><i class="fa-solid fa-chart-simple"></i> Snapshot</div>
-                    <h4>Quick status</h4>
-                  </div>
-                  <div class="guide-icon"><i class="fa-solid fa-chart-pie"></i></div>
-                </div>
-                <div class="quick-stat">
-                  <span class="quick-label">Selected Queue</span>
-                  <span class="quick-value" id="selectedQueueValue">—</span>
-                </div>
-                <div class="quick-stat">
-                  <span class="quick-label">Selected Action</span>
-                  <span class="quick-value" id="selectedActionValue">—</span>
-                </div>
-                <div class="quick-stat">
-                  <span class="quick-label">2x4 Comment</span>
-                  <span class="quick-value" id="selectedCodeValue">—</span>
-                </div>
-                <div class="quick-stat">
-                  <span class="quick-label">Generator Status</span>
-                  <span class="quick-value" id="generatorStatusValue">Waiting</span>
-                </div>
-              </div>
-
-              <div class="side-card">
-                <div class="work-top">
-                  <div>
-                    <div class="badge"><i class="fa-solid fa-lightbulb"></i> Best practice</div>
-                    <h4>Handling tip</h4>
-                  </div>
-                  <div class="guide-icon"><i class="fa-solid fa-circle-check"></i></div>
-                </div>
-                <ul class="helper-list">
-                  <li>Use the actual case number that you are actively working.</li>
-                  <li>Review the generated comment before pasting it in case wording needs a small revision.</li>
-                  <li>If the workbook row already contains a 2x4 code, the builder uses that code automatically.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <button
+            class="fbc-fullscreen-btn"
+            id="fbcFullscreenBtn"
+            type="button"
+            onclick="toggleFbcFullscreen()"
+            aria-pressed="false"
+            title="Expand FBC Comment Generator to the page body"
+          >
+            <i class="fa-solid fa-expand"></i>
+            <span>Full Screen</span>
+          </button>
         </div>
       </div>
-    </section>
+
+
+      <div class="content-grid">
+
+        <!-- GENERATOR -->
+        <div class="work-card">
+
+          <div class="work-top">
+            <div>
+              <div class="badge">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Generator
+              </div>
+
+              <h4>Build your FBC comment</h4>
+            </div>
+
+            <div class="guide-icon">
+              <i class="fa-solid fa-comments"></i>
+            </div>
+          </div>
+
+
+          <div class="select-grid">
+
+            <div>
+              <label class="field-label">Queue Type</label>
+
+              <div class="select-wrap">
+                <select id="queueTypeSelect">
+                  <option value="">Select Queue Type</option>
+                </select>
+
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+            </div>
+
+
+            <div>
+              <label class="field-label">Action Taken</label>
+
+              <div class="select-wrap">
+                <select id="actionTakenSelect" disabled>
+                  <option value="">Select Action Taken</option>
+                </select>
+
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div style="margin-bottom:14px;">
+            <label class="field-label">Case #</label>
+
+            <input
+              id="caseNumberInput"
+              type="text"
+              placeholder="Enter Case #"
+            >
+          </div>
+
+
+          <div>
+            <label class="field-label">Generated FBC Comment</label>
+
+            <textarea
+              id="generatedCommentBox"
+              class="response-box"
+              readonly
+              placeholder="Your generated FBC comment will appear here."
+            ></textarea>
+          </div>
+
+
+          <div class="action-row right">
+
+            <div id="fbcNoteBox" class="note-box">
+              Format:
+              <strong>2x4 Comment - Case# - Recommended Comment</strong>
+            </div>
+
+            <button
+              class="btn btn-dark btn-wide"
+              type="button"
+              onclick="copyGeneratedComment()"
+            >
+              <i class="fa-solid fa-copy"></i>
+              Copy Comment
+            </button>
+
+            <button
+              class="btn btn-dark btn-wide"
+              type="button"
+              onclick="clearFbcBuilder()"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+              Clear
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="side-stack">
+
+          <!-- QUICK STATUS -->
+          <div class="side-card">
+
+            <div class="work-top">
+              <div>
+                <div class="badge">
+                  <i class="fa-solid fa-chart-simple"></i>
+                  Snapshot
+                </div>
+
+                <h4>Quick status</h4>
+              </div>
+
+              <div class="guide-icon">
+                <i class="fa-solid fa-chart-pie"></i>
+              </div>
+            </div>
+
+
+            <div class="quick-stat">
+              <span class="quick-label">Selected Queue</span>
+              <span class="quick-value" id="selectedQueueValue">—</span>
+            </div>
+
+            <div class="quick-stat">
+              <span class="quick-label">Selected Action</span>
+              <span class="quick-value" id="selectedActionValue">—</span>
+            </div>
+
+            <div class="quick-stat">
+              <span class="quick-label">2x4 Comment</span>
+              <span class="quick-value" id="selectedCodeValue">—</span>
+            </div>
+
+            <div class="quick-stat">
+              <span class="quick-label">Generator Status</span>
+              <span class="quick-value" id="generatorStatusValue">Waiting</span>
+            </div>
+
+          </div>
+
+
+          <!-- HANDLING TIP -->
+          <div class="side-card">
+
+            <div class="work-top">
+              <div>
+                <div class="badge">
+                  <i class="fa-solid fa-lightbulb"></i>
+                  Best practice
+                </div>
+
+                <h4>Handling tip</h4>
+              </div>
+
+              <div class="guide-icon">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+            </div>
+
+            <ul class="helper-list">
+              <li>
+                Use the actual case number that you are actively working.
+              </li>
+
+              <li>
+                Review the generated comment before pasting it in case
+                wording needs a small revision.
+              </li>
+
+              <li>
+                If the workbook row already contains a 2x4 code, the builder
+                uses that code automatically.
+              </li>
+            </ul>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- =====================================================
+         FULL SCREEN ONLY — REMINDER / 2x4 REFERENCE
+         ===================================================== -->
+
+    <div
+      class="fbc-fullscreen-reminder"
+      aria-label="FBC Comment Reminder"
+    >
+
+      <div class="fbc-fullscreen-reminder-copy">
+
+        <div class="fbc-fullscreen-reminder-title">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          FBC COMMENT REMINDER
+        </div>
+
+        <div class="fbc-fullscreen-reminder-text">
+          Effective immediately, the 2×4 comment structure below is intended
+          to reduce confusion and remove unnecessary 2×4 comments previously used.
+        </div>
+
+      </div>
+
+
+      <div class="fbc-fullscreen-reminder-image">
+
+        <img
+          src="assets/images/fbc-comments-guide-images/fbc-comments-guide-image.png"
+          alt="FBC Comment Table reference image"
+        >
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
 
 
