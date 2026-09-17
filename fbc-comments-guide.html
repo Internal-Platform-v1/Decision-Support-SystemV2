@@ -26,6 +26,16 @@
           <button class="primary-btn" type="button" onclick="scrollToBuilder()">Open FBC Comment Generator <i class="fa-solid fa-arrow-down"></i></button>
           <button class="secondary-btn" type="button" onclick="document.getElementById('fbcBuilder')?.scrollIntoView({behavior:'smooth'})">Start now <i class="fa-solid fa-arrow-right"></i></button>
         </div>
+
+        <div class="fbc-fullscreen-reminder" aria-label="FBC Comment Reminder">
+          <div class="fbc-fullscreen-reminder-copy">
+            <div class="fbc-fullscreen-reminder-title"><i class="fa-solid fa-triangle-exclamation"></i> FBC Comment Reminder</div>
+            <div class="fbc-fullscreen-reminder-text">Effective immediately, the 2×4 comment structure below is intended to reduce confusion and remove unnecessary 2×4 comments previously used.</div>
+          </div>
+          <div class="fbc-fullscreen-reminder-image">
+            <img src="assets/images/fbc-comments-guide-images/fbc-comments-guide-image.png" alt="FBC Comment Table reference image" onerror="this.parentElement.classList.add('image-missing')">
+          </div>
+        </div>
       </div>
     </section>
 
@@ -94,12 +104,10 @@
               </div>
 
               <div class="action-row right">
-                <button class="btn btn-primary btn-wide" type="button" onclick="generateFbcComment()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Comment</button>
+                <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong></div>
                 <button class="btn btn-dark btn-wide" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button>
                 <button class="btn btn-dark btn-wide" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button>
               </div>
-
-              <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong></div>
             </div>
 
             <div class="side-stack">
@@ -145,22 +153,6 @@
                 </ul>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Full-screen-only 2x4 comment reminder -->
-        <div class="fbc-fullscreen-reminder" aria-label="FBC Comment Reminder">
-          <div class="fbc-fullscreen-reminder-head">
-            <div class="fbc-fullscreen-reminder-title">
-              <i class="fa-solid fa-triangle-exclamation"></i>
-              FBC Comment Reminder
-            </div>
-            <div class="fbc-fullscreen-reminder-note">
-              Effective immediately, the 2x4 comment structure below is intended to reduce confusion and remove unnecessary 2x4 comments previously used.
-            </div>
-          </div>
-          <div class="fbc-fullscreen-reminder-image">
-            <img src="assets/images/fbc-comments-guide-images/fbc-comments-guide-image.png" alt="FBC Comment Table reference image" onerror="this.parentElement.classList.add('image-missing')">
           </div>
         </div>
       </div>
