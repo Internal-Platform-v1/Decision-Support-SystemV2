@@ -99,3 +99,141 @@ body.modal-open{overflow:hidden}
 .ebs-kv{padding:10px 0;border-bottom:1px solid #eeeef5}.ebs-kv:last-child{border-bottom:0;padding-bottom:0}.ebs-kv small{display:block;color:#777a99;font-size:9px;margin-bottom:4px}.ebs-kv strong{display:block;color:#303258;font-size:10px;word-break:break-word}
 @media(max-width:900px){.ebs-content{grid-template-columns:1fr}.ebs-side{display:grid;grid-template-columns:1fr 1fr}.ebs-builder .builder-top{display:block}.ebs-status{margin-top:10px}}
 @media(max-width:520px){.ebs-content{padding:12px}.ebs-select-grid,.ebs-side{grid-template-columns:1fr}.ebs-actions{flex-wrap:wrap}}
+
+
+/* ============================================================
+   EBS FINAL LAYOUT — FOOTER FIT + FULL SCREEN
+   Same page-body behavior as FBC Comment Generator.
+   ============================================================ */
+
+/* Normal view: let the EBS workspace use the remaining page height
+   so the footer remains visible instead of being pushed below it. */
+.case-page{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.directory-main#ebsBuilder{
+    height:auto !important;
+    min-height:0 !important;
+    flex:1 1 auto;
+    margin:14px auto 14px !important;
+    overflow:hidden;
+}
+
+.ebs-builder{
+    min-height:0;
+    flex:1 1 auto;
+    overflow:hidden;
+}
+
+.ebs-content{
+    min-height:0;
+    overflow:auto;
+}
+
+.ebs-builder-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:8px;
+    flex:0 0 auto;
+    margin-left:auto;
+}
+
+.ebs-fullscreen-btn{
+    height:31px;
+    padding:0 11px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid #e1d9f4;
+    border-radius:6px;
+    background:#ffffff;
+    color:#4d148c;
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:.15s ease;
+}
+
+.ebs-fullscreen-btn i{
+    font-size:9px;
+}
+
+.ebs-fullscreen-btn:hover{
+    border-color:#bca6e9;
+    background:#faf9ff;
+    color:#5b17c5;
+}
+
+.ebs-fullscreen-btn.active{
+    border-color:#4d148c;
+    background:#4d148c;
+    color:#ffffff;
+}
+
+/* Header and footer stay above the expanded workspace. */
+.app-shell > #header-placeholder{
+    position:relative;
+    z-index:100;
+}
+
+.app-shell > #footer-placeholder{
+    position:relative;
+    z-index:100;
+    flex:0 0 auto;
+}
+
+/* Expand only the EBS workspace between the existing header and footer. */
+.directory-main#ebsBuilder.ebs-fullscreen{
+    position:fixed !important;
+    top:var(--ebs-fullscreen-top) !important;
+    left:var(--ebs-fullscreen-left) !important;
+    width:var(--ebs-fullscreen-width) !important;
+    height:calc(
+        var(--ebs-fullscreen-bottom) -
+        var(--ebs-fullscreen-top)
+    ) !important;
+    min-height:0 !important;
+    margin:0 !important;
+    z-index:40;
+    overflow:hidden !important;
+}
+
+.directory-main#ebsBuilder.ebs-fullscreen .ebs-builder{
+    height:100%;
+    min-height:0;
+    overflow:hidden;
+}
+
+.directory-main#ebsBuilder.ebs-fullscreen .ebs-content{
+    min-height:0;
+    overflow:auto;
+}
+
+@media(max-width:900px){
+    .ebs-builder-actions{
+        width:100%;
+        justify-content:flex-end;
+        margin-left:0;
+    }
+
+    .ebs-fullscreen-btn,
+    .ebs-status{
+        flex:0 0 auto;
+    }
+}
+
+@media(max-width:520px){
+    .directory-main#ebsBuilder{
+        margin:12px auto 12px !important;
+    }
+
+    .ebs-builder-actions{
+        flex-wrap:wrap;
+    }
+}
