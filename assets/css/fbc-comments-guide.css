@@ -1575,3 +1575,37 @@ body{
         max-height:150px;
     }
 }
+
+/* ============================================================
+   FBC FULL SCREEN — INLINE REMINDER BELOW GENERATOR
+   Uses the existing reminder content/image; normal view unchanged.
+   ============================================================ */
+
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    flex:0 0 auto !important;
+    height:auto !important;
+}
+
+.fbc-workspace.fbc-fullscreen .content-grid{
+    flex:0 0 auto !important;
+    height:auto !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    padding:12px 16px !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image{
+    min-height:0 !important;
+    height:100% !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image img{
+    width:auto !important;
+    height:auto !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important;
+}
