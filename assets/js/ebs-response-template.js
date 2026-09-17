@@ -441,3 +441,121 @@ document.addEventListener("headerLoaded", () => {
 });
 
 window.focusEbsConcern = function(){ document.getElementById("concernSelect")?.focus(); };
+
+
+/* ============================================================
+   EBS PAGE-BODY FULL SCREEN
+   Header and footer remain visible; only the EBS workspace expands.
+   ============================================================ */
+
+function getEbsFullscreenBounds() {
+  const shell = document.querySelector('.app-shell');
+  const header = document.getElementById('header-placeholder');
+  const footer = document.getElementById('footer-placeholder');
+  if (!shell) return null;
+
+  const shellRect = shell.getBoundingClientRect();
+  const headerRect = header ? header.getBoundingClientRect() : null;
+  const footerRect = footer ? footer.getBoundingClientRect() : null;
+
+  const top = headerRect
+    ? Math.max(shellRect.top, headerRect.bottom)
+    : shellRect.top;
+
+  const bottom = footerRect
+    ? Math.min(shellRect.bottom, footerRect.top)
+    : shellRect.bottom;
+
+  return {
+    top,
+    bottom: Math.max(top, bottom),
+    left: shellRect.left,
+    width: shellRect.width
+  };
+}
+
+function syncEbsFullscreenBounds() {
+  const workspace = document.getElementById('ebsBuilder');
+  if (!workspace || !workspace.classList.contains('ebs-fullscreen')) return;
+
+  const bounds = getEbsFullscreenBounds();
+  if (!bounds) return;
+
+  workspace.style.setProperty('--ebs-fullscreen-top', `${bounds.top}px`);
+  workspace.style.setProperty('--ebs-fullscreen-bottom', `${bounds.bottom}px`);
+  workspace.style.setProperty('--ebs-fullscreen-left', `${bounds.left}px`);
+  workspace.style.setProperty('--ebs-fullscreen-width', `${bounds.width}px`);
+}
+
+function updateEbsFullscreenButton() {
+  const button = document.getElementById('ebsFullscreenBtn');
+  const workspace = document.getElementById('ebsBuilder');
+  if (!button || !workspace) return;
+
+  const active = workspace.classList.contains('ebs-fullscreen');
+
+  button.classList.toggle('active', active);
+  button.setAttribute('aria-pressed', active ? 'true' : 'false');
+
+  button.innerHTML = active
+    ? '<i class="fa-solid fa-compress"></i><span>Exit Full Screen</span>'
+    : '<i class="fa-solid fa-expand"></i><span>Full Screen</span>';
+
+  button.title = active
+    ? 'Return EBS Response Builder to the normal page layout'
+    : 'Expand EBS Response Builder to the page body';
+}
+
+function toggleEbsFullscreen() {
+  const workspace = document.getElementById('ebsBuilder');
+  if (!workspace) return;
+
+  const entering = !workspace.classList.contains('ebs-fullscreen');
+
+  if (entering) {
+    const bounds = getEbsFullscreenBounds();
+
+    if (bounds) {
+      workspace.style.setProperty('--ebs-fullscreen-top', `${bounds.top}px`);
+      workspace.style.setProperty('--ebs-fullscreen-bottom', `${bounds.bottom}px`);
+      workspace.style.setProperty('--ebs-fullscreen-left', `${bounds.left}px`);
+      workspace.style.setProperty('--ebs-fullscreen-width', `${bounds.width}px`);
+    }
+
+    workspace.classList.add('ebs-fullscreen');
+    document.documentElement.classList.add('ebs-fullscreen-active');
+    document.body.classList.add('ebs-fullscreen-active');
+
+    updateEbsFullscreenButton();
+    syncEbsFullscreenBounds();
+    setTimeout(syncEbsFullscreenBounds, 50);
+  } else {
+    workspace.classList.remove('ebs-fullscreen');
+    document.documentElement.classList.remove('ebs-fullscreen-active');
+    document.body.classList.remove('ebs-fullscreen-active');
+
+    workspace.style.removeProperty('--ebs-fullscreen-top');
+    workspace.style.removeProperty('--ebs-fullscreen-bottom');
+    workspace.style.removeProperty('--ebs-fullscreen-left');
+    workspace.style.removeProperty('--ebs-fullscreen-width');
+
+    updateEbsFullscreenButton();
+  }
+}
+
+window.toggleEbsFullscreen = toggleEbsFullscreen;
+window.addEventListener('resize', syncEbsFullscreenBounds);
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+
+  const workspace = document.getElementById('ebsBuilder');
+  if (workspace?.classList.contains('ebs-fullscreen')) {
+    toggleEbsFullscreen();
+  }
+});
+
+document.addEventListener('headerLoaded', () => {
+  syncEbsFullscreenBounds();
+  updateEbsFullscreenButton();
+});
