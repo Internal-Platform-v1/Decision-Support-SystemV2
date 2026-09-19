@@ -37,10 +37,9 @@ body{
 
 .case-hero{
     height:300px;
-    flex:0 0 290px;
     position:relative;
     overflow:hidden;
-    padding:34px 7.2%;
+    padding:25px 7.2%;
     background:#f8f7ff url("../images/hero-background-1.png") center 90% / cover no-repeat;
     display:flex;
     justify-content:space-between;
