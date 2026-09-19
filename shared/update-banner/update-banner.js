@@ -35,7 +35,17 @@
       let markup = await response.text();
       markup = markup.replace("__UPDATE_BANNER_TRUCK__", imageUrl);
 
-      header.insertAdjacentHTML("afterend", markup);
+      // Prefer a page-specific placeholder when one exists.
+      // This allows guide pages to position the banner inside their
+      // workspace while preserving the existing fallback behavior
+      // for pages that do not provide a placeholder.
+      const placeholder = document.getElementById("update-banner-placeholder");
+
+      if (placeholder) {
+        placeholder.innerHTML = markup;
+      } else {
+        header.insertAdjacentHTML("afterend", markup);
+      }
 
       const banner = document.getElementById("dssUpdateBanner");
       if (!banner) return;
