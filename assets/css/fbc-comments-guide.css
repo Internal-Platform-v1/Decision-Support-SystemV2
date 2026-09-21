@@ -8,11 +8,11 @@
     }
     
     .case-hero{
-        height:300px;
+        height:290px;
         position:relative;
         overflow:hidden;
         padding:25px 7.2%;
-        background:#f8f7ff url("../images/hero-background-1.png") center 90% / cover no-repeat;
+        background:#f8f7ff url("../images/hero-background.png") center 83% / cover no-repeat;
         display:flex;
         justify-content:space-between;
     }
@@ -1296,16 +1296,11 @@ body{
 @keyframes fbcReminderBlink{
     0%,100%{
         opacity:1;
-        color:#ff6600;
-        border-color:#ff6600;
-        box-shadow:0 0 0 0 rgba(255,102,0,0);
+        box-shadow:0 0 0 0 rgba(91,23,197,0);
     }
-
     50%{
         opacity:.42;
-        color:#ff6600;
-        border-color:#ff6600;
-        box-shadow:0 0 0 4px rgba(255,102,0,.18);
+        box-shadow:0 0 0 4px rgba(91,23,197,.12);
     }
 }
 
@@ -1375,406 +1370,187 @@ body{
 }
 
 /* =========================================================
-   FBC FINAL LAYOUT — AUTO GENERATION / FOOTER FIT / REMINDER
+   FBC — NORMAL VIEW FIT / NO INTERNAL SCROLL
    ========================================================= */
 
-/* Normal page: use the page's flex space without forcing the footer down. */
-.fbc-workspace{
-    height:auto !important;
-    min-height:0 !important;
-    flex:1 1 auto;
-    margin:14px auto 14px !important;
-    overflow:hidden;
+/* Give the FBC workspace more vertical room */
+.fbc-workspace {
+    height: calc(100vh - 410px) !important;
+    min-height: 0 !important;
 }
 
-.fbc-container{
-    height:100%;
-    min-height:0;
+/* Slightly tighten the panel */
+.fbc-panel {
+    padding: 16px !important;
 }
 
-.fbc-panel{
-    height:100%;
-    min-height:0;
-    padding:16px;
+/* Tighten the section header */
+.section-head {
+    padding-bottom: 10px !important;
+    margin-bottom: 10px !important;
 }
 
-.section-head{
-    padding-bottom:10px;
-    margin-bottom:10px;
-}
-
+/* Tighten cards */
 .work-card,
-.side-card{
-    padding:9px;
+.side-card {
+    padding: 14px !important;
 }
 
-.select-grid{
-    gap:10px;
-    margin-bottom:10px;
+/* Reduce spacing between Queue / Action */
+.select-grid {
+    gap: 10px !important;
+    margin-bottom: 10px !important;
 }
 
-.work-top{
-    margin-bottom:9px;
+/* Reduce spacing around the top of the generator */
+.work-top {
+    margin-bottom: 9px !important;
 }
 
-.field-label{
-    margin-bottom:4px;
+/* Make the Case # area tighter */
+.field-label {
+    margin-bottom: 4px !important;
 }
 
-#fbcBuilder textarea{
-    min-height:80px;
+/* Shorter generated comment box */
+#fbcBuilder textarea {
+    min-height: 80px !important;
 }
 
-/* Format note + Copy + Clear live on one horizontal line. */
-.action-row{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:8px;
-    margin-top:8px;
-    flex-wrap:nowrap;
+/* Buttons closer to the comment box */
+.action-row {
+    margin-top: 8px !important;
 }
 
-#fbcNoteBox{
-    margin:0 auto 0 0;
-    padding:8px 10px;
-    min-width:0;
-    flex:1 1 auto;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+/* Don't create another scrollbar inside the generator */
+.work-card {
+    overflow: hidden !important;
 }
 
-.action-row .btn{
-    flex:0 0 auto;
+/* Let the side content use the additional workspace height */
+.side-stack {
+    overflow: hidden !important;
 }
 
-/* The reminder exists only in Full Screen mode. */
-.fbc-fullscreen-reminder{
-    display:none;
-}
+/* =========================================================
+   FBC FINAL FOOTER FIT — MATCH SHARED DSS PAGES
+   Keep header + footer fully visible. The FBC content owns
+   only the remaining vertical space between them.
+   ========================================================= */
 
-/* Full Screen: split the available page body between the generator and reminder. */
-.fbc-workspace.fbc-fullscreen{
-    display:block;
+html,
+body{
+    width:100%;
+    height:100%;
+    min-height:0;
+    margin:0;
     overflow:hidden !important;
 }
 
-.fbc-workspace.fbc-fullscreen .fbc-container{
-    height:100%;
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+.app-shell{
+    width:100%;
+    height:100vh !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
 }
 
-.fbc-workspace.fbc-fullscreen .fbc-panel{
-    height:auto;
-    min-height:0;
-    flex:1 1 auto;
-    overflow:hidden;
+.app-shell > #header-placeholder,
+.app-shell > #footer-placeholder{
+    flex:0 0 auto !important;
+    width:100%;
 }
 
-.fbc-workspace.fbc-fullscreen .content-grid{
-    min-height:0;
-    overflow:hidden;
+.app-shell > #header-placeholder{
+    position:relative;
+    z-index:100;
 }
 
-.fbc-workspace.fbc-fullscreen .work-card{
-    overflow:hidden;
+.app-shell > #footer-placeholder{
+    position:relative;
+    z-index:100;
+    margin:0 !important;
 }
 
-.fbc-workspace.fbc-fullscreen .side-stack{
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
-    display:grid;
-    grid-template-columns:minmax(260px, .8fr) minmax(420px, 1.2fr);
-    align-items:center;
-    gap:18px;
-    flex:0 0 190px;
-    min-height:0;
-    padding:12px 16px;
+.case-page{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
     background:#ffffff;
-    border:1px solid #e4e5ef;
-    border-radius:9px;
-    box-shadow:0 5px 20px #30266f0d;
-    overflow:hidden;
 }
 
-.fbc-fullscreen-reminder-copy{
-    min-width:0;
+.case-hero{
+    flex:0 0 300px !important;
+    height:300px !important;
+    min-height:300px !important;
 }
 
-.fbc-fullscreen-reminder-title{
-    margin-bottom:7px;
-    color:#4d148c;
-    font-size:9px;
-    font-weight:800;
-    letter-spacing:.04em;
-    text-transform:uppercase;
+.stats-row{
+    flex:0 0 auto !important;
+    margin:-50px auto 0 !important;
 }
 
-.fbc-fullscreen-reminder-title i{
-    color:#ff6600;
-    margin-right:5px;
+.fbc-workspace{
+    width:85.6%;
+    max-width:none;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:14px auto 14px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
 }
 
-.fbc-fullscreen-reminder-text{
-    color:#4f5278;
-    font-size:9px;
-    line-height:1.45;
-}
-
-.fbc-fullscreen-reminder-image{
-    height:100%;
-    min-width:0;
-    min-height:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-}
-
-.fbc-fullscreen-reminder-image img{
-    display:block;
+.fbc-container{
     width:100%;
     height:100%;
-    max-width:100%;
-    max-height:165px;
-    object-fit:contain;
-    object-position:center;
-    border:1px solid #e8e9f2;
-    border-radius:6px;
-    background:#faf9ff;
+    min-height:0 !important;
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
 }
 
-.fbc-fullscreen-reminder-image.image-missing::after{
-    content:'FBC Comment Table reference image';
-    color:#777a99;
-    font-size:10px;
+.fbc-panel{
+    width:100%;
+    height:100%;
+    min-height:0 !important;
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden !important;
 }
 
-/* Keep the footer completely visible in normal view. */
-.app-shell > #footer-placeholder{
-    flex:0 0 auto;
+.content-grid{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+}
+
+/* Never let the normal FBC workspace push the footer below the viewport. */
+.fbc-workspace:not(.fbc-fullscreen) .work-card,
+.fbc-workspace:not(.fbc-fullscreen) .side-stack{
+    min-height:0;
+}
+
+/* Fullscreen still stops exactly at the footer. */
+.fbc-workspace.fbc-fullscreen{
+    z-index:40;
 }
 
 @media(max-width:900px){
-    .action-row{
-        flex-wrap:wrap;
-    }
-
-    #fbcNoteBox{
-        flex:1 1 100%;
-        order:0;
-    }
-
-    .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
-        grid-template-columns:1fr;
-        flex-basis:220px;
-    }
-
-    .fbc-fullscreen-reminder-image img{
-        max-height:150px;
+    .fbc-workspace{
+        width:90%;
     }
 }
 
-/* =========================================================
-   FULL SCREEN ONLY — FBC COMMENT REMINDER
-   Normal view is completely unchanged
-   ========================================================= */
-
-/* Hidden in normal view */
-.fbc-fullscreen-reminder {
-    display: none;
-}
-
-
-/* Show only when Full Screen is active */
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-
-    margin: 10px 0 0;
-    padding: 10px 16px;
-
-    background: #ffffff;
-    border: 1px solid #e4e5ef;
-    border-radius: 9px;
-
-    box-sizing: border-box;
-}
-
-
-/* Reminder text */
-.fbc-fullscreen-reminder-copy {
-    flex: 1;
-    min-width: 0;
-}
-
-.fbc-fullscreen-reminder-title {
-    margin-bottom: 5px;
-
-    color: #ff6600;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-}
-
-.fbc-fullscreen-reminder-title i {
-    margin-right: 5px;
-}
-
-.fbc-fullscreen-reminder-text {
-    color: #45466e;
-    font-size: 9px;
-    line-height: 1.45;
-}
-
-
-/* Reminder image */
-.fbc-fullscreen-reminder-image {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fbc-fullscreen-reminder-image img {
-    display: block;
-
-    width: auto;
-    height: auto;
-
-    max-width: 620px;
-    max-height: 170px;
-
-    object-fit: contain;
-
-    border: 1px solid #e8e9f2;
-    border-radius: 6px;
-}
-
-
-/* =========================================================
-   FULL SCREEN SPACE DISTRIBUTION
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-panel {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
-    flex: 0 0 auto;
-}
-
-/* =========================================================
-   FBC FULLSCREEN REMINDER
-   Hidden in normal view.
-   Shown only inside the generator during fullscreen.
-   ========================================================= */
-
-.fbc-fullscreen-reminder {
-    display: none;
-}
-
-
-/* =========================================================
-   FULLSCREEN ONLY
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 12px;
-    padding: 14px 16px;
-    border: 1px solid #e3def1;
-    border-radius: 7px;
-    background: #fbfaff;
-    align-items: stretch;
-    gap: 18px;
-    overflow: hidden;
-}
-
-
-/* Reminder text area */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-copy {
-    flex: 0 0 230px;
-    min-width: 230px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title {
-    margin-bottom: 8px;
-    color: #4d148c;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .02em;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title i {
-    color: #ff6600;
-    margin-right: 5px;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-text {
-    color: #555878;
-    font-size: 9px;
-    line-height: 1.45;
-}
-
-
-/* =========================================================
-   LARGE REFERENCE IMAGE
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image img {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-width: none;
-    max-height: none;
-    object-fit: contain;
-}
-
-
-/* =========================================================
-   REMOVE THE OLD SMALL-IMAGE LIMITS
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image.image-missing {
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+@media(max-width:520px){
+    .fbc-workspace{
+        width:92%;
+        margin-bottom:10px !important;
+    }
 }
