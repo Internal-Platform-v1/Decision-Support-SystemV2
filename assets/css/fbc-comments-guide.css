@@ -1580,80 +1580,9 @@ td pre{
 }
 
 /* ============================================================
-   FBC PAGE — KEEP FOOTER AT BOTTOM
-   ============================================================ */
-
-/* Let FBC use the available space between the content above
-   and the footer, without creating space below the footer. */
-.fbc-workspace{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    margin:4px auto 4px !important;
-}
-
-/* Keep the footer at the bottom of the app shell */
-.app-shell > #footer-placeholder{
-    flex:0 0 auto !important;
-}
-
-/* ============================================================
-   FBC FINAL NORMAL PAGE LAYOUT
-   Footer stays at bottom.
-   FBC panel fills the available space.
-   ============================================================ */
-
-.case-page:has(.fbc-workspace){
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    display:flex;
-    flex-direction:column;
-}
-
-.fbc-workspace{
-    width:85.6%;
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    margin:4px auto 4px !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-.fbc-container{
-    width:100%;
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    display:flex;
-    flex-direction:column;
-}
-
-.fbc-panel{
-    width:100%;
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-/* The actual FBC content uses the remaining panel height */
-.content-grid{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-}
-
-/* Footer remains fixed at the bottom of the normal page flow */
-.app-shell > #footer-placeholder{
-    flex:0 0 auto !important;
-}
-
-/* ============================================================
-   FBC — MATCH EBS RESPONSE PAGE HEIGHT BEHAVIOR
+   FBC FINAL PAGE LAYOUT
+   Matches the EBS Response flex behavior.
+   Footer stays at the bottom.
    ============================================================ */
 
 html,
@@ -1670,218 +1599,278 @@ body{
     flex-direction:column;
 }
 
-/* The page body occupies all space between header and footer */
-.case-page:has(.fbc-workspace){
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-/* FBC workspace fills the available vertical space */
-.fbc-workspace{
-    width:85.6%;
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-   margin:14px auto 0 !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-/* Container fills workspace */
-.fbc-container{
-    width:100%;
-    height:100%;
-    min-height:0;
-    flex:1 1 auto !important;
-    display:flex;
-    flex-direction:column;
-}
-
-/* Main panel fills workspace */
-.fbc-panel{
-    width:100%;
-    height:100%;
-    min-height:0;
-    flex:1 1 auto !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-/* Header inside FBC panel does not grow */
-.fbc-panel .section-head{
+/* Header remains at the top */
+.app-shell > #header-placeholder{
+    position:relative;
+    z-index:100;
     flex:0 0 auto;
 }
 
-/* Main content consumes the remaining height */
-.fbc-panel .content-grid{
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    overflow:hidden;
-}
-
-/* Internal cards can scroll instead of pushing the footer */
-.fbc-panel .work-card{
-    min-height:0;
-    overflow:auto;
-}
-
-.fbc-panel .side-stack{
-    min-height:0;
-    overflow:auto;
-}
-
-/* Footer stays at the bottom */
+/* Footer remains at the bottom */
 .app-shell > #footer-placeholder{
+    position:relative;
+    z-index:100;
     flex:0 0 auto !important;
 }
 
-.fbc-workspace{
-    width:85.6%;
-    height:calc(100vh - 500px) !important;
-    flex:0 0 auto !important;
-    min-height:0 !important;
-    margin:14px auto 12px !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-/* ============================================================
-   FBC — REDUCE CONTENT HEIGHT AND MOVE FOOTER UP
-   ============================================================ */
-
-.case-page:has(.fbc-workspace){
-    flex:0 0 auto !important;
-    height:auto !important;
-    min-height:0 !important;
-    display:block !important;
-    overflow:visible !important;
-}
-
-.fbc-workspace{
-    width:85.6%;
-    height:calc(100vh - 520px) !important;
-    flex:0 0 auto !important;
-    min-height:0 !important;
-    margin:14px auto 0 !important;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-
-.fbc-container{
-    width:100%;
-    height:100% !important;
-    min-height:0 !important;
-    flex:0 0 auto !important;
-}
-
-.fbc-panel{
-    width:100%;
-    height:100% !important;
-    min-height:0 !important;
-    flex:0 0 auto !important;
-}
-
-/* Footer follows the FBC content immediately */
-.app-shell > #footer-placeholder{
-    flex:0 0 auto !important;
-}
-
-/* ============================================================
-   FBC NORMAL PAGE LAYOUT
-   MATCHES EBS RESPONSE TEMPLATE
-   ============================================================ */
-
-/* Page body fills the space between header and footer */
+/* Main page consumes everything between header and footer */
 .case-page{
     background:#ffffff;
     flex:1 1 0 !important;
     min-height:0 !important;
+    height:auto !important;
     overflow:hidden !important;
+
     display:flex !important;
     flex-direction:column !important;
 }
 
-/* FBC workspace consumes the remaining space */
-.fbc-workspace{
+/* Hero keeps its normal fixed height */
+.case-page .case-hero{
+    flex:0 0 300px;
+}
+
+/* Stats stay in their existing position */
+.case-page .stats-row{
+    flex:0 0 auto;
+}
+
+/* ============================================================
+   FBC WORKSPACE
+   ============================================================ */
+
+.case-page .fbc-workspace{
     width:85.6%;
+
+    /*
+       IMPORTANT:
+       The workspace gets ALL remaining vertical space.
+       No viewport calculation is used.
+    */
+    flex:1 1 0 !important;
+
     height:auto !important;
     min-height:0 !important;
-
-    flex:1 1 0 !important;
 
     margin:14px auto 14px !important;
 
-    display:flex;
-    flex-direction:column;
+    display:flex !important;
+    flex-direction:column !important;
 
-    overflow:hidden;
+    overflow:hidden !important;
 }
 
-/* Container fills the workspace */
-.fbc-container{
+/* Container fills workspace */
+.case-page .fbc-container{
     width:100%;
-    height:auto !important;
-    min-height:0 !important;
 
     flex:1 1 0 !important;
+    min-height:0 !important;
 
-    display:flex;
-    flex-direction:column;
+    height:auto !important;
+
+    display:flex !important;
+    flex-direction:column !important;
+
+    overflow:hidden !important;
 }
 
-/* FBC panel fills the container */
-.fbc-panel{
+/* Panel fills container */
+.case-page .fbc-panel{
     width:100%;
-    height:auto !important;
-    min-height:0 !important;
 
     flex:1 1 0 !important;
+    min-height:0 !important;
 
-    display:flex;
-    flex-direction:column;
+    height:auto !important;
+
+    display:flex !important;
+    flex-direction:column !important;
 
     background:#ffffff;
     border:1px solid #e4e5ef;
     border-radius:9px;
     box-shadow:0 5px 20px #30266f0d;
 
-    padding:16px;
+    padding:16px !important;
 
-    overflow:hidden;
+    overflow:hidden !important;
 }
 
-/* Header stays fixed; content takes the remaining height */
-.fbc-panel .section-head{
-    flex:0 0 auto;
+/* Header inside panel does not stretch */
+.case-page .fbc-panel .section-head{
+    flex:0 0 auto !important;
 }
 
-/* Main FBC content fills remaining panel space */
-.fbc-panel .content-grid{
+/* Generator + sidebar consume remaining panel height */
+.case-page .fbc-panel .content-grid{
     flex:1 1 0 !important;
     min-height:0 !important;
+
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(260px,330px);
+    gap:14px;
+
+    overflow:hidden !important;
+}
+
+/* Left generator card */
+.case-page .fbc-panel .work-card{
+    min-width:0;
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:auto !important;
+}
+
+/* Right sidebar */
+.case-page .fbc-panel .side-stack{
+    min-width:0;
+    min-height:0;
+
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+
+    overflow:auto !important;
+}
+
+/* ============================================================
+   FBC NORMAL VIEW — TIGHT CONTENT
+   ============================================================ */
+
+.case-page .fbc-panel .work-card,
+.case-page .fbc-panel .side-card{
+    padding:9px;
+}
+
+.case-page .fbc-panel .work-top{
+    margin-bottom:9px;
+}
+
+.case-page .fbc-panel .select-grid{
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.case-page .fbc-panel .field-label{
+    margin-bottom:4px;
+}
+
+.case-page .fbc-panel #generatedCommentBox{
+    min-height:80px;
+}
+
+.case-page .fbc-panel .action-row{
+    margin-top:8px;
+}
+
+/* ============================================================
+   FULLSCREEN
+   ============================================================ */
+
+.fbc-workspace.fbc-fullscreen{
+    position:fixed !important;
+
+    top:var(--fbc-fullscreen-top) !important;
+    left:var(--fbc-fullscreen-left) !important;
+
+    width:var(--fbc-fullscreen-width) !important;
+
+    height:calc(
+        var(--fbc-fullscreen-bottom) -
+        var(--fbc-fullscreen-top)
+    ) !important;
+
+    min-height:0 !important;
+
+    margin:0 !important;
+
+    z-index:40;
+
+    overflow:hidden !important;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-container,
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    width:100%;
+    height:100%;
+    min-height:0;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    border-radius:0;
+    box-shadow:none;
+}
+
+.fbc-workspace.fbc-fullscreen .content-grid{
+    min-height:0;
     overflow:hidden;
 }
 
-/* Internal areas scroll instead of pushing footer down */
-.fbc-panel .work-card{
+.fbc-workspace.fbc-fullscreen .work-card{
     min-height:0;
     overflow:auto;
 }
 
-.fbc-panel .side-stack{
+.fbc-workspace.fbc-fullscreen .side-stack{
     min-height:0;
     overflow:auto;
 }
 
-/* Footer stays at the bottom of the app shell */
-.app-shell > #footer-placeholder{
-    flex:0 0 auto !important;
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media(max-width:900px){
+
+    .case-page .fbc-workspace{
+        width:90%;
+    }
+
+    .case-page .fbc-panel .content-grid{
+        grid-template-columns:1fr;
+        overflow:auto !important;
+    }
+
+    .case-page .fbc-panel .side-stack{
+        overflow:visible !important;
+    }
+}
+
+@media(max-width:520px){
+
+    .case-page .case-hero{
+        height:240px;
+        flex-basis:240px;
+        padding-left:4%;
+        padding-right:4%;
+    }
+
+    .case-page .case-hero h1{
+        font-size:26px;
+    }
+
+    .case-page .stats-row{
+        grid-template-columns:1fr;
+    }
+
+    .case-page .fbc-workspace{
+        width:92%;
+        margin:12px auto 12px !important;
+    }
+
+    .case-page .fbc-panel{
+        padding:14px !important;
+    }
+
+    .case-page .fbc-panel .content-grid{
+        grid-template-columns:1fr;
+    }
+
+    .case-page .fbc-panel .select-grid{
+        grid-template-columns:1fr;
+    }
 }
