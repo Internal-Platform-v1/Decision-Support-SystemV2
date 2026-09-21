@@ -1583,13 +1583,6 @@ td pre{
    FBC PAGE — KEEP FOOTER AT BOTTOM
    ============================================================ */
 
-/* The page itself must continue filling the viewport */
-.case-page:has(.fbc-workspace){
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-}
-
 /* Let FBC use the available space between the content above
    and the footer, without creating space below the footer. */
 .fbc-workspace{
@@ -1600,6 +1593,61 @@ td pre{
 }
 
 /* Keep the footer at the bottom of the app shell */
+.app-shell > #footer-placeholder{
+    flex:0 0 auto !important;
+}
+
+/* ============================================================
+   FBC FINAL NORMAL PAGE LAYOUT
+   Footer stays at bottom.
+   FBC panel fills the available space.
+   ============================================================ */
+
+.case-page:has(.fbc-workspace){
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex;
+    flex-direction:column;
+}
+
+.fbc-workspace{
+    width:85.6%;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:4px auto 4px !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+.fbc-container{
+    width:100%;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex;
+    flex-direction:column;
+}
+
+.fbc-panel{
+    width:100%;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* The actual FBC content uses the remaining panel height */
+.content-grid{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+}
+
+/* Footer remains fixed at the bottom of the normal page flow */
 .app-shell > #footer-placeholder{
     flex:0 0 auto !important;
 }
