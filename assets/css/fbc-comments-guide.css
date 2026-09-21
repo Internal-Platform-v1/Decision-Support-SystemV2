@@ -1874,3 +1874,28 @@ body{
         grid-template-columns:1fr;
     }
 }
+
+/* ============================================================
+   FINAL FOOTER BOTTOM GAP
+   Leave a small strip of page background below the footer,
+   matching the spacing used by the other tool pages.
+   ============================================================ */
+
+html,
+body{
+    min-height:100%;
+}
+
+body{
+    background:#f0f0f5;
+}
+
+.app-shell{
+    /*
+       Do NOT let the shell reach the very bottom of the viewport.
+       This creates the visible white/light page-background strip
+       underneath the footer.
+    */
+    height:calc(100vh - 18px) !important;
+    min-height:0 !important;
+}
