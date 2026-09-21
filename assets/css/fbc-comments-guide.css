@@ -1651,3 +1651,92 @@ td pre{
 .app-shell > #footer-placeholder{
     flex:0 0 auto !important;
 }
+
+/* ============================================================
+   FBC — MATCH EBS RESPONSE PAGE HEIGHT BEHAVIOR
+   ============================================================ */
+
+html,
+body{
+    height:100%;
+    margin:0;
+    overflow:hidden;
+}
+
+.app-shell{
+    height:100vh;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+}
+
+/* The page body occupies all space between header and footer */
+.case-page:has(.fbc-workspace){
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* FBC workspace fills the available vertical space */
+.fbc-workspace{
+    width:85.6%;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:14px auto 12px !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* Container fills workspace */
+.fbc-container{
+    width:100%;
+    height:100%;
+    min-height:0;
+    flex:1 1 auto !important;
+    display:flex;
+    flex-direction:column;
+}
+
+/* Main panel fills workspace */
+.fbc-panel{
+    width:100%;
+    height:100%;
+    min-height:0;
+    flex:1 1 auto !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+/* Header inside FBC panel does not grow */
+.fbc-panel .section-head{
+    flex:0 0 auto;
+}
+
+/* Main content consumes the remaining height */
+.fbc-panel .content-grid{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow:hidden;
+}
+
+/* Internal cards can scroll instead of pushing the footer */
+.fbc-panel .work-card{
+    min-height:0;
+    overflow:auto;
+}
+
+.fbc-panel .side-stack{
+    min-height:0;
+    overflow:auto;
+}
+
+/* Footer stays at the bottom */
+.app-shell > #footer-placeholder{
+    flex:0 0 auto !important;
+}
