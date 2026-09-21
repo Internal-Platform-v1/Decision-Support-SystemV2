@@ -1740,3 +1740,14 @@ body{
 .app-shell > #footer-placeholder{
     flex:0 0 auto !important;
 }
+
+.fbc-workspace{
+    width:85.6%;
+    height:calc(100vh - 500px) !important;
+    flex:0 0 auto !important;
+    min-height:0 !important;
+    margin:14px auto 12px !important;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
