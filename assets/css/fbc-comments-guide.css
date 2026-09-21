@@ -1686,7 +1686,7 @@ body{
     flex:1 1 auto !important;
     min-height:0 !important;
     height:auto !important;
-    margin:14px auto 12px !important;
+   margin:14px auto 0 !important;
     display:flex;
     flex-direction:column;
     overflow:hidden;
