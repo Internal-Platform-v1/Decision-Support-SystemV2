@@ -1240,206 +1240,17 @@ body{
 
 
 /* ============================================================
-   FBC PAGE-BODY FULL SCREEN
-   Same behavior as the Tools & Links Hub:
-   header and footer remain visible; only the FBC workspace expands.
+   FBC FOOTER VISIBILITY FIX
+   ------------------------------------------------------------
+   The shared footer was loading correctly, but the FBC page
+   was clipping its bottom because the page shell was shorter
+   than the viewport while the generator kept a fixed viewport
+   height. Keep the footer in the normal flex flow and let the
+   generator consume only the remaining space.
    ============================================================ */
 
-.section-actions{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:8px;
-    flex:0 0 auto;
-    margin-left:auto;
-}
-
-.fbc-fullscreen-btn{
-    height:31px;
-    padding:0 11px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    border:1px solid #e1d9f4;
-    border-radius:6px;
-    background:#ffffff;
-    color:#4d148c;
-    font-size:10px;
-    font-weight:700;
-    cursor:pointer;
-    white-space:nowrap;
-    transition:.15s ease;
-}
-
-.fbc-fullscreen-btn i{
-    font-size:9px;
-}
-
-.fbc-fullscreen-btn:hover{
-    border-color:#bca6e9;
-    background:#faf8ff;
-    color:#5b17c5;
-}
-
-.fbc-fullscreen-btn.active{
-    border-color:#4d148c;
-    background:#4d148c;
-    color:#ffffff;
-}
-
-/* Reminder attention remains until the user checks the acknowledgement. */
-.reminder-button.reminder-attention{
-    animation:fbcReminderBlink 1s ease-in-out infinite;
-}
-
-@keyframes fbcReminderBlink{
-    0%,100%{
-        opacity:1;
-        box-shadow:0 0 0 0 rgba(91,23,197,0);
-    }
-    50%{
-        opacity:.42;
-        box-shadow:0 0 0 4px rgba(91,23,197,.12);
-    }
-}
-
-/* Keep the header/dropdowns above the expanded workspace. */
-.app-shell > #header-placeholder{
-    position:relative;
-    z-index:100;
-}
-
-.app-shell > #footer-placeholder{
-    position:relative;
-    z-index:100;
-}
-
-.fbc-workspace.fbc-fullscreen{
-    position:fixed !important;
-    top:var(--fbc-fullscreen-top) !important;
-    left:var(--fbc-fullscreen-left) !important;
-    width:var(--fbc-fullscreen-width) !important;
-    height:calc(
-        var(--fbc-fullscreen-bottom) -
-        var(--fbc-fullscreen-top)
-    ) !important;
-    min-height:0 !important;
-    margin:0 !important;
-    z-index:40;
-    overflow:hidden !important;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-container,
-.fbc-workspace.fbc-fullscreen .fbc-panel{
-    height:100%;
-    min-height:0;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-panel{
-    border-radius:0;
-    box-shadow:none;
-}
-
-.fbc-workspace.fbc-fullscreen .content-grid{
-    min-height:0;
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .work-card{
-    min-height:0;
-    overflow:auto;
-}
-
-.fbc-workspace.fbc-fullscreen .side-stack{
-    min-height:0;
-    overflow:auto;
-}
-
-@media(max-width:900px){
-    .section-actions{
-        width:100%;
-        justify-content:flex-end;
-        margin-left:0;
-    }
-
-    .fbc-fullscreen-btn,
-    .reminder-button{
-        flex:0 0 auto;
-    }
-}
-
-/* =========================================================
-   FBC — NORMAL VIEW FIT / NO INTERNAL SCROLL
-   ========================================================= */
-
-/* Give the FBC workspace more vertical room */
-.fbc-workspace {
-    height: calc(100vh - 410px) !important;
-    min-height: 0 !important;
-}
-
-/* Slightly tighten the panel */
-.fbc-panel {
-    padding: 16px !important;
-}
-
-/* Tighten the section header */
-.section-head {
-    padding-bottom: 10px !important;
-    margin-bottom: 10px !important;
-}
-
-/* Tighten cards */
-.work-card,
-.side-card {
-    padding: 14px !important;
-}
-
-/* Reduce spacing between Queue / Action */
-.select-grid {
-    gap: 10px !important;
-    margin-bottom: 10px !important;
-}
-
-/* Reduce spacing around the top of the generator */
-.work-top {
-    margin-bottom: 9px !important;
-}
-
-/* Make the Case # area tighter */
-.field-label {
-    margin-bottom: 4px !important;
-}
-
-/* Shorter generated comment box */
-#fbcBuilder textarea {
-    min-height: 80px !important;
-}
-
-/* Buttons closer to the comment box */
-.action-row {
-    margin-top: 8px !important;
-}
-
-/* Don't create another scrollbar inside the generator */
-.work-card {
-    overflow: hidden !important;
-}
-
-/* Let the side content use the additional workspace height */
-.side-stack {
-    overflow: hidden !important;
-}
-
-/* =========================================================
-   FBC FINAL FOOTER FIT — MATCH SHARED DSS PAGES
-   Keep header + footer fully visible. The FBC content owns
-   only the remaining vertical space between them.
-   ========================================================= */
-
 html,
-body{
+body {
     width:100%;
     height:100%;
     min-height:0;
@@ -1447,109 +1258,105 @@ body{
     overflow:hidden !important;
 }
 
-.app-shell{
+.app-shell {
     width:100%;
     height:100vh !important;
     min-height:0 !important;
+    max-height:100vh;
     display:flex !important;
     flex-direction:column !important;
     overflow:hidden !important;
 }
 
 .app-shell > #header-placeholder,
-.app-shell > #footer-placeholder{
+.app-shell > #footer-placeholder {
     flex:0 0 auto !important;
     width:100%;
 }
 
-.app-shell > #header-placeholder{
+.app-shell > #header-placeholder {
     position:relative;
     z-index:100;
 }
 
-.app-shell > #footer-placeholder{
+.app-shell > #footer-placeholder {
     position:relative;
     z-index:100;
+    height:66px;
+    min-height:66px;
     margin:0 !important;
+    overflow:visible !important;
 }
 
-.case-page{
+.app-shell > #footer-placeholder .footer-banner {
+    height:66px;
+    min-height:66px;
+}
+
+.case-page {
     flex:1 1 auto !important;
     min-height:0 !important;
     height:auto !important;
     display:flex !important;
     flex-direction:column !important;
     overflow:hidden !important;
-    background:#ffffff;
 }
 
-.case-hero{
-    flex:0 0 300px !important;
-    height:300px !important;
-    min-height:300px !important;
+.case-hero {
+    flex:0 0 290px;
+    height:290px !important;
+    min-height:290px !important;
 }
 
-.stats-row{
+.stats-row {
     flex:0 0 auto !important;
     margin:-50px auto 0 !important;
 }
 
-.fbc-workspace{
+.fbc-workspace {
     width:85.6%;
-    max-width:none;
     flex:1 1 auto !important;
-    min-height:0 !important;
     height:auto !important;
+    min-height:0 !important;
     margin:14px auto 14px !important;
-    display:flex !important;
-    flex-direction:column !important;
     overflow:hidden !important;
 }
 
-.fbc-container{
-    width:100%;
-    height:100%;
+.fbc-container,
+.fbc-panel,
+.content-grid {
     min-height:0 !important;
-    flex:1 1 auto;
-    display:flex;
-    flex-direction:column;
 }
 
-.fbc-panel{
-    width:100%;
-    height:100%;
-    min-height:0 !important;
+.fbc-container {
     flex:1 1 auto;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden !important;
 }
 
-.content-grid{
+.fbc-panel {
+    flex:1 1 auto;
+}
+
+.content-grid {
     flex:1 1 auto !important;
-    min-height:0 !important;
     overflow:hidden !important;
 }
 
-/* Never let the normal FBC workspace push the footer below the viewport. */
-.fbc-workspace:not(.fbc-fullscreen) .work-card,
-.fbc-workspace:not(.fbc-fullscreen) .side-stack{
-    min-height:0;
-}
-
-/* Fullscreen still stops exactly at the footer. */
-.fbc-workspace.fbc-fullscreen{
-    z-index:40;
-}
-
-@media(max-width:900px){
-    .fbc-workspace{
-        width:90%;
+@media (max-width:700px) {
+    .app-shell > #footer-placeholder,
+    .app-shell > #footer-placeholder .footer-banner {
+        height:82px;
+        min-height:82px;
     }
 }
 
-@media(max-width:520px){
-    .fbc-workspace{
+@media (max-width:520px) {
+    .app-shell > #footer-placeholder,
+    .app-shell > #footer-placeholder .footer-banner {
+        height:92px;
+        min-height:92px;
+    }
+
+    .fbc-workspace {
         width:92%;
         margin-bottom:10px !important;
     }
