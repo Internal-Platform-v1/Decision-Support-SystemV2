@@ -1793,3 +1793,95 @@ body{
 .app-shell > #footer-placeholder{
     flex:0 0 auto !important;
 }
+
+/* ============================================================
+   FBC NORMAL PAGE LAYOUT
+   MATCHES EBS RESPONSE TEMPLATE
+   ============================================================ */
+
+/* Page body fills the space between header and footer */
+.case-page{
+    background:#ffffff;
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    display:flex !important;
+    flex-direction:column !important;
+}
+
+/* FBC workspace consumes the remaining space */
+.fbc-workspace{
+    width:85.6%;
+    height:auto !important;
+    min-height:0 !important;
+
+    flex:1 1 0 !important;
+
+    margin:14px auto 14px !important;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+/* Container fills the workspace */
+.fbc-container{
+    width:100%;
+    height:auto !important;
+    min-height:0 !important;
+
+    flex:1 1 0 !important;
+
+    display:flex;
+    flex-direction:column;
+}
+
+/* FBC panel fills the container */
+.fbc-panel{
+    width:100%;
+    height:auto !important;
+    min-height:0 !important;
+
+    flex:1 1 0 !important;
+
+    display:flex;
+    flex-direction:column;
+
+    background:#ffffff;
+    border:1px solid #e4e5ef;
+    border-radius:9px;
+    box-shadow:0 5px 20px #30266f0d;
+
+    padding:16px;
+
+    overflow:hidden;
+}
+
+/* Header stays fixed; content takes the remaining height */
+.fbc-panel .section-head{
+    flex:0 0 auto;
+}
+
+/* Main FBC content fills remaining panel space */
+.fbc-panel .content-grid{
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    overflow:hidden;
+}
+
+/* Internal areas scroll instead of pushing footer down */
+.fbc-panel .work-card{
+    min-height:0;
+    overflow:auto;
+}
+
+.fbc-panel .side-stack{
+    min-height:0;
+    overflow:auto;
+}
+
+/* Footer stays at the bottom of the app shell */
+.app-shell > #footer-placeholder{
+    flex:0 0 auto !important;
+}
