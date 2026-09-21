@@ -1409,19 +1409,7 @@ td pre{
     font-size:10px;
 }
 
-
-/* ============================================================
-   IMPORTANT — NORMAL FBC PAGE FOOTER FIX
-   Removes the unused flex space below the FBC panel.
-   Does NOT affect other pages.
-   ============================================================ */
-
-.case-page:has(.fbc-workspace){
-    flex:0 0 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-}
-
+    
 
 /* ============================================================
    RESPONSIVE
@@ -1589,4 +1577,29 @@ td pre{
     .fbi-step img{
         max-height:220px;
     }
+}
+
+/* ============================================================
+   FBC PAGE — KEEP FOOTER AT BOTTOM
+   ============================================================ */
+
+/* The page itself must continue filling the viewport */
+.case-page:has(.fbc-workspace){
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+}
+
+/* Let FBC use the available space between the content above
+   and the footer, without creating space below the footer. */
+.fbc-workspace{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:4px auto 4px !important;
+}
+
+/* Keep the footer at the bottom of the app shell */
+.app-shell > #footer-placeholder{
+    flex:0 0 auto !important;
 }
