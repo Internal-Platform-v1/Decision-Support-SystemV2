@@ -555,7 +555,6 @@ body{
 
 /* ============================================================
    FBC COMMENT GENERATOR
-   Uses the same Case Directory V2 page structure
    ============================================================ */
 
 .fbc-workspace{
@@ -565,6 +564,7 @@ body{
     margin:4px auto 0 !important;
     display:flex;
     flex-direction:column;
+    flex:0 0 auto;
     overflow:hidden;
 }
 
@@ -586,9 +586,13 @@ body{
     border:1px solid #e4e5ef;
     border-radius:9px;
     box-shadow:0 5px 20px #30266f0d;
-    padding:20px;
+    padding:16px;
     overflow:hidden;
 }
+
+/* ============================================================
+   SECTION HEADER
+   ============================================================ */
 
 .section-head{
     flex:0 0 auto;
@@ -596,8 +600,8 @@ body{
     justify-content:space-between;
     align-items:flex-start;
     gap:15px;
-    padding:0 0 12px;
-    margin:0 0 14px;
+    padding:0 0 10px;
+    margin:0 0 10px;
     border-bottom:1px solid #f0f0f5;
 }
 
@@ -638,6 +642,19 @@ body{
     padding-top:5px;
 }
 
+.section-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:8px;
+    flex:0 0 auto;
+    margin-left:auto;
+}
+
+/* ============================================================
+   CONTENT GRID
+   ============================================================ */
+
 .content-grid{
     flex:1;
     min-height:0;
@@ -653,7 +670,7 @@ body{
     background:#ffffff;
     border:1px solid #e8e9f2;
     border-radius:7px;
-    padding:16px;
+    padding:9px;
 }
 
 .work-card{
@@ -677,12 +694,16 @@ body{
     flex:0 0 auto;
 }
 
+/* ============================================================
+   GENERATOR
+   ============================================================ */
+
 .work-top{
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
     gap:10px;
-    margin-bottom:12px;
+    margin-bottom:9px;
 }
 
 .work-top h4{
@@ -707,13 +728,13 @@ body{
 .select-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-bottom:14px;
+    gap:10px;
+    margin-bottom:10px;
 }
 
 .field-label{
     display:block;
-    margin-bottom:6px;
+    margin-bottom:4px;
     color:#45466e;
     font-size:10px;
     font-weight:700;
@@ -749,7 +770,7 @@ body{
 }
 
 #fbcBuilder textarea{
-    min-height:110px;
+    min-height:80px;
     resize:vertical;
     line-height:1.5;
 }
@@ -764,13 +785,27 @@ body{
     pointer-events:none;
 }
 
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+
 .action-row{
     display:flex;
-    justify-content:flex-end;
     align-items:center;
+    justify-content:flex-end;
     gap:8px;
-    margin-top:12px;
-    flex-wrap:wrap;
+    margin-top:8px;
+    flex-wrap:nowrap;
+}
+
+#fbcNoteBox{
+    margin:0 auto 0 0;
+    padding:8px 10px;
+    min-width:0;
+    flex:1 1 auto;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .btn{
@@ -797,6 +832,14 @@ body{
     color:#ffffff;
     border:1px solid #21145b;
 }
+
+.action-row .btn{
+    flex:0 0 auto;
+}
+
+/* ============================================================
+   NOTES / STATUS / HELPERS
+   ============================================================ */
 
 .note-box{
     margin-top:12px;
@@ -871,6 +914,10 @@ body{
     line-height:1.5;
 }
 
+/* ============================================================
+   GUIDE IMAGE
+   ============================================================ */
+
 .guide-image-wrap{
     margin-top:14px;
     padding-top:14px;
@@ -901,7 +948,7 @@ body{
 }
 
 /* ============================================================
-   Reminder modal
+   REMINDER BUTTON
    ============================================================ */
 
 .reminder-button{
@@ -920,6 +967,30 @@ body{
 .reminder-button:hover{
     background:#faf9ff;
 }
+
+.reminder-button.reminder-attention{
+    animation:fbcReminderBlink 1s ease-in-out infinite;
+}
+
+@keyframes fbcReminderBlink{
+    0%,100%{
+        opacity:1;
+        color:#ff6600;
+        border-color:#ff6600;
+        box-shadow:0 0 0 0 rgba(255,102,0,0);
+    }
+
+    50%{
+        opacity:.42;
+        color:#ff6600;
+        border-color:#ff6600;
+        box-shadow:0 0 0 4px rgba(255,102,0,.18);
+    }
+}
+
+/* ============================================================
+   REMINDER MODAL
+   ============================================================ */
 
 .reminder-modal{
     position:fixed;
@@ -1016,7 +1087,7 @@ body{
 }
 
 /* ============================================================
-   FBI instruction modal
+   FBI INSTRUCTION MODAL
    ============================================================ */
 
 .fbi-modal,
@@ -1162,7 +1233,194 @@ body{
 }
 
 /* ============================================================
-   Responsive
+   FULLSCREEN BUTTON
+   ============================================================ */
+
+.fbc-fullscreen-btn{
+    height:31px;
+    padding:0 11px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid #e1d9f4;
+    border-radius:6px;
+    background:#ffffff;
+    color:#4d148c;
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:.15s ease;
+}
+
+.fbc-fullscreen-btn i{
+    font-size:9px;
+}
+
+.fbc-fullscreen-btn:hover{
+    border-color:#bca6e9;
+    background:#faf8ff;
+    color:#5b17c5;
+}
+
+.fbc-fullscreen-btn.active{
+    border-color:#4d148c;
+    background:#4d148c;
+    color:#ffffff;
+}
+
+/* Keep header and footer above fullscreen workspace */
+.app-shell > #header-placeholder,
+.app-shell > #footer-placeholder{
+    position:relative;
+    z-index:100;
+}
+
+.app-shell > #footer-placeholder{
+    flex:0 0 auto;
+}
+
+/* ============================================================
+   FULLSCREEN WORKSPACE
+   ============================================================ */
+
+.fbc-workspace.fbc-fullscreen{
+    position:fixed !important;
+    top:var(--fbc-fullscreen-top) !important;
+    left:var(--fbc-fullscreen-left) !important;
+    width:var(--fbc-fullscreen-width) !important;
+    height:calc(
+        var(--fbc-fullscreen-bottom) -
+        var(--fbc-fullscreen-top)
+    ) !important;
+    min-height:0 !important;
+    margin:0 !important;
+    z-index:40;
+    overflow:hidden !important;
+    display:block;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-container{
+    width:100%;
+    height:100%;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-panel{
+    flex:1 1 auto;
+    width:100%;
+    height:auto;
+    min-height:0;
+    overflow:hidden;
+    border-radius:0;
+    box-shadow:none;
+}
+
+.fbc-workspace.fbc-fullscreen .content-grid{
+    min-height:0;
+    overflow:hidden;
+}
+
+.fbc-workspace.fbc-fullscreen .work-card{
+    min-height:0;
+    overflow:hidden;
+}
+
+.fbc-workspace.fbc-fullscreen .side-stack{
+    min-height:0;
+    overflow:hidden;
+}
+
+/* ============================================================
+   FULLSCREEN REMINDER
+   Hidden during normal view.
+   ============================================================ */
+
+.fbc-fullscreen-reminder{
+    display:none;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
+    display:flex;
+    width:100%;
+    box-sizing:border-box;
+    flex:0 0 auto;
+    margin-top:12px;
+    padding:14px 16px;
+    border:1px solid #e3def1;
+    border-radius:7px;
+    background:#fbfaff;
+    align-items:stretch;
+    gap:18px;
+    overflow:hidden;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-copy{
+    flex:0 0 230px;
+    min-width:230px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title{
+    margin-bottom:8px;
+    color:#4d148c;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title i{
+    color:#ff6600;
+    margin-right:5px;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-text{
+    color:#555878;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image{
+    flex:1 1 auto;
+    min-width:0;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width:none;
+    max-height:none;
+    object-fit:contain;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image.image-missing{
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image.image-missing::after{
+    content:'FBC Comment Table reference image';
+    color:#777a99;
+    font-size:10px;
+}
+
+/* ============================================================
+   RESPONSIVE
    ============================================================ */
 
 @media(max-width:900px){
@@ -1192,13 +1450,45 @@ body{
         margin-left:auto;
     }
 
+    .section-actions{
+        width:100%;
+        justify-content:flex-end;
+        margin-left:0;
+    }
+
+    .fbc-fullscreen-btn,
+    .reminder-button{
+        flex:0 0 auto;
+    }
+
+    .action-row{
+        flex-wrap:wrap;
+    }
+
+    #fbcNoteBox{
+        flex:1 1 100%;
+        order:0;
+    }
+
+    .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-copy{
+        flex:0 0 auto;
+        min-width:0;
+    }
+
+    .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image img{
+        max-height:150px;
+    }
 }
 
 @media(max-width:520px){
 
     .fbc-workspace{
         width:92%;
-        height:calc(100vh - 420px);
     }
 
     .fbc-panel{
@@ -1235,547 +1525,4 @@ body{
     .fbi-step img{
         max-height:220px;
     }
-
-}
-
-
-/* ============================================================
-   FBC PAGE-BODY FULL SCREEN
-   Same behavior as the Tools & Links Hub:
-   header and footer remain visible; only the FBC workspace expands.
-   ============================================================ */
-
-.section-actions{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:8px;
-    flex:0 0 auto;
-    margin-left:auto;
-}
-
-.fbc-fullscreen-btn{
-    height:31px;
-    padding:0 11px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    border:1px solid #e1d9f4;
-    border-radius:6px;
-    background:#ffffff;
-    color:#4d148c;
-    font-size:10px;
-    font-weight:700;
-    cursor:pointer;
-    white-space:nowrap;
-    transition:.15s ease;
-}
-
-.fbc-fullscreen-btn i{
-    font-size:9px;
-}
-
-.fbc-fullscreen-btn:hover{
-    border-color:#bca6e9;
-    background:#faf8ff;
-    color:#5b17c5;
-}
-
-.fbc-fullscreen-btn.active{
-    border-color:#4d148c;
-    background:#4d148c;
-    color:#ffffff;
-}
-
-/* Reminder attention remains until the user checks the acknowledgement. */
-.reminder-button.reminder-attention{
-    animation:fbcReminderBlink 1s ease-in-out infinite;
-}
-
-@keyframes fbcReminderBlink{
-    0%,100%{
-        opacity:1;
-        color:#ff6600;
-        border-color:#ff6600;
-        box-shadow:0 0 0 0 rgba(255,102,0,0);
-    }
-
-    50%{
-        opacity:.42;
-        color:#ff6600;
-        border-color:#ff6600;
-        box-shadow:0 0 0 4px rgba(255,102,0,.18);
-    }
-}
-
-/* Keep the header/dropdowns above the expanded workspace. */
-.app-shell > #header-placeholder{
-    position:relative;
-    z-index:100;
-}
-
-.app-shell > #footer-placeholder{
-    position:relative;
-    z-index:100;
-}
-
-.fbc-workspace.fbc-fullscreen{
-    position:fixed !important;
-    top:var(--fbc-fullscreen-top) !important;
-    left:var(--fbc-fullscreen-left) !important;
-    width:var(--fbc-fullscreen-width) !important;
-    height:calc(
-        var(--fbc-fullscreen-bottom) -
-        var(--fbc-fullscreen-top)
-    ) !important;
-    min-height:0 !important;
-    margin:0 !important;
-    z-index:40;
-    overflow:hidden !important;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-container,
-.fbc-workspace.fbc-fullscreen .fbc-panel{
-    height:100%;
-    min-height:0;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-panel{
-    border-radius:0;
-    box-shadow:none;
-}
-
-.fbc-workspace.fbc-fullscreen .content-grid{
-    min-height:0;
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .work-card{
-    min-height:0;
-    overflow:auto;
-}
-
-.fbc-workspace.fbc-fullscreen .side-stack{
-    min-height:0;
-    overflow:auto;
-}
-
-@media(max-width:900px){
-    .section-actions{
-        width:100%;
-        justify-content:flex-end;
-        margin-left:0;
-    }
-
-    .fbc-fullscreen-btn,
-    .reminder-button{
-        flex:0 0 auto;
-    }
-}
-
-/* =========================================================
-   FBC FINAL LAYOUT — AUTO GENERATION / FOOTER FIT / REMINDER
-   ========================================================= */
-
-/* Normal page: use the page's flex space without forcing the footer down. */
-.fbc-workspace{
-    width:85.6%;
-    height:auto !important;
-    min-height:0 !important;
-    flex:0 0 auto !important;
-    margin:4px auto 0 !important;
-    overflow:hidden;
-}
-
-.fbc-container{
-    height:100%;
-    min-height:0;
-}
-
-.fbc-panel{
-    height:100%;
-    min-height:0;
-    padding:16px;
-}
-
-.section-head{
-    padding-bottom:10px;
-    margin-bottom:10px;
-}
-
-.work-card,
-.side-card{
-    padding:9px;
-}
-
-.select-grid{
-    gap:10px;
-    margin-bottom:10px;
-}
-
-.work-top{
-    margin-bottom:9px;
-}
-
-.field-label{
-    margin-bottom:4px;
-}
-
-#fbcBuilder textarea{
-    min-height:80px;
-}
-
-/* Format note + Copy + Clear live on one horizontal line. */
-.action-row{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:8px;
-    margin-top:8px;
-    flex-wrap:nowrap;
-}
-
-#fbcNoteBox{
-    margin:0 auto 0 0;
-    padding:8px 10px;
-    min-width:0;
-    flex:1 1 auto;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.action-row .btn{
-    flex:0 0 auto;
-}
-
-/* The reminder exists only in Full Screen mode. */
-.fbc-fullscreen-reminder{
-    display:none;
-}
-
-/* Full Screen: split the available page body between the generator and reminder. */
-.fbc-workspace.fbc-fullscreen{
-    display:block;
-    overflow:hidden !important;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-container{
-    height:100%;
-    min-height:0;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-panel{
-    height:auto;
-    min-height:0;
-    flex:1 1 auto;
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .content-grid{
-    min-height:0;
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .work-card{
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .side-stack{
-    overflow:hidden;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
-    display:grid;
-    grid-template-columns:minmax(260px, .8fr) minmax(420px, 1.2fr);
-    align-items:center;
-    gap:18px;
-    flex:0 0 190px;
-    min-height:0;
-    padding:12px 16px;
-    background:#ffffff;
-    border:1px solid #e4e5ef;
-    border-radius:9px;
-    box-shadow:0 5px 20px #30266f0d;
-    overflow:hidden;
-}
-
-.fbc-fullscreen-reminder-copy{
-    min-width:0;
-}
-
-.fbc-fullscreen-reminder-title{
-    margin-bottom:7px;
-    color:#4d148c;
-    font-size:9px;
-    font-weight:800;
-    letter-spacing:.04em;
-    text-transform:uppercase;
-}
-
-.fbc-fullscreen-reminder-title i{
-    color:#ff6600;
-    margin-right:5px;
-}
-
-.fbc-fullscreen-reminder-text{
-    color:#4f5278;
-    font-size:9px;
-    line-height:1.45;
-}
-
-.fbc-fullscreen-reminder-image{
-    height:100%;
-    min-width:0;
-    min-height:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-}
-
-.fbc-fullscreen-reminder-image img{
-    display:block;
-    width:100%;
-    height:100%;
-    max-width:100%;
-    max-height:165px;
-    object-fit:contain;
-    object-position:center;
-    border:1px solid #e8e9f2;
-    border-radius:6px;
-    background:#faf9ff;
-}
-
-.fbc-fullscreen-reminder-image.image-missing::after{
-    content:'FBC Comment Table reference image';
-    color:#777a99;
-    font-size:10px;
-}
-
-/* Keep the footer completely visible in normal view. */
-.app-shell > #footer-placeholder{
-    flex:0 0 auto;
-}
-
-@media(max-width:900px){
-    .action-row{
-        flex-wrap:wrap;
-    }
-
-    #fbcNoteBox{
-        flex:1 1 100%;
-        order:0;
-    }
-
-    .fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder{
-        grid-template-columns:1fr;
-        flex-basis:220px;
-    }
-
-    .fbc-fullscreen-reminder-image img{
-        max-height:150px;
-    }
-}
-
-/* =========================================================
-   FULL SCREEN ONLY — FBC COMMENT REMINDER
-   Normal view is completely unchanged
-   ========================================================= */
-
-/* Hidden in normal view */
-.fbc-fullscreen-reminder {
-    display: none;
-}
-
-
-/* Show only when Full Screen is active */
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-
-    margin: 10px 0 0;
-    padding: 10px 16px;
-
-    background: #ffffff;
-    border: 1px solid #e4e5ef;
-    border-radius: 9px;
-
-    box-sizing: border-box;
-}
-
-
-/* Reminder text */
-.fbc-fullscreen-reminder-copy {
-    flex: 1;
-    min-width: 0;
-}
-
-.fbc-fullscreen-reminder-title {
-    margin-bottom: 5px;
-
-    color: #ff6600;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-}
-
-.fbc-fullscreen-reminder-title i {
-    margin-right: 5px;
-}
-
-.fbc-fullscreen-reminder-text {
-    color: #45466e;
-    font-size: 9px;
-    line-height: 1.45;
-}
-
-
-/* Reminder image */
-.fbc-fullscreen-reminder-image {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fbc-fullscreen-reminder-image img {
-    display: block;
-
-    width: auto;
-    height: auto;
-
-    max-width: 620px;
-    max-height: 170px;
-
-    object-fit: contain;
-
-    border: 1px solid #e8e9f2;
-    border-radius: 6px;
-}
-
-
-/* =========================================================
-   FULL SCREEN SPACE DISTRIBUTION
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-panel {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
-    flex: 0 0 auto;
-}
-
-/* =========================================================
-   FBC FULLSCREEN REMINDER
-   Hidden in normal view.
-   Shown only inside the generator during fullscreen.
-   ========================================================= */
-
-.fbc-fullscreen-reminder {
-    display: none;
-}
-
-
-/* =========================================================
-   FULLSCREEN ONLY
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder {
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 12px;
-    padding: 14px 16px;
-    border: 1px solid #e3def1;
-    border-radius: 7px;
-    background: #fbfaff;
-    align-items: stretch;
-    gap: 18px;
-    overflow: hidden;
-}
-
-
-/* Reminder text area */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-copy {
-    flex: 0 0 230px;
-    min-width: 230px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title {
-    margin-bottom: 8px;
-    color: #4d148c;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .02em;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-title i {
-    color: #ff6600;
-    margin-right: 5px;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-text {
-    color: #555878;
-    font-size: 9px;
-    line-height: 1.45;
-}
-
-
-/* =========================================================
-   LARGE REFERENCE IMAGE
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image img {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-width: none;
-    max-height: none;
-    object-fit: contain;
-}
-
-
-/* =========================================================
-   REMOVE THE OLD SMALL-IMAGE LIMITS
-   ========================================================= */
-
-.fbc-workspace.fbc-fullscreen .fbc-fullscreen-reminder-image.image-missing {
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
