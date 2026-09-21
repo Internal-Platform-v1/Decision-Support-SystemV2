@@ -1240,124 +1240,29 @@ body{
 
 
 /* ============================================================
-   FBC FOOTER VISIBILITY FIX
-   ------------------------------------------------------------
-   The shared footer was loading correctly, but the FBC page
-   was clipping its bottom because the page shell was shorter
-   than the viewport while the generator kept a fixed viewport
-   height. Keep the footer in the normal flex flow and let the
-   generator consume only the remaining space.
+   FBC CONTENT HEIGHT — FOOTER FIT
+   Keep the existing FBC design unchanged. The workspace only
+   uses the vertical space remaining between the header/hero
+   content and the shared footer.
    ============================================================ */
 
-html,
-body {
-    width:100%;
-    height:100%;
+.app-shell{
+    height:100vh;
+}
+
+.case-page{
     min-height:0;
-    margin:0;
-    overflow:hidden !important;
 }
 
-.app-shell {
-    width:100%;
-    height:100vh !important;
+.fbc-workspace{
+    height:calc(100vh - 490px) !important;
     min-height:0 !important;
-    max-height:100vh;
-    display:flex !important;
-    flex-direction:column !important;
-    overflow:hidden !important;
+    margin-bottom:14px !important;
 }
 
-.app-shell > #header-placeholder,
-.app-shell > #footer-placeholder {
-    flex:0 0 auto !important;
-    width:100%;
-}
-
-.app-shell > #header-placeholder {
-    position:relative;
-    z-index:100;
-}
-
-.app-shell > #footer-placeholder {
-    position:relative;
-    z-index:100;
-    height:66px;
-    min-height:66px;
-    margin:0 !important;
-    overflow:visible !important;
-}
-
-.app-shell > #footer-placeholder .footer-banner {
-    height:66px;
-    min-height:66px;
-}
-
-.case-page {
-    flex:1 1 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    display:flex !important;
-    flex-direction:column !important;
-    overflow:hidden !important;
-}
-
-.case-hero {
-    flex:0 0 290px;
-    height:290px !important;
-    min-height:290px !important;
-}
-
-.stats-row {
-    flex:0 0 auto !important;
-    margin:-50px auto 0 !important;
-}
-
-.fbc-workspace {
-    width:85.6%;
-    flex:1 1 auto !important;
-    height:auto !important;
-    min-height:0 !important;
-    margin:14px auto 14px !important;
-    overflow:hidden !important;
-}
-
-.fbc-container,
-.fbc-panel,
-.content-grid {
-    min-height:0 !important;
-}
-
-.fbc-container {
-    flex:1 1 auto;
-}
-
-.fbc-panel {
-    flex:1 1 auto;
-}
-
-.content-grid {
-    flex:1 1 auto !important;
-    overflow:hidden !important;
-}
-
-@media (max-width:700px) {
-    .app-shell > #footer-placeholder,
-    .app-shell > #footer-placeholder .footer-banner {
-        height:82px;
-        min-height:82px;
-    }
-}
-
-@media (max-width:520px) {
-    .app-shell > #footer-placeholder,
-    .app-shell > #footer-placeholder .footer-banner {
-        height:92px;
-        min-height:92px;
-    }
-
-    .fbc-workspace {
-        width:92%;
+@media(max-width:520px){
+    .fbc-workspace{
+        height:calc(100vh - 440px) !important;
         margin-bottom:10px !important;
     }
 }
