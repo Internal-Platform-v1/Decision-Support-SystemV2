@@ -37,24 +37,7 @@
     }
   }
 
-  async function loadAdminProfile(){
-    const d=db();
-    const user=state.auth || window.currentUser || getAuth()?.currentUser;
-    if(!d || !user || !user.email) return;
-    const email=String(user.email).trim().toLowerCase();
-    try{
-      const snap=await d.collection(USERS_COLLECTION).doc(email).get();
-      const data=snap.exists ? (snap.data() || {}) : {};
-      window.currentUserProfile={
-        uid:user.uid,
-        email:user.email,
-        displayName:String(data.name || data.displayName || user.displayName || email.split('@')[0]).replace(/\s+vndr$/i,'').trim(),
-        role:String(data.role || '').trim()
-      };
-    }catch(e){
-      console.info('Admin profile lookup unavailable:',e.code||e.message);
-    }
-  }
+
   function setIdentity(){const n=userName(),r=window.currentUserProfile?.role||'System Administrator',i=initials(n,authEmail());['sidebarUserName'].forEach(id=>$(id)&&($(id).textContent=n));if($('sidebarUserRole'))$('sidebarUserRole').textContent=r;if($('sidebarAvatar'))$('sidebarAvatar').textContent=i;if($('topAvatar'))$('topAvatar').textContent=i;if($('heroUserName'))$('heroUserName').textContent=n+'!'}
   function updateClock(){const n=new Date(),d=n.toLocaleDateString('en-US',{timeZone:'Asia/Manila',weekday:'short',month:'short',day:'2-digit',year:'numeric'}),t=n.toLocaleTimeString('en-US',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'});if($('currentDateText'))$('currentDateText').textContent=d;if($('currentTimeText'))$('currentTimeText').textContent=t}
   async function waitAuth(timeout=15000){const a=auth();if(!a)throw Error('Firebase Authentication is unavailable.');if(a.currentUser){state.auth=a.currentUser;authReady=true;return a.currentUser}return new Promise((resolve,reject)=>{let done=false,unsub=a.onAuthStateChanged(u=>{if(done)return;done=true;unsub&&unsub();if(!u){reject(Error('No authenticated Firebase user is available.'));return}state.auth=u;authReady=true;resolve(u)});setTimeout(()=>{if(!done){done=true;unsub&&unsub();if(a.currentUser){state.auth=a.currentUser;authReady=true;resolve(a.currentUser)}else reject(Error('No authenticated Firebase user is available.'))}},timeout)})}
