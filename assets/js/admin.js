@@ -17,6 +17,44 @@
   function initials(name,email){const n=String(name||'').trim();if(!n)return String(email||'AD').slice(0,2).toUpperCase();const p=n.split(/\s+/);return(p.length>1?p[0][0]+p[p.length-1][0]:p[0].slice(0,2)).toUpperCase()}
   function authEmail(){return String(state.auth?.email||window.currentUser?.email||window.currentUserProfile?.email||'').trim().toLowerCase()}
   function userName(){return window.currentUserProfile?.displayName||window.currentUserProfile?.name||state.auth?.displayName||state.auth?.email?.split('@')[0]||'Admin'}
+
+  async function loadAdminProfile(){
+    const d=db();
+    const user=state.auth || window.currentUser || getAuth()?.currentUser;
+    if(!d || !user || !user.email) return;
+    const email=String(user.email).trim().toLowerCase();
+    try{
+      const snap=await d.collection(USERS_COLLECTION).doc(email).get();
+      const data=snap.exists ? (snap.data() || {}) : {};
+      window.currentUserProfile={
+        uid:user.uid,
+        email:user.email,
+        displayName:String(data.name || data.displayName || user.displayName || email.split('@')[0]).replace(/\s+vndr$/i,'').trim(),
+        role:String(data.role || '').trim()
+      };
+    }catch(e){
+      console.info('Admin profile lookup unavailable:',e.code||e.message);
+    }
+  }
+
+  async function loadAdminProfile(){
+    const d=db();
+    const user=state.auth || window.currentUser || getAuth()?.currentUser;
+    if(!d || !user || !user.email) return;
+    const email=String(user.email).trim().toLowerCase();
+    try{
+      const snap=await d.collection(USERS_COLLECTION).doc(email).get();
+      const data=snap.exists ? (snap.data() || {}) : {};
+      window.currentUserProfile={
+        uid:user.uid,
+        email:user.email,
+        displayName:String(data.name || data.displayName || user.displayName || email.split('@')[0]).replace(/\s+vndr$/i,'').trim(),
+        role:String(data.role || '').trim()
+      };
+    }catch(e){
+      console.info('Admin profile lookup unavailable:',e.code||e.message);
+    }
+  }
   function setIdentity(){const n=userName(),r=window.currentUserProfile?.role||'System Administrator',i=initials(n,authEmail());['sidebarUserName'].forEach(id=>$(id)&&($(id).textContent=n));if($('sidebarUserRole'))$('sidebarUserRole').textContent=r;if($('sidebarAvatar'))$('sidebarAvatar').textContent=i;if($('topAvatar'))$('topAvatar').textContent=i;if($('heroUserName'))$('heroUserName').textContent=n+'!'}
   function updateClock(){const n=new Date(),d=n.toLocaleDateString('en-US',{timeZone:'Asia/Manila',weekday:'short',month:'short',day:'2-digit',year:'numeric'}),t=n.toLocaleTimeString('en-US',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'});if($('currentDateText'))$('currentDateText').textContent=d;if($('currentTimeText'))$('currentTimeText').textContent=t}
   async function waitAuth(timeout=15000){const a=auth();if(!a)throw Error('Firebase Authentication is unavailable.');if(a.currentUser){state.auth=a.currentUser;authReady=true;return a.currentUser}return new Promise((resolve,reject)=>{let done=false,unsub=a.onAuthStateChanged(u=>{if(done)return;done=true;unsub&&unsub();if(!u){reject(Error('No authenticated Firebase user is available.'));return}state.auth=u;authReady=true;resolve(u)});setTimeout(()=>{if(!done){done=true;unsub&&unsub();if(a.currentUser){state.auth=a.currentUser;authReady=true;resolve(a.currentUser)}else reject(Error('No authenticated Firebase user is available.'))}},timeout)})}
@@ -28,6 +66,25 @@
   function setStats(){const total=state.users.length,active=state.users.filter(u=>u.active!==false).length;if($('kpiTotalUsers'))$('kpiTotalUsers').textContent=total;if($('kpiActiveUsers'))$('kpiActiveUsers').textContent=active}
   async function loadTemplates(){const d=db();if(!d)return;const cols=[TEMPLATE_COLLECTION,...guideRegistry.map(g=>g.templateCollection).filter(Boolean)].filter((v,i,a)=>a.indexOf(v)===i);let docs=[];for(const c of cols){try{const s=await d.collection(c).get();s.docs.forEach(x=>docs.push(x.id))}catch(e){console.info('Template source unavailable:',c,e.code||e.message)}}state.templateTotal=docs.length;state.commentTemplates=docs.filter(x=>x.startsWith('comment__')).length;state.corrTemplates=docs.filter(x=>x.startsWith('corr__')).length;state.emailTemplates=docs.filter(x=>x.startsWith('email__')).length;if($('kpiTemplates'))$('kpiTemplates').textContent=state.templateTotal}
   async function loadAnnouncements(){const d=db();if(!d)return;try{const s=await d.collection('announcements').get();state.announcementTotal=s.size;if($('kpiAnnouncements'))$('kpiAnnouncements').textContent=s.size;if($('notificationBadge')){$('notificationBadge').textContent=s.size;$('notificationBadge').hidden=s.size===0}if($('kpiAnnouncementDelta'))$('kpiAnnouncementDelta').textContent='Connected'}catch{state.announcementTotal=null;if($('kpiAnnouncements'))$('kpiAnnouncements').textContent='—';if($('notificationBadge'))$('notificationBadge').hidden=true;if($('kpiAnnouncementDelta'))$('kpiAnnouncementDelta').textContent='Not linked'}}
+
+  async function loadGuideUsageStats(){
+    const d=db();
+    if(!d) return;
+    try{
+      const snapshot=await d.collection('guide_stats').orderBy('usageCount','desc').limit(5).get();
+      state.guideUsage={};
+      snapshot.docs.forEach(doc=>{
+        const data=doc.data()||{};
+        const id=data.guideId||doc.id;
+        const title=String(data.guideTitle||'').toLowerCase();
+        const match=guideRegistry.find(g=>g.id===id || String(g.title).toLowerCase()===title);
+        if(match) state.guideUsage[match.id]=Number(data.usageCount||0);
+      });
+      renderGuideUsage();
+    }catch(e){
+      console.info('Guide usage collection unavailable:',e.code||e.message);
+    }
+  }
   function renderGuideUsage(){const t=$('guideUsageList');if(!t)return;const rows=guideRegistry.map(g=>({g,c:Number(state.guideUsage[g.id]||0)})).sort((a,b)=>b.c-a.c).slice(0,5),max=Math.max(...rows.map(x=>x.c),1);t.innerHTML=rows.map((x,i)=>`<div class="guide-usage-row"><span class="guide-usage-rank">${i+1}</span><span class="guide-usage-title" title="${esc(x.g.title)}">${esc(x.g.title)}</span><span class="guide-usage-track"><i style="width:${Math.max(x.c?8:0,Math.round(x.c/max*100))}%"></i></span><span class="guide-usage-count">${x.c||'—'}</span></div>`).join('')||'<div class="admin-no-data">No guide registry data.</div>'}
   function scanGuideUsage(){state.guideUsage={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i),raw=localStorage.getItem(k);if(!raw)continue;let p;try{p=JSON.parse(raw)}catch{continue}const inspect=x=>{if(!x||typeof x!=='object')return;const id=x.guideId||x.id,title=x.title||x.guideTitle||x.guideName||x.name||x.label,count=Number(x.count??x.usage??x.usageCount??x.views??x.timesUsed);if(id&&guideRegistry.some(g=>g.id===id))state.guideUsage[id]=(state.guideUsage[id]||0)+(Number.isFinite(count)?count:1);else if(title){const g=guideRegistry.find(g=>String(g.title).toLowerCase()===String(title).toLowerCase());if(g)state.guideUsage[g.id]=(state.guideUsage[g.id]||0)+(Number.isFinite(count)?count:1)}};if(Array.isArray(p))p.forEach(inspect);else inspect(p)}}catch{} }
   function renderRegions(){const m=state.users.reduce((a,u)=>{const r=String(u.region||'All regions').trim()||'All regions';a[r]=(a[r]||0)+1;return a},{}),rows=Object.entries(m).sort((a,b)=>b[1]-a[1]),total=state.region==='all'?state.users.length:(m[state.region]||0),pal=['#6030ca','#9c7be9','#c8bdf1','#8ed5b0','#ffb470'];if($('regionTotal'))$('regionTotal').textContent=total;const stops=[];let cur=0;rows.forEach(([r,c],i)=>{const p=state.users.length?c/state.users.length*100:0;stops.push(`${pal[i%pal.length]} ${cur}% ${cur+p}%`);cur+=p});if($('regionDonut'))$('regionDonut').style.background=rows.length?`conic-gradient(${stops.join(',')})`:'#e9eaf2';if($('regionLegend'))$('regionLegend').innerHTML=rows.slice(0,5).map(([r,c],i)=>`<div class="region-legend-row"><i style="background:${pal[i%pal.length]}"></i><span>${esc(r)}</span><strong>${c}</strong><small>${state.users.length?Math.round(c/state.users.length*100):0}%</small></div>`).join('')||'<div class="admin-no-data">No regional data.</div>';if($('regionFilter')){const v=state.region;$('regionFilter').innerHTML='<option value="all">All Regions</option>'+rows.map(([r])=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');$('regionFilter').value=v}}
@@ -46,7 +103,7 @@
   function navigate(section){currentSection=section;document.querySelectorAll('.admin-nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===section));if(section==='dashboard'){$('dashboardView').hidden=false;$('moduleView').hidden=true;return}$('dashboardView').hidden=true;$('moduleView').hidden=false;const c=cfg[section];$('moduleTitle').textContent=c.title;$('moduleDescription').textContent=c.desc;$('moduleActionButton').innerHTML=`<i class="fa-solid fa-plus"></i> ${esc(c.action)}`;$('moduleKicker').textContent=section==='users'?'USER DIRECTORY':'ADMINISTRATION';if(section==='users')renderUsers();else if(section==='templates')renderTemplates();else if(section==='logs')renderLogs();else $('moduleContent').innerHTML=moduleMarkup(section);saveActivity('login',`${c.title} Opened`,'Admin navigation');renderRecentActivity()}
   function setupSearch(){const i=$('globalAdminSearch'),r=$('globalSearchResults');if(!i||!r)return;i.addEventListener('input',()=>{const q=i.value.trim().toLowerCase();if(!q){r.classList.remove('show');r.innerHTML='';return}const us=state.users.filter(u=>[u.name,u.email,u.role,u.region].join(' ').toLowerCase().includes(q)).slice(0,4).map(u=>({title:u.name,sub:`${u.role} · ${u.region}`,icon:'fa-user',fn:()=>navigate('users')}));const gs=guideRegistry.filter(g=>[g.title,g.category,...(g.keywords||[])].join(' ').toLowerCase().includes(q)).slice(0,3).map(g=>({title:g.title,sub:g.category||'Guide',icon:'fa-book-open',fn:()=>g.url?location.href=g.url:navigate('guides')}));const all=[...us,...gs];r.innerHTML=all.length?all.map((x,n)=>`<button class="admin-search-result" data-index="${n}" type="button"><i class="fa-solid ${x.icon}"></i><span><strong>${esc(x.title)}</strong><small>${esc(x.sub)}</small></span></button>`).join(''):'<div class="admin-no-data">No matching users or guides.</div>';r.classList.add('show');r.querySelectorAll('[data-index]').forEach((b,n)=>b.addEventListener('click',()=>{all[n].fn();r.classList.remove('show');i.value=''}))});document.addEventListener('click',e=>{if(!i.parentElement.contains(e.target))r.classList.remove('show')})}
   function bind(){document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.section)));$('regionFilter')?.addEventListener('change',e=>{state.region=e.target.value;renderRegions()});$('moduleActionButton')?.addEventListener('click',()=>{if(currentSection==='users')openUserModal();else toast(`${cfg[currentSection]?.title||'Module'} is ready for connection.`)});$('userForm')?.addEventListener('submit',saveUser);$('userModalClose')?.addEventListener('click',closeUserModal);$('userModalCancel')?.addEventListener('click',closeUserModal);$('userModal')?.addEventListener('click',e=>{if(e.target.id==='userModal')closeUserModal()});$('supportButton')?.addEventListener('click',()=>toast('Support workflow is ready to be connected.'));$('notificationButton')?.addEventListener('click',()=>navigate('announcements'));$('profileButton')?.addEventListener('click',()=>toast(authEmail()?`${userName()} · ${authEmail()}`:'Admin profile'));setupSearch()}
-  async function init(){loadActivity();bind();updateClock();setInterval(updateClock,30000);scanGuideUsage();renderGuideUsage();renderRecentActivity();renderUserActivity();try{await waitAuth();setIdentity();await renderDashboard();try{await loadUsers()}catch(e){console.error('approved_users load failed:',e);toast(e.code==='permission-denied'?'Firestore permission denied for approved_users.':'Unable to load approved users.')}await loadTemplates();await loadAnnouncements();renderDashboard();document.documentElement.classList.remove('page-loading');document.documentElement.setAttribute('aria-busy','false')}catch(e){console.error(e);setIdentity();toast(e.message||'Admin authentication could not be established.');document.documentElement.classList.remove('page-loading');document.documentElement.setAttribute('aria-busy','false')}}
+  async function init(){loadActivity();bind();updateClock();setInterval(updateClock,30000);scanGuideUsage();renderGuideUsage();renderRecentActivity();renderUserActivity();try{await waitAuth();setIdentity();await loadAdminProfile();setIdentity();await loadAdminProfile();setIdentity();await renderDashboard();try{await loadUsers()}catch(e){console.error('approved_users load failed:',e);toast(e.code==='permission-denied'?'Firestore permission denied for approved_users.':'Unable to load approved users.')}await loadGuideUsageStats();await loadTemplates();await loadAnnouncements();renderDashboard();document.documentElement.classList.remove('page-loading');document.documentElement.setAttribute('aria-busy','false')}catch(e){console.error(e);setIdentity();toast(e.message||'Admin authentication could not be established.');document.documentElement.classList.remove('page-loading');document.documentElement.setAttribute('aria-busy','false')}}
   async function renderDashboard(){setIdentity();renderGuideUsage();renderRegions();renderRecentUsers();renderRecentActivity();renderUserActivity();if($('kpiGuides'))$('kpiGuides').textContent=guideRegistry.length}
   document.addEventListener('currentUserProfileLoaded',setIdentity);
   document.addEventListener('DOMContentLoaded',init);
