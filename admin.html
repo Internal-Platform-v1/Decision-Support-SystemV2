@@ -60,7 +60,7 @@
 
             <nav class="admin-side-tabs">
                 <button class="admin-side-tab active" type="button" data-section="overview">
-                    <i class="fa-solid fa-grid-2"></i><span>Overview</span>
+                    <i class="fa-solid fa-chart-pie"></i><span>Dashboard</span>
                 </button>
                 <button class="admin-side-tab" type="button" data-section="users">
                     <i class="fa-solid fa-users"></i><span>User Management</span>
@@ -102,7 +102,7 @@
                 <div class="admin-breadcrumb">
                     <span>ADMINISTRATION</span>
                     <i class="fa-solid fa-chevron-right"></i>
-                    <strong>Administrative Workspace</strong>
+                    <strong id="topbarSection">Dashboard</strong>
                 </div>
 
                 <div class="admin-topbar-actions">
@@ -170,55 +170,51 @@
                         <span class="admin-last-updated" id="lastUpdated">Updated just now</span>
                     </div>
 
-                    <section class="admin-kpi-grid">
+                    <section class="admin-kpi-grid admin-dashboard-kpis">
                         <article class="admin-kpi-card">
                             <div class="admin-kpi-icon blue"><i class="fa-solid fa-users"></i></div>
-                            <div>
-                                <label>Total Users</label>
-                                <h3 id="userCount">—</h3>
-                                <p>Registered system users</p>
-                            </div>
+                            <div><label>Total Users</label><h3 id="userCount">—</h3><p>Approved user accounts</p></div>
                             <span class="admin-kpi-trend">Live</span>
+                        </article>
+
+                        <article class="admin-kpi-card">
+                            <div class="admin-kpi-icon green"><i class="fa-solid fa-user-check"></i></div>
+                            <div><label>Active Users</label><h3 id="activeUserCount">—</h3><p>Currently active accounts</p></div>
+                            <span class="admin-kpi-trend healthy">Active</span>
                         </article>
 
                         <article class="admin-kpi-card">
                             <div class="admin-kpi-icon orange"><i class="fa-solid fa-file-lines"></i></div>
-                            <div>
-                                <label>Templates</label>
-                                <h3 id="templateCount">—</h3>
-                                <p>Comments, CORR and email</p>
-                            </div>
+                            <div><label>Templates</label><h3 id="templateCount">—</h3><p>All template records</p></div>
                             <span class="admin-kpi-trend">Live</span>
                         </article>
 
                         <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon red"><i class="fa-solid fa-bullhorn"></i></div>
-                            <div>
-                                <label>Announcements</label>
-                                <h3 id="announcementCount">—</h3>
-                                <p>Published system notices</p>
-                            </div>
-                            <span class="admin-kpi-trend">Active</span>
+                            <div class="admin-kpi-icon purple"><i class="fa-solid fa-book-open"></i></div>
+                            <div><label>Registered Guides</label><h3 id="guideCount">—</h3><p>Guide flows available</p></div>
+                            <span class="admin-kpi-trend">Registry</span>
                         </article>
 
                         <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon green"><i class="fa-solid fa-shield-halved"></i></div>
-                            <div>
-                                <label>System Health</label>
-                                <h3>100%</h3>
-                                <p>Core services operational</p>
-                            </div>
-                            <span class="admin-kpi-trend healthy">Healthy</span>
+                            <div class="admin-kpi-icon blue"><i class="fa-solid fa-user-shield"></i></div>
+                            <div><label>Admin Roles</label><h3 id="adminRoleCount">—</h3><p>Managers + Team Leaders</p></div>
+                            <span class="admin-kpi-trend">Access</span>
+                        </article>
+
+                        <article class="admin-kpi-card">
+                            <div class="admin-kpi-icon green"><i class="fa-solid fa-database"></i></div>
+                            <div><label>Data Sources</label><h3 id="dataSourceCount">—</h3><p>Connected Firestore collections</p></div>
+                            <span class="admin-kpi-trend healthy">Connected</span>
                         </article>
                     </section>
 
                     <section class="admin-workspace-panel">
                         <div class="admin-workspace-header">
                             <div>
-                                <span class="admin-section-label">MANAGEMENT MODULE</span>
-                                <h2 id="workspaceTitle">Administrative Workspace</h2>
+                                <span class="admin-section-label">ADMIN DASHBOARD</span>
+                                <h2 id="workspaceTitle">Admin Dashboard</h2>
                                 <p id="workspaceDescription">
-                                    Select a module to manage your Decision Support System.
+                                    Live operational view of users, templates, guides and administration status.
                                 </p>
                             </div>
 
