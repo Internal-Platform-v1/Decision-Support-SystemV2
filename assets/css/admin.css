@@ -1,1020 +1,1736 @@
-
 /* ============================================================
-   ADMIN.CSS — CLEAN REFERENCE LAYOUT
-   ------------------------------------------------------------
-   IMPORTANT:
-   - CSS ONLY. No JavaScript changes.
-   - HTML structure is left untouched.
-   - Scoped to .admin-page.
-   - Uses the supplied AI-generated dashboard as the visual
-     reference: Inter + FedEx purple/orange + white header +
-     navy sidebar + rounded cards + three analytics panels.
+   FEDEx Freight — Decision Support System Admin Console
+   Dashboard visual baseline: Sep 2026 reference screenshots
+   This file intentionally overrides the Tailwind utilities in
+   admin(2).html without changing the existing HTML / JS logic.
    ============================================================ */
 
-.admin-page{
-    --admin-purple:#4D148C;
-    --admin-orange:#FF6600;
-    --admin-navy:#18113C;
-    --admin-navy-hover:#2A1F5C;
-    --admin-bg:#F2F4F8;
-    --admin-white:#FFFFFF;
-    --admin-text:#1F2937;
-    --admin-muted:#6B7280;
-    --admin-border:#E5E7EB;
-    --admin-green:#059669;
-    width:100%;
-    min-height:100vh;
-    margin:0;
-    padding:0;
-    background:var(--admin-bg);
-    color:var(--admin-text);
-    font-family:'Inter',sans-serif;
-    overflow-x:hidden;
+:root{
+    --admin-purple:#4d40e6;
+    --admin-purple-dark:#1e1b4b;
+    --admin-purple-soft:#eceaff;
+    --admin-purple-pale:#f5f3ff;
+    --admin-bg:#f5f6fa;
+    --admin-card:#ffffff;
+    --admin-border:#dfe2ee;
+    --admin-text:#111827;
+    --admin-muted:#70809b;
+    --admin-green:#05b98d;
+    --admin-orange:#ff6a2b;
+    --admin-sidebar:#1e1b4b;
+    --admin-sidebar-border:rgba(255,255,255,.09);
+    --admin-shadow:0 1px 2px rgba(24,31,56,.08), 0 8px 24px rgba(45,51,84,.05);
+    --admin-radius:16px;
 }
 
-/* ============================================================
-   GLOBAL / PAGE ROOT
-   ============================================================ */
-
-.admin-page *,
-.admin-page *::before,
-.admin-page *::after{
+*{
     box-sizing:border-box;
 }
 
-.admin-page button,
-.admin-page input,
-.admin-page select,
-.admin-page textarea{
-    font-family:'Inter',sans-serif;
+html,
+body{
+    width:100%;
+    min-height:100%;
 }
 
-.admin-page ::-webkit-scrollbar{
-    width:6px;
-    height:6px;
+html{
+    scroll-behavior:smooth;
 }
 
-.admin-page ::-webkit-scrollbar-track{
-    background:#F2F4F8;
+body.admin-page{
+    margin:0;
+    background:var(--admin-bg) !important;
+    color:var(--admin-text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;
+    font-size:13px;
+    overflow:hidden;
 }
 
-.admin-page ::-webkit-scrollbar-thumb{
-    background:#CBD5E1;
-    border-radius:999px;
-}
-
-.admin-page ::-webkit-scrollbar-thumb:hover{
-    background:#94A3B8;
+button,
+input,
+select,
+textarea{
+    font:inherit;
 }
 
 /* ============================================================
    TOP HEADER
    ============================================================ */
-
-.admin-page > header{
+body.admin-page > header{
+    position:sticky !important;
+    top:0;
+    left:0;
     width:100%;
-    height:64px!important;
-    min-height:64px!important;
-    display:flex!important;
-    align-items:center!important;
-    position:sticky!important;
-    top:0!important;
-    z-index:100!important;
-    background:#fff!important;
-    border-bottom:1px solid #E5E7EB!important;
-    box-shadow:0 1px 4px rgba(15,23,42,.04)!important;
+    height:50px !important;
+    min-height:50px !important;
+    padding:0 !important;
+    margin:0 !important;
+    background:#fff !important;
+    border:0 !important;
+    border-bottom:1px solid #e5e7ef !important;
+    box-shadow:0 1px 0 rgba(22,29,54,.02) !important;
+    z-index:1000 !important;
 }
 
-.admin-page > header > div:first-child{
-    width:270px!important;
-    flex:0 0 270px!important;
+body.admin-page > header > div:first-child{
+    position:relative;
+    width:220px !important;
+    min-width:220px !important;
+    height:50px;
+    margin:0 !important;
+    padding:0 14px !important;
+    gap:0 !important;
+    background:var(--admin-sidebar) !important;
+    color:#fff !important;
+    overflow:visible;
+    flex-shrink:0;
 }
 
-.admin-page > header > div:nth-child(2){
-    flex:1 1 auto!important;
-    max-width:560px!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
+body.admin-page > header > div:first-child .fedex-logo-text-purple,
+body.admin-page > header > div:first-child .fedex-logo-text-orange{
+    color:#fff !important;
 }
 
-.admin-page > header > div:last-child{
-    flex:0 0 auto!important;
+body.admin-page > header > div:first-child .fedex-logo-text-orange{
+    color:#ff8b50 !important;
 }
 
-/* keep logo / brand close to supplied reference */
-.admin-page .fedex-logo-text-purple{
-    color:#4D148C!important;
+body.admin-page > header > div:first-child > div:first-of-type{
+    position:relative;
+    display:flex !important;
+    align-items:center !important;
+    height:50px;
+    padding-left:38px;
+    margin:0 !important;
 }
 
-.admin-page .fedex-logo-text-orange{
-    color:#FF6600!important;
+/* Compact two-tone mark rendered with CSS; no HTML changes required. */
+body.admin-page > header > div:first-child > div:first-of-type::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:24px;
+    width:21px;
+    height:9px;
+    border-radius:1px;
+    background:linear-gradient(90deg,#6e55ff 0 76%,#ff6b2a 76% 100%);
+    box-shadow:0 0 0 1px rgba(255,255,255,.08);
 }
 
-.admin-page #global-search{
-    height:38px!important;
-    background:#F8FAFC!important;
-    border:1px solid #E2E8F0!important;
-    border-radius:11px!important;
-    font-size:12px!important;
-    color:#334155!important;
+body.admin-page > header > div:first-child > div:first-of-type::after{
+    content:"";
+    position:absolute;
+    left:38px;
+    bottom:7px;
+    width:82px;
+    height:1px;
+    background:rgba(255,255,255,.06);
 }
 
-.admin-page #global-search:focus{
-    background:#fff!important;
-    border-color:#8B5BCB!important;
-    box-shadow:0 0 0 3px rgba(77,20,140,.09)!important;
+body.admin-page > header > div:first-child > div:first-of-type{
+    font-size:0 !important;
+}
+
+body.admin-page > header > div:first-child > div:first-of-type .fedex-logo-text-purple,
+body.admin-page > header > div:first-child > div:first-of-type .fedex-logo-text-orange{
+    font-size:14px !important;
+    font-weight:800 !important;
+    letter-spacing:-.03em;
+    line-height:1;
+}
+
+body.admin-page > header > div:first-child > div:first-of-type .text-xs{
+    position:absolute;
+    left:38px;
+    top:30px;
+    margin:0 !important;
+    font-size:8px !important;
+    line-height:1 !important;
+    font-weight:500 !important;
+    letter-spacing:.13em !important;
+    color:#b9b5d8 !important;
+    text-transform:uppercase;
+}
+
+body.admin-page > header > div:first-child > .hidden.sm\:block{
+    display:none !important;
+}
+
+/* Existing DSS block is visually moved into the white header area. */
+body.admin-page > header > div:first-child > .hidden.sm\:flex{
+    position:absolute !important;
+    left:242px !important;
+    top:7px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    width:175px !important;
+    gap:0 !important;
+    margin:0 !important;
+    z-index:5;
+}
+
+body.admin-page > header > div:first-child > .hidden.sm\:flex .text-xs{
+    font-size:13px !important;
+    line-height:15px !important;
+    color:#111827 !important;
+    font-weight:700 !important;
+    letter-spacing:-.01em;
+}
+
+body.admin-page > header > div:first-child > .hidden.sm\:flex .text-\[10px\]{
+    font-size:8px !important;
+    line-height:9px !important;
+    color:#7a8499 !important;
+    letter-spacing:.08em !important;
+}
+
+/* Search bar */
+body.admin-page > header > div:nth-child(2){
+    position:absolute;
+    left:432px;
+    top:5px;
+    width:420px;
+    max-width:420px;
+    margin:0 !important;
+    z-index:3;
+}
+
+body.admin-page #global-search{
+    height:36px;
+    width:100%;
+    padding:0 38px 0 38px !important;
+    background:#f7f7fb !important;
+    border:1px solid #d9dbe7 !important;
+    border-radius:12px !important;
+    color:#4b5563;
+    font-size:12px !important;
+    box-shadow:none !important;
+    transition:border-color .2s ease,background .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+
+body.admin-page #global-search:hover{
+    background:#fff !important;
+    border-color:#cfd2df !important;
+}
+
+body.admin-page #global-search:focus{
+    background:#fff !important;
+    border-color:#7260ff !important;
+    box-shadow:0 0 0 3px rgba(77,64,230,.09) !important;
+}
+
+body.admin-page #global-search::placeholder{
+    color:#8a93a6;
+}
+
+body.admin-page > header > div:nth-child(2) .absolute.inset-y-0.left-0{
+    left:12px !important;
+    padding:0 !important;
+}
+
+body.admin-page > header > div:nth-child(2) .absolute.inset-y-0.right-0{
+    right:10px !important;
+    padding:0 !important;
+}
+
+body.admin-page > header > div:nth-child(2) .absolute.inset-y-0.right-0 span{
+    display:none !important;
+}
+
+/* Utilities: notification + avatar */
+body.admin-page > header > div:last-child{
+    position:absolute;
+    right:12px;
+    top:0;
+    height:50px;
+    margin:0 !important;
+    gap:9px !important;
+    display:flex !important;
+    align-items:center !important;
+}
+
+body.admin-page > header > div:last-child > div:first-child{
+    /* Date/time is positioned into the hero on desktop; see below. */
+    position:fixed;
+    top:82px;
+    right:max(16px, calc((100vw - 1382px)/2 + 16px));
+    display:flex !important;
+    z-index:40;
+    padding:0 !important;
+    color:#5f6f8b !important;
+}
+
+body.admin-page > header > div:last-child > div:first-child > div:first-child{
+    font-size:11px !important;
+    color:#5f6f8b !important;
+    line-height:1.3;
+}
+
+body.admin-page > header > div:last-child > div:first-child > div:last-child{
+    font-size:10px !important;
+    line-height:1.2;
+    color:#0f1e42 !important;
+    font-weight:600 !important;
+    text-align:right;
+}
+
+body.admin-page > header > div:last-child > div:nth-last-child(2){
+    display:none !important;
+}
+
+body.admin-page #notification-btn{
+    width:30px;
+    height:30px;
+    padding:0 !important;
+    border-radius:50%;
+    color:#68728a !important;
+    background:transparent !important;
+    transition:transform .18s ease,color .18s ease,background .18s ease;
+}
+
+body.admin-page #notification-btn:hover{
+    transform:translateY(-1px);
+    color:#4d40e6 !important;
+    background:#f1efff !important;
+}
+
+body.admin-page #notification-btn svg{
+    width:17px !important;
+    height:17px !important;
+}
+
+body.admin-page #notification-btn span{
+    width:15px !important;
+    height:15px !important;
+    top:-1px !important;
+    right:-2px !important;
+    font-size:8px !important;
+    border:2px solid #fff !important;
+    background:#ff6a2b !important;
+}
+
+body.admin-page #user-menu-btn{
+    height:34px;
+    padding:0 0 0 2px !important;
+    gap:5px !important;
+}
+
+body.admin-page #header-avatar{
+    width:30px !important;
+    height:30px !important;
+    border-radius:50%;
+    background:#6a4df5 !important;
+    font-size:10px !important;
+}
+
+body.admin-page #user-menu-btn svg{
+    width:12px !important;
+    height:12px !important;
+    color:#7a8496 !important;
 }
 
 /* ============================================================
-   OUTER APP LAYOUT
-   ------------------------------------------------------------
-   The current HTML closes the main flex wrapper before the
-   Recent Users / Recent Activity block. Instead of changing
-   HTML, we intentionally make that wrapper transparent and
-   lay the page sections out in normal document flow.
+   PAGE SHELL / SIDEBAR
    ============================================================ */
-
-.admin-page > .flex-1.flex.overflow-hidden{
-    display:block!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:auto!important;
-    overflow:visible!important;
+body.admin-page > .flex-1.flex.overflow-hidden{
+    height:calc(100vh - 50px) !important;
+    min-height:0 !important;
+    overflow:hidden !important;
 }
 
-/* SIDEBAR */
-.admin-page #sidebar{
-    position:fixed!important;
-    left:0!important;
-    top:64px!important;
-    bottom:0!important;
-    width:256px!important;
-    height:auto!important;
-    min-height:calc(100vh - 64px)!important;
-    z-index:80!important;
-    display:flex!important;
-    transform:none!important;
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    background:#18113C!important;
+body.admin-page #sidebar{
+    position:relative !important;
+    inset:auto !important;
+    transform:none !important;
+    width:220px !important;
+    min-width:220px !important;
+    max-width:220px !important;
+    height:calc(100vh - 50px) !important;
+    min-height:0 !important;
+    background:var(--admin-sidebar) !important;
+    color:#d5d2e9 !important;
+    border:0 !important;
+    box-shadow:none !important;
+    z-index:900 !important;
 }
 
-/* desktop: the hidden mobile transform must stay neutral */
-@media(min-width:1024px){
-    .admin-page #sidebar{
-        transform:none!important;
-    }
+body.admin-page #sidebar > div:first-child{
+    padding:16px 7px 0 !important;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:none;
 }
 
-/* MAIN DASHBOARD AREA */
-.admin-page > .flex-1.flex.overflow-hidden > main{
-    display:block!important;
-    width:calc(100% - 256px)!important;
-    max-width:none!important;
-    min-width:0!important;
-    min-height:calc(100vh - 64px)!important;
-    height:auto!important;
-    margin-left:256px!important;
-    padding:24px!important;
-    overflow:visible!important;
-    background:var(--admin-bg)!important;
+body.admin-page #sidebar > div:first-child::-webkit-scrollbar{
+    display:none;
+}
+
+body.admin-page #sidebar > div:first-child > div:first-child{
+    height:72px;
+    margin:0 0 18px !important;
+    padding:0 8px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    gap:10px !important;
+}
+
+body.admin-page #sidebar-avatar{
+    width:34px !important;
+    height:34px !important;
+    background:#6c52ee !important;
+    font-size:10px !important;
+    border:0 !important;
+}
+
+body.admin-page #sidebar .relative > span{
+    width:8px !important;
+    height:8px !important;
+    right:0 !important;
+    bottom:-1px !important;
+    border:2px solid var(--admin-sidebar) !important;
+}
+
+body.admin-page #sidebar-user-name{
+    color:#fff !important;
+    font-size:13px !important;
+    line-height:15px !important;
+    font-weight:700 !important;
+}
+
+body.admin-page #sidebar-user-role{
+    color:#b9b5d8 !important;
+    font-size:10px !important;
+    line-height:13px !important;
+}
+
+body.admin-page #sidebar .flex.items-center.space-x-1.mt-0\\:5{
+    margin-top:1px !important;
+}
+
+body.admin-page #sidebar .text-\[9px\]{
+    color:#8d89b3 !important;
+    font-size:9px !important;
+}
+
+body.admin-page #sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:4px !important;
+    margin:0 !important;
+}
+
+body.admin-page #sidebar nav a{
+    min-height:37px;
+    padding:0 12px !important;
+    border-radius:11px !important;
+    gap:10px !important;
+    color:#aaa8d0 !important;
+    font-size:12px !important;
+    line-height:1 !important;
+    font-weight:500 !important;
+    transition:background .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+
+body.admin-page #sidebar nav a svg{
+    width:16px !important;
+    height:16px !important;
+    flex:0 0 16px;
+    color:currentColor;
+}
+
+body.admin-page #sidebar nav a:hover{
+    color:#fff !important;
+    background:rgba(255,255,255,.055) !important;
+    transform:translateX(1px);
+}
+
+body.admin-page #sidebar nav a.bg-fedex-purple{
+    color:#fff !important;
+    background:#4835c5 !important;
+    box-shadow:0 4px 10px rgba(11,8,42,.16) !important;
+}
+
+/* Optional unread counter generated by existing / future JS. */
+body.admin-page #sidebar nav a[data-section="users"]::after{
+    content:"2";
+    margin-left:auto;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#ff6a2b;
+    color:#fff;
+    font-size:9px;
+    font-weight:800;
+}
+
+body.admin-page #sidebar > div:last-child{
+    padding:12px 7px 10px !important;
+    gap:8px !important;
+    background:linear-gradient(180deg,rgba(30,27,75,0),rgba(30,27,75,.22));
+}
+
+body.admin-page #sidebar > div:last-child > div:first-child{
+    padding:12px 10px 10px !important;
+    margin:0 !important;
+    border-radius:13px !important;
+    border:1px solid rgba(255,255,255,.07) !important;
+    background:rgba(255,255,255,.06) !important;
+}
+
+body.admin-page #sidebar > div:last-child .p-2{
+    width:30px;
+    height:30px;
+    padding:0 !important;
+    border-radius:9px !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(108,82,238,.28) !important;
+    color:#d8d2ff !important;
+}
+
+body.admin-page #sidebar > div:last-child .text-xs.font-bold{
+    font-size:11px !important;
+}
+
+body.admin-page #sidebar > div:last-child .text-\[10px\]{
+    font-size:9px !important;
+}
+
+body.admin-page #sidebar > div:last-child button{
+    height:27px;
+    padding:0 8px !important;
+    border-radius:9px !important;
+    font-size:10px !important;
+    background:#684cf4 !important;
+    box-shadow:0 5px 14px rgba(65,47,180,.22);
+    transition:transform .18s ease,box-shadow .18s ease;
+}
+
+body.admin-page #sidebar > div:last-child button:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 18px rgba(65,47,180,.26);
+}
+
+body.admin-page #sidebar > div:last-child > div:last-child{
+    padding:0 8px !important;
+    color:#8d89b3 !important;
+    font-size:8px !important;
+    line-height:1.4 !important;
 }
 
 /* ============================================================
-   SIDEBAR REFINEMENT
+   MAIN CONTENT CANVAS
    ============================================================ */
-
-.admin-page #sidebar > div:first-child{
-    padding:16px 12px!important;
+body.admin-page #admin-main{
+    position:relative;
+    flex:1 1 auto;
+    width:auto;
+    min-width:0;
+    height:100%;
+    padding:22px 0 40px !important;
+    margin:0 !important;
+    background:var(--admin-bg) !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    scrollbar-color:#d5d9e4 transparent;
 }
 
-.admin-page #sidebar nav{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:2px!important;
+body.admin-page #admin-main::-webkit-scrollbar{
+    width:9px;
 }
 
-.admin-page #sidebar nav a{
-    min-height:42px!important;
-    display:flex!important;
-    align-items:center!important;
-    padding:0 13px!important;
-    border-radius:11px!important;
-    font-size:12px!important;
-    line-height:1!important;
-    text-decoration:none!important;
-    transition:background .16s ease,color .16s ease!important;
+body.admin-page #admin-main::-webkit-scrollbar-thumb{
+    background:#d4d8e4;
+    border:3px solid var(--admin-bg);
+    border-radius:999px;
 }
 
-.admin-page #sidebar nav a:not(.bg-fedex-purple){
-    color:#B9BED0!important;
+body.admin-page #admin-main::-webkit-scrollbar-track{
+    background:transparent;
 }
 
-.admin-page #sidebar nav a:not(.bg-fedex-purple):hover{
-    color:#fff!important;
-    background:rgba(255,255,255,.055)!important;
+/* Every visual dashboard row is centered at the screenshot's width. */
+body.admin-page #admin-main > .hero-gradient,
+body.admin-page #admin-main > .grid:has(#kpi-total-users),
+body.admin-page #admin-main > #dashboard-content,
+body.admin-page #admin-main > .grid:has(#recent-users-table),
+body.admin-page #admin-main > #admin-module-view{
+    width:calc(100% - 32px) !important;
+    max-width:1382px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
 }
 
-.admin-page #sidebar nav a.bg-fedex-purple{
-    background:#4D148C!important;
-    color:#fff!important;
-    box-shadow:0 7px 18px rgba(77,20,140,.20)!important;
+body.admin-page #admin-main > .hero-gradient,
+body.admin-page #admin-main > .grid,
+body.admin-page #admin-main > #dashboard-content,
+body.admin-page #admin-main > #admin-module-view{
+    margin-top:0 !important;
+    margin-bottom:0 !important;
 }
 
-.admin-page #sidebar nav a svg{
-    flex:0 0 18px!important;
-    width:18px!important;
-    height:18px!important;
-}
-
-/* profile block */
-.admin-page #sidebar .bg-white\/5{
-    background:rgba(255,255,255,.055)!important;
-}
-
-.admin-page #sidebar .border-white\/10{
-    border-color:rgba(255,255,255,.10)!important;
+/* Vertical rhythm matches the supplied 1895×896 reference. */
+body.admin-page #admin-main{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:22px !important;
 }
 
 /* ============================================================
    HERO
    ============================================================ */
-
-.admin-page .hero-gradient{
-    width:100%!important;
-    min-height:276px!important;
-    padding:34px 38px!important;
-    border-radius:24px!important;
-    background:
-        linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 40%,#FAE8FF 100%)!important;
-    border:1px solid rgba(129,140,248,.18)!important;
-    box-shadow:0 4px 15px rgba(30,41,59,.04)!important;
+body.admin-page #admin-main > .hero-gradient{
+    position:relative;
+    height:221px !important;
+    min-height:221px !important;
+    max-height:221px !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    border:1px solid #dddaf6 !important;
+    border-radius:16px !important;
+    background:linear-gradient(105deg,#f0efff 0%,#efedff 64%,#e5e0ff 100%) !important;
+    box-shadow:0 1px 1px rgba(37,39,84,.03) !important;
 }
 
-.admin-page .hero-gradient > .relative.z-10{
-    min-height:205px!important;
-}
-
-.admin-page .hero-gradient h1{
-    margin:0!important;
-    font-size:42px!important;
-    line-height:1.08!important;
-    letter-spacing:-1.2px!important;
-    color:#111827!important;
-}
-
-.admin-page .hero-gradient h1 .text-fedex-orange{
-    color:#FF6600!important;
-}
-
-.admin-page .hero-gradient .text-\[11px\]{
-    font-size:11px!important;
-    letter-spacing:.18em!important;
-}
-
-.admin-page .hero-gradient p{
-    max-width:560px!important;
-    font-size:14px!important;
-    line-height:1.55!important;
-    color:#475569!important;
-}
-
-.admin-page .hero-gradient .space-y-3 > * + *{
-    margin-top:10px!important;
-}
-
-.admin-page .hero-gradient .pt-2{
-    padding-top:7px!important;
-}
-
-.admin-page .hero-gradient button{
-    min-height:42px!important;
-    padding:0 16px!important;
-    border-radius:10px!important;
-    font-size:12px!important;
-}
-
-.admin-page .hero-gradient .hero-gradient button:first-child{
-    background:#4D148C!important;
-}
-
-.admin-page .hero-gradient .drop-shadow-2xl{
-    filter:drop-shadow(0 22px 18px rgba(15,23,42,.18))!important;
-}
-
-/* ============================================================
-   KPI ROW
-   ============================================================ */
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5{
-    display:grid!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    gap:16px!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 > div{
-    min-width:0!important;
-    min-height:126px!important;
-    padding:17px!important;
-    border-radius:16px!important;
-    border:1px solid #E7EAF0!important;
-    box-shadow:0 4px 13px rgba(15,23,42,.035)!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 > div:hover{
-    box-shadow:0 8px 20px rgba(15,23,42,.07)!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 .w-10.h-10{
-    width:42px!important;
-    height:42px!important;
-    border-radius:12px!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 .text-2xl{
-    font-size:28px!important;
-    line-height:1!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 .text-xs.font-medium{
-    font-size:12px!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 .text-\[10px\]{
-    font-size:10px!important;
-}
-
-.admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5 .text-\[11px\]{
-    font-size:11px!important;
-}
-
-/* ============================================================
-   THREE ANALYTICS PANELS
-   ------------------------------------------------------------
-   The HTML currently has #dashboard-content around the first
-   three panels. Restore the intended 5 / 4 / 3 layout here.
-   ============================================================ */
-
-.admin-page #dashboard-content{
-    display:grid!important;
-    grid-template-columns:minmax(0,5fr) minmax(0,4fr) minmax(300px,3fr)!important;
-    gap:24px!important;
-    width:100%!important;
-    margin:24px 0!important;
-    align-items:stretch!important;
-}
-
-.admin-page #dashboard-content > div{
-    min-width:0!important;
-    width:auto!important;
-    margin:0!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
-    border-radius:16px!important;
-    border:1px solid #E7EAF0!important;
-    box-shadow:0 4px 13px rgba(15,23,42,.035)!important;
-}
-
-/* Override the old lg:col-span utilities only inside this grid. */
-.admin-page #dashboard-content > .lg\:col-span-5,
-.admin-page #dashboard-content > .lg\:col-span-4,
-.admin-page #dashboard-content > .lg\:col-span-3{
-    grid-column:auto!important;
-}
-
-/* panel sizing */
-.admin-page #dashboard-content > div{
-    min-height:300px!important;
-}
-
-.admin-page #dashboard-content > div:first-child{
-    min-height:300px!important;
-}
-
-.admin-page #dashboard-content > div:nth-child(2){
-    min-height:300px!important;
-}
-
-.admin-page #dashboard-content > div:nth-child(3){
-    min-height:300px!important;
-}
-
-/* chart card */
-.admin-page #userActivityChart{
-    display:block!important;
-    width:100%!important;
-    height:224px!important;
-    max-height:none!important;
-}
-
-.admin-page #userActivityChart{
-    min-height:224px!important;
-}
-
-/* region chart */
-.admin-page #regionDistributionChart{
-    display:block!important;
-    width:100%!important;
-    height:176px!important;
-}
-
-.admin-page #regionDistributionChart{
-    min-height:176px!important;
-}
-
-/* Chart containers */
-.admin-page #userActivityChart + *{
+body.admin-page #admin-main > .hero-gradient::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:-1px;
+    height:42px;
     pointer-events:none;
+    background:linear-gradient(180deg,transparent,rgba(255,255,255,.10));
 }
 
-.admin-page #userActivityChart,
-.admin-page #regionDistributionChart{
-    max-width:100%!important;
+body.admin-page #admin-main > .hero-gradient > .absolute{
+    opacity:.24 !important;
+    transform:scale(.85);
 }
 
-.admin-page #userActivityChart{
-    position:relative!important;
+body.admin-page #admin-main > .hero-gradient > .relative.z-10{
+    height:100%;
+    width:100%;
+    padding:30px 25px 28px 30px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:20px !important;
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:first-child{
+    max-width:610px !important;
+    margin:0 !important;
+    padding:0 !important;
+    z-index:5;
+}
+
+body.admin-page #admin-main > .hero-gradient .text-\[11px\] .uppercase,
+body.admin-page #admin-main > .hero-gradient .text-\[11px\]{
+    color:#5d49ff !important;
+    font-size:11px !important;
+    font-weight:800 !important;
+    letter-spacing:.14em !important;
+}
+
+body.admin-page #admin-main > .hero-gradient h1{
+    margin:5px 0 0 !important;
+    font-size:30px !important;
+    line-height:1.12 !important;
+    letter-spacing:-.035em !important;
+    color:#101827 !important;
+}
+
+body.admin-page #admin-main > .hero-gradient h1 span{
+    color:var(--admin-orange) !important;
+}
+
+body.admin-page #admin-main > .hero-gradient p{
+    margin-top:9px !important;
+    color:#67748e !important;
+    font-size:12px !important;
+    line-height:1.42 !important;
+    max-width:470px !important;
+}
+
+/* Hero buttons */
+body.admin-page #admin-main > .hero-gradient .flex.flex-wrap.items-center.gap-3{
+    margin-top:18px !important;
+    padding:0 !important;
+    gap:10px !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .flex.flex-wrap.items-center.gap-3 button{
+    height:39px;
+    padding:0 16px !important;
+    border-radius:12px !important;
+    font-size:11px !important;
+    font-weight:700 !important;
+    border:1px solid #d7d9ea !important;
+    box-shadow:none !important;
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+
+body.admin-page #admin-main > .hero-gradient .flex.flex-wrap.items-center.gap-3 button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 7px 15px rgba(64,55,150,.10) !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .flex.flex-wrap.items-center.gap-3 button:first-child{
+    background:#684bf6 !important;
+    border-color:#684bf6 !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .flex.flex-wrap.items-center.gap-3 button:not(:first-child){
+    background:rgba(255,255,255,.84) !important;
+    color:#4f43e5 !important;
+}
+
+/* Hero visual area */
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child{
+    position:relative;
+    width:640px !important;
+    height:100% !important;
+    min-width:640px !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+}
+
+/* Hide the old decorative SVG and draw a clean dashboard device with CSS. */
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:first-child{
+    position:absolute;
+    left:72px;
+    top:46px;
+    width:190px !important;
+    height:119px !important;
+    z-index:3;
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:first-child::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:16px;
+    background:#211e56;
+    box-shadow:0 12px 18px rgba(39,34,92,.22);
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:first-child::after{
+    content:"";
+    position:absolute;
+    left:14px;
+    top:14px;
+    width:162px;
+    height:88px;
+    border-radius:10px;
+    background:#fff;
+    box-shadow:inset 0 0 0 1px rgba(20,28,55,.04);
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:first-child svg{
+    display:none !important;
+}
+
+/* Three signal bubbles around the device. */
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child::before,
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    z-index:6;
+    box-shadow:0 8px 14px rgba(36,32,91,.14);
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child::before{
+    left:40px;
+    top:30px;
+    width:38px;
+    height:38px;
+    background:#674bf2;
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child::after{
+    left:220px;
+    top:42px;
+    width:36px;
+    height:36px;
+    background:#ff6a2b;
+}
+
+/* Existing mug becomes the green people indicator bubble. */
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:nth-child(2){
+    display:flex !important;
+    position:absolute !important;
+    left:44px !important;
+    bottom:32px !important;
+    width:29px !important;
+    height:29px !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:50% !important;
+    background:#13b88d !important;
+    box-shadow:0 8px 14px rgba(19,184,141,.17) !important;
+    transform:none !important;
+    z-index:7;
+    font-size:0 !important;
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:nth-child(2)::after{
+    content:"";
+    width:10px;
+    height:8px;
+    border:1.4px solid #fff;
+    border-radius:7px 7px 4px 4px;
+    position:absolute;
+    left:9px;
+    top:12px;
+}
+
+body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child > div:nth-child(2) span{
+    display:none !important;
+}
+
+/* Hero quote becomes the right-side message panel. */
+body.admin-page #admin-main > .hero-gradient .glass-quote{
+    position:absolute !important;
+    right:-1px !important;
+    left:auto !important;
+    bottom:-1px !important;
+    top:-1px !important;
+    width:194px !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:60px 23px 0 !important;
+    border:0 !important;
+    border-left:1px solid rgba(130,117,210,.18) !important;
+    border-radius:0 !important;
+    background:rgba(255,255,255,.16) !important;
+    box-shadow:none !important;
+    z-index:4;
+}
+
+body.admin-page #admin-main > .hero-gradient .glass-quote .text-fedex-purple{
+    color:#6a54f3 !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .glass-quote > div:first-child{
+    margin-bottom:18px !important;
+    font-size:35px !important;
+    line-height:.4 !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .glass-quote p{
+    margin:0 0 8px !important;
+    max-width:none !important;
+    font-size:12px !important;
+    line-height:1.35 !important;
+    color:#26314f !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .glass-quote p.text-fedex-purple{
+    color:#654cf4 !important;
+}
+
+body.admin-page #admin-main > .hero-gradient .glass-quote .w-8{
+    width:29px !important;
+    height:4px !important;
+    margin-top:16px !important;
+    background:#ff6a2b !important;
 }
 
 /* ============================================================
-   GUIDE USAGE
+   KPI CARDS — 5 across
    ============================================================ */
-
-.admin-page #guide-usage-list{
-    min-height:210px!important;
-    display:flex!important;
-    flex-direction:column!important;
-    justify-content:flex-start!important;
-    gap:15px!important;
+body.admin-page #admin-main > .grid:has(#kpi-total-users){
+    display:grid !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:14px !important;
+    height:96px !important;
+    min-height:96px !important;
 }
 
-.admin-page #guide-usage-list > div{
-    width:100%!important;
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div{
+    position:relative;
+    min-width:0;
+    height:96px !important;
+    padding:0 !important;
+    background:#fff !important;
+    border:1px solid var(--admin-border) !important;
+    border-radius:16px !important;
+    box-shadow:var(--admin-shadow) !important;
+    overflow:hidden;
+    transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+    animation:adminCardIn .45s cubic-bezier(.2,.65,.25,1) both;
 }
 
-.admin-page #guide-usage-list .text-xs{
-    font-size:12px!important;
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(1){animation-delay:.08s}
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(2){animation-delay:.12s}
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(3){animation-delay:.16s}
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(4){animation-delay:.20s}
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(5){animation-delay:.24s}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:hover{
+    transform:translateY(-3px);
+    border-color:#d5d8e7 !important;
+    box-shadow:0 9px 24px rgba(39,45,79,.10) !important;
 }
 
-.admin-page #guide-usage-list .h-2{
-    height:8px!important;
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > div:first-child{
+    position:absolute;
+    left:18px;
+    top:21px;
+    width:30px !important;
+    height:30px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border-radius:11px !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.admin-page #guide-usage-list .w-4{
-    width:20px!important;
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > div:first-child svg{
+    width:16px !important;
+    height:16px !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(1) > div:first-child{
+    background:#ece8ff !important;
+    color:#6650ec !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(2) > div:first-child{
+    background:#e6fbf5 !important;
+    color:#02b991 !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(3) > div:first-child{
+    background:#fff1eb !important;
+    color:#ff6a2b !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(4) > div:first-child{
+    background:#eef2ff !important;
+    color:#27365f !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(5) > div:first-child{
+    background:#f2e9ff !important;
+    color:#a153ff !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > p:first-of-type{
+    position:absolute;
+    left:70px;
+    top:17px;
+    margin:0 !important;
+    color:#65718a !important;
+    font-size:10px !important;
+    line-height:12px !important;
+    font-weight:500 !important;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > div:nth-of-type(2){
+    position:absolute;
+    left:70px;
+    top:38px;
+    margin:0 !important;
+    display:flex !important;
+    align-items:baseline !important;
+    gap:7px !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > div:nth-of-type(2) > span:first-child{
+    font-size:23px !important;
+    line-height:25px !important;
+    font-weight:800 !important;
+    letter-spacing:-.02em;
+    color:#141821 !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > div:nth-of-type(2) > span:last-child{
+    margin:0 !important;
+    padding:0 !important;
+    background:transparent !important;
+    color:#00ae82 !important;
+    font-size:10px !important;
+    line-height:12px !important;
+    font-weight:700 !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div:nth-child(4) > div:nth-of-type(2) > span:last-child{
+    color:#70798c !important;
+}
+
+body.admin-page #admin-main > .grid:has(#kpi-total-users) > div > p:last-child{
+    position:absolute;
+    left:70px;
+    top:67px;
+    margin:0 !important;
+    color:#7e8799 !important;
+    font-size:9px !important;
+    line-height:11px !important;
 }
 
 /* ============================================================
-   REGION LEGEND
+   ANALYTICS GRID — 3 equal columns
    ============================================================ */
-
-.admin-page #region-legend{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:9px!important;
+body.admin-page #dashboard-content{
+    position:relative;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:18px !important;
+    height:292px !important;
+    min-height:292px !important;
+    max-height:292px !important;
 }
 
-.admin-page #region-legend > div{
-    min-height:24px!important;
+body.admin-page #dashboard-content > div{
+    grid-column:span 1 !important;
+    width:auto !important;
+    min-width:0;
+    height:292px !important;
+    min-height:292px !important;
+    padding:19px !important;
+    border:1px solid var(--admin-border) !important;
+    border-radius:16px !important;
+    background:#fff !important;
+    box-shadow:var(--admin-shadow) !important;
+    overflow:hidden !important;
+    animation:adminCardIn .48s cubic-bezier(.2,.65,.25,1) both;
+    transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
 }
 
-.admin-page #region-legend .text-xs{
-    font-size:11px!important;
+body.admin-page #dashboard-content > div:nth-child(1){animation-delay:.26s}
+body.admin-page #dashboard-content > div:nth-child(2){animation-delay:.32s}
+body.admin-page #dashboard-content > div:nth-child(3){animation-delay:.38s}
+
+body.admin-page #dashboard-content > div:hover{
+    transform:translateY(-3px);
+    border-color:#d7d9e6 !important;
+    box-shadow:0 10px 24px rgba(44,49,83,.09) !important;
 }
 
-/* ============================================================
-   RECENT USERS + RECENT ACTIVITY
-   ------------------------------------------------------------
-   These blocks sit outside <main> in the current HTML. We keep
-   them in normal document flow and align them to the same
-   7 / 5 composition.
-   ============================================================ */
-
-.admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6{
-    display:grid!important;
-    grid-template-columns:minmax(0,7fr) minmax(0,5fr)!important;
-    gap:24px!important;
-    width:calc(100% - 256px)!important;
-    margin-left:256px!important;
-    padding:0 24px 24px!important;
-    align-items:stretch!important;
+body.admin-page #dashboard-content h3{
+    margin:0 !important;
+    color:#101725 !important;
+    font-size:13px !important;
+    line-height:17px !important;
+    font-weight:800 !important;
+    letter-spacing:-.01em;
 }
 
-.admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6 > div{
-    min-width:0!important;
-    width:auto!important;
-    grid-column:auto!important;
-    min-height:250px!important;
-    border-radius:16px!important;
-    border:1px solid #E7EAF0!important;
-    box-shadow:0 4px 13px rgba(15,23,42,.035)!important;
+body.admin-page #dashboard-content h3 span{
+    color:#8c96a8 !important;
+    font-size:10px !important;
+    font-weight:400 !important;
 }
 
-/* kill old span utilities only for this row */
-.admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6 > .lg\:col-span-7,
-.admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6 > .lg\:col-span-5{
-    grid-column:auto!important;
+body.admin-page #dashboard-content a{
+    color:#654cf4 !important;
+    font-size:11px !important;
+    font-weight:600 !important;
+    text-decoration:none !important;
+    transition:color .18s ease,transform .18s ease;
 }
 
-.admin-page #recent-users-table{
-    width:100%!important;
-    table-layout:auto!important;
+body.admin-page #dashboard-content a:hover{
+    color:#4936c8 !important;
+    transform:translateX(2px);
 }
 
-.admin-page #recent-users-table th{
-    white-space:nowrap!important;
-    font-size:10px!important;
+/* ---------------- User Activity ---------------- */
+body.admin-page #dashboard-content > div:nth-child(1) > div:first-child > div:first-child{
+    min-height:26px;
+    margin:0 0 4px !important;
 }
 
-.admin-page #recent-users-table td{
-    white-space:nowrap!important;
-    font-size:11px!important;
+body.admin-page #dashboard-content > div:nth-child(1) > div:first-child > div:first-child > div{
+    gap:14px !important;
+    color:#6b7488;
+    font-size:10px !important;
 }
 
-/* recent activity typography */
-.admin-page #recent-activity-body{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:15px!important;
+body.admin-page #dashboard-content > div:nth-child(1) > div:first-child > div:first-child > div span{
+    font-size:10px !important;
 }
 
-.admin-page #recent-activity-body .text-xs{
-    font-size:11px!important;
+body.admin-page #dashboard-content > div:nth-child(1) > div:first-child > div:first-child > div span span{
+    width:10px !important;
+    height:10px !important;
+    margin-right:5px !important;
 }
 
-.admin-page #recent-activity-body .text-\[10px\]{
-    font-size:10px!important;
+body.admin-page #dashboard-content > div:nth-child(1) .h-56{
+    height:224px !important;
+    position:relative;
 }
 
-/* ============================================================
-   DYNAMIC MANAGEMENT VIEW
-   ============================================================ */
-
-.admin-page #admin-module-view{
-    width:calc(100% - 256px)!important;
-    margin-left:256px!important;
-    padding:0 24px 28px!important;
+body.admin-page #userActivityChart{
+    display:block;
+    width:100% !important;
+    height:100% !important;
 }
 
-.admin-page #admin-module-view.hidden{
-    display:none!important;
+/* ---------------- Guide Usage ---------------- */
+body.admin-page #dashboard-content > div:nth-child(2) > div:first-child > div:first-child{
+    margin-bottom:7px !important;
 }
 
-.admin-page #admin-module-view:not(.hidden){
-    display:block!important;
+body.admin-page #guide-usage-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px !important;
+    margin-top:0 !important;
 }
 
-.admin-page #admin-module-view > div{
-    border-radius:16px!important;
-    border:1px solid #E7EAF0!important;
-    box-shadow:0 4px 13px rgba(15,23,42,.035)!important;
+body.admin-page #guide-usage-list > div{
+    min-width:0;
+    animation:guideRowIn .42s ease both;
 }
 
-/* ============================================================
-   USER MANAGEMENT MODULE
-   ============================================================ */
+body.admin-page #guide-usage-list > div:nth-child(1){animation-delay:.46s}
+body.admin-page #guide-usage-list > div:nth-child(2){animation-delay:.51s}
+body.admin-page #guide-usage-list > div:nth-child(3){animation-delay:.56s}
+body.admin-page #guide-usage-list > div:nth-child(4){animation-delay:.61s}
+body.admin-page #guide-usage-list > div:nth-child(5){animation-delay:.66s}
 
-.admin-page .admin-users-toolbar{
+body.admin-page #guide-usage-list > div > div:first-child{
+    margin-bottom:4px !important;
+    gap:8px !important;
+}
+
+body.admin-page #guide-usage-list > div > div:first-child > span:first-child{
+    min-width:0;
+    color:#162035 !important;
+    font-size:10px !important;
+    line-height:13px !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+body.admin-page #guide-usage-list > div > div:first-child > span:last-child{
+    color:#111827 !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+}
+
+body.admin-page #guide-usage-list > div > div:first-child > span:first-child > span{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:19px !important;
+    height:19px !important;
+    margin-right:7px !important;
+    border-radius:50%;
+    background:#eef0f6 !important;
+    color:#748097 !important;
+    font-size:9px !important;
+}
+
+body.admin-page #guide-usage-list > div > div:last-child{
+    width:100%;
+    height:5px !important;
+    background:#e7e8f0 !important;
+    border-radius:999px !important;
+    overflow:hidden;
+}
+
+body.admin-page #guide-usage-list > div > div:last-child > div{
+    height:100% !important;
+    border-radius:999px !important;
+    background:#674cf3 !important;
+    transform-origin:left center;
+    animation:guideBarIn .9s cubic-bezier(.2,.75,.25,1) both;
+}
+
+/* ---------------- Region distribution ---------------- */
+body.admin-page #dashboard-content > div:nth-child(3){
+    position:relative;
+}
+
+body.admin-page #dashboard-content > div:nth-child(3) > div:first-child > div:first-child{
+    position:relative;
+    display:block !important;
+    min-height:37px;
+    margin-bottom:0 !important;
+}
+
+body.admin-page #dashboard-content > div:nth-child(3) > div:first-child > div:first-child h3::after{
+    content:"All regions";
+    display:block;
+    margin-top:1px;
+    color:#8b95a8;
+    font-size:9px;
+    font-weight:400;
+    line-height:12px;
+}
+
+body.admin-page #region-filter{
+    display:none !important;
+}
+
+body.admin-page #dashboard-content > div:nth-child(3) .relative.h-44{
+    position:relative !important;
+    display:block !important;
+    width:100% !important;
+    height:184px !important;
+    margin:0 !important;
+}
+
+body.admin-page #regionDistributionChart{
+    position:absolute !important;
+    left:1px;
+    top:26px;
+    width:145px !important;
+    height:145px !important;
+}
+
+body.admin-page #dashboard-content > div:nth-child(3) .absolute.inset-0{
+    position:absolute !important;
+    left:1px !important;
+    top:26px !important;
+    width:145px !important;
+    height:145px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center;
+}
+
+body.admin-page #dashboard-content > div:nth-child(3) .absolute.inset-0 span:first-child{
+    font-size:22px !important;
+    line-height:22px !important;
+    font-weight:800 !important;
+    color:#161c29 !important;
+}
+
+body.admin-page #dashboard-content > div:nth-child(3) .absolute.inset-0 span:last-child{
+    margin-top:4px;
+    font-size:8px !important;
+    line-height:10px !important;
+    color:#8b95a8 !important;
+}
+
+body.admin-page #region-legend{
+    position:absolute !important;
+    right:0;
+    top:57px;
+    width:199px;
+    margin:0 !important;
+    display:flex;
+    flex-direction:column;
+    gap:10px !important;
+}
+
+body.admin-page #region-legend > div{
+    min-width:0;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:16px;
-    margin-bottom:18px;
+    gap:8px;
+    color:#111827;
+    font-size:11px !important;
 }
 
-.admin-page .admin-users-toolbar strong{
-    color:#10134F!important;
-    font-size:18px!important;
+body.admin-page #region-legend > div > span:first-child{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    color:#1a2231 !important;
+    font-size:11px !important;
 }
 
-.admin-page .admin-users-toolbar input{
-    width:300px!important;
-    height:40px!important;
-    border:1px solid #E1E2EE!important;
-    border-radius:10px!important;
-    padding:0 12px!important;
-    color:#10134F!important;
-    font-size:11px!important;
-    outline:none!important;
+body.admin-page #region-legend > div > span:first-child > span{
+    width:9px !important;
+    height:9px !important;
+    margin-right:8px !important;
 }
 
-.admin-page .admin-users-toolbar input:focus{
-    border-color:#8D63D8!important;
-    box-shadow:0 0 0 3px #F0E9FF!important;
+body.admin-page #region-legend > div > div{
+    display:flex;
+    gap:9px !important;
+    align-items:baseline;
 }
 
-.admin-page .admin-users-table-wrap{
-    width:100%!important;
-    overflow:auto!important;
-    border:1px solid #E7E8F3!important;
-    border-radius:12px!important;
-    background:#fff!important;
+body.admin-page #region-legend > div > div span:first-child{
+    font-size:11px !important;
+    font-weight:700 !important;
+    color:#111827 !important;
 }
 
-.admin-page .admin-users-table{
-    width:100%!important;
-    min-width:780px!important;
-    border-collapse:collapse!important;
-}
-
-.admin-page .admin-users-table th{
-    padding:13px 14px!important;
-    background:#FAFAFE!important;
-    color:#777A99!important;
-    text-align:left!important;
-    font-size:9px!important;
-    text-transform:uppercase!important;
-    letter-spacing:.05em!important;
-}
-
-.admin-page .admin-users-table td{
-    border-top:1px solid #E7E8F3!important;
-    padding:13px 14px!important;
-    color:#10134F!important;
-    font-size:11px!important;
-}
-
-.admin-page .admin-users-table td strong{
-    font-size:12px!important;
-}
-
-.admin-page .admin-users-table td small{
-    margin-top:4px!important;
-    color:#777A99!important;
-    font-size:9px!important;
-}
-
-.admin-page .admin-role-badge{
-    display:inline-flex!important;
-    align-items:center!important;
-    min-height:28px!important;
-    padding:0 10px!important;
-    border-radius:999px!important;
-    background:#F1E8FB!important;
-    color:#4D148C!important;
-    font-size:10px!important;
-    font-weight:750!important;
-}
-
-.admin-page .admin-user-status{
-    display:inline-flex!important;
-    border-radius:20px!important;
-    padding:5px 9px!important;
-    font-size:9px!important;
-    font-weight:800!important;
-}
-
-.admin-page .admin-user-status.active{
-    background:#E9F8EF!important;
-    color:#16834B!important;
-}
-
-.admin-page .admin-user-status.inactive{
-    background:#F1F1F5!important;
-    color:#777A99!important;
-}
-
-.admin-page .admin-user-actions{
-    display:flex!important;
-    align-items:center!important;
-    gap:8px!important;
-}
-
-.admin-page .admin-edit-user,
-.admin-page .admin-delete-user{
-    display:inline-flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    gap:6px!important;
-    min-height:34px!important;
-    padding:0 11px!important;
-    border-radius:9px!important;
-    font-size:11px!important;
-    font-weight:750!important;
-}
-
-.admin-page .admin-edit-user{
-    border:1px solid #D9C9EB!important;
-    background:#F8F2FF!important;
-    color:#4D148C!important;
-}
-
-.admin-page .admin-delete-user{
-    border:1px solid #F0D1D9!important;
-    background:#FFF7F8!important;
-    color:#B0445B!important;
+body.admin-page #region-legend > div > div span:last-child{
+    font-size:10px !important;
+    color:#8490a4 !important;
 }
 
 /* ============================================================
-   USER MODAL
+   RECENT TABLES — two equal columns
    ============================================================ */
-
-.admin-page .admin-modal{
-    position:fixed!important;
-    inset:0!important;
-    z-index:9999!important;
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    padding:24px!important;
-    background:rgba(20,12,38,.58)!important;
-    backdrop-filter:blur(12px)!important;
-    opacity:0!important;
-    visibility:hidden!important;
-    pointer-events:none!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table){
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:18px !important;
+    min-height:355px;
 }
 
-.admin-page .admin-modal.show{
-    opacity:1!important;
-    visibility:visible!important;
-    pointer-events:auto!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table) > div{
+    grid-column:span 1 !important;
+    height:355px !important;
+    min-height:355px !important;
+    padding:0 !important;
+    border:1px solid var(--admin-border) !important;
+    border-radius:16px !important;
+    background:#fff !important;
+    box-shadow:var(--admin-shadow) !important;
+    overflow:hidden !important;
 }
 
-.admin-page .admin-modal-card{
-    width:min(620px,100%)!important;
-    max-height:calc(100vh - 48px)!important;
-    overflow:auto!important;
-    border-radius:18px!important;
-    background:#fff!important;
-    box-shadow:0 30px 90px rgba(35,22,70,.28)!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table) > div:nth-child(2){
+    padding:0 !important;
 }
 
-.admin-page .admin-modal-header{
-    display:flex!important;
-    justify-content:space-between!important;
-    gap:16px!important;
-    padding:22px 24px 18px!important;
-    border-bottom:1px solid #EEEAF4!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table) > div:hover{
+    box-shadow:0 10px 24px rgba(44,49,83,.08) !important;
 }
 
-.admin-page .admin-modal-close{
-    width:35px!important;
-    height:35px!important;
-    border:0!important;
-    border-radius:10px!important;
-    background:#F3F1F8!important;
-    color:#68647B!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table) .p-5{
+    padding:15px 19px !important;
 }
 
-.admin-page #userForm{
-    padding:22px 24px 24px!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table) h3{
+    margin:0 !important;
+    color:#101725 !important;
+    font-size:13px !important;
+    line-height:17px !important;
+    font-weight:800 !important;
 }
 
-.admin-page .admin-form-grid{
-    display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:16px!important;
+body.admin-page #admin-main > .grid:has(#recent-users-table) a{
+    color:#654cf4 !important;
+    font-size:11px !important;
+    font-weight:600 !important;
 }
 
-.admin-page .admin-form-field{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:7px!important;
+body.admin-page #recent-users-table{
+    width:100% !important;
+    border-collapse:collapse !important;
 }
 
-.admin-page .admin-form-field-full{
-    grid-column:1/-1!important;
+body.admin-page #recent-users-table thead tr{
+    height:33px;
+    background:#fafaff !important;
+    border-top:1px solid #eceef5 !important;
+    border-bottom:1px solid #e0e3ed !important;
 }
 
-.admin-page .admin-form-field > label{
-    color:#343565!important;
-    font-size:12px!important;
-    font-weight:700!important;
+body.admin-page #recent-users-table thead th{
+    height:33px;
+    padding:0 15px !important;
+    color:#77839b !important;
+    font-size:8px !important;
+    line-height:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    text-transform:uppercase;
+    white-space:nowrap;
 }
 
-.admin-page .admin-form-field input,
-.admin-page .admin-form-field select{
-    width:100%!important;
-    min-height:42px!important;
-    border:1px solid #DFDCE8!important;
-    border-radius:10px!important;
-    background:#fff!important;
-    color:#343565!important;
-    padding:0 12px!important;
-    font-size:12px!important;
-    outline:none!important;
+body.admin-page #recent-users-table tbody tr{
+    height:55px;
+    border-bottom:1px solid #e4e6ef !important;
+    transition:background .18s ease,transform .18s ease;
 }
 
-.admin-page .admin-checkbox-field{
-    display:flex!important;
-    flex-direction:row!important;
-    align-items:center!important;
-    gap:12px!important;
-    padding:13px 14px!important;
-    border:1px solid #E4DFEB!important;
-    border-radius:12px!important;
-    background:#FBFAFF!important;
+body.admin-page #recent-users-table tbody tr:hover{
+    background:#fbfaff !important;
 }
 
-.admin-page .admin-checkbox-field input{
-    width:18px!important;
-    height:18px!important;
-    min-height:18px!important;
-    accent-color:#4D148C!important;
+body.admin-page #recent-users-table tbody td{
+    padding:0 15px !important;
+    color:#344056 !important;
+    font-size:10px !important;
+    line-height:13px !important;
+    white-space:nowrap;
 }
 
-.admin-page .admin-checkbox-field strong{
-    color:#343565!important;
-    font-size:12px!important;
+body.admin-page #recent-users-table tbody td:first-child p:first-child{
+    font-size:11px !important;
+    line-height:14px !important;
+    color:#101827 !important;
+    font-weight:700 !important;
 }
 
-.admin-page .admin-checkbox-field small{
-    color:#858196!important;
-    font-size:11px!important;
+body.admin-page #recent-users-table tbody td:first-child p:last-child{
+    margin-top:2px !important;
+    font-size:9px !important;
+    line-height:11px !important;
+    color:#8b95a8 !important;
 }
 
-.admin-page .admin-modal-footer{
-    display:flex!important;
-    justify-content:flex-end!important;
-    gap:10px!important;
-    margin-top:24px!important;
-    padding-top:18px!important;
-    border-top:1px solid #EEEAF4!important;
+body.admin-page #recent-users-table tbody td .w-7{
+    width:28px !important;
+    height:28px !important;
+    font-size:9px !important;
+    flex:0 0 28px;
 }
 
-.admin-page .admin-modal-cancel,
-.admin-page .admin-modal-save{
-    min-height:42px!important;
-    padding:0 18px!important;
-    border-radius:10px!important;
-    font-size:12px!important;
-    font-weight:700!important;
+/* role/status pills */
+body.admin-page #recent-users-table tbody td span.inline-block{
+    min-height:19px;
+    padding:2px 9px !important;
+    border-radius:999px !important;
+    font-size:8px !important;
+    line-height:13px !important;
+    font-weight:600 !important;
+    border:1px solid currentColor;
+    background:#fff !important;
 }
 
-.admin-page .admin-modal-cancel{
-    border:1px solid #DED9E9!important;
-    background:#fff!important;
-    color:#68647B!important;
+/* Recent activity feed */
+body.admin-page #admin-main > .grid:has(#recent-users-table) > div:nth-child(2) > div:first-child{
+    padding:15px 19px !important;
 }
 
-.admin-page .admin-modal-save{
-    border:0!important;
-    background:#4D148C!important;
-    color:#fff!important;
+body.admin-page #recent-activity-body{
+    display:flex;
+    flex-direction:column;
+    gap:0 !important;
+}
+
+body.admin-page #recent-activity-body > div{
+    min-height:55px;
+    padding:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    border-bottom:1px solid #e4e6ef;
+    animation:activityRowIn .44s ease both;
+    transition:background .18s ease,padding-left .18s ease;
+}
+
+body.admin-page #recent-activity-body > div:hover{
+    background:#fbfaff;
+    padding-left:4px !important;
+}
+
+body.admin-page #recent-activity-body > div:nth-child(1){animation-delay:.64s}
+body.admin-page #recent-activity-body > div:nth-child(2){animation-delay:.70s}
+body.admin-page #recent-activity-body > div:nth-child(3){animation-delay:.76s}
+body.admin-page #recent-activity-body > div:nth-child(4){animation-delay:.82s}
+body.admin-page #recent-activity-body > div:nth-child(5){animation-delay:.88s}
+
+body.admin-page #recent-activity-body > div > div:first-child{
+    width:28px !important;
+    height:28px !important;
+    flex:0 0 28px;
+    margin:0 !important;
+    border-radius:9px !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+body.admin-page #recent-activity-body > div > div:first-child i{
+    font-size:11px !important;
+}
+
+body.admin-page #recent-activity-body > div > div:nth-child(2){
+    min-width:0;
+}
+
+body.admin-page #recent-activity-body > div > div:nth-child(2) > div{
+    gap:8px !important;
+}
+
+body.admin-page #recent-activity-body > div > div:nth-child(2) p:first-child{
+    font-size:10px !important;
+    line-height:13px !important;
+    color:#111827 !important;
+    font-weight:700 !important;
+}
+
+body.admin-page #recent-activity-body > div > div:nth-child(2) span{
+    font-size:9px !important;
+    line-height:11px !important;
+    color:#8791a4 !important;
+}
+
+body.admin-page #recent-activity-body > div > div:nth-child(2) p:last-child{
+    margin-top:2px !important;
+    font-size:9px !important;
+    line-height:12px !important;
+    color:#7c879b !important;
+}
+
+body.admin-page #recent-activity-body > div > div:nth-child(2) p:last-child .font-medium{
+    color:#1d2638 !important;
 }
 
 /* ============================================================
-   HIDDEN STATES
+   MODULE VIEW — preserve functionality while matching console
    ============================================================ */
-
-.admin-page .hidden{
-    /* Tailwind handles hidden. Keep it intact. */
+body.admin-page #admin-module-view{
+    min-height:400px;
 }
 
-.admin-page .admin-modal[aria-hidden="true"]{
-    opacity:0!important;
-    visibility:hidden!important;
-    pointer-events:none!important;
+body.admin-page #admin-module-view .bg-white{
+    border:1px solid var(--admin-border) !important;
+    border-radius:16px !important;
+    box-shadow:var(--admin-shadow) !important;
+}
+
+body.admin-page #module-kicker{
+    font-size:9px !important;
+    letter-spacing:.14em !important;
+    color:#654cf4 !important;
+}
+
+body.admin-page #module-title{
+    font-size:20px !important;
+}
+
+/* ============================================================
+   DROPDOWN / TOAST / MODAL SUPPORT STYLES
+   ============================================================ */
+body.admin-page #user-dropdown{
+    width:210px !important;
+    margin-top:8px !important;
+    padding:5px 0 !important;
+    border:1px solid #e2e4ec !important;
+    border-radius:13px !important;
+    box-shadow:0 16px 35px rgba(27,33,60,.12) !important;
+    animation:dropdownIn .16s ease both;
+}
+
+body.admin-page #user-dropdown a,
+body.admin-page #user-dropdown button{
+    min-height:32px;
+    padding:0 13px !important;
+    font-size:10px !important;
+}
+
+body.admin-page #toast{
+    right:18px !important;
+    bottom:18px !important;
+    border-radius:11px !important;
+    box-shadow:0 10px 28px rgba(22,27,48,.18) !important;
+}
+
+body.admin-page .admin-modal{
+    backdrop-filter:blur(4px);
+}
+
+body.admin-page .admin-modal-card{
+    border-radius:18px;
+    box-shadow:0 20px 55px rgba(20,24,47,.18);
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes adminCardIn{
+    0%{opacity:0;transform:translateY(9px) scale(.995)}
+    100%{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes guideRowIn{
+    0%{opacity:0;transform:translateX(8px)}
+    100%{opacity:1;transform:translateX(0)}
+}
+
+@keyframes guideBarIn{
+    0%{transform:scaleX(0)}
+    100%{transform:scaleX(1)}
+}
+
+@keyframes activityRowIn{
+    0%{opacity:0;transform:translateX(8px)}
+    100%{opacity:1;transform:translateX(0)}
+}
+
+@keyframes dropdownIn{
+    0%{opacity:0;transform:translateY(-4px) scale(.98)}
+    100%{opacity:1;transform:translateY(0) scale(1)}
 }
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-
-@media(max-width:1280px){
-    .admin-page > header > div:first-child{
-        width:240px!important;
-        flex-basis:240px!important;
+@media (max-width:1500px){
+    body.admin-page #admin-main > .hero-gradient,
+    body.admin-page #admin-main > .grid:has(#kpi-total-users),
+    body.admin-page #admin-main > #dashboard-content,
+    body.admin-page #admin-main > .grid:has(#recent-users-table),
+    body.admin-page #admin-main > #admin-module-view{
+        width:calc(100% - 28px) !important;
+        max-width:none !important;
     }
 
-    .admin-page #sidebar{
-        width:240px!important;
+    body.admin-page > header > div:nth-child(2){
+        left:410px;
+        width:385px;
+        max-width:385px;
     }
 
-    .admin-page > .flex-1.flex.overflow-hidden > main{
-        width:calc(100% - 240px)!important;
-        margin-left:240px!important;
+    body.admin-page > header > div:first-child > .hidden.sm\:flex{
+        left:232px !important;
     }
 
-    .admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6,
-    .admin-page #admin-module-view{
-        width:calc(100% - 240px)!important;
-        margin-left:240px!important;
+    body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child{
+        width:560px !important;
+        min-width:560px !important;
     }
 
-    .admin-page #dashboard-content{
-        grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)!important;
-    }
-
-    .admin-page #dashboard-content > div:nth-child(3){
-        grid-column:1/-1!important;
-    }
-}
-
-@media(max-width:1023px){
-    .admin-page > header > div:first-child{
-        width:auto!important;
-        flex:0 0 auto!important;
-    }
-
-    .admin-page > .flex-1.flex.overflow-hidden{
-        display:block!important;
-    }
-
-    .admin-page #sidebar{
-        width:270px!important;
-        top:64px!important;
-        transform:translateX(-100%)!important;
-    }
-
-    .admin-page #sidebar.-translate-x-full{
-        transform:translateX(-100%)!important;
-    }
-
-    .admin-page #sidebar:not(.-translate-x-full){
-        transform:translateX(0)!important;
-    }
-
-    .admin-page > .flex-1.flex.overflow-hidden > main{
-        width:100%!important;
-        margin-left:0!important;
-        padding:18px!important;
-    }
-
-    .admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6,
-    .admin-page #admin-module-view{
-        width:100%!important;
-        margin-left:0!important;
-        padding-left:18px!important;
-        padding-right:18px!important;
-    }
-
-    .admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5{
-        grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    }
-
-    .admin-page #dashboard-content{
-        grid-template-columns:1fr!important;
-    }
-
-    .admin-page #dashboard-content > div:nth-child(3){
-        grid-column:auto!important;
-    }
-
-    .admin-page > .grid.grid-cols-1.lg\:grid-cols-12.gap-6{
-        grid-template-columns:1fr!important;
+    body.admin-page #admin-main > .hero-gradient .glass-quote{
+        width:176px !important;
+        padding-left:19px !important;
+        padding-right:18px !important;
     }
 }
 
-@media(max-width:700px){
-    .admin-page > header{
-        padding:0 10px!important;
+@media (max-width:1180px){
+    body.admin-page > header > div:nth-child(2){
+        left:360px;
+        width:320px;
+        max-width:320px;
     }
 
-    .admin-page > header > div:nth-child(2){
-        max-width:none!important;
-        margin:0 10px!important;
+    body.admin-page > header > div:first-child > .hidden.sm\:flex{
+        left:228px !important;
+        width:132px !important;
     }
 
-    .admin-page > header .hidden.xl\:flex{
-        display:none!important;
+    body.admin-page #sidebar{
+        width:220px !important;
+        min-width:220px !important;
     }
 
-    .admin-page .hero-gradient{
-        min-height:auto!important;
-        padding:24px!important;
+    body.admin-page #dashboard-content{
+        grid-template-columns:1fr 1fr !important;
+        height:auto !important;
+        max-height:none !important;
     }
 
-    .admin-page .hero-gradient h1{
-        font-size:32px!important;
+    body.admin-page #dashboard-content > div{
+        height:292px !important;
     }
 
-    .admin-page .hero-gradient p{
-        font-size:12px!important;
+    body.admin-page #dashboard-content > div:nth-child(3){
+        grid-column:1 / -1 !important;
     }
 
-    .admin-page .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-5{
-        grid-template-columns:1fr!important;
+    body.admin-page #admin-main > .grid:has(#recent-users-table){
+        grid-template-columns:1fr !important;
+        min-height:0;
     }
 
-    .admin-page .admin-form-grid{
-        grid-template-columns:1fr!important;
+    body.admin-page #admin-main > .grid:has(#recent-users-table) > div{
+        height:auto !important;
+        min-height:355px !important;
     }
 
-    .admin-page .admin-form-field-full{
-        grid-column:auto!important;
+    body.admin-page > header > div:last-child > div:first-child{
+        display:none !important;
+    }
+}
+
+@media (max-width:900px){
+    body.admin-page{
+        overflow:auto;
     }
 
-    .admin-page .admin-users-toolbar{
-        align-items:stretch!important;
-        flex-direction:column!important;
+    body.admin-page > header{
+        position:sticky !important;
     }
 
-    .admin-page .admin-users-toolbar input{
-        width:100%!important;
+    body.admin-page > header > div:first-child{
+        width:64px !important;
+        min-width:64px !important;
+        padding:0 !important;
     }
 
-    .admin-page .admin-modal{
-        padding:12px!important;
+    body.admin-page > header > div:first-child > div:first-of-type{
+        padding:0 !important;
+        justify-content:center;
     }
 
-    .admin-page .admin-modal-footer{
-        flex-direction:column-reverse!important;
-        align-items:stretch!important;
+    body.admin-page > header > div:first-child > div:first-of-type::before{
+        left:21px;
     }
 
-    .admin-page .admin-modal-cancel,
-    .admin-page .admin-modal-save{
-        width:100%!important;
+    body.admin-page > header > div:first-child > div:first-of-type .fedex-logo-text-purple,
+    body.admin-page > header > div:first-child > div:first-of-type .fedex-logo-text-orange,
+    body.admin-page > header > div:first-child > div:first-of-type .text-xs,
+    body.admin-page > header > div:first-child > .hidden.sm\:flex{
+        display:none !important;
+    }
+
+    body.admin-page > header > div:nth-child(2){
+        left:75px;
+        width:min(60vw,420px);
+        max-width:none;
+    }
+
+    body.admin-page #sidebar{
+        position:fixed !important;
+        left:0;
+        top:50px;
+        transform:translateX(-100%) !important;
+        height:calc(100vh - 50px) !important;
+    }
+
+    body.admin-page #admin-main > .hero-gradient > .relative.z-10 > div:last-child{
+        display:none !important;
+    }
+
+    body.admin-page #admin-main > .hero-gradient{
+        height:auto !important;
+        min-height:300px !important;
+        max-height:none !important;
+    }
+
+    body.admin-page #admin-main > .hero-gradient > .relative.z-10{
+        padding:32px 28px !important;
+    }
+
+    body.admin-page #admin-main > .grid:has(#kpi-total-users){
+        height:auto !important;
+        min-height:0 !important;
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+
+    body.admin-page #admin-main > .grid:has(#kpi-total-users) > div{
+        height:96px !important;
+    }
+
+    body.admin-page #dashboard-content{
+        grid-template-columns:1fr !important;
+    }
+
+    body.admin-page #dashboard-content > div,
+    body.admin-page #dashboard-content > div:nth-child(3){
+        grid-column:1 / -1 !important;
+        height:292px !important;
+    }
+}
+
+@media (prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        scroll-behavior:auto !important;
+        transition-duration:.01ms !important;
     }
 }
