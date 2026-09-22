@@ -562,6 +562,8 @@
 
         $("workspaceTitle").textContent = current.title;
         $("workspaceDescription").textContent = current.description;
+        if ($("workspacePanelTitle")) $("workspacePanelTitle").textContent = current.title;
+        if ($("topbarSection")) $("topbarSection").textContent = current.title;
 
         $("workspaceAction").innerHTML =
             `<i class="fa-solid fa-plus"></i> ${current.action}`;
@@ -633,7 +635,7 @@
             };
         });
 
-        $("refreshBtn")?.addEventListener("click", () => {
+        const refreshAdmin = () => {
             loadCounts();
             loadApprovedUsers();
 
@@ -644,7 +646,10 @@
                 })}`;
 
             toast("Admin dashboard refreshed.");
-        });
+        };
+
+        $("refreshBtn")?.addEventListener("click", refreshAdmin);
+        $("topRefreshBtn")?.addEventListener("click", refreshAdmin);
 
         $("workspaceAction")?.addEventListener("click", () => {
             if (currentSection === "users") {
