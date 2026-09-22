@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Decision Support System | Admin Dashboard</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="stylesheet" href="assets/css/page-loader.css">
-  <link rel="stylesheet" href="assets/css/admin.css">
+      <link rel="stylesheet" href="assets/css/admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <script>document.documentElement.classList.add('page-loading');document.documentElement.setAttribute('aria-busy','true');</script>
 </head>
@@ -15,14 +13,23 @@
     <div class="page-loader-inner"><div class="page-loader-mark" aria-hidden="true"><span class="page-loader-ring"></span><span class="page-loader-dot"></span></div><p class="page-loader-text">Loading Administration…</p></div>
   </div>
 
-  <div class="admin-app">
-    <aside class="admin-sidebar" aria-label="Admin navigation">
-      <div class="admin-sidebar-brand">
-        <div class="fedex-wordmark"><span class="fedex-fed">Fed</span><span class="fedex-ex">Ex</span><small>Freight</small></div>
-        <div class="admin-brand-divider"></div>
-        <div class="dss-brand"><strong>Decision Support System</strong><span>ADMIN CONSOLE</span></div>
+  <div class="admin-app"><header class="admin-topbar">
+      <div class="admin-topbar-context">
+        <span class="fedex-top-logo" aria-hidden="true"></span>
+        <span class="topbar-separator"></span>
+        <span class="topbar-dss-title">Decision Support System</span>
+        <small>ADMIN CONSOLE</small>
       </div>
+      <div class="admin-topbar-right">
+        <div class="admin-global-search"><i class="fa-solid fa-magnifying-glass"></i><input id="globalAdminSearch" type="search" placeholder="Search users, guides, templates..." autocomplete="off"><div class="admin-search-results" id="globalSearchResults"></div></div>
+        <button class="admin-top-icon" id="notificationButton" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"></i><span id="notificationBadge" class="admin-notification-badge" hidden>0</span></button>
+        <div class="admin-top-divider"></div>
+        <button class="admin-top-profile" id="profileButton" type="button" aria-label="Administrator profile"><span class="admin-top-avatar" id="topAvatar">AD</span><i class="fa-solid fa-chevron-down"></i></button>
+      </div>
+    </header>
+    <div class="admin-body">
 
+    <aside class="admin-sidebar" aria-label="Admin navigation">
       <div class="admin-profile-card">
         <div class="admin-profile-avatar" id="sidebarAvatar">AD</div>
         <div class="admin-profile-copy"><strong id="sidebarUserName">Admin User</strong><span id="sidebarUserRole">System Administrator</span><small><i class="fa-solid fa-circle"></i> Online</small></div>
@@ -49,15 +56,7 @@
     </aside>
 
     <main class="admin-main">
-      <header class="admin-topbar">
-        <div class="admin-topbar-context"><span>Decision Support System</span><small>ADMIN CONSOLE</small></div>
-        <div class="admin-topbar-right">
-          <div class="admin-global-search"><i class="fa-solid fa-magnifying-glass"></i><input id="globalAdminSearch" type="search" placeholder="Search users, guides, templates…" autocomplete="off"><div class="admin-search-results" id="globalSearchResults"></div></div>
-          <button class="admin-top-icon" id="notificationButton" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"></i><span id="notificationBadge" class="admin-notification-badge" hidden>0</span></button>
-          <div class="admin-top-divider"></div>
-          <button class="admin-top-profile" id="profileButton" type="button" aria-label="Administrator profile"><span class="admin-top-avatar" id="topAvatar">AD</span><i class="fa-solid fa-chevron-down"></i></button>
-        </div>
-      </header>
+      
 
       <div class="admin-page-scroll">
         <section class="admin-hero">
@@ -71,15 +70,7 @@
               <button class="hero-action secondary" type="button" data-section="reports"><i class="fa-solid fa-chart-column"></i> View Reports</button>
             </div>
           </div>
-          <div class="admin-hero-right" aria-hidden="true">
-            <div class="hero-art-ring hero-art-ring-a"></div><div class="hero-art-ring hero-art-ring-b"></div>
-            <div class="hero-floating-card hero-float-calendar"><i class="fa-regular fa-calendar"></i></div>
-            <div class="hero-floating-card hero-float-work"><i class="fa-solid fa-briefcase"></i></div>
-            <div class="hero-floating-card hero-float-chart"><i class="fa-solid fa-chart-simple"></i></div>
-            <div class="hero-computer-card"><div class="hero-computer-top"></div><div class="hero-computer-screen"><span></span><span></span><span></span><div class="hero-screen-chart"><b></b><b></b><b></b><b></b><b></b></div></div><div class="hero-computer-base"></div></div>
-            <div class="hero-quote-card"><span class="quote-mark">“</span><p>Guiding every decision.<br><strong>Delivering</strong><br>every time.</p><div class="quote-accent"><i></i><b></b></div></div>
-          </div>
-          <div class="admin-hero-meta"><span><i class="fa-solid fa-circle"></i> Firebase Connected</span><span><i class="fa-solid fa-circle"></i> Admin Session Active</span><span><i class="fa-solid fa-circle"></i> Changes Require Review</span></div>
+                    <div class="admin-hero-meta"><span><i class="fa-solid fa-circle"></i> Firebase Connected</span><span><i class="fa-solid fa-circle"></i> Admin Session Active</span><span><i class="fa-solid fa-circle"></i> Changes Require Review</span></div>
         </section>
 
         <section id="dashboardView" class="admin-dashboard-view">
@@ -120,6 +111,7 @@
         </section>
       </div>
     </main>
+    </div>
   </div>
 
   <div class="admin-toast" id="toast" role="status" aria-live="polite"></div>
@@ -138,9 +130,7 @@
     if(!firebase.apps.length){firebase.initializeApp(firebaseConfig)}
     window.db=firebase.firestore();window.auth=firebase.auth();
   </script>
-  <script src="shared/include.js"></script>
-  <script src="ai-assistant/guide-registry.js"></script>
-  <script src="assets/js/admin.js"></script>
-  <script src="assets/js/page-loader.js"></script>
+      <script>window.GUIDE_REGISTRY=[{"id": "bd_general_guide", "title": "BD — General Guide", "url": "BD GENERAL GUIDE.html", "category": "billing"}, {"id": "pricing_general_guides", "title": "Pricing General Guides", "url": "pricing-guides.html", "category": "pricing"}, {"id": "ovc_general_guideline", "title": "OVC — General Guideline", "url": "OVC GENERAL GUIDE.html", "category": "claims"}, {"id": "loa_rebill_guide", "title": "LOA — Rebill Guide", "url": "Rebill per LOA General Guide.html", "category": "rebill"}, {"id": "reweigh_general_guide", "title": "Reweigh — General Guide", "url": "Reweigh General Guide.html", "category": "reweigh"}, {"id": "fpay_paud_audit_guide", "title": "FPAY — PAUD Audit Guide", "url": "PAUD FPAY Guide.html", "category": "billing"}, {"id": "correction_code_guide", "title": "Correction Code Guide", "url": "Correction Code Guide.html", "category": "correction"}, {"id": "fedex_direct_guide", "title": "FedEx Direct Guide", "url": "FedEx Direct Guide.html", "category": "service"}, {"id": "class_update_guide", "title": "Class Update Guide", "url": "class-update-guide.html", "category": "service"}, {"id": "rate_volume_quote_guide", "title": "Rate & Volume Quote Guide", "url": "rate-volume-guide.html", "category": "pricing"}, {"id": "crau_request_decision_guide", "title": "CRAU — Request Decision Guide", "url": "crau-guide.html", "category": "service"}, {"id": "weight_update_per_bol_guide", "title": "Weight Update per BOL Guide", "url": "weight-update-per-bol-guide.html", "category": "reweigh"}, {"id": "account_handling_guide", "title": "Account Handling Guide", "url": "account-handling-guides.html", "category": "service"}, {"id": "rvsl_debtor_update_guide", "title": "RVSL — Debtor Update Guide", "url": "rvsl-guide.html", "category": "billing"}, {"id": "verifying_tracking_number_guide", "title": "Verifying Tracking Number Guide", "url": "information-validation-guide.html", "category": "service"}, {"id": "missing_documents_guide", "title": "Missing Documents Guide", "url": "missing-docs-guide.html", "category": "service"}, {"id": "other_surcharges_guide", "title": "Other Surcharges Guide", "url": "other-surcharges-guide.html", "category": "pricing"}, {"id": "sort_and_segregate_guide", "title": "Sort & Segregate Guide", "url": "sort-and-segregate-guide.html", "category": "pricing"}, {"id": "notify_fee_guide", "title": "Notify Fee Guide", "url": "notify-fee-guide.html", "category": "pricing"}, {"id": "service_level_type_guide", "title": "Service Level/Type Guide", "url": "service-level-type-guide.html", "category": "service"}, {"id": "keep_or_remove_payment_guide", "title": "Keep or Remove Payment Guide", "url": "keep_or_remove_payment_guide_fixed.html", "category": "billing"}, {"id": "demand_invoice_guide", "title": "Demand Invoice Guide", "url": "demand-invoice-guide.html", "category": "billing"}, {"id": "paud_tpkn_guide", "title": "PAUD / TPKN Guide", "url": "paud-tpkn-guide.html", "category": "billing"}, {"id": "reference_number_guide", "title": "Reference Number Guide", "url": "reference-number-guide.html", "category": "billing"}, {"id": "tphi_guide", "title": "TPHI Guide", "url": "tphi-guide.html", "category": "billing"}, {"id": "recycled_pro_guide", "title": "Recycled Pro Guide", "url": "recycled-pro-guide.html", "category": "service"}, {"id": "employee_discount_guide", "title": "Employee Discount Guide", "url": "employee-discount-guide.html", "category": "billing"}, {"id": "nost_guide", "title": "NOST Guide", "url": "nost-guide.html", "category": "service"}, {"id": "void_and_write_off_guide", "title": "Void and Write Off Guide", "url": "void-and-wo-guide.html", "category": "billing"}, {"id": "tplo_guide", "title": "TPLO Guide", "url": "tplo-guide.html", "category": "billing"}, {"id": "pro_number_suffix_guide", "title": "Pro Number Suffix Guide", "url": "pro-no-suffix.html", "category": "service"}, {"id": "volume_application_guide", "title": "Volume Application Guide", "url": "volume-application.html", "category": "pricing"}, {"id": "regions_and_ehot_queue_guide", "title": "Regions and EHOT Queue Guide", "url": "region-and-ehot-queue.html", "category": "service"}, {"id": "paud_queues_guide", "title": "PAUD Queue's Guide", "url": "paud-queues-guide.html", "category": "billing"}];</script>
+<script src="assets/js/admin.js"></script>
 </body>
 </html>
