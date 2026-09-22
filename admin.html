@@ -60,7 +60,15 @@
 
       <div class="admin-page-scroll">
         <section class="admin-hero">
-          <div class="admin-hero-copy">
+          <div class="admin-hero-date">
+        <span>Today is</span>
+        <strong id="currentDateText">—</strong>
+        <b>|</b>
+        <strong id="currentTimeText">—</strong>
+        <small>(PHT)</small>
+      </div>
+
+      <div class="admin-hero-copy">
             <span class="admin-welcome-label">WELCOME BACK,</span>
             <h1>Good day, <span id="heroUserName">Admin!</span></h1>
             <p>Manage users, guides, templates, and system settings for the Decision Support System.</p>
@@ -70,11 +78,10 @@
               <button class="hero-action secondary" type="button" data-section="reports"><i class="fa-solid fa-chart-column"></i> View Reports</button>
             </div>
           </div>
-                    <div class="admin-hero-meta"><span><i class="fa-solid fa-circle"></i> Firebase Connected</span><span><i class="fa-solid fa-circle"></i> Admin Session Active</span><span><i class="fa-solid fa-circle"></i> Changes Require Review</span></div>
-        </section>
+</section>
 
         <section id="dashboardView" class="admin-dashboard-view">
-          <div class="admin-dashboard-heading"><div><span>ADMINISTRATIVE DASHBOARD</span><h2>System at a glance</h2></div><div class="admin-current-time"><span>Today is</span><strong id="currentDateText">—</strong><b>|</b><strong id="currentTimeText">—</strong><small>(PHT)</small></div></div>
+          <div class="admin-dashboard-heading"><div><span>ADMINISTRATIVE DASHBOARD</span><h2>System at a glance</h2></div></div>
 
           <section class="admin-kpi-row">
             <article class="admin-kpi"><div class="admin-kpi-icon purple"><i class="fa-solid fa-users"></i></div><div class="admin-kpi-content"><span>Total Users</span><strong id="kpiTotalUsers">—</strong><small>All approved users</small></div><em>Live</em></article>
