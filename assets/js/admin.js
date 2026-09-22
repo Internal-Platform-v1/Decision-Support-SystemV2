@@ -13,11 +13,28 @@
     let currentSection = "overview";
     let editingUserId = null;
 
+    const dashboardStats = {
+        users: 0,
+        activeUsers: 0,
+        inactiveUsers: 0,
+        managers: 0,
+        teamLeaders: 0,
+        regularUsers: 0,
+        regions: {},
+        templates: 0,
+        commentTemplates: 0,
+        corrTemplates: 0,
+        emailTemplates: 0,
+        guides: GUIDE_REGISTRY.length,
+        dataSources: 0,
+        lastTemplateUpdate: null
+    };
+
     const config = {
         overview: {
-            title: "Administrative Workspace",
-            description: "Select a module to manage your Decision Support System.",
-            action: "New Item"
+            title: "Admin Dashboard",
+            description: "Live operational view of users, templates, guides and administration status.",
+            action: "Add User"
         },
         users: {
             title: "User Management",
@@ -86,34 +103,203 @@
     }
 
     function overviewContent() {
-        const cards = [
-            ["users", "blue", "fa-users", "User Management", "Manage all approved users, roles and account access.", "Manage users"],
-            ["templates", "orange", "fa-file-lines", "Template Manager", "Create and maintain comments, CORR guidance and email responses.", "Manage templates"],
-            ["announcements", "red", "fa-bullhorn", "Announcement Center", "Publish system announcements, alerts and important notices.", "Manage announcements"],
-            ["guides", "purple", "fa-book-open", "Guide Management", "Review guide registration, visibility and guide metadata.", "Manage guides"],
-            ["permissions", "green", "fa-user-shield", "Roles & Permissions", "Control administrator access and permission assignments.", "Manage permissions"],
-            ["settings", "blue", "fa-gear", "System Settings", "Configure system preferences and operational options.", "Open settings"]
+        const users = approvedUsers || [];
+        const activeUsers = users.filter(user => user.active !== false);
+        const inactiveUsers = users.filter(user => user.active === false);
+        const managers = users.filter(user => String(user.role || "").toLowerCase() === "manager");
+        const teamLeaders = users.filter(user => String(user.role || "").toLowerCase() === "team leader");
+        const regularUsers = users.filter(user => {
+            const role = String(user.role || "").toLowerCase();
+            return role !== "manager" && role !== "team leader";
+        });
+
+        const regionEntries = Object.entries(
+            users.reduce((acc, user) => {
+                const region = user.region || "All regions";
+                acc[region] = (acc[region] || 0) + 1;
+                return acc;
+            }, {})
+        ).sort((a, b) => b[1] - a[1]);
+
+        const roleRows = [
+            ["Users", regularUsers.length, "blue"],
+            ["Team Leaders", teamLeaders.length, "orange"],
+            ["Managers", managers.length, "purple"]
+        ];
+
+        const maxRole = Math.max(...roleRows.map(row => row[1]), 1);
+        const moduleRows = [
+            ["User Management", "Connected", "fa-users", "green", "users"],
+            ["Template Manager", dashboardStats.templates ? "Connected" : "No records", "fa-file-lines", "orange", "templates"],
+            ["Guide Management", `${dashboardStats.guides} registered`, "fa-book-open", "purple", "guides"],
+            ["Announcements", "Module ready", "fa-bullhorn", "red", "announcements"],
+            ["Roles & Permissions", "Module ready", "fa-user-shield", "blue", "permissions"],
+            ["System Settings", "Module ready", "fa-gear", "green", "settings"]
+        ];
+
+        const recentUsers = [...users]
+            .sort((a, b) => String(a.name || a.email || "").localeCompare(String(b.name || b.email || "")))
+            .slice(0, 6);
+
+        const templateBreakdown = [
+            ["Comment", dashboardStats.commentTemplates, "fa-comment-dots", "purple"],
+            ["CORR Code", dashboardStats.corrTemplates, "fa-code", "blue"],
+            ["Email", dashboardStats.emailTemplates, "fa-envelope", "orange"]
         ];
 
         return `
-            <div class="admin-module-grid">
-                ${cards.map(card => `
-                    <button
-                        class="admin-module-card"
-                        type="button"
-                        data-section="${card[0]}"
-                    >
-                        <span class="admin-module-icon ${card[1]}">
-                            <i class="fa-solid ${card[2]}"></i>
-                        </span>
-                        <h3>${card[3]}</h3>
-                        <p>${card[4]}</p>
-                        <span class="admin-module-footer">
-                            ${card[5]}
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </span>
-                    </button>
-                `).join("")}
+            <div class="dashboard-grid">
+
+                <section class="dashboard-panel dashboard-user-summary">
+                    <div class="dashboard-panel-heading">
+                        <div>
+                            <span>USER DIRECTORY</span>
+                            <h3>Account & access summary</h3>
+                        </div>
+                        <button class="dashboard-link" type="button" data-section="users">
+                            Manage users <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="dashboard-stat-strip">
+                        <div><strong>${activeUsers.length}</strong><span>Active</span></div>
+                        <div><strong>${inactiveUsers.length}</strong><span>Inactive</span></div>
+                        <div><strong>${managers.length}</strong><span>Managers</span></div>
+                        <div><strong>${teamLeaders.length}</strong><span>Team Leaders</span></div>
+                    </div>
+
+                    <div class="dashboard-mini-title">Roles</div>
+                    <div class="dashboard-bars">
+                        ${roleRows.map(row => `
+                            <div class="dashboard-bar-row">
+                                <div><span>${row[0]}</span><strong>${row[1]}</strong></div>
+                                <div class="dashboard-bar"><i class="${row[2]}" style="--bar-width:${Math.max(8, Math.round((row[1] / maxRole) * 100))}%"></i></div>
+                            </div>
+                        `).join("")}
+                    </div>
+                </section>
+
+                <section class="dashboard-panel">
+                    <div class="dashboard-panel-heading">
+                        <div>
+                            <span>REGIONAL DISTRIBUTION</span>
+                            <h3>Users by region</h3>
+                        </div>
+                        <i class="fa-solid fa-earth-asia dashboard-heading-icon"></i>
+                    </div>
+
+                    <div class="dashboard-region-list">
+                        ${regionEntries.length ? regionEntries.map(([region, count]) => `
+                            <div class="dashboard-region-row">
+                                <span><i class="fa-solid fa-location-dot"></i>${escapeHtml(region)}</span>
+                                <strong>${count}</strong>
+                            </div>
+                        `).join("") : `
+                            <div class="dashboard-no-data">No regional user data available.</div>
+                        `}
+                    </div>
+                </section>
+
+                <section class="dashboard-panel dashboard-template-panel">
+                    <div class="dashboard-panel-heading">
+                        <div>
+                            <span>TEMPLATE INVENTORY</span>
+                            <h3>Suggested template records</h3>
+                        </div>
+                        <button class="dashboard-link" type="button" data-section="templates">
+                            Open manager <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="dashboard-template-total">
+                        <strong>${dashboardStats.templates}</strong>
+                        <span>Total records across connected template collections</span>
+                    </div>
+
+                    <div class="dashboard-template-types">
+                        ${templateBreakdown.map(item => `
+                            <div>
+                                <span class="dashboard-template-icon ${item[3]}"><i class="fa-solid ${item[2]}"></i></span>
+                                <strong>${item[1]}</strong>
+                                <small>${item[0]}</small>
+                            </div>
+                        `).join("")}
+                    </div>
+                </section>
+
+                <section class="dashboard-panel dashboard-users-panel">
+                    <div class="dashboard-panel-heading">
+                        <div>
+                            <span>APPROVED USERS</span>
+                            <h3>Directory snapshot</h3>
+                        </div>
+                        <button class="dashboard-link" type="button" data-section="users">
+                            View all <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="dashboard-user-list">
+                        ${recentUsers.length ? recentUsers.map(user => `
+                            <div class="dashboard-user-row">
+                                <span class="dashboard-avatar">${escapeHtml((user.name || user.email || "?").charAt(0).toUpperCase())}</span>
+                                <div>
+                                    <strong>${escapeHtml(user.name || user.email || user.id)}</strong>
+                                    <small>${escapeHtml(user.email || user.id)}</small>
+                                </div>
+                                <span class="dashboard-role">${escapeHtml(user.role || "User")}</span>
+                                <span class="dashboard-active-dot ${user.active === false ? "off" : ""}"></span>
+                            </div>
+                        `).join("") : `
+                            <div class="dashboard-no-data">No approved users are currently available.</div>
+                        `}
+                    </div>
+                </section>
+
+                <section class="dashboard-panel dashboard-system-panel">
+                    <div class="dashboard-panel-heading">
+                        <div>
+                            <span>SYSTEM CONTROL</span>
+                            <h3>Administration status</h3>
+                        </div>
+                        <span class="dashboard-status-chip"><i class="fa-solid fa-circle"></i> Connected</span>
+                    </div>
+
+                    <div class="dashboard-system-list">
+                        <div><span><i class="fa-solid fa-database"></i> Firestore</span><strong>Connected</strong></div>
+                        <div><span><i class="fa-solid fa-users"></i> Approved Users</span><strong>${users.length} records</strong></div>
+                        <div><span><i class="fa-solid fa-book"></i> Guide Registry</span><strong>${dashboardStats.guides} guides</strong></div>
+                        <div><span><i class="fa-solid fa-file-lines"></i> Template Collections</span><strong>${dashboardStats.dataSources} sources</strong></div>
+                    </div>
+
+                    <div class="dashboard-quick-actions">
+                        <button type="button" data-section="users"><i class="fa-solid fa-user-plus"></i> Add User</button>
+                        <button type="button" data-section="templates"><i class="fa-solid fa-file-lines"></i> Templates</button>
+                        <button type="button" data-section="guides"><i class="fa-solid fa-book-open"></i> Guides</button>
+                    </div>
+                </section>
+
+                <section class="dashboard-panel dashboard-modules-panel">
+                    <div class="dashboard-panel-heading">
+                        <div>
+                            <span>ADMIN MODULES</span>
+                            <h3>Workspace availability</h3>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-module-list">
+                        ${moduleRows.map(row => `
+                            <button type="button" class="dashboard-module-row" data-section="${row[4]}">
+                                <span class="dashboard-module-icon ${row[3]}"><i class="fa-solid ${row[2]}"></i></span>
+                                <span>
+                                    <strong>${row[0]}</strong>
+                                    <small>${row[1]}</small>
+                                </span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        `).join("")}
+                    </div>
+                </section>
+
             </div>
         `;
     }
@@ -299,12 +485,29 @@
                     (a.name || "").localeCompare(b.name || "")
                 );
 
+            dashboardStats.users = approvedUsers.length;
+            dashboardStats.activeUsers = approvedUsers.filter(user => user.active !== false).length;
+            dashboardStats.inactiveUsers = approvedUsers.filter(user => user.active === false).length;
+            dashboardStats.managers = approvedUsers.filter(user => String(user.role || "").toLowerCase() === "manager").length;
+            dashboardStats.teamLeaders = approvedUsers.filter(user => String(user.role || "").toLowerCase() === "team leader").length;
+            dashboardStats.regularUsers = approvedUsers.filter(user => {
+                const role = String(user.role || "").toLowerCase();
+                return role !== "manager" && role !== "team leader";
+            }).length;
+            dashboardStats.regions = approvedUsers.reduce((acc, user) => {
+                const region = user.region || "All regions";
+                acc[region] = (acc[region] || 0) + 1;
+                return acc;
+            }, {});
+
             if ($("userCount")) {
                 $("userCount").textContent = approvedUsers.length;
             }
 
             if (currentSection === "users") {
                 render("users");
+            } else if (currentSection === "overview") {
+                render("overview");
             }
 
         } catch (error) {
@@ -564,7 +767,14 @@
         $("workspaceDescription").textContent = current.description;
 
         $("workspaceAction").innerHTML =
-            `<i class="fa-solid fa-plus"></i> ${current.action}`;
+            currentSection === "overview"
+                ? `<i class="fa-solid fa-user-plus"></i> Add User`
+                : `<i class="fa-solid fa-plus"></i> ${current.action}`;
+
+        if ($("topbarSection")) {
+            $("topbarSection").textContent =
+                currentSection === "overview" ? "Dashboard" : current.title;
+        }
 
         $("workspaceContent").innerHTML =
             section === "overview"
@@ -600,16 +810,56 @@
         }
 
         try {
-            const [users, templates] = await Promise.all([
+            const collections = [
+                TEMPLATE_COLLECTION,
+                ...GUIDE_REGISTRY.map(guide => guide.templateCollection)
+            ].filter((value, index, list) => value && list.indexOf(value) === index);
+
+            const [users, ...templateSnapshots] = await Promise.all([
                 db.collection(USERS_COLLECTION).get(),
-                db.collection(TEMPLATE_COLLECTION).get()
+                ...collections.map(collection => db.collection(collection).get())
             ]);
 
+            const allTemplateDocs = templateSnapshots.flatMap(snapshot =>
+                snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    data: doc.data() || {}
+                }))
+            );
+
+            dashboardStats.templates = allTemplateDocs.length;
+            dashboardStats.commentTemplates = allTemplateDocs.filter(item =>
+                item.id.toLowerCase().startsWith("comment__")
+            ).length;
+            dashboardStats.corrTemplates = allTemplateDocs.filter(item =>
+                item.id.toLowerCase().startsWith("corr__")
+            ).length;
+            dashboardStats.emailTemplates = allTemplateDocs.filter(item =>
+                item.id.toLowerCase().startsWith("email__")
+            ).length;
+            dashboardStats.guides = GUIDE_REGISTRY.length;
+            dashboardStats.dataSources = collections.length;
+
             $("userCount").textContent = users.size;
-            $("templateCount").textContent = templates.size;
+            $("activeUserCount").textContent = users.docs.filter(doc =>
+                (doc.data() || {}).active !== false
+            ).length;
+            $("templateCount").textContent = dashboardStats.templates;
+            $("guideCount").textContent = dashboardStats.guides;
+            $("adminRoleCount").textContent = users.docs.filter(doc => {
+                const role = String((doc.data() || {}).role || "").toLowerCase();
+                return role === "manager" || role === "team leader";
+            }).length;
+            $("dataSourceCount").textContent = dashboardStats.dataSources;
+
+            if (currentSection === "overview") {
+                render("overview");
+            }
 
         } catch (error) {
-            console.warn("Admin counts unavailable:", error);
+            console.warn("Admin dashboard data unavailable:", error);
+            if ($("userCount")) $("userCount").textContent = "—";
+            if ($("templateCount")) $("templateCount").textContent = "—";
         }
     }
 
@@ -647,7 +897,7 @@
         });
 
         $("workspaceAction")?.addEventListener("click", () => {
-            if (currentSection === "users") {
+            if (currentSection === "overview" || currentSection === "users") {
                 openUserModal();
             } else {
                 toast("This management module is not connected yet.");
