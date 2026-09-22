@@ -1,332 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Command Center | BD Tools</title>
-
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/page-loader.css">
-    <link rel="stylesheet" href="assets/css/admin.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <script>
-        document.documentElement.classList.add("page-loading");
-        document.documentElement.setAttribute("aria-busy", "true");
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Decision Support System | Admin Dashboard</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/page-loader.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script>document.documentElement.classList.add('page-loading');document.documentElement.setAttribute('aria-busy','true');</script>
 </head>
+<body class="admin-page" data-waits-for-user="true">
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+    <div class="page-loader-inner"><div class="page-loader-mark" aria-hidden="true"><span class="page-loader-ring"></span><span class="page-loader-dot"></span></div><p class="page-loader-text">Loading Administration…</p></div>
+  </div>
 
-<body data-waits-for-user="true" class="admin-page">
-    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
-        <div class="page-loader-inner">
-            <div class="page-loader-mark" aria-hidden="true">
-                <span class="page-loader-ring"></span>
-                <span class="page-loader-dot"></span>
-            </div>
-            <p class="page-loader-text">Loading Administration…</p>
+  <div class="admin-app">
+    <aside class="admin-sidebar" aria-label="Admin navigation">
+      <div class="admin-sidebar-brand">
+        <div class="fedex-wordmark"><span class="fedex-fed">Fed</span><span class="fedex-ex">Ex</span><small>Freight</small></div>
+        <div class="admin-brand-divider"></div>
+        <div class="dss-brand"><strong>Decision Support System</strong><span>ADMIN CONSOLE</span></div>
+      </div>
+
+      <div class="admin-profile-card">
+        <div class="admin-profile-avatar" id="sidebarAvatar">AD</div>
+        <div class="admin-profile-copy"><strong id="sidebarUserName">Admin User</strong><span id="sidebarUserRole">System Administrator</span><small><i class="fa-solid fa-circle"></i> Online</small></div>
+      </div>
+
+      <div class="admin-sidebar-label">WORKSPACE</div>
+      <nav class="admin-nav-list">
+        <button class="admin-nav-item active" type="button" data-section="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></button>
+        <button class="admin-nav-item" type="button" data-section="users"><i class="fa-solid fa-users"></i><span>User Management</span></button>
+        <button class="admin-nav-item" type="button" data-section="templates"><i class="fa-solid fa-file-lines"></i><span>Templates Management</span></button>
+        <button class="admin-nav-item" type="button" data-section="guides"><i class="fa-solid fa-book-open"></i><span>Guide Management</span></button>
+        <button class="admin-nav-item" type="button" data-section="announcements"><i class="fa-solid fa-bullhorn"></i><span>Announcements</span></button>
+        <button class="admin-nav-item" type="button" data-section="logs"><i class="fa-solid fa-clock-rotate-left"></i><span>System Logs</span></button>
+        <button class="admin-nav-item" type="button" data-section="reports"><i class="fa-solid fa-chart-column"></i><span>Reports &amp; Analytics</span></button>
+        <button class="admin-nav-item" type="button" data-section="permissions"><i class="fa-solid fa-shield-halved"></i><span>Roles &amp; Permissions</span></button>
+        <button class="admin-nav-item" type="button" data-section="settings"><i class="fa-solid fa-gear"></i><span>System Settings</span></button>
+      </nav>
+
+      <div class="admin-sidebar-bottom">
+        <div class="admin-help-card"><div class="admin-help-icon"><i class="fa-solid fa-headset"></i></div><strong>Need Help?</strong><span>Contact Support</span><button id="supportButton" type="button">Get Help <i class="fa-solid fa-arrow-right"></i></button></div>
+        <div class="admin-sidebar-status"><span><i class="fa-solid fa-circle-check"></i></span><div><strong>All systems operational</strong><small id="sidebarConnectionText">Checking Firebase connection…</small></div></div>
+        <div class="admin-version"><span>Version 1.0.0</span><small>© 2025 FedEx Freight</small></div>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="admin-topbar-context"><span>Decision Support System</span><small>ADMIN CONSOLE</small></div>
+        <div class="admin-topbar-right">
+          <div class="admin-global-search"><i class="fa-solid fa-magnifying-glass"></i><input id="globalAdminSearch" type="search" placeholder="Search users, guides, templates…" autocomplete="off"><div class="admin-search-results" id="globalSearchResults"></div></div>
+          <button class="admin-top-icon" id="notificationButton" type="button" aria-label="Notifications"><i class="fa-regular fa-bell"></i><span id="notificationBadge" class="admin-notification-badge" hidden>0</span></button>
+          <div class="admin-top-divider"></div>
+          <button class="admin-top-profile" id="profileButton" type="button" aria-label="Administrator profile"><span class="admin-top-avatar" id="topAvatar">AD</span><i class="fa-solid fa-chevron-down"></i></button>
         </div>
+      </header>
+
+      <div class="admin-page-scroll">
+        <section class="admin-hero">
+          <div class="admin-hero-copy">
+            <span class="admin-welcome-label">WELCOME BACK,</span>
+            <h1>Good day, <span id="heroUserName">Admin!</span></h1>
+            <p>Manage users, guides, templates, and system settings for the Decision Support System.</p>
+            <div class="admin-hero-buttons">
+              <button class="hero-action primary" type="button" data-section="users"><i class="fa-solid fa-user"></i> Manage Users</button>
+              <button class="hero-action secondary" type="button" data-section="templates"><i class="fa-solid fa-file-lines"></i> Manage Templates</button>
+              <button class="hero-action secondary" type="button" data-section="reports"><i class="fa-solid fa-chart-column"></i> View Reports</button>
+            </div>
+          </div>
+          <div class="admin-hero-right" aria-hidden="true">
+            <div class="hero-art-ring hero-art-ring-a"></div><div class="hero-art-ring hero-art-ring-b"></div>
+            <div class="hero-floating-card hero-float-calendar"><i class="fa-regular fa-calendar"></i></div>
+            <div class="hero-floating-card hero-float-work"><i class="fa-solid fa-briefcase"></i></div>
+            <div class="hero-floating-card hero-float-chart"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="hero-computer-card"><div class="hero-computer-top"></div><div class="hero-computer-screen"><span></span><span></span><span></span><div class="hero-screen-chart"><b></b><b></b><b></b><b></b><b></b></div></div><div class="hero-computer-base"></div></div>
+            <div class="hero-quote-card"><span class="quote-mark">“</span><p>Guiding every decision.<br><strong>Delivering</strong><br>every time.</p><div class="quote-accent"><i></i><b></b></div></div>
+          </div>
+          <div class="admin-hero-meta"><span><i class="fa-solid fa-circle"></i> Firebase Connected</span><span><i class="fa-solid fa-circle"></i> Admin Session Active</span><span><i class="fa-solid fa-circle"></i> Changes Require Review</span></div>
+        </section>
+
+        <section id="dashboardView" class="admin-dashboard-view">
+          <div class="admin-dashboard-heading"><div><span>ADMINISTRATIVE DASHBOARD</span><h2>System at a glance</h2></div><div class="admin-current-time"><span>Today is</span><strong id="currentDateText">—</strong><b>|</b><strong id="currentTimeText">—</strong><small>(PHT)</small></div></div>
+
+          <section class="admin-kpi-row">
+            <article class="admin-kpi"><div class="admin-kpi-icon purple"><i class="fa-solid fa-users"></i></div><div class="admin-kpi-content"><span>Total Users</span><strong id="kpiTotalUsers">—</strong><small>All approved users</small></div><em>Live</em></article>
+            <article class="admin-kpi"><div class="admin-kpi-icon green"><i class="fa-solid fa-user-check"></i></div><div class="admin-kpi-content"><span>Active Users</span><strong id="kpiActiveUsers">—</strong><small>Currently active</small></div><em>Active</em></article>
+            <article class="admin-kpi"><div class="admin-kpi-icon orange"><i class="fa-solid fa-file-lines"></i></div><div class="admin-kpi-content"><span>Templates</span><strong id="kpiTemplates">—</strong><small>Total template records</small></div><em>Live</em></article>
+            <article class="admin-kpi"><div class="admin-kpi-icon blue"><i class="fa-solid fa-book-open"></i></div><div class="admin-kpi-content"><span>Guides</span><strong id="kpiGuides">—</strong><small>Registered guide flows</small></div><em>Registry</em></article>
+            <article class="admin-kpi"><div class="admin-kpi-icon red"><i class="fa-solid fa-bullhorn"></i></div><div class="admin-kpi-content"><span>Announcements</span><strong id="kpiAnnouncements">—</strong><small>Published notices</small></div><em id="kpiAnnouncementDelta">—</em></article>
+          </section>
+
+          <section class="admin-dashboard-grid dashboard-analytics-grid">
+            <article class="admin-card activity-card"><div class="admin-card-header"><div><span>USER ACTIVITY</span><h3>Last 7 Days</h3></div><div class="activity-legend"><span><i class="legend-dot purple"></i> Logins</span><span><i class="legend-dot lilac"></i> Active Users</span></div></div><div class="activity-chart"><div class="chart-grid-line one"></div><div class="chart-grid-line two"></div><div class="chart-grid-line three"></div><div class="chart-grid-line four"></div><div class="chart-y-labels"><span>30</span><span>20</span><span>10</span><span>0</span></div><div class="chart-bars" id="activityBars"></div><div class="chart-x-labels" id="activityLabels"></div></div><div class="chart-empty-note" id="activityEmptyNote" hidden>Activity telemetry is not connected yet.</div></article>
+            <article class="admin-card guide-usage-card"><div class="admin-card-header"><div><span>GUIDE USAGE</span><h3>Top 5</h3></div><button class="admin-card-link" type="button" data-section="reports">View All</button></div><div id="guideUsageList" class="guide-usage-list"></div></article>
+            <article class="admin-card region-card"><div class="admin-card-header"><div><span>USER DISTRIBUTION</span><h3>By Region</h3></div><select id="regionFilter" class="admin-mini-select"><option value="all">All Regions</option></select></div><div class="region-body"><div class="region-donut" id="regionDonut"><div><strong id="regionTotal">—</strong><span>Users</span></div></div><div class="region-legend" id="regionLegend"></div></div></article>
+          </section>
+
+          <section class="admin-dashboard-grid dashboard-tables-grid">
+            <article class="admin-card recent-users-card"><div class="admin-card-header"><div><span>USER DIRECTORY</span><h3>Recent Users</h3></div><button class="admin-card-link" type="button" data-section="users">View All <i class="fa-solid fa-chevron-right"></i></button></div><div class="admin-table-scroll"><table class="admin-dashboard-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Region</th><th>Status</th><th>Date Added</th></tr></thead><tbody id="recentUsersBody"></tbody></table></div></article>
+            <article class="admin-card recent-activity-card"><div class="admin-card-header"><div><span>SYSTEM ACTIVITY</span><h3>Recent Activity</h3></div><button class="admin-card-link" type="button" data-section="logs">View All <i class="fa-solid fa-chevron-right"></i></button></div><div class="admin-activity-list" id="recentActivityList"></div></article>
+          </section>
+
+          <section class="admin-card module-card"><div class="admin-card-header"><div><span>ADMINISTRATIVE CONTROL</span><h3>Quick Access</h3></div><span class="admin-card-caption">All management modules</span></div><div class="module-quick-grid">
+            <button type="button" data-section="users"><span class="module-quick-icon purple"><i class="fa-solid fa-users"></i></span><span><strong>User Management</strong><small>Accounts, roles &amp; access</small></span><i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" data-section="templates"><span class="module-quick-icon orange"><i class="fa-solid fa-file-lines"></i></span><span><strong>Templates Management</strong><small>Comment, CORR &amp; email</small></span><i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" data-section="guides"><span class="module-quick-icon blue"><i class="fa-solid fa-book-open"></i></span><span><strong>Guide Management</strong><small>Registry &amp; visibility</small></span><i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" data-section="announcements"><span class="module-quick-icon red"><i class="fa-solid fa-bullhorn"></i></span><span><strong>Announcements</strong><small>Notices &amp; alerts</small></span><i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" data-section="permissions"><span class="module-quick-icon green"><i class="fa-solid fa-shield-halved"></i></span><span><strong>Roles &amp; Permissions</strong><small>Administrative access</small></span><i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" data-section="settings"><span class="module-quick-icon slate"><i class="fa-solid fa-gear"></i></span><span><strong>System Settings</strong><small>Application configuration</small></span><i class="fa-solid fa-arrow-right"></i></button>
+          </div></section>
+        </section>
+
+        <section id="moduleView" class="admin-module-view" hidden>
+          <div class="admin-module-heading"><div><span id="moduleKicker">ADMINISTRATION</span><h2 id="moduleTitle">User Management</h2><p id="moduleDescription">Manage all approved users, roles and account access.</p></div><button class="module-primary-action" id="moduleActionButton" type="button"><i class="fa-solid fa-plus"></i> Add User</button></div>
+          <div id="moduleContent"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="admin-toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="admin-modal" id="userModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+    <div class="admin-modal-card"><div class="admin-modal-header"><div><span>USER MANAGEMENT</span><h2 id="userModalTitle">Add User</h2><p id="userModalDescription">Add a new employee to the approved users list.</p></div><button class="admin-modal-close" id="userModalClose" type="button" aria-label="Close modal"><i class="fa-solid fa-xmark"></i></button></div>
+      <form id="userForm"><div class="admin-form-grid"><div class="admin-form-field admin-form-field-full"><label for="userName">Full Name</label><input id="userName" name="name" type="text" placeholder="Enter employee's full name" required></div><div class="admin-form-field admin-form-field-full"><label for="userEmail">Email Address</label><input id="userEmail" name="email" type="email" placeholder="employee@fedexfreight.com" required><small>Email addresses are stored in normalized lowercase form.</small></div><div class="admin-form-field"><label for="userRole">Role</label><select id="userRole" name="role"><option value="User">User</option><option value="Manager">Manager</option><option value="Team Leader">Team Leader</option></select></div><div class="admin-form-field"><label for="userRegion">Region</label><input id="userRegion" name="region" type="text" placeholder="Philippines" value="All regions"></div><div class="admin-form-field admin-form-field-full"><label class="admin-checkbox-field"><input id="userActive" name="active" type="checkbox" checked><span><strong>Active User</strong><small>Allow this user to remain active in the system.</small></span></label></div></div><div class="admin-modal-footer"><button class="admin-modal-cancel" id="userModalCancel" type="button">Cancel</button><button class="admin-modal-save" id="userModalSave" type="submit"><i class="fa-solid fa-user-plus"></i> Add User</button></div></form>
     </div>
+  </div>
 
-    <!--
-        Standalone admin application.
-        The shared header/footer are intentionally not rendered here.
-        shared/include.js is still loaded at the bottom because the existing
-        authentication/session behavior may be required by Firestore rules.
-    -->
-    <div class="admin-app-shell">
-
-        <aside class="admin-nav" aria-label="Administration navigation">
-            <div class="admin-brand">
-                <div class="admin-brand-mark"><span>BD</span></div>
-                <div class="admin-brand-copy">
-                    <strong>Decision Support</strong>
-                    <span>ADMIN CONSOLE</span>
-                </div>
-            </div>
-
-            <div class="admin-nav-user">
-                <div class="admin-nav-avatar">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <div>
-                    <strong>Administration</strong>
-                    <span>Secure workspace</span>
-                </div>
-                <span class="admin-online-dot" title="Online"></span>
-            </div>
-
-            <div class="admin-nav-label">WORKSPACE</div>
-
-            <nav class="admin-side-tabs">
-                <button class="admin-side-tab active" type="button" data-section="overview">
-                    <i class="fa-solid fa-chart-pie"></i><span>Dashboard</span>
-                </button>
-                <button class="admin-side-tab" type="button" data-section="users">
-                    <i class="fa-solid fa-users"></i><span>User Management</span>
-                </button>
-                <button class="admin-side-tab" type="button" data-section="templates">
-                    <i class="fa-solid fa-file-lines"></i><span>Template Manager</span>
-                </button>
-                <button class="admin-side-tab" type="button" data-section="announcements">
-                    <i class="fa-solid fa-bullhorn"></i><span>Announcements</span>
-                </button>
-                <button class="admin-side-tab" type="button" data-section="guides">
-                    <i class="fa-solid fa-book-open"></i><span>Guide Management</span>
-                </button>
-                <button class="admin-side-tab" type="button" data-section="permissions">
-                    <i class="fa-solid fa-user-shield"></i><span>Roles &amp; Permissions</span>
-                </button>
-                <button class="admin-side-tab" type="button" data-section="settings">
-                    <i class="fa-solid fa-gear"></i><span>System Settings</span>
-                </button>
-            </nav>
-
-            <div class="admin-nav-footer">
-                <div class="admin-nav-status">
-                    <span class="admin-nav-status-icon"><i class="fa-solid fa-circle-check"></i></span>
-                    <div>
-                        <strong>All systems operational</strong>
-                        <small>Firebase connected</small>
-                    </div>
-                </div>
-                <button class="admin-nav-refresh" id="refreshBtn" type="button">
-                    <i class="fa-solid fa-rotate"></i><span>Refresh data</span>
-                </button>
-            </div>
-        </aside>
-
-        <main class="admin-main">
-
-            <header class="admin-topbar">
-                <div class="admin-breadcrumb">
-                    <span>ADMINISTRATION</span>
-                    <i class="fa-solid fa-chevron-right"></i>
-                    <strong id="topbarSection">Dashboard</strong>
-                </div>
-
-                <div class="admin-topbar-actions">
-                    <span class="admin-session-pill">
-                        <i class="fa-solid fa-circle"></i> Admin session active
-                    </span>
-                </div>
-            </header>
-
-            <div class="admin-main-scroll">
-
-                <!-- Original hero retained: title + background image -->
-                <section class="admin-hero">
-                    <div class="admin-hero-copy">
-                        <span class="admin-eyebrow">
-                            <i class="fa-solid fa-lock"></i> SECURE ADMINISTRATION
-                        </span>
-
-                        <h1>System <span>Command Center</span></h1>
-
-                        <p>
-                            Manage users, announcements, templates, guides, permissions
-                            and the operational settings behind your Decision Support System.
-                        </p>
-
-                        <div class="admin-hero-actions">
-                            <button class="admin-primary-button" type="button" data-section="users">
-                                <i class="fa-solid fa-users-gear"></i> Manage Users
-                            </button>
-                            <button class="admin-secondary-button" type="button" data-section="templates">
-                                <i class="fa-solid fa-file-lines"></i> Manage Templates
-                            </button>
-                        </div>
-
-                        <div class="admin-status-row">
-                            <span><i class="admin-status-dot green"></i> Firebase Connected</span>
-                            <span><i class="admin-status-dot purple"></i> Admin Session Active</span>
-                            <span><i class="admin-status-dot orange"></i> Changes Require Review</span>
-                        </div>
-                    </div>
-
-                    <div class="admin-hero-art" aria-hidden="true">
-                        <div class="admin-orbit admin-orbit-one"></div>
-                        <div class="admin-orbit admin-orbit-two"></div>
-                        <div class="admin-floating-card admin-card-main">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            <strong>Administration</strong>
-                            <span>System control center</span>
-                        </div>
-                        <div class="admin-floating-card admin-card-small">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <strong>Live System</strong>
-                            <span>Operational</span>
-                        </div>
-                        <div class="admin-hero-cube"><i class="fa-solid fa-cube"></i></div>
-                    </div>
-                </section>
-
-                <section class="admin-content-wrap">
-                    <div class="admin-section-heading">
-                        <div>
-                            <span class="admin-section-label">ADMINISTRATIVE OVERVIEW</span>
-                            <h2>System at a glance</h2>
-                        </div>
-                        <span class="admin-last-updated" id="lastUpdated">Updated just now</span>
-                    </div>
-
-                    <section class="admin-kpi-grid admin-dashboard-kpis">
-                        <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon blue"><i class="fa-solid fa-users"></i></div>
-                            <div><label>Total Users</label><h3 id="userCount">—</h3><p>Approved user accounts</p></div>
-                            <span class="admin-kpi-trend">Live</span>
-                        </article>
-
-                        <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon green"><i class="fa-solid fa-user-check"></i></div>
-                            <div><label>Active Users</label><h3 id="activeUserCount">—</h3><p>Currently active accounts</p></div>
-                            <span class="admin-kpi-trend healthy">Active</span>
-                        </article>
-
-                        <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon orange"><i class="fa-solid fa-file-lines"></i></div>
-                            <div><label>Templates</label><h3 id="templateCount">—</h3><p>All template records</p></div>
-                            <span class="admin-kpi-trend">Live</span>
-                        </article>
-
-                        <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon purple"><i class="fa-solid fa-book-open"></i></div>
-                            <div><label>Registered Guides</label><h3 id="guideCount">—</h3><p>Guide flows available</p></div>
-                            <span class="admin-kpi-trend">Registry</span>
-                        </article>
-
-                        <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon blue"><i class="fa-solid fa-user-shield"></i></div>
-                            <div><label>Admin Roles</label><h3 id="adminRoleCount">—</h3><p>Managers + Team Leaders</p></div>
-                            <span class="admin-kpi-trend">Access</span>
-                        </article>
-
-                        <article class="admin-kpi-card">
-                            <div class="admin-kpi-icon green"><i class="fa-solid fa-database"></i></div>
-                            <div><label>Data Sources</label><h3 id="dataSourceCount">—</h3><p>Connected Firestore collections</p></div>
-                            <span class="admin-kpi-trend healthy">Connected</span>
-                        </article>
-                    </section>
-
-                    <section class="admin-workspace-panel">
-                        <div class="admin-workspace-header">
-                            <div>
-                                <span class="admin-section-label">ADMIN DASHBOARD</span>
-                                <h2 id="workspaceTitle">Admin Dashboard</h2>
-                                <p id="workspaceDescription">
-                                    Live operational view of users, templates, guides and administration status.
-                                </p>
-                            </div>
-
-                            <button class="admin-outline-button" id="workspaceAction" type="button">
-                                <i class="fa-solid fa-plus"></i> New Item
-                            </button>
-                        </div>
-
-                        <div id="workspaceContent" class="admin-workspace-content"></div>
-                    </section>
-                </section>
-            </div>
-        </main>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <!-- User Add/Edit Modal -->
-    <div class="admin-modal" id="userModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
-        <div class="admin-modal-card">
-            <div class="admin-modal-header">
-                <div>
-                    <span class="admin-section-label">USER MANAGEMENT</span>
-                    <h2 id="userModalTitle">Add User</h2>
-                    <p id="userModalDescription">
-                        Add a new employee to the approved users list.
-                    </p>
-                </div>
-
-                <button class="admin-modal-close" id="userModalClose" type="button" aria-label="Close modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form id="userForm">
-                <div class="admin-form-grid">
-                    <div class="admin-form-field admin-form-field-full">
-                        <label for="userName">Full Name</label>
-                        <input id="userName" name="name" type="text"
-                               placeholder="Enter employee's full name" required>
-                    </div>
-
-                    <div class="admin-form-field admin-form-field-full">
-                        <label for="userEmail">Email Address</label>
-                        <input id="userEmail" name="email" type="email"
-                               placeholder="employee@fedex.com" required>
-                        <small>Email addresses are used as the user document ID.</small>
-                    </div>
-
-                    <div class="admin-form-field">
-                        <label for="userRole">Role</label>
-                        <select id="userRole" name="role">
-                            <option value="User">User</option>
-                            <option value="Manager">Manager</option>
-                            <option value="Team Leader">Team Leader</option>
-                        </select>
-                    </div>
-
-                    <div class="admin-form-field">
-                        <label for="userRegion">Region</label>
-                        <input id="userRegion" name="region" type="text"
-                               placeholder="All regions" value="All regions">
-                    </div>
-
-                    <div class="admin-form-field admin-form-field-full">
-                        <label class="admin-checkbox-field">
-                            <input id="userActive" name="active" type="checkbox" checked>
-                            <span>
-                                <strong>Active User</strong>
-                                <small>Allow this user to remain active in the system.</small>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="admin-modal-footer">
-                    <button class="admin-modal-cancel" id="userModalCancel" type="button">
-                        Cancel
-                    </button>
-
-                    <button class="admin-modal-save" id="userModalSave" type="submit">
-                        <i class="fa-solid fa-user-plus"></i> Add User
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-            authDomain: "bdgg-database.firebaseapp.com",
-            projectId: "bdgg-database",
-            storageBucket: "bdgg-database.appspot.com",
-            messagingSenderId: "43574975434",
-            appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-
-        window.db = firebase.firestore();
-    </script>
-
-    <!-- Keep existing shared session/auth behavior. No header/footer placeholders exist. -->
-    <script src="shared/include.js"></script>
-    <script src="assets/js/admin.js"></script>
-    <script src="assets/js/page-loader.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig={apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",authDomain:"bdgg-database.firebaseapp.com",projectId:"bdgg-database",storageBucket:"bdgg-database.appspot.com",messagingSenderId:"43574975434",appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"};
+    if(!firebase.apps.length){firebase.initializeApp(firebaseConfig)}
+    window.db=firebase.firestore();window.auth=firebase.auth();
+  </script>
+  <script src="shared/include.js"></script>
+  <script src="ai-assistant/guide-registry.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/page-loader.js"></script>
 </body>
 </html>
