@@ -1,9 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 /* ============================================================
    ADMIN DASHBOARD
    Reference-based layout
    ============================================================ */
 
 .admin-dashboard-content {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   margin-left: var(--admin-sidebar-width);
   min-height: calc(100vh - 305px);
   padding: 18px 22px 34px;
@@ -118,14 +121,14 @@
 
 .kpi-copy span {
   color: #747493;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
 }
 
 .kpi-copy strong {
   margin-top: 3px;
   color: #171750;
-  font-size: 24px;
+  font-size: 25px;
   line-height: 1;
   letter-spacing: -.5px;
 }
@@ -140,7 +143,7 @@
   position: absolute;
   top: 19px;
   right: 12px;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
 }
 
@@ -199,7 +202,7 @@
 .dashboard-card-header h2 {
   margin: 0;
   color: #15154c;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.35;
 }
 
@@ -213,7 +216,7 @@
   padding: 0;
   background: transparent;
   color: #5e2bc7;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -250,7 +253,7 @@
   flex-direction: column;
   justify-content: space-between;
   color: #aaaabd;
-  font-size: 7px;
+  font-size: 8px;
   text-align: right;
 }
 
@@ -313,7 +316,7 @@
 .bar-group > span {
   margin-top: 8px;
   color: #9999af;
-  font-size: 7px;
+  font-size: 8px;
   white-space: nowrap;
 }
 
@@ -321,7 +324,7 @@
   display: flex;
   gap: 10px;
   color: #777791;
-  font-size: 7px;
+  font-size: 8px;
 }
 
 .chart-legend span {
@@ -382,7 +385,7 @@
 .guide-row strong {
   overflow: hidden;
   color: #4b4b70;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -404,7 +407,7 @@
 
 .guide-row > b {
   color: #77778f;
-  font-size: 8px;
+  font-size: 9px;
   text-align: right;
 }
 
@@ -493,18 +496,18 @@
 
 .region-legend span {
   color: #6c6c86;
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .region-legend b {
   color: #4e4e70;
-  font-size: 8px;
+  font-size: 9px;
   text-align: right;
 }
 
 .region-legend small {
   color: #9999ad;
-  font-size: 7px;
+  font-size: 8px;
   text-align: right;
 }
 
@@ -526,7 +529,7 @@
   padding: 0 7px;
   background: #f4f4fa;
   color: #777790;
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 800;
   text-align: left;
   white-space: nowrap;
@@ -545,7 +548,7 @@
   padding: 0 7px;
   border-bottom: 1px solid #f0eff4;
   color: #666681;
-  font-size: 7.5px;
+  font-size: 8.5px;
   white-space: nowrap;
 }
 
@@ -569,7 +572,7 @@
   border-radius: 50%;
   background: #eee8ff;
   color: #6332c9;
-  font-size: 7px;
+  font-size: 8px;
   font-style: normal;
   font-weight: 800;
 }
@@ -581,7 +584,7 @@
   min-height: 17px;
   padding: 0 7px;
   border-radius: 20px;
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
 }
 
@@ -610,7 +613,7 @@
 
 .activity-action b {
   color: #555572;
-  font-size: 7.5px;
+  font-size: 8.5px;
 }
 
 .activity-action.login { color: #7a4bdd; }
