@@ -25,15 +25,21 @@
 
 #adminHeader {
   width: 100%;
-  min-height: 100vh;
   color: var(--admin-text);
   font-family: "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
 .admin-shell {
   min-height: 100vh;
-  display: flex;
   background: #f7f7fc;
+}
+
+.admin-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 100;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ============================================================
@@ -43,7 +49,7 @@
 .admin-sidebar {
   width: var(--admin-sidebar-width);
   min-width: var(--admin-sidebar-width);
-  min-height: 100vh;
+  height: 100vh;
   padding: 20px 14px 14px;
   display: flex;
   flex-direction: column;
@@ -262,13 +268,19 @@
 
 .admin-main {
   min-width: 0;
-  flex: 1;
   min-height: 100vh;
+  margin-left: var(--admin-sidebar-width);
+  padding-top: 70px;
 }
 
 .admin-top-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--admin-sidebar-width);
+  z-index: 90;
   height: 70px;
-  width: 100%;
+  width: auto;
   padding: 0 28px;
   display: flex;
   align-items: center;
@@ -684,6 +696,14 @@
     width: 70px;
     min-width: 70px;
     padding: 16px 9px;
+  }
+
+  .admin-main {
+    margin-left: 70px;
+  }
+
+  .admin-top-header {
+    left: 70px;
   }
 
   .admin-profile-text,
