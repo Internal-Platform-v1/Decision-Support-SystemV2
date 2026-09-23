@@ -399,3 +399,227 @@ html:not(.page-loading) .page-loader{opacity:0;visibility:hidden;pointer-events:
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* ============================================================
+   STRICT REFERENCE MATCH — DO NOT REDESIGN
+   These final overrides are intentionally limited to geometry,
+   spacing and analytics motion so the dashboard follows the
+   supplied reference rather than introducing a new visual system.
+   ============================================================ */
+
+/* Reference desktop canvas */
+.admin-page-scroll{
+  max-width:1485px;
+  width:calc(100% - 84px);
+  padding-top:22px;
+}
+
+/* The reference goes directly from hero -> KPI row. */
+.admin-dashboard-heading{
+  display:none;
+}
+.admin-dashboard-view{
+  margin-top:13px;
+}
+.admin-hero-meta{
+  display:none;
+}
+
+/* KPI geometry */
+.admin-kpi-row{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:14px;
+}
+.admin-kpi{
+  min-height:96px;
+  height:96px;
+}
+
+/* ------------------------------------------------------------
+   ANALYTICS — three cards share the same top edge but NOT the
+   same height. This is a deliberate match to the reference.
+   ------------------------------------------------------------ */
+.dashboard-analytics-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-top:20px;
+  align-items:start;
+}
+.dashboard-analytics-grid .admin-card{
+  margin:0;
+}
+.activity-card{
+  height:277px;
+}
+.guide-usage-card{
+  height:255px;
+}
+.region-card{
+  height:210px;
+}
+
+/* Activity panel */
+.activity-card .admin-card-header{
+  min-height:61px;
+  height:61px;
+  padding:15px 19px 10px;
+}
+.activity-card .activity-chart{
+  height:201px;
+  margin:0 18px 10px 17px;
+}
+.activity-card .chart-bars{
+  height:158px;
+  top:7px;
+}
+.activity-card .chart-grid-line.one{top:10px}
+.activity-card .chart-grid-line.two{top:59px}
+.activity-card .chart-grid-line.three{top:108px}
+.activity-card .chart-grid-line.four{top:157px}
+.activity-card .chart-y-labels{
+  top:4px;
+  bottom:27px;
+}
+.activity-card .chart-x-labels{
+  bottom:0;
+}
+
+/* Guide usage panel */
+.guide-usage-card .admin-card-header{
+  min-height:61px;
+  height:61px;
+  padding:15px 19px 9px;
+}
+.guide-usage-list{
+  padding:0 19px 12px;
+  gap:9px;
+}
+.guide-usage-row{
+  grid-template-columns:20px minmax(0,1fr) 30px;
+  gap:8px;
+}
+.guide-usage-rank{
+  width:18px;
+  height:18px;
+}
+.guide-usage-info strong{
+  font-size:9px;
+  line-height:11px;
+}
+.guide-usage-track{
+  height:5px;
+  margin-top:4px;
+}
+
+/* Region panel */
+.region-card .admin-card-header{
+  min-height:61px;
+  height:61px;
+  padding:15px 19px 8px;
+}
+.region-body{
+  grid-template-columns:137px minmax(0,1fr);
+  gap:8px;
+  padding:0 19px 10px;
+}
+.region-donut{
+  width:124px;
+  height:124px;
+  margin:0 auto;
+}
+.region-donut::before{
+  inset:19px;
+}
+.region-legend{
+  gap:9px;
+}
+.region-legend-row{
+  gap:6px;
+  font-size:9px;
+}
+
+/* Lower reference row starts after the tallest analytics card. */
+.dashboard-tables-grid{
+  margin-top:20px;
+}
+
+/* ------------------------------------------------------------
+   ANALYTICS MOTION
+   ------------------------------------------------------------ */
+.dashboard-analytics-grid .admin-card{
+  animation:analyticsCardIn .55s cubic-bezier(.22,.75,.22,1) both;
+}
+.dashboard-analytics-grid .activity-card{animation-delay:.04s}
+.dashboard-analytics-grid .guide-usage-card{animation-delay:.10s}
+.dashboard-analytics-grid .region-card{animation-delay:.16s}
+
+/* Generic support for the dynamically created activity bars. */
+.chart-bars > *{
+  transform-origin:center bottom;
+  animation:analyticsBarIn .72s cubic-bezier(.22,.82,.2,1) both;
+}
+.chart-bars > *:nth-child(1){animation-delay:.10s}
+.chart-bars > *:nth-child(2){animation-delay:.15s}
+.chart-bars > *:nth-child(3){animation-delay:.20s}
+.chart-bars > *:nth-child(4){animation-delay:.25s}
+.chart-bars > *:nth-child(5){animation-delay:.30s}
+.chart-bars > *:nth-child(6){animation-delay:.35s}
+.chart-bars > *:nth-child(7){animation-delay:.40s}
+
+.guide-usage-list > *{
+  animation:analyticsRowIn .45s ease both;
+}
+.guide-usage-list > *:nth-child(1){animation-delay:.10s}
+.guide-usage-list > *:nth-child(2){animation-delay:.16s}
+.guide-usage-list > *:nth-child(3){animation-delay:.22s}
+.guide-usage-list > *:nth-child(4){animation-delay:.28s}
+.guide-usage-list > *:nth-child(5){animation-delay:.34s}
+
+.region-card .region-donut{
+  animation:analyticsDonutIn .9s cubic-bezier(.2,.82,.2,1) both;
+}
+.region-card .region-legend-row{
+  animation:analyticsRowIn .45s ease both;
+}
+.region-card .region-legend-row:nth-child(1){animation-delay:.18s}
+.region-card .region-legend-row:nth-child(2){animation-delay:.24s}
+.region-card .region-legend-row:nth-child(3){animation-delay:.30s}
+
+@keyframes analyticsCardIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes analyticsBarIn{
+  from{opacity:0;transform:scaleY(0)}
+  to{opacity:1;transform:scaleY(1)}
+}
+@keyframes analyticsRowIn{
+  from{opacity:0;transform:translateX(7px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes analyticsDonutIn{
+  from{opacity:0;transform:rotate(-92deg) scale(.75)}
+  to{opacity:1;transform:rotate(-92deg) scale(1)}
+}
+
+@media (max-width:1200px){
+  .admin-page-scroll{width:calc(100% - 28px);max-width:none}
+  .dashboard-analytics-grid{grid-template-columns:1fr 1fr}
+  .activity-card{grid-column:1/-1;height:277px}
+  .guide-usage-card{height:255px}
+  .region-card{height:210px}
+}
+
+@media (max-width:900px){
+  .admin-page-scroll{width:calc(100% - 24px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .dashboard-analytics-grid .admin-card,
+  .chart-bars > *,
+  .guide-usage-list > *,
+  .region-card .region-donut,
+  .region-card .region-legend-row{
+    animation:none!important;
+  }
+}
