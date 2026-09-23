@@ -1,1 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Decision Support System</title>
 
+  <!-- Shared Admin Console header -->
+  <link rel="stylesheet" href="../../shared/header/admin-header.css">
+
+  <!-- Dashboard-only CSS -->
+  <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+
+<body
+  data-admin-page="dashboard"
+  data-admin-title="Decision Support System"
+>
+
+  <!-- Shared sidebar + top header + welcome hero -->
+  <div id="adminHeader"></div>
+
+  <!-- =========================================================
+       DASHBOARD-ONLY CONTENT
+       Everything below this point belongs only to the dashboard.
+       ========================================================= -->
+  <main class="admin-dashboard-content">
+
+    <section class="dashboard-section-heading">
+      <div>
+        <span class="dashboard-eyebrow">ADMIN OVERVIEW</span>
+        <h2>Dashboard</h2>
+        <p>Monitor the Decision Support System from one place.</p>
+      </div>
+    </section>
+
+    <section class="dashboard-stat-grid" aria-label="Dashboard statistics">
+      <article class="dashboard-stat-card">
+        <div class="dashboard-stat-icon users-icon">U</div>
+        <div>
+          <span>Total Users</span>
+          <strong id="dashboardTotalUsers">—</strong>
+          <small>Active system users</small>
+        </div>
+      </article>
+
+      <article class="dashboard-stat-card">
+        <div class="dashboard-stat-icon templates-icon">T</div>
+        <div>
+          <span>Templates</span>
+          <strong id="dashboardTotalTemplates">—</strong>
+          <small>Available response templates</small>
+        </div>
+      </article>
+
+      <article class="dashboard-stat-card">
+        <div class="dashboard-stat-icon guides-icon">G</div>
+        <div>
+          <span>Guides</span>
+          <strong id="dashboardTotalGuides">—</strong>
+          <small>Decision guides</small>
+        </div>
+      </article>
+
+      <article class="dashboard-stat-card">
+        <div class="dashboard-stat-icon activity-icon">A</div>
+        <div>
+          <span>System Activity</span>
+          <strong id="dashboardActivityCount">—</strong>
+          <small>Recent recorded events</small>
+        </div>
+      </article>
+    </section>
+
+    <section class="dashboard-lower-grid">
+      <article class="dashboard-panel">
+        <div class="dashboard-panel-header">
+          <div>
+            <span class="dashboard-eyebrow">QUICK ACCESS</span>
+            <h3>Administration</h3>
+          </div>
+        </div>
+
+        <div class="dashboard-quick-grid">
+          <button class="dashboard-quick-card" data-dashboard-nav="users">
+            <span>Users</span>
+            <small>Manage accounts and access</small>
+            <b>→</b>
+          </button>
+
+          <button class="dashboard-quick-card" data-dashboard-nav="templates">
+            <span>Templates</span>
+            <small>Manage response templates</small>
+            <b>→</b>
+          </button>
+
+          <button class="dashboard-quick-card" data-dashboard-nav="guides">
+            <span>Guides</span>
+            <small>Manage decision guides</small>
+            <b>→</b>
+          </button>
+
+          <button class="dashboard-quick-card" data-dashboard-nav="reports">
+            <span>Reports</span>
+            <small>Review system analytics</small>
+            <b>→</b>
+          </button>
+        </div>
+      </article>
+
+      <article class="dashboard-panel">
+        <div class="dashboard-panel-header">
+          <div>
+            <span class="dashboard-eyebrow">RECENT ACTIVITY</span>
+            <h3>System Logs</h3>
+          </div>
+
+          <button class="dashboard-text-button" data-dashboard-nav="logs">
+            View all
+          </button>
+        </div>
+
+        <div id="dashboardRecentActivity" class="dashboard-activity-list">
+          <div class="dashboard-empty-state">
+            <span>No activity loaded yet.</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <script src="../../shared/header/admin-header.js"></script>
+  <script src="admin-dashboard.js"></script>
+</body>
+</html>
