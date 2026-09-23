@@ -5,127 +5,319 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Decision Support System</title>
 
-  <!-- Shared Admin Console header -->
   <link rel="stylesheet" href="../../shared/header/admin-header.css">
-
-  <!-- Dashboard-only CSS -->
   <link rel="stylesheet" href="admin-dashboard.css">
 </head>
 
-<body
-  data-admin-page="dashboard"
-  data-admin-title="Decision Support System"
->
+<body data-admin-page="dashboard" data-admin-title="Decision Support System">
 
-  <!-- Shared sidebar + top header + welcome hero -->
+  <!-- Shared Admin Console shell -->
   <div id="adminHeader"></div>
 
   <!-- =========================================================
-       DASHBOARD-ONLY CONTENT
-       Everything below this point belongs only to the dashboard.
+       ADMIN DASHBOARD
+       Dashboard-only content starts here.
        ========================================================= -->
   <main class="admin-dashboard-content">
 
-    <section class="dashboard-section-heading">
-      <div>
-        <span class="dashboard-eyebrow">ADMIN OVERVIEW</span>
-        <h2>Dashboard</h2>
-        <p>Monitor the Decision Support System from one place.</p>
-      </div>
-    </section>
+    <!-- TOP KPI CARDS -->
+    <section class="dashboard-kpi-grid">
 
-    <section class="dashboard-stat-grid" aria-label="Dashboard statistics">
-      <article class="dashboard-stat-card">
-        <div class="dashboard-stat-icon users-icon">U</div>
-        <div>
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-purple">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3.5 19c.6-3.2 2.4-5 5.5-5s4.9 1.8 5.5 5"/><path d="M14.5 14.6c2.9-.3 5.2 1.2 6 4.4"/></svg>
+        </div>
+        <div class="kpi-copy">
           <span>Total Users</span>
-          <strong id="dashboardTotalUsers">—</strong>
-          <small>Active system users</small>
+          <strong id="totalUsers">24</strong>
+          <small>All registered users</small>
         </div>
+        <div class="kpi-change positive">↑ 8%</div>
       </article>
 
-      <article class="dashboard-stat-card">
-        <div class="dashboard-stat-icon templates-icon">T</div>
-        <div>
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-green">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg>
+        </div>
+        <div class="kpi-copy">
+          <span>Active Users</span>
+          <strong id="activeUsers">21</strong>
+          <small>Currently active</small>
+        </div>
+        <div class="kpi-change positive">↑ 5%</div>
+      </article>
+
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-orange">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></svg>
+        </div>
+        <div class="kpi-copy">
           <span>Templates</span>
-          <strong id="dashboardTotalTemplates">—</strong>
-          <small>Available response templates</small>
+          <strong id="totalTemplates">58</strong>
+          <small>Total template records</small>
         </div>
+        <div class="kpi-change positive">↑ 12%</div>
       </article>
 
-      <article class="dashboard-stat-card">
-        <div class="dashboard-stat-icon guides-icon">G</div>
-        <div>
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-blue">
+          <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5A2.5 2.5 0 0 1 20 21V5.5Z"/></svg>
+        </div>
+        <div class="kpi-copy">
           <span>Guides</span>
-          <strong id="dashboardTotalGuides">—</strong>
-          <small>Decision guides</small>
+          <strong id="totalGuides">24</strong>
+          <small>Decision guides available</small>
         </div>
+        <div class="kpi-change neutral">— 0%</div>
       </article>
 
-      <article class="dashboard-stat-card">
-        <div class="dashboard-stat-icon activity-icon">A</div>
-        <div>
-          <span>System Activity</span>
-          <strong id="dashboardActivityCount">—</strong>
-          <small>Recent recorded events</small>
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-red">
+          <svg viewBox="0 0 24 24"><path d="M4 14V10a2 2 0 0 1 2-2h7l5-3v14l-5-3H6a2 2 0 0 1-2-2Z"/><path d="M8 16l1.5 4h3L11 16"/></svg>
         </div>
+        <div class="kpi-copy">
+          <span>Announcements</span>
+          <strong id="totalAnnouncements">6</strong>
+          <small>Published announcements</small>
+        </div>
+        <div class="kpi-change positive">↑ 50%</div>
       </article>
+
     </section>
 
-    <section class="dashboard-lower-grid">
-      <article class="dashboard-panel">
-        <div class="dashboard-panel-header">
-          <div>
-            <span class="dashboard-eyebrow">QUICK ACCESS</span>
-            <h3>Administration</h3>
+    <!-- ANALYTICS ROW -->
+    <section class="dashboard-analytics-grid">
+
+      <!-- USER ACTIVITY -->
+      <article class="dashboard-card user-activity-card">
+        <div class="dashboard-card-header">
+          <h2>User Activity <span>(Last 7 Days)</span></h2>
+          <div class="chart-legend">
+            <span><i class="legend-dot login"></i>Logins</span>
+            <span><i class="legend-dot active"></i>Active Users</span>
           </div>
         </div>
 
-        <div class="dashboard-quick-grid">
-          <button class="dashboard-quick-card" data-dashboard-nav="users">
-            <span>Users</span>
-            <small>Manage accounts and access</small>
-            <b>→</b>
-          </button>
-
-          <button class="dashboard-quick-card" data-dashboard-nav="templates">
-            <span>Templates</span>
-            <small>Manage response templates</small>
-            <b>→</b>
-          </button>
-
-          <button class="dashboard-quick-card" data-dashboard-nav="guides">
-            <span>Guides</span>
-            <small>Manage decision guides</small>
-            <b>→</b>
-          </button>
-
-          <button class="dashboard-quick-card" data-dashboard-nav="reports">
-            <span>Reports</span>
-            <small>Review system analytics</small>
-            <b>→</b>
-          </button>
-        </div>
-      </article>
-
-      <article class="dashboard-panel">
-        <div class="dashboard-panel-header">
-          <div>
-            <span class="dashboard-eyebrow">RECENT ACTIVITY</span>
-            <h3>System Logs</h3>
+        <div class="activity-chart">
+          <div class="chart-y-axis">
+            <span>30</span>
+            <span>20</span>
+            <span>10</span>
+            <span>0</span>
           </div>
 
-          <button class="dashboard-text-button" data-dashboard-nav="logs">
-            View all
-          </button>
-        </div>
+          <div class="chart-plot">
+            <div class="chart-gridline g30"></div>
+            <div class="chart-gridline g20"></div>
+            <div class="chart-gridline g10"></div>
+            <div class="chart-gridline g0"></div>
 
-        <div id="dashboardRecentActivity" class="dashboard-activity-list">
-          <div class="dashboard-empty-state">
-            <span>No activity loaded yet.</span>
+            <div class="bar-groups">
+              <div class="bar-group"><div class="bars"><b style="height:34%"></b><b class="soft" style="height:52%"></b></div><span>Sep 17</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:40%"></b><b class="soft" style="height:61%"></b></div><span>Sep 18</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:37%"></b><b class="soft" style="height:75%"></b></div><span>Sep 19</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:30%"></b><b class="soft" style="height:51%"></b></div><span>Sep 20</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:35%"></b><b class="soft" style="height:45%"></b></div><span>Sep 21</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:38%"></b><b class="soft" style="height:62%"></b></div><span>Sep 22</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:44%"></b><b class="soft" style="height:69%"></b></div><span>Sep 23</span></div>
+            </div>
           </div>
         </div>
       </article>
+
+      <!-- GUIDE USAGE -->
+      <article class="dashboard-card guide-usage-card">
+        <div class="dashboard-card-header">
+          <h2>Guide Usage <span>(Top 5)</span></h2>
+          <button type="button" class="view-all-button" data-dashboard-nav="guides">View All</button>
+        </div>
+
+        <div class="guide-usage-list">
+          <div class="guide-row">
+            <span class="rank purple">1</span>
+            <strong>BD — General Guide</strong>
+            <div class="guide-bar"><i style="width:100%"></i></div>
+            <b>128</b>
+          </div>
+          <div class="guide-row">
+            <span class="rank lavender">2</span>
+            <strong>Rate &amp; Volume Quote (R&amp;V)</strong>
+            <div class="guide-bar"><i style="width:75%"></i></div>
+            <b>96</b>
+          </div>
+          <div class="guide-row">
+            <span class="rank purple">3</span>
+            <strong>Weight Update per BOL</strong>
+            <div class="guide-bar"><i style="width:58%"></i></div>
+            <b>74</b>
+          </div>
+          <div class="guide-row">
+            <span class="rank orange">4</span>
+            <strong>Reference Number Guide</strong>
+            <div class="guide-bar"><i style="width:48%"></i></div>
+            <b>62</b>
+          </div>
+          <div class="guide-row">
+            <span class="rank purple">5</span>
+            <strong>Fuel Guide</strong>
+            <div class="guide-bar"><i style="width:45%"></i></div>
+            <b>58</b>
+          </div>
+        </div>
+      </article>
+
+      <!-- REGION -->
+      <article class="dashboard-card region-card">
+        <div class="dashboard-card-header">
+          <h2>User Distribution by Region</h2>
+          <select id="regionFilter" aria-label="Region">
+            <option>All Regions</option>
+            <option>Philippines</option>
+            <option>India</option>
+          </select>
+        </div>
+
+        <div class="region-content">
+          <div class="donut-wrap">
+            <div class="donut-chart">
+              <div class="donut-center">
+                <strong>24</strong>
+                <span>Users</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="region-legend">
+            <div><i class="region-dot ph"></i><span>Philippines</span><b>16</b><small>67%</small></div>
+            <div><i class="region-dot india"></i><span>India</span><b>5</b><small>21%</small></div>
+            <div><i class="region-dot other"></i><span>Other</span><b>3</b><small>12%</small></div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- TABLE ROW -->
+    <section class="dashboard-tables-grid">
+
+      <!-- RECENT USERS -->
+      <article class="dashboard-card table-card">
+        <div class="dashboard-card-header">
+          <h2>Recent Users</h2>
+          <button type="button" class="view-all-button" data-dashboard-nav="users">View All <span>›</span></button>
+        </div>
+
+        <div class="dashboard-table-scroll">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>ROLE</th>
+                <th>REGION</th>
+                <th>STATUS</th>
+                <th>DATE ADDED</th>
+              </tr>
+            </thead>
+            <tbody id="recentUsersBody">
+              <tr>
+                <td><span class="table-person"><i>MS</i>Maria Santos</span></td>
+                <td>maria.santos@iqor.com</td>
+                <td><span class="role-pill">Team Leader</span></td>
+                <td>Philippines</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td>Sep 22, 2025</td>
+              </tr>
+              <tr>
+                <td><span class="table-person"><i>JC</i>John Cruz</span></td>
+                <td>john.cruz@iqor.com</td>
+                <td><span class="role-pill">Employee</span></td>
+                <td>Philippines</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td>Sep 21, 2025</td>
+              </tr>
+              <tr>
+                <td><span class="table-person"><i>PS</i>Priya Sharma</span></td>
+                <td>priya.sharma@iqor.com</td>
+                <td><span class="role-pill">Team Leader</span></td>
+                <td>India</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td>Sep 20, 2025</td>
+              </tr>
+              <tr>
+                <td><span class="table-person"><i>VS</i>Vikram Singh</span></td>
+                <td>vikram.singh@iqor.com</td>
+                <td><span class="role-pill">Employee</span></td>
+                <td>India</td>
+                <td><span class="status-pill inactive">Inactive</span></td>
+                <td>Sep 18, 2025</td>
+              </tr>
+              <tr>
+                <td><span class="table-person"><i>AR</i>Ana Reyes</span></td>
+                <td>ana.reyes@iqor.com</td>
+                <td><span class="role-pill">Manager</span></td>
+                <td>Philippines</td>
+                <td><span class="status-pill active">Active</span></td>
+                <td>Sep 17, 2025</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- RECENT ACTIVITY -->
+      <article class="dashboard-card table-card">
+        <div class="dashboard-card-header">
+          <h2>Recent Activity</h2>
+          <button type="button" class="view-all-button" data-dashboard-nav="logs">View All <span>›</span></button>
+        </div>
+
+        <div class="dashboard-table-scroll">
+          <table class="dashboard-table activity-table">
+            <thead>
+              <tr>
+                <th>ACTION</th>
+                <th>USER</th>
+                <th>DETAILS</th>
+                <th>TIME</th>
+              </tr>
+            </thead>
+            <tbody id="recentActivityBody">
+              <tr>
+                <td><span class="activity-action login">↪ <b>User Login</b></span></td>
+                <td>Maria Santos</td>
+                <td>Logged in to the system</td>
+                <td>10 mins ago</td>
+              </tr>
+              <tr>
+                <td><span class="activity-action template">▣ <b>Template Updated</b></span></td>
+                <td>John Cruz</td>
+                <td>Updated EBS Response template</td>
+                <td>1 hour ago</td>
+              </tr>
+              <tr>
+                <td><span class="activity-action user">● <b>New User Added</b></span></td>
+                <td>Ana Reyes</td>
+                <td>Added new team member</td>
+                <td>2 hours ago</td>
+              </tr>
+              <tr>
+                <td><span class="activity-action guide">▣ <b>Guide Published</b></span></td>
+                <td>System Admin</td>
+                <td>Published Fuel Guide</td>
+                <td>2 hours ago</td>
+              </tr>
+              <tr>
+                <td><span class="activity-action announce">⚑ <b>Announcement</b></span></td>
+                <td>Vikram Singh</td>
+                <td>Posted new announcement</td>
+                <td>1 day ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
     </section>
 
   </main>
