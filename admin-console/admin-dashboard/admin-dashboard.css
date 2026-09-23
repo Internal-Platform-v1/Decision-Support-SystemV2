@@ -4,7 +4,8 @@
    ============================================================ */
 
 .admin-dashboard-content {
-  min-height: calc(100vh - 70px - 235px);
+  margin-left: var(--admin-sidebar-width);
+  min-height: calc(100vh - 305px);
   padding: 18px 22px 34px;
   background: #f7f7fb;
 }
@@ -12,6 +13,8 @@
 /* ---------- KPI CARDS ---------- */
 
 .dashboard-kpi-grid {
+  width: 100%;
+  min-width: 0;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
@@ -638,6 +641,7 @@
 
 @media (max-width: 850px) {
   .admin-dashboard-content {
+    margin-left: var(--admin-sidebar-width);
     padding: 15px 15px 28px;
   }
 
