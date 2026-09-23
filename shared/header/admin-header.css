@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 /* ============================================================
    ADMIN HEADER / SHARED ADMIN CONSOLE
    admin-header.css
@@ -26,7 +28,7 @@
 #adminHeader {
   width: 100%;
   color: var(--admin-text);
-  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
 
 .admin-shell {
