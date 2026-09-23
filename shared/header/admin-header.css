@@ -30,7 +30,7 @@
 }
 
 .admin-shell {
-  min-height: 100vh;
+  min-height: 0;
   background: #f7f7fc;
 }
 
@@ -268,7 +268,7 @@
 
 .admin-main {
   min-width: 0;
-  min-height: 100vh;
+  min-height: 305px;
   margin-left: var(--admin-sidebar-width);
   padding-top: 70px;
 }
@@ -287,8 +287,6 @@
   justify-content: space-between;
   background: #fff;
   border-bottom: 1px solid #ededf4;
-  position: relative;
-  z-index: 20;
 }
 
 .admin-brand {

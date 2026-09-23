@@ -16,15 +16,15 @@
   };
 
   const pageMap = {
-    dashboard: "../../admin-console/admin-dashboard/admin-dashboard.html",
-    users: "../../admin-console/admin-users/admin-users.html",
-    templates: "../../admin-console/admin-templates/admin-templates.html",
-    guides: "../../admin-console/admin-guides/admin-guides.html",
-    announcements: "../../admin-console/admin-announcements/admin-announcements.html",
-    logs: "../../admin-console/admin-logs/admin-logs.html",
-    reports: "../../admin-console/admin-reports/admin-reports.html",
-    roles: "../../admin-console/admin-roles/admin-roles.html",
-    settings: "../../admin-console/admin-settings/admin-settings.html"
+    dashboard: "../admin-dashboard/admin-dashboard.html",
+    users: "../admin-users/admin-users.html",
+    templates: "../admin-templates/admin-templates.html",
+    guides: "../admin-guides/admin-guides.html",
+    announcements: "../admin-announcements/admin-announcements.html",
+    logs: "../admin-logs/admin-logs.html",
+    reports: "../admin-reports/admin-reports.html",
+    roles: "../admin-roles/admin-roles.html",
+    settings: "../admin-settings/admin-settings.html"
   };
 
   function getInitials(name) {
