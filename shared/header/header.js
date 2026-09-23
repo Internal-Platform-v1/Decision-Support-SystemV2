@@ -223,7 +223,7 @@ function updateUserDisplay(profile) {
                 return;
             }
 
-            window.location.href = "admin.html";
+            window.location.href = "admin-console/admin-dashboard/admin-dashboard.html";
         });
     }
 
