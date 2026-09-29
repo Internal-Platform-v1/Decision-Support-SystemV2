@@ -1,278 +1,117 @@
 /* ============================================================
-   shared/header.js — V2
-   Header behavior + current-user display
+   shared/header.js — V3
+   Header behavior + settings menu (no authentication)
    Runs once after header.html has been inserted.
    ============================================================ */
 (function () {
     "use strict";
 
-    const FIREBASE_CONFIG = {
-        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fKDr8KwnxJU",
-        authDomain: "bdgg-database.firebaseapp.com",
-        projectId: "bdgg-database",
-        storageBucket: "bdgg-database.appspot.com",
-        messagingSenderId: "43574975434",
-        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    };
+    const ROLE_KEY  = "bd_role";
+    const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
 
     /* ------------------------------------------------------------
-       Firebase: initialize once only
+       Role state (localStorage only — no auth)
        ------------------------------------------------------------ */
-    function getFirebase() {
-        if (typeof firebase === "undefined") {
-            console.error("V2 Header: Firebase SDK is not loaded.");
-            return null;
-        }
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(FIREBASE_CONFIG);
-        }
-
-        return firebase;
-    }
-
-    /* ------------------------------------------------------------
-       User name / avatar
-       ------------------------------------------------------------ */
-    function initialsFromName(name) {
-        const value = String(name || "User").trim().replace(/\s+/g, " ");
-        const parts = value.split(" ");
-
-        if (parts.length === 1) {
-            return value.slice(0, 2).toUpperCase();
-        }
-
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-
-function updateUserDisplay(profile) {
-    const name = profile && profile.displayName
-        ? profile.displayName
-        : "User";
-
-    const role = profile && profile.role
-        ? String(profile.role).trim()
-        : "";
-
-    const profileName = document.getElementById("profileName");
-    const profileRole = document.getElementById("profileRole");
-    const profileButton = document.getElementById("profileBtn");
-    const commandCenterButton = document.getElementById(
-        "systemCommandCenterBtn"
-    );
-
-    if (profileName) {
-        profileName.textContent = name;
-    }
-
-    if (profileRole) {
-        profileRole.textContent = role || "BD Tools User";
-    }
-
-    if (profileButton) {
-        profileButton.textContent = initialsFromName(name);
-        profileButton.setAttribute(
-            "aria-label",
-            "Open profile for " + name
-        );
-    }
-
-    /*
-     * Show System Command Center only to Managers.
-     * Accepts "manager" or "Manager".
-     */
-    const isManager = role.toLowerCase() === "manager";
-
-    if (commandCenterButton) {
-        commandCenterButton.hidden = !isManager;
-    }
-
-    const dashboardName = document.getElementById("currentUserName");
-
-    if (dashboardName) {
-        dashboardName.textContent = name;
-    }
-}
-
-    async function loadUser(user) {
-        const fb = getFirebase();
-        if (!fb || !user) return;
-
-        const email = String(user.email || "").trim().toLowerCase();
-        let displayName = user.displayName || email.split("@")[0] || "User";
-        let role = "";
-        let profileData = {};
-
+    function getRole() {
         try {
-            const db = fb.firestore();
-            const collection = db.collection("approved_users");
-
-            /* Primary lookup: the approved_users document ID is the email. */
-            const directDoc = await collection.doc(email).get();
-
-            if (directDoc.exists) {
-                profileData = directDoc.data() || {};
-            } else {
-                /* Fallback for collections where email is stored as a field. */
-                const snapshot = await collection
-                    .where("email", "==", email)
-                    .limit(1)
-                    .get();
-
-                if (!snapshot.empty) {
-                    profileData = snapshot.docs[0].data() || {};
-                }
-            }
-
-            displayName = String(
-                profileData.name ||
-                profileData.displayName ||
-                user.displayName ||
-                email.split("@")[0] ||
-                "User"
-            ).replace(/\s+vndr$/i, "").trim();
-
-            const roleKey = Object.keys(profileData).find(
-                key => key.trim().toLowerCase() === "role"
-            );
-
-            role = roleKey
-                ? String(profileData[roleKey] || "").trim()
-                : "";
-
-            console.log("V2 Header: approved user profile data:", profileData);
-            console.log("V2 Header: resolved role:", role);
-        } catch (error) {
-            console.error("V2 Header: approved_users lookup failed:", error);
+            return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user";
+        } catch (e) {
+            return "user";
         }
+    }
 
-        window.currentUser = user;
-        window.currentUserProfile = {
-            uid: user.uid,
-            email: user.email,
-            displayName: displayName,
-            role: role
-        };
+    function setRole(role) {
+        const safe = role === "admin" ? "admin" : "user";
+        try {
+            localStorage.setItem(ROLE_KEY, safe);
+        } catch (e) { /* storage unavailable */ }
+        return safe;
+    }
 
-        updateUserDisplay(window.currentUserProfile);
+    function applyRole(role) {
+        /* Expose on <html> so CSS / other scripts can react. */
+        document.documentElement.setAttribute("data-role", role);
 
-        document.dispatchEvent(new CustomEvent("currentUserProfileLoaded", {
-            detail: window.currentUserProfile
-        }));
+        document.querySelectorAll(".role-option").forEach(function (opt) {
+            const active = opt.dataset.role === role;
+            opt.classList.toggle("active", active);
+            opt.setAttribute("aria-checked", String(active));
+        });
 
-        console.log("V2 Header: current user loaded:", window.currentUserProfile);
+        const adminBtn = document.getElementById("adminDashboardBtn");
+        if (adminBtn) adminBtn.hidden = role !== "admin";
+
+        document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
     }
 
     /* ------------------------------------------------------------
-       Profile dropdown
+       Settings dropdown
        ------------------------------------------------------------ */
-    function setupProfile() {
-    const button = document.getElementById("profileBtn");
-    const chevron = document.getElementById("profileChevron");
-    const menu = document.getElementById("profileMenu");
+    function setupSettings() {
+        const button = document.getElementById("settingsBtn");
+        const menu   = document.getElementById("settingsMenu");
+        const adminBtn = document.getElementById("adminDashboardBtn");
 
-    const commandCenterButton = document.getElementById(
-        "systemCommandCenterBtn"
-    );
-
-    if (!button || !menu) {
-        console.error("V2 Header: profile elements were not found.");
-        return;
-    }
-
-    const toggle = function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const open = menu.classList.toggle("open");
-
-        button.setAttribute("aria-expanded", String(open));
-
-        if (chevron) {
-            chevron.setAttribute("aria-expanded", String(open));
+        if (!button || !menu) {
+            console.error("Header: settings elements were not found.");
+            return;
         }
-    };
 
-    button.addEventListener("click", toggle);
+        /* Paint the stored role immediately. */
+        applyRole(getRole());
 
-    if (chevron) {
-        chevron.addEventListener("click", toggle);
-    }
+        function close() {
+            menu.classList.remove("open");
+            button.setAttribute("aria-expanded", "false");
+        }
 
-    /*
-     * System Command Center
-     */
-    if (commandCenterButton) {
-        commandCenterButton.addEventListener("click", function (event) {
+        button.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
 
-            const profile = window.currentUserProfile;
-            const role = profile && profile.role
-                ? String(profile.role).trim().toLowerCase()
-                : "";
+            const open = menu.classList.toggle("open");
+            button.setAttribute("aria-expanded", String(open));
+        });
 
-            /*
-             * Security check before navigation.
-             * The button is also hidden for non-Managers.
-             */
-            if (role !== "manager") {
-                console.warn(
-                    "V2 Header: unauthorized System Command Center access."
-                );
-                return;
-            }
+        /* User / Admin segmented control */
+        menu.querySelectorAll(".role-option").forEach(function (opt) {
+            opt.addEventListener("click", function (event) {
+                event.stopPropagation();
+                applyRole(setRole(this.dataset.role));
+            });
+        });
 
-            window.location.href = "admin-console/admin-dashboard/admin-dashboard.html";
+        /* Admin dashboard navigation */
+        if (adminBtn) {
+            adminBtn.addEventListener("click", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (getRole() !== "admin") {
+                    console.warn("Header: admin dashboard blocked for non-admin role.");
+                    return;
+                }
+
+                window.location.href = ADMIN_URL;
+            });
+        }
+
+        /* Click outside closes the menu */
+        document.addEventListener("click", function (event) {
+            if (!event.target.closest(".settings-wrapper")) close();
         });
     }
-
-    /*
-     * Profile menu buttons
-     */
-    menu.querySelectorAll("button").forEach(function (item) {
-        item.addEventListener("click", function (event) {
-            event.stopPropagation();
-
-            const action = this.textContent.trim().toLowerCase();
-
-            if (action.includes("logout")) {
-                const fb = getFirebase();
-
-                if (fb) {
-                    fb.auth().signOut().then(function () {
-                        window.location.href = "index.html";
-                    }).catch(function (error) {
-                        console.error("Logout failed:", error);
-                    });
-                }
-            }
-        });
-    });
-
-    document.addEventListener("click", function (event) {
-        if (!event.target.closest(".header-actions")) {
-            menu.classList.remove("open");
-
-            button.setAttribute("aria-expanded", "false");
-
-            if (chevron) {
-                chevron.setAttribute("aria-expanded", "false");
-            }
-        }
-    });
-}
 
     /* ------------------------------------------------------------
        Case Directory dropdown
        ------------------------------------------------------------ */
     function setupCaseDirectory() {
-        const button = document.getElementById("caseDirectoryBtn");
-        const menu = document.getElementById("caseDropdown");
+        const button  = document.getElementById("caseDirectoryBtn");
+        const menu    = document.getElementById("caseDropdown");
         const wrapper = document.querySelector(".nav-dropdown-wrapper");
 
         if (!button || !menu || !wrapper) {
-            console.error("V2 Header: Case Directory elements were not found.");
+            console.error("Header: Case Directory elements were not found.");
             return;
         }
 
@@ -280,8 +119,8 @@ function updateUserDisplay(profile) {
             event.preventDefault();
             event.stopPropagation();
 
-            const profileMenu = document.getElementById("profileMenu");
-            if (profileMenu) profileMenu.classList.remove("open");
+            const settingsMenu = document.getElementById("settingsMenu");
+            if (settingsMenu) settingsMenu.classList.remove("open");
 
             const open = menu.classList.toggle("open");
             button.classList.toggle("open", open);
@@ -290,9 +129,7 @@ function updateUserDisplay(profile) {
 
         menu.querySelectorAll("a").forEach(function (link) {
             link.addEventListener("click", function (event) {
-                if (this.getAttribute("href") === "#") {
-                    event.preventDefault();
-                }
+                if (this.getAttribute("href") === "#") event.preventDefault();
                 menu.classList.remove("open");
                 button.classList.remove("open");
                 button.setAttribute("aria-expanded", "false");
@@ -308,120 +145,85 @@ function updateUserDisplay(profile) {
         });
     }
 
-/* ------------------------------------------------------------
-   Main navigation
-   ------------------------------------------------------------ */
-function setupNavigation() {
-    const navItems = document.querySelectorAll(".brand-nav .nav-item");
+    /* ------------------------------------------------------------
+       Main navigation
+       ------------------------------------------------------------ */
+    function setupNavigation() {
+        const navItems = document.querySelectorAll(".brand-nav .nav-item");
 
-    const currentPage = window.location.pathname
-        .split("/")
-        .pop()
-        .toLowerCase();
+        const currentPage = window.location.pathname
+            .split("/")
+            .pop()
+            .toLowerCase();
 
-    const caseDirectoryPages = [
-        "legacy-case-directory.html",
-        "shine-case-directory.html"
-    ];
+        const caseDirectoryPages = [
+            "legacy-case-directory.html",
+            "shine-case-directory.html"
+        ];
 
-    const caseDirectoryButton =
-        document.getElementById("caseDirectoryBtn");
+        const caseDirectoryButton = document.getElementById("caseDirectoryBtn");
 
-    /*
-     * IMPORTANT:
-     * Remove active from EVERY navigation item first.
-     * This prevents Home and Case Directory from both
-     * being highlighted.
-     */
-    navItems.forEach(function (nav) {
-        nav.classList.remove("active");
-    });
+        /* Remove active from every item first so nothing double-highlights. */
+        navItems.forEach(function (nav) {
+            nav.classList.remove("active");
+        });
 
-    /*
-     * Highlight Case Directory only on its two pages.
-     */
-    if (
-        caseDirectoryButton &&
-        caseDirectoryPages.includes(currentPage)
-    ) {
-        caseDirectoryButton.classList.add("active");
-    } else {
-        /*
-         * Highlight the correct regular navigation item.
-         */
+        if (caseDirectoryButton && caseDirectoryPages.includes(currentPage)) {
+            caseDirectoryButton.classList.add("active");
+        } else {
+            navItems.forEach(function (item) {
+                const destination = {
+                    home: "index.html",
+                    ebs:  "ebs-response-template.html",
+                    fbc:  "fbc-comments-guide.html",
+                    links:"links.html"
+                }[item.dataset.nav];
+
+                if (destination && currentPage === destination.toLowerCase()) {
+                    item.classList.add("active");
+                }
+            });
+        }
+
         navItems.forEach(function (item) {
-            const destination = {
-                home: "index-main.html",
-                ebs: "ebs-response-template.html",
-                fbc: "fbc-comments-guide.html",
-                links: "links.html"
-            }[item.dataset.nav];
+            if (item.id === "caseDirectoryBtn") return;
 
-            if (
-                destination &&
-                currentPage === destination.toLowerCase()
-            ) {
-                item.classList.add("active");
-            }
+            item.addEventListener("click", function () {
+                navItems.forEach(function (nav) {
+                    nav.classList.remove("active");
+                });
+
+                this.classList.add("active");
+
+                const destination = {
+                    home: "index.html",
+                    ebs:  "ebs-response-template.html",
+                    fbc:  "fbc-comments-guide.html",
+                    links:"links.html"
+                }[this.dataset.nav];
+
+                if (destination) window.location.href = destination;
+            });
         });
     }
 
-    /*
-     * Keep the existing navigation behavior.
-     */
-    navItems.forEach(function (item) {
-        if (item.id === "caseDirectoryBtn") return;
-
-        item.addEventListener("click", function () {
-            navItems.forEach(function (nav) {
-                nav.classList.remove("active");
-            });
-
-            this.classList.add("active");
-
-            const destination = {
-                home: "index-main.html",
-                ebs: "ebs-response-template.html",
-                fbc: "fbc-comments-guide.html",
-                links: "links.html"
-            }[this.dataset.nav];
-
-            if (destination) {
-                window.location.href = destination;
-            }
-        });
-    });
-}
     /* ------------------------------------------------------------
        Global Search — DSS V2
-
-       The header search is a true global guide search.
-       It reads the .guide-card metadata from each group page,
-       so the group HTML remains the source of truth.
+       (unchanged behavior — kept verbatim)
        ------------------------------------------------------------ */
-
     const DSS_GUIDE_SEARCH_SOURCES = [
-        /* Billing Dispute */
         "guides/Billing Dispute Guides/billing-dispute-guides.html",
         "guides/Billing Dispute Guides/billing-dispute-guides (7).html",
-
-        /* Pricing */
         "guides/Pricing General Guides/pricing-guides.html",
         "guides/Pricing General Guides/pricing-guides-final.html",
         "guides/pricing-guides.html",
-
-        /* Account Handling */
         "guides/Billing Dispute Guides/account-handling-guides.html",
         "guides/Billing Dispute Guides/account-handling-guides-secured.html",
         "guides/account-handling-guides.html",
-
-        /* PAUD Queue */
         "guides/PAUD Queue Guides/paud-queue-guides.html",
         "guides/PAUD Queue Guides/paud-queue-guides-secured.html",
         "guides/PAUD Queue Guides/paud-queue-guides-theme-ready.html",
         "guides/paud-queue-guides.html",
-
-        /* Other */
         "guides/Other Guides/other-guides.html",
         "guides/other-guides.html"
     ];
@@ -429,8 +231,8 @@ function setupNavigation() {
     const DSS_GUIDE_SEARCH_CACHE_KEY = "dssV2GlobalGuideSearchIndex";
     const DSS_GUIDE_SEARCH_CACHE_TTL = 10 * 60 * 1000;
 
-    let globalGuideSearchIndex = [];
-    let globalGuideSearchReady = false;
+    let globalGuideSearchIndex   = [];
+    let globalGuideSearchReady   = false;
     let globalGuideSearchPromise = null;
 
     function escapeSearchHtml(value) {
@@ -519,13 +321,6 @@ function setupNavigation() {
 
         let absoluteGuideUrl;
 
-        /*
-         * Group pages use <base href="../../">, and several cards store
-         * root-level paths such as "guides/Billing Dispute Guides/...".
-         * Resolve those against the site origin rather than the group
-         * page's directory. Normal relative links stay relative to the
-         * source group page.
-         */
         if (/^(?:https?:)?\/\//i.test(link)) {
             absoluteGuideUrl = new URL(link, document.baseURI).href;
         } else if (link.startsWith("/")) {
@@ -576,7 +371,7 @@ function setupNavigation() {
             globalGuideSearchReady = globalGuideSearchIndex.length > 0;
             return globalGuideSearchReady;
         } catch (error) {
-            console.warn("V2 Header: unable to read search cache:", error);
+            console.warn("Header: unable to read search cache:", error);
             return false;
         }
     }
@@ -588,7 +383,7 @@ function setupNavigation() {
                 items: globalGuideSearchIndex
             }));
         } catch (error) {
-            console.warn("V2 Header: unable to save search cache:", error);
+            console.warn("Header: unable to save search cache:", error);
         }
     }
 
@@ -622,8 +417,7 @@ function setupNavigation() {
                 .map(card => extractGuideFromCard(card, sourceUrl, groupName))
                 .filter(Boolean);
         } catch (error) {
-            /* A missing optional group source should never break the header. */
-            console.debug("V2 Header: search source unavailable:", sourcePath);
+            console.debug("Header: search source unavailable:", sourcePath);
             return [];
         }
     }
@@ -635,7 +429,6 @@ function setupNavigation() {
             const seen = new Set();
             globalGuideSearchIndex = [];
 
-            /* Always index the page the user is currently on first. */
             const currentPageUrl = window.location.href;
             const currentPageTitle = document.querySelector(".group-hero h1")?.textContent
                 ?.replace(/\s+/g, " ")
@@ -650,14 +443,12 @@ function setupNavigation() {
                 );
             });
 
-            /* Then collect every group page in parallel. */
             const groups = await Promise.all(
                 DSS_GUIDE_SEARCH_SOURCES.map(fetchGuideSource)
             );
 
             groups.flat().forEach(guide => addGuideToIndex(guide, seen));
 
-            /* Stable alphabetical order keeps results predictable. */
             globalGuideSearchIndex.sort((a, b) =>
                 a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
             );
@@ -667,7 +458,7 @@ function setupNavigation() {
 
             return globalGuideSearchIndex;
         })().catch(error => {
-            console.error("V2 Header: global guide search index failed:", error);
+            console.error("Header: global guide search index failed:", error);
             globalGuideSearchReady = false;
             return globalGuideSearchIndex;
         }).finally(() => {
@@ -735,9 +526,7 @@ function setupNavigation() {
             const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             try {
                 output = output.replace(new RegExp(`(${escaped})`, "ig"), "<mark>$1</mark>");
-            } catch (_) {
-                /* Ignore malformed highlight terms. */
-            }
+            } catch (_) { /* ignore malformed terms */ }
         });
 
         return output;
@@ -884,7 +673,6 @@ function setupNavigation() {
             }
         });
 
-        /* Start building in the background so the first search is fast. */
         if (!loadCachedSearchIndex()) {
             buildGlobalGuideSearchIndex();
         }
@@ -894,23 +682,10 @@ function setupNavigation() {
        One-time startup
        ------------------------------------------------------------ */
     function start() {
-        setupProfile();
+        setupSettings();
         setupCaseDirectory();
         setupNavigation();
         setupSearch();
-
-        const fb = getFirebase();
-        if (fb) {
-            /* One auth-state listener. No polling or MutationObserver. */
-            fb.auth().onAuthStateChanged(function (user) {
-                if (user) {
-                    loadUser(user);
-                } else {
-                    window.currentUser = null;
-                    window.currentUserProfile = null;
-                }
-            });
-        }
     }
 
     start();
