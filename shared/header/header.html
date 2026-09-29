@@ -61,7 +61,7 @@
             <b class="notification-dot">3</b>
         </button>
 
-        <!-- Settings dropdown (replaces the old profile menu) -->
+        <!-- Settings dropdown -->
         <div class="settings-wrapper">
             <button
                 class="icon-btn settings-btn"
@@ -115,3 +115,53 @@
         </div>
     </div>
 </header>
+
+<!-- ============================================================
+     Admin gate — password prompt before entering the dashboard
+     ============================================================ -->
+<div class="admin-gate" id="adminGate" hidden>
+    <div class="admin-gate-backdrop" data-admin-gate-close></div>
+
+    <div
+        class="admin-gate-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="adminGateTitle"
+    >
+        <div class="admin-gate-icon" aria-hidden="true">🛡️</div>
+
+        <h2 id="adminGateTitle">Admin access</h2>
+        <p class="admin-gate-copy">
+            Enter the admin password to open the dashboard.
+        </p>
+
+        <input
+            type="password"
+            id="adminGateInput"
+            class="admin-gate-input"
+            placeholder="Admin password"
+            autocomplete="off"
+            spellcheck="false"
+        >
+
+        <div class="admin-gate-error" id="adminGateError" role="alert"></div>
+
+        <div class="admin-gate-actions">
+            <button
+                type="button"
+                class="admin-gate-btn ghost"
+                id="adminGateCancel"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="admin-gate-btn primary"
+                id="adminGateSubmit"
+            >
+                Unlock
+            </button>
+        </div>
+    </div>
+</div>
