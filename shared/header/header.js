@@ -1,13 +1,36 @@
 /* ============================================================
-   shared/header.js — V3
-   Header behavior + settings menu (no authentication)
+   shared/header.js — V4
+   Header behavior + settings menu + admin password gate
    Runs once after header.html has been inserted.
+
+   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   >>>  CHANGE THE LINE BELOW TO YOUR ADMIN PASSWORD HASH  <<<
+   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+   To generate the hash, open any page of this site, open
+   DevTools console, and run:
+
+     crypto.subtle.digest("SHA-256",
+       new TextEncoder().encode("YourPasswordHere"))
+     .then(b => console.log(
+       Array.from(new Uint8Array(b))
+         .map(x => x.toString(16).padStart(2, "0")).join("")
+     ));
+
+   Paste the hex string it prints as ADMIN_PASSWORD_HASH below.
    ============================================================ */
 (function () {
     "use strict";
 
     const ROLE_KEY  = "bd_role";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
+
+    /* >>> EDIT THIS LINE <<< */
+    const ADMIN_PASSWORD_HASH =
+        "0000000000000000000000000000000000000000000000000000000000000000";
+
+    const ADMIN_UNLOCK_KEY = "bd_admin_unlocked";
+    const ADMIN_UNLOCK_TTL = 30 * 60 * 1000; /* 30 minutes */
 
     /* ------------------------------------------------------------
        Role state (localStorage only — no auth)
@@ -29,7 +52,6 @@
     }
 
     function applyRole(role) {
-        /* Expose on <html> so CSS / other scripts can react. */
         document.documentElement.setAttribute("data-role", role);
 
         document.querySelectorAll(".role-option").forEach(function (opt) {
@@ -41,15 +63,131 @@
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
 
+        /* Dropping back to User invalidates any active admin unlock. */
+        if (role !== "admin") clearAdminUnlocked();
+
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
+    }
+
+    /* ------------------------------------------------------------
+       Admin unlock helpers
+       ------------------------------------------------------------ */
+    async function sha256Hex(text) {
+        const bytes = new TextEncoder().encode(String(text));
+        const buf   = await crypto.subtle.digest("SHA-256", bytes);
+        return Array.from(new Uint8Array(buf))
+            .map(b => b.toString(16).padStart(2, "0"))
+            .join("");
+    }
+
+    function isAdminUnlocked() {
+        try {
+            const raw = sessionStorage.getItem(ADMIN_UNLOCK_KEY);
+            if (!raw) return false;
+            const obj = JSON.parse(raw);
+            return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function setAdminUnlocked() {
+        try {
+            sessionStorage.setItem(
+                ADMIN_UNLOCK_KEY,
+                JSON.stringify({ exp: Date.now() + ADMIN_UNLOCK_TTL })
+            );
+        } catch (e) { /* storage unavailable */ }
+    }
+
+    function clearAdminUnlocked() {
+        try { sessionStorage.removeItem(ADMIN_UNLOCK_KEY); } catch (e) {}
+    }
+
+    /* ------------------------------------------------------------
+       Admin gate modal
+       ------------------------------------------------------------ */
+    function setupAdminGate() {
+        const gate = document.getElementById("adminGate");
+        if (!gate) return;
+
+        const card     = gate.querySelector(".admin-gate-card");
+        const input    = document.getElementById("adminGateInput");
+        const error    = document.getElementById("adminGateError");
+        const cancel   = document.getElementById("adminGateCancel");
+        const submit   = document.getElementById("adminGateSubmit");
+        const backdrop = gate.querySelector(".admin-gate-backdrop");
+
+        function open() {
+            gate.hidden = false;
+            input.value = "";
+            error.textContent = "";
+            card.classList.remove("shake");
+            setTimeout(function () { input.focus(); }, 50);
+        }
+
+        function close() {
+            gate.hidden = true;
+            input.value = "";
+            error.textContent = "";
+            card.classList.remove("shake");
+        }
+
+        async function attemptUnlock() {
+            const value = input.value;
+            if (!value) {
+                error.textContent = "Enter the admin password.";
+                input.focus();
+                return;
+            }
+
+            let hash;
+            try {
+                hash = await sha256Hex(value);
+            } catch (e) {
+                error.textContent = "Unable to verify password in this browser.";
+                return;
+            }
+
+            if (hash === ADMIN_PASSWORD_HASH) {
+                setAdminUnlocked();
+                close();
+                window.location.href = ADMIN_URL;
+                return;
+            }
+
+            error.textContent = "Incorrect password.";
+            input.value = "";
+            input.focus();
+
+            card.classList.remove("shake");
+            void card.offsetWidth;
+            card.classList.add("shake");
+        }
+
+        submit.addEventListener("click", attemptUnlock);
+
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter")  { event.preventDefault(); attemptUnlock(); }
+            if (event.key === "Escape") { event.preventDefault(); close(); }
+        });
+
+        cancel.addEventListener("click", close);
+        if (backdrop) backdrop.addEventListener("click", close);
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && !gate.hidden) close();
+        });
+
+        window.BDAdminGate = { open: open, close: close };
     }
 
     /* ------------------------------------------------------------
        Settings dropdown
        ------------------------------------------------------------ */
     function setupSettings() {
-        const button = document.getElementById("settingsBtn");
-        const menu   = document.getElementById("settingsMenu");
+        const button   = document.getElementById("settingsBtn");
+        const menu     = document.getElementById("settingsMenu");
         const adminBtn = document.getElementById("adminDashboardBtn");
 
         if (!button || !menu) {
@@ -81,7 +219,7 @@
             });
         });
 
-        /* Admin dashboard navigation */
+        /* Admin dashboard navigation — password gated */
         if (adminBtn) {
             adminBtn.addEventListener("click", function (event) {
                 event.preventDefault();
@@ -92,7 +230,21 @@
                     return;
                 }
 
-                window.location.href = ADMIN_URL;
+                /* Collapse settings menu behind the modal. */
+                close();
+
+                /* Already unlocked this session? Go straight in. */
+                if (isAdminUnlocked()) {
+                    window.location.href = ADMIN_URL;
+                    return;
+                }
+
+                /* Otherwise ask for the password. */
+                if (window.BDAdminGate) {
+                    window.BDAdminGate.open();
+                } else {
+                    console.error("Header: admin gate was not initialised.");
+                }
             });
         }
 
@@ -163,7 +315,6 @@
 
         const caseDirectoryButton = document.getElementById("caseDirectoryBtn");
 
-        /* Remove active from every item first so nothing double-highlights. */
         navItems.forEach(function (nav) {
             nav.classList.remove("active");
         });
@@ -209,7 +360,6 @@
 
     /* ------------------------------------------------------------
        Global Search — DSS V2
-       (unchanged behavior — kept verbatim)
        ------------------------------------------------------------ */
     const DSS_GUIDE_SEARCH_SOURCES = [
         "guides/Billing Dispute Guides/billing-dispute-guides.html",
@@ -682,6 +832,7 @@
        One-time startup
        ------------------------------------------------------------ */
     function start() {
+        setupAdminGate();
         setupSettings();
         setupCaseDirectory();
         setupNavigation();
