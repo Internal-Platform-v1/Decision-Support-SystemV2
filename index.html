@@ -8,7 +8,8 @@
     <!-- main styles (content only) -->
     <link rel="stylesheet" href="assets/css/styles.css" />
     <!-- shared component styles (loaded dynamically by include.js) -->
-    <link rel="stylesheet" href="assets/css/page-loader.css">
+    <link rel="stylesheet" href="assets/css/page-loader.css" />
+
     <script>
         document.documentElement.classList.add("page-loading");
         document.documentElement.setAttribute("aria-busy", "true");
@@ -20,8 +21,7 @@
         html.page-loading #userName,
         html.page-loading #user-name,
         html.page-loading #welcomeName,
-        html.page-loading #welcome-name,
-        html.page-loading #currentUserName {
+        html.page-loading #welcome-name {
             visibility: hidden !important;
         }
     </style>
@@ -47,9 +47,7 @@
             <!-- HERO -->
             <section class="hero">
                 <div class="hero-copy">
-                    <h1 id="heroGreeting">
-                        Good day<span id="currentUserName"></span>!
-                    </h1>
+                    <h1>Good day<span id="currentUserName"></span>!</h1>
                     <p>Your one-stop hub for Billing Dispute<br class="desktop-only" /> guides, tools, and resources.</p>
                     <div class="hero-search">
                         <span class="search-icon"></span>
@@ -85,34 +83,34 @@
                         <div class="base"></div>
                     </div>
                 </div>
-            </section>
 
-            <!-- STATS -->
-            <section class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-icon purple">
-                        <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="2.2"/><path d="M7.5 3.5v4M16.5 3.5v4M4 9.5h16M8 13h2M12 13h2M8 16.5h2M12 16.5h2"/></svg>
+                <!-- STATS -->
+                <section class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="2.2"/><path d="M7.5 3.5v4M16.5 3.5v4M4 9.5h16M8 13h2M12 13h2M8 16.5h2M12 16.5h2"/></svg>
+                        </div>
+                        <div><strong>24</strong><small>Guides Available</small></div>
                     </div>
-                    <div><strong>24</strong><small>Guides Available</small></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon orange">
-                        <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M8 8V6.2A1.7 1.7 0 0 1 9.7 4.5h4.6A1.7 1.7 0 0 1 16 6.2V8M4 12h16M10 12v2h4v-2"/></svg>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="2"/><path d="M8 8V6.2A1.7 1.7 0 0 1 9.7 4.5h4.6A1.7 1.7 0 0 1 16 6.2V8M4 12h16M10 12v2h4v-2"/></svg>
+                        </div>
+                        <div><strong>6</strong><small>Tools &amp; Resources</small></div>
                     </div>
-                    <div><strong>6</strong><small>Tools &amp; Resources</small></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon blue">
-                        <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.3 2"/></svg>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.3 2"/></svg>
+                        </div>
+                        <div><strong>12</strong><small>Recently Viewed</small></div>
                     </div>
-                    <div><strong>12</strong><small>Recently Viewed</small></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon yellow">
-                        <svg class="ui-icon stat-svg star-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.8 2.55 5.18 5.72.83-4.14 4.04.98 5.7L12 16.86 6.89 19.55l.98-5.7-4.14-4.04 5.72-.83L12 3.8Z"/></svg>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <svg class="ui-icon stat-svg star-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.8 2.55 5.18 5.72.83-4.14 4.04.98 5.7L12 16.86 6.89 19.55l.98-5.7-4.14-4.04 5.72-.83L12 3.8Z"/></svg>
+                        </div>
+                        <div><strong>5</strong><small>Favorites</small></div>
                     </div>
-                    <div><strong>5</strong><small>Favorites</small></div>
-                </div>
+                </section>
             </section>
 
             <!-- QUICK ACCESS -->
@@ -183,7 +181,7 @@
                         <button class="arrow-btn">→</button>
                     </article>
 
-                    <!-- Card 5 -->
+                    <!-- Card 5 – PAUD Queue's Guide -->
                     <article class="quick-card indigo-card" data-guide="PAUD Queue's Guide">
                         <div class="quick-icon indigo-bg">
                             <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -242,7 +240,7 @@
 
     <div class="toast" id="toast"></div>
 
-<!-- Firebase — app + firestore only (auth & storage removed) -->
+<!-- Firebase — app + firestore only (auth and storage SDKs removed) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
@@ -262,9 +260,6 @@
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
-
-    /* Expose Firestore globally so script.js keeps working */
-    window.db = firebase.firestore();
 </script>
 
 <!-- Shared components -->
@@ -277,29 +272,23 @@
 <script>
     /* =========================================================
        NO-AUTH BOOTSTRAP
-       The page renders immediately; there is no sign-in step.
+       There is no sign-in step. Optionally show a name that was
+       previously stored under "bd_display_name".
        ========================================================= */
     (function () {
-        var nameEl = document.getElementById('currentUserName');
         var name = '';
-
         try {
             name = (localStorage.getItem('bd_display_name') || '').trim();
-        } catch (e) { /* storage blocked */ }
+        } catch (e) { /* storage unavailable — ignore */ }
 
         if (name) {
-            nameEl.textContent = ' ' + name;
-        } else {
-            /* No identity set — drop the span so we don't render "Good day, !" */
-            nameEl.remove();
-            document.getElementById('heroGreeting').textContent = 'Good day!';
+            var el = document.getElementById('currentUserName');
+            if (el) el.textContent = ', ' + name;
         }
 
-        /* Release the loader and fire the ready event script.js may be waiting on */
         window.bdToolsUserReady = function () {
-            window.dispatchEvent(new Event("bdtools:user-ready"));
+            window.dispatchEvent(new Event('bdtools:user-ready'));
         };
-        window.bdToolsUserReady();
     })();
 </script>
 
