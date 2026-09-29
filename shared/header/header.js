@@ -1,23 +1,10 @@
 /* ============================================================
-   shared/header.js — V4
+   shared/header.js — V5
    Header behavior + settings menu + admin password gate
    Runs once after header.html has been inserted.
 
-   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   >>>  CHANGE THE LINE BELOW TO YOUR ADMIN PASSWORD HASH  <<<
-   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-   To generate the hash, open any page of this site, open
-   DevTools console, and run:
-
-     crypto.subtle.digest("SHA-256",
-       new TextEncoder().encode("YourPasswordHere"))
-     .then(b => console.log(
-       Array.from(new Uint8Array(b))
-         .map(x => x.toString(16).padStart(2, "0")).join("")
-     ));
-
-   Paste the hex string it prints as ADMIN_PASSWORD_HASH below.
+   ADMIN PASSWORD: "fedex-admin-2026"
+   Change it on the ADMIN_PASSWORD line below.
    ============================================================ */
 (function () {
     "use strict";
@@ -25,9 +12,8 @@
     const ROLE_KEY  = "bd_role";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
 
-    /* >>> EDIT THIS LINE <<< */
-    const ADMIN_PASSWORD_HASH =
-        "0000000000000000000000000000000000000000000000000000000000000000";
+    /* >>> EDIT THIS LINE TO CHANGE THE PASSWORD <<< */
+    const ADMIN_PASSWORD = "fedex-admin-2026";
 
     const ADMIN_UNLOCK_KEY = "bd_admin_unlocked";
     const ADMIN_UNLOCK_TTL = 30 * 60 * 1000; /* 30 minutes */
@@ -72,14 +58,6 @@
     /* ------------------------------------------------------------
        Admin unlock helpers
        ------------------------------------------------------------ */
-    async function sha256Hex(text) {
-        const bytes = new TextEncoder().encode(String(text));
-        const buf   = await crypto.subtle.digest("SHA-256", bytes);
-        return Array.from(new Uint8Array(buf))
-            .map(b => b.toString(16).padStart(2, "0"))
-            .join("");
-    }
-
     function isAdminUnlocked() {
         try {
             const raw = sessionStorage.getItem(ADMIN_UNLOCK_KEY);
@@ -133,7 +111,7 @@
             card.classList.remove("shake");
         }
 
-        async function attemptUnlock() {
+        function attemptUnlock() {
             const value = input.value;
             if (!value) {
                 error.textContent = "Enter the admin password.";
@@ -141,15 +119,7 @@
                 return;
             }
 
-            let hash;
-            try {
-                hash = await sha256Hex(value);
-            } catch (e) {
-                error.textContent = "Unable to verify password in this browser.";
-                return;
-            }
-
-            if (hash === ADMIN_PASSWORD_HASH) {
+            if (value === ADMIN_PASSWORD) {
                 setAdminUnlocked();
                 close();
                 window.location.href = ADMIN_URL;
