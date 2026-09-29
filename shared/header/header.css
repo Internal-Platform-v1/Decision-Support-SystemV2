@@ -51,7 +51,7 @@
 .brand-nav {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 0;
     height: 100%;
     position: relative;
 }
@@ -62,56 +62,111 @@
     background: transparent;
     color: #343565;
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 700;
     position: relative;
-    padding: 0 2px;
+    padding: 0 7px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 4px;
     letter-spacing: 0.01em;
-    transition: color 0.25s ease;
+    border-radius: 7px;
+    transition:
+        color .22s ease,
+        background .22s ease,
+        transform .28s cubic-bezier(.22, 1, .36, 1),
+        text-shadow .3s ease,
+        box-shadow .3s ease;
 }
 
 .nav-item:hover {
     color: #5620bd;
+    transform: translateY(-2px);
 }
 
 .nav-item.active {
     color: #5620bd;
+    transform: translateY(-1px);
 }
 
-/* ---- animated underline ---- */
-.nav-underline {
+/* ---- nav highlight pill ---- */
+.nav-item::before {
+    content: "";
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: #6b25df;
-    border-radius: 2px;
-    transition: width 0.3s ease, left 0.3s ease;
+    inset: 9px 2px;
+    border-radius: 7px;
+    background: rgba(107,37,223,.055);
+    opacity: 0;
+    transform: scale(.96);
+    transition:
+        opacity .25s ease,
+        transform .3s cubic-bezier(.22,1,.36,1);
+    pointer-events: none;
 }
 
-.nav-item:hover .nav-underline {
-    width: 100%;
-    left: 0;
+.nav-item:hover::before,
+.nav-item.active::before {
+    opacity: 1;
+    transform: scale(1);
 }
 
+.nav-item:hover,
+.nav-item.active {
+    box-shadow: 0 3px 12px rgba(107,37,223,.06);
+}
+
+.nav-item:hover .nav-label {
+    text-shadow: 0 3px 10px rgba(77, 20, 140, .13);
+}
+
+.nav-item.active .nav-label {
+    text-shadow: 0 2px 8px rgba(77, 20, 140, .10);
+}
+
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+    color: #6b25df;
+    filter: drop-shadow(0 0 4px rgba(107,37,223,.18));
+}
+
+/* Underline is retired but kept for markup compatibility. */
+.nav-underline,
+.nav-item:hover .nav-underline,
 .nav-item.active .nav-underline {
-    width: 100%;
-    left: 0;
+    width: 0 !important;
+    left: 50% !important;
+    opacity: 0 !important;
+    box-shadow: none !important;
+    pointer-events: none;
 }
 
 /* ---- dropdown chevron ---- */
 .nav-item.has-dropdown .dropdown-chevron {
     font-size: 8px;
     color: #6d6e91;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color .25s ease;
+}
+
+.nav-item.has-dropdown:hover .dropdown-chevron,
+.nav-item.has-dropdown.open .dropdown-chevron {
+    color: #5620bd;
 }
 
 .nav-item.has-dropdown.open .dropdown-chevron {
     transform: rotate(180deg);
+}
+
+.nav-item.has-dropdown:hover {
+    transform: translateY(-2px);
+}
+
+.nav-item.has-dropdown.open {
+    transform: translateY(-1px);
+}
+
+.nav-item.has-dropdown:hover::before,
+.nav-item.has-dropdown.open::before {
+    background: rgba(107,37,223,.07);
 }
 
 /* ---- dropdown wrapper & panel ---- */
@@ -134,7 +189,6 @@
     min-width: 190px;
     z-index: 100;
 
-    /* ---- refined animation ---- */
     opacity: 0;
     transform: translateY(-8px) scale(0.96);
     transform-origin: top left;
@@ -157,16 +211,12 @@
     font-size: 9px;
     color: #343565;
     text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
     border-radius: 0;
     position: relative;
-}
 
-/* staggered animation for dropdown items */
-.dropdown-panel a {
     opacity: 0;
     transform: translateX(-6px);
-    transition: opacity 0.2s ease, transform 0.25s ease, background 0.2s ease, color 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.25s ease, background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
 }
 
 .dropdown-panel.open a {
@@ -183,6 +233,7 @@
     background: #f5f1ff;
     color: #5620bd;
     padding-left: 22px;
+    box-shadow: inset 2px 0 0 #6b25df;
 }
 
 .dropdown-panel a .dropdown-icon {
@@ -195,9 +246,9 @@
 .dropdown-panel a:hover .dropdown-icon {
     opacity: 1;
     transform: scale(1.1);
+    filter: drop-shadow(0 2px 5px rgba(107,37,223,.18));
 }
 
-/* subtle separator between dropdown items */
 .dropdown-panel a:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -228,12 +279,18 @@
     align-items: center;
     padding: 0 10px;
     background: #fff;
-    transition: border-color 0.25s ease, box-shadow 0.3s ease, width 0.3s ease;
+    position: relative;
+    transition: border-color 0.25s ease, box-shadow 0.3s ease, width 0.3s ease, transform 0.25s ease;
+}
+
+.global-search:hover {
+    border-color: #d2cee2;
+    box-shadow: 0 3px 12px rgba(77, 20, 140, .04);
 }
 
 .global-search:focus-within {
     border-color: #6b25df;
-    box-shadow: 0 0 0 3px rgba(107, 37, 223, 0.08);
+    box-shadow: 0 0 0 3px rgba(107, 37, 223, 0.08), 0 5px 16px rgba(77, 20, 140, .06);
     width: 220px;
 }
 
@@ -256,6 +313,7 @@
 .global-search:focus-within .search-icon {
     transform: scale(1.05);
     opacity: 0.8;
+    filter: drop-shadow(0 0 4px rgba(107,37,223,.22));
 }
 
 .search-icon {
@@ -282,30 +340,26 @@
     transition: background 0.25s ease;
 }
 
-.global-search:focus-within .search-icon {
-    border-color: #6b25df;
-}
-.global-search:focus-within .search-icon::after {
-    background: #6b25df;
-}
+.global-search:focus-within .search-icon { border-color: #6b25df; }
+.global-search:focus-within .search-icon::after { background: #6b25df; }
 
-/* ---- notification bell ---- */
+/* ---- generic icon buttons ---- */
 .icon-btn {
     border: 0;
     background: transparent;
     padding: 3px;
     position: relative;
     cursor: pointer;
-    transition: transform 0.25s ease;
+    transition: transform 0.25s ease, filter .25s ease;
 }
 
 .icon-btn:hover {
     transform: scale(1.08);
+    filter: drop-shadow(0 3px 7px rgba(86,32,189,.16));
 }
-.icon-btn:active {
-    transform: scale(0.92);
-}
+.icon-btn:active { transform: scale(0.92); }
 
+/* ---- notification bell ---- */
 .bell-icon {
     display: block;
     width: 16px;
@@ -318,6 +372,7 @@
 
 .icon-btn:hover .bell-icon {
     border-color: #5620bd;
+    filter: drop-shadow(0 0 4px rgba(107,37,223,.20));
 }
 
 .bell-icon::after {
@@ -332,9 +387,7 @@
     transition: background 0.25s ease;
 }
 
-.icon-btn:hover .bell-icon::after {
-    background: #5620bd;
-}
+.icon-btn:hover .bell-icon::after { background: #5620bd; }
 
 .notification-dot {
     position: absolute;
@@ -349,350 +402,242 @@
     display: grid;
     place-items: center;
     border: 1px solid #fff;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .3s ease;
 }
 
 .icon-btn:hover .notification-dot {
     transform: scale(1.15);
+    box-shadow: 0 0 7px rgba(255,76,32,.28);
 }
 
-/* ---- avatar ---- */
-.avatar-btn {
-    border: 0;
+/* ============================================================
+   SETTINGS MENU  (replaces the old profile / avatar block)
+   ============================================================ */
+
+.settings-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.settings-btn {
     width: 31px;
     height: 31px;
     border-radius: 50%;
-    background: #4d14b8;
-    color: #fff;
-    font-weight: 700;
-    font-size: 10px;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.3s ease;
+    display: grid;
+    place-items: center;
+    color: #55577c;
+    transition: color .25s ease, background .25s ease, transform .25s ease, box-shadow .3s ease;
 }
 
-.avatar-btn:hover {
-    transform: scale(1.06);
-    box-shadow: 0 2px 12px rgba(77, 20, 184, 0.25);
-}
-.avatar-btn:active {
-    transform: scale(0.92);
-}
-
-.tiny-chevron {
-    border: 0;
-    background: transparent;
-    color: #666987;
-    font-size: 14px;
-    padding: 0;
-    cursor: pointer;
-    transition: transform 0.3s ease, color 0.25s ease;
-}
-
-.tiny-chevron:hover {
+.settings-btn:hover {
     color: #5620bd;
-    transform: rotate(180deg);
+    background: rgba(107,37,223,.06);
+    transform: scale(1.06);
+    box-shadow: 0 2px 12px rgba(77, 20, 184, 0.18);
 }
 
-/* ---- profile menu ---- */
-.profile-menu {
+.settings-btn:active { transform: scale(0.94); }
+
+.settings-btn[aria-expanded="true"] {
+    color: #5620bd;
+    background: rgba(107,37,223,.08);
+}
+
+.settings-icon {
+    font-size: 16px;
+    line-height: 1;
+    display: inline-block;
+    transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+}
+
+.settings-btn:hover .settings-icon,
+.settings-btn[aria-expanded="true"] .settings-icon {
+    transform: rotate(60deg);
+}
+
+/* ---- dropdown panel ---- */
+.settings-menu {
     position: absolute;
     right: 0;
     top: 44px;
-    width: 155px;
-    padding: 8px 0;
+    width: 200px;
+    padding: 10px 0 6px;
     background: #fff;
     border: 1px solid #e7e8f3;
     border-radius: 10px;
     box-shadow: 0 16px 40px rgba(31, 25, 87, 0.12), 0 2px 8px rgba(31, 25, 87, 0.04);
 
-    /* ---- smooth entrance ---- */
     opacity: 0;
     transform: translateY(-6px) scale(0.96);
     transform-origin: top right;
     pointer-events: none;
     transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1),
                 transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 150;
 }
 
-.profile-menu.open {
+.settings-menu.open {
     opacity: 1;
     transform: translateY(0) scale(1);
     pointer-events: auto;
 }
 
-.profile-menu .profile-name {
-    font-size: 11px;
-    font-weight: 800;
-    padding: 0 14px 2px;
-}
-
-.profile-menu .profile-role {
+.settings-heading {
     font-size: 8px;
-    color: #999;
-    margin: 0 0 6px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ea0b8;
     padding: 0 14px 8px;
     border-bottom: 1px solid #f0f0f5;
+    margin-bottom: 8px;
 }
 
-.profile-menu button {
+.settings-group {
+    padding: 0 14px 10px;
+}
+
+.settings-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: #343565;
+    margin-bottom: 7px;
+    letter-spacing: 0.01em;
+}
+
+/* ---- User / Admin segmented control ---- */
+.role-options {
+    display: flex;
+    gap: 3px;
+    background: #f3f2fa;
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.role-option {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: 6px 4px;
+    border-radius: 6px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #6d6e91;
+    cursor: pointer;
+    transition: color .2s ease, background .25s ease, box-shadow .25s ease, transform .2s ease;
+}
+
+.role-option:hover {
+    color: #5620bd;
+}
+
+.role-option.active {
+    background: #fff;
+    color: #5620bd;
+    box-shadow: 0 1px 3px rgba(31, 25, 87, .12), 0 0 0 1px rgba(107,37,223,.08);
+}
+
+.role-option:active { transform: scale(.97); }
+
+/* ---- Admin dashboard entry ---- */
+#adminDashboardBtn {
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 10px;
     border: 0;
     background: transparent;
-    width: 100%;
     text-align: left;
-    padding: 7px 14px;
+    padding: 8px 14px;
     font-size: 9px;
-    border-radius: 0;
+    color: #343565;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
 }
 
-.profile-menu button span {
+#adminDashboardBtn:hover {
+    background: #f5f1ff;
+    color: #5620bd;
+    padding-left: 18px;
+    box-shadow: inset 2px 0 0 #6b25df;
+}
+
+#adminDashboardBtn span {
     font-size: 13px;
     opacity: 0.6;
     transition: opacity 0.2s ease, transform 0.2s ease;
     flex: 0 0 auto;
 }
 
-.profile-menu button:hover {
-    background: #f5f1ff;
-    color: #5620bd;
-    padding-left: 18px;
-}
-.profile-menu button:hover span {
+#adminDashboardBtn:hover span {
     opacity: 1;
     transform: scale(1.05);
+    filter: drop-shadow(0 0 4px rgba(107,37,223,.15));
+}
+
+#adminDashboardBtn[hidden] {
+    display: none !important;
 }
 
 /* ---- responsive ---- */
 @media (max-width: 1050px) {
     .topbar { padding: 0 20px; }
-    .brand-nav { gap: 14px; }
+    .brand-nav { gap: 0; }
     .global-search { width: 155px; }
     .global-search:focus-within { width: 180px; }
 }
 
 @media (max-width: 800px) {
-    .brand-nav { gap: 10px; }
-    .nav-item { font-size: 9px; }
+    .brand-nav { gap: 0; }
+    .nav-item { font-size: 9px; padding: 0 6px; }
     .global-search { width: 120px; }
     .global-search:focus-within { width: 140px; }
 }
 
-/* ============================================================
-   ORIGINAL STYLE — PREMIUM GLOW / HIGHLIGHT LAYER ONLY
-   ============================================================ */
-.topbar::after{content:"";position:absolute;left:0;bottom:-1px;width:0;height:2px;background:linear-gradient(90deg,transparent,#6b25df,#ff6600,transparent);opacity:.55;transition:width .7s cubic-bezier(.22,1,.36,1);pointer-events:none}
-.topbar:hover::after{width:100%}
-.nav-item{transition:color .25s ease,text-shadow .3s ease}
-.nav-item:hover,.nav-item.active{color:#5620bd;text-shadow:0 0 9px rgba(107,37,223,.16)}
-.nav-underline{box-shadow:0 0 0 rgba(107,37,223,0);transition:width .3s ease,left .3s ease,box-shadow .3s ease}
-.nav-item:hover .nav-underline{box-shadow:0 -1px 8px rgba(107,37,223,.32)}
-.nav-item.active .nav-underline{box-shadow:0 -1px 8px rgba(107,37,223,.25)}
-.nav-item.has-dropdown:hover .dropdown-chevron,.nav-item.has-dropdown.open .dropdown-chevron{color:#5620bd}
-.dropdown-panel a:hover{box-shadow:inset 2px 0 0 #6b25df}
-.dropdown-panel a:hover .dropdown-icon{filter:drop-shadow(0 2px 5px rgba(107,37,223,.18))}
-.global-search{transition:border-color .25s ease,box-shadow .3s ease,width .3s ease,transform .25s ease}
-.global-search:hover{border-color:#d2cee2;box-shadow:0 3px 12px rgba(77,20,140,.04)}
-.global-search:focus-within{box-shadow:0 0 0 3px rgba(107,37,223,.08),0 5px 16px rgba(77,20,140,.06)}
-.global-search:focus-within .search-icon{filter:drop-shadow(0 0 4px rgba(107,37,223,.22))}
-.icon-btn:hover{filter:drop-shadow(0 3px 7px rgba(86,32,189,.16))}
-.icon-btn:hover .bell-icon{filter:drop-shadow(0 0 4px rgba(107,37,223,.20))}
-.icon-btn:hover .notification-dot{box-shadow:0 0 7px rgba(255,76,32,.28)}
-.avatar-btn:hover{box-shadow:0 2px 14px rgba(77,20,184,.30),0 0 0 3px rgba(107,37,223,.07)}
-.tiny-chevron:hover{filter:drop-shadow(0 0 4px rgba(107,37,223,.18))}
-.profile-menu button:hover span{filter:drop-shadow(0 0 4px rgba(107,37,223,.15))}
-
-/* ============================================================
-   NAV HIGHLIGHT — replaces underline hover/active treatment
-   ============================================================ */
-.nav-item {
-    padding: 0 10px;
-    border-radius: 7px;
-    transition:
-        color .25s ease,
-        background-color .25s ease,
-        box-shadow .3s ease,
-        text-shadow .3s ease;
+@media (max-width: 760px) {
+    .nav-item { padding: 0 5px; }
 }
 
-.nav-item::before {
+@media (max-width: 1120px) {
+    .nav-item { padding-left: 6px; padding-right: 6px; }
+}
+
+/* ============================================================
+   PREMIUM GLOW / HIGHLIGHT LAYER
+   ============================================================ */
+.topbar::after {
     content: "";
     position: absolute;
-    inset: 9px 2px;
-    border-radius: 7px;
-    background: rgba(107,37,223,.055);
-    opacity: 0;
-    transform: scale(.96);
-    transition:
-        opacity .25s ease,
-        transform .3s cubic-bezier(.22,1,.36,1);
+    left: 0;
+    bottom: -1px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #6b25df, #ff6600, transparent);
+    opacity: .55;
+    transition: width .7s cubic-bezier(.22, 1, .36, 1);
     pointer-events: none;
 }
+.topbar:hover::after { width: 100%; }
 
-.nav-item:hover::before,
-.nav-item.active::before {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.nav-item:hover,
-.nav-item.active {
-    color: #5620bd;
-    text-shadow: 0 0 8px rgba(107,37,223,.13);
-    box-shadow: 0 3px 12px rgba(107,37,223,.06);
-}
-
-/* Completely remove the previous underline visual. */
-.nav-underline,
-.nav-item:hover .nav-underline,
-.nav-item.active .nav-underline {
-    width: 0 !important;
-    left: 50% !important;
-    opacity: 0 !important;
-    box-shadow: none !important;
-    pointer-events: none;
-}
-
-/* Small icon highlight accompanies the color highlight. */
-.nav-item:hover .nav-icon,
-.nav-item.active .nav-icon {
-    color: #6b25df;
-    filter: drop-shadow(0 0 4px rgba(107,37,223,.18));
-}
-
-.nav-item.has-dropdown:hover::before,
-.nav-item.has-dropdown.open::before {
-    background: rgba(107,37,223,.07);
-}
-
-
-/* ============================================================
-   NAV MENU — BOLD + PREMIUM LIFT
-   Existing color-highlight effect remains unchanged.
-   ============================================================ */
-
-.nav-item {
-    font-weight: 700;
-
-    transition:
-        color .22s ease,
-        background .22s ease,
-        transform .28s cubic-bezier(.22, 1, .36, 1);
-}
-
-.nav-item:hover {
-    transform: translateY(-2px);
-}
-
-.nav-item.active {
-    transform: translateY(-1px);
-}
-
-/* Subtle text glow reinforces the hover state. */
-.nav-item:hover .nav-label {
-    text-shadow: 0 3px 10px rgba(77, 20, 140, .13);
-}
-
-.nav-item.active .nav-label {
-    text-shadow: 0 2px 8px rgba(77, 20, 140, .10);
-}
-
-/* Case Directory gets the same lift behavior. */
-.nav-item.has-dropdown:hover {
-    transform: translateY(-2px);
-}
-
-.nav-item.has-dropdown.open {
-    transform: translateY(-1px);
-}
-
-/* Keep the dropdown panel itself stationary. */
-.dropdown-panel {
-    transform-origin: top left;
-}
-
-/* Respect reduced-motion preferences. */
 @media (prefers-reduced-motion: reduce) {
     .nav-item,
     .nav-item:hover,
     .nav-item.active,
     .nav-item.has-dropdown:hover,
-    .nav-item.has-dropdown.open {
+    .nav-item.has-dropdown.open,
+    .settings-icon,
+    .settings-btn:hover .settings-icon,
+    .settings-btn[aria-expanded="true"] .settings-icon {
         transform: none !important;
         transition: none !important;
     }
 }
 
-
-/* ============================================================
-   FINAL HEADER REFINEMENT
-   - Restore tighter/original navigation spacing.
-   - Avatar is now the only profile control; no chevron.
-   ============================================================ */
-
-/* Tighter original-style menu spacing */
-.brand-nav {
-    gap: 0;
-}
-
-.nav-item {
-    padding-left: 7px;
-    padding-right: 7px;
-}
-
-/* Keep the existing lift effect, but make it feel compact. */
-.nav-item:hover {
-    transform: translateY(-2px);
-}
-
-.nav-item.active {
-    transform: translateY(-1px);
-}
-
-/* Avatar remains the profile trigger with no dropdown chevron. */
-.profile-area {
-    gap: 0;
-}
-
-.avatar-btn {
-    margin-right: 0;
-}
-
-/* The profile menu remains anchored cleanly to the avatar. */
-.profile-menu {
-    right: 0;
-}
-
-/* Prevent the removed chevron from affecting layout if old markup is cached. */
-.tiny-chevron {
-    display: none !important;
-}
-
-@media (max-width: 1120px) {
-    .nav-item {
-        padding-left: 6px;
-        padding-right: 6px;
-    }
-}
-
-@media (max-width: 760px) {
-    .nav-item {
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-}
-
 /* ============================================================
    DSS V2 — GLOBAL HEADER SEARCH RESULTS
-   Dynamically generated by header.js.
    ============================================================ */
-
-.global-search {
-    position: relative;
-}
 
 .global-search.has-results {
     z-index: 1200;
@@ -944,8 +889,4 @@
     .global-search-spinner {
         animation: none;
     }
-}
-
-#systemCommandCenterBtn[hidden] {
-    display: none !important;
 }
