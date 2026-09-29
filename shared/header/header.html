@@ -1,5 +1,5 @@
 <!-- ============================================================
-     shared/header.html – refined with animation hooks
+     shared/header.html
      ============================================================ -->
 <header class="topbar">
     <div class="brand-area">
@@ -20,17 +20,18 @@
                     <span class="dropdown-chevron">⌄</span>
                     <span class="nav-underline"></span>
                 </button>
-<div class="dropdown-panel" id="caseDropdown">
-    <a href="legacy-case-directory.html" data-nav="legacy">
-        <span class="dropdown-icon">📂</span>
-        Legacy Case Directory
-    </a>
 
-    <a href="shine-case-directory.html" data-nav="shine">
-        <span class="dropdown-icon">✨</span>
-        Shine Case Directory
-    </a>
-</div>
+                <div class="dropdown-panel" id="caseDropdown">
+                    <a href="legacy-case-directory.html" data-nav="legacy">
+                        <span class="dropdown-icon">📂</span>
+                        Legacy Case Directory
+                    </a>
+
+                    <a href="shine-case-directory.html" data-nav="shine">
+                        <span class="dropdown-icon">✨</span>
+                        Shine Case Directory
+                    </a>
+                </div>
             </div>
 
             <button class="nav-item" data-nav="ebs">
@@ -54,36 +55,63 @@
             <span class="search-icon"></span>
             <input id="globalSearch" type="text" placeholder="Search guides, tools, topics..." autocomplete="off">
         </div>
+
         <button class="icon-btn notification-btn" aria-label="Notifications">
             <span class="bell-icon"></span>
             <b class="notification-dot">3</b>
         </button>
-<button class="avatar-btn" id="profileBtn" aria-label="Open profile">JD</button>
 
-<div class="profile-menu" id="profileMenu">
-    <div class="profile-name" id="profileName">User</div>
-    <div class="profile-role" id="profileRole">BD Tools User</div>
+        <!-- Settings dropdown (replaces the old profile menu) -->
+        <div class="settings-wrapper">
+            <button
+                class="icon-btn settings-btn"
+                id="settingsBtn"
+                type="button"
+                aria-label="Open settings"
+                aria-haspopup="true"
+                aria-expanded="false"
+            >
+                <span class="settings-icon" aria-hidden="true">⚙</span>
+            </button>
 
-    <button id="profileMenuBtn" type="button">
-        <span>👤</span> Profile
-    </button>
+            <div class="settings-menu" id="settingsMenu" role="menu">
+                <div class="settings-heading">Settings</div>
 
-    <!-- Visible only when the current user's role is Manager -->
-    <button
-        id="systemCommandCenterBtn"
-        type="button"
-        hidden
-    >
-        <span>🛡️</span> System Command Center
-    </button>
+                <div class="settings-group">
+                    <div class="settings-label" id="roleLabel">View mode</div>
 
-    <button id="settingsMenuBtn" type="button">
-        <span>⚙️</span> Settings
-    </button>
+                    <div class="role-options" role="radiogroup" aria-labelledby="roleLabel">
+                        <button
+                            type="button"
+                            class="role-option"
+                            data-role="user"
+                            role="radio"
+                            aria-checked="true"
+                        >
+                            User
+                        </button>
 
-    <button id="logoutMenuBtn" type="button">
-        <span>🚪</span> Logout
-    </button>
-</div>
+                        <button
+                            type="button"
+                            class="role-option"
+                            data-role="admin"
+                            role="radio"
+                            aria-checked="false"
+                        >
+                            Admin
+                        </button>
+                    </div>
+                </div>
+
+                <button
+                    id="adminDashboardBtn"
+                    type="button"
+                    role="menuitem"
+                    hidden
+                >
+                    <span aria-hidden="true">🛡️</span> Admin Dashboard
+                </button>
+            </div>
+        </div>
     </div>
 </header>
