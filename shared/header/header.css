@@ -411,7 +411,7 @@
 }
 
 /* ============================================================
-   SETTINGS MENU  (replaces the old profile / avatar block)
+   SETTINGS MENU
    ============================================================ */
 
 .settings-wrapper {
@@ -456,7 +456,6 @@
     transform: rotate(60deg);
 }
 
-/* ---- dropdown panel ---- */
 .settings-menu {
     position: absolute;
     right: 0;
@@ -506,7 +505,6 @@
     letter-spacing: 0.01em;
 }
 
-/* ---- User / Admin segmented control ---- */
 .role-options {
     display: flex;
     gap: 3px;
@@ -541,7 +539,6 @@
 
 .role-option:active { transform: scale(.97); }
 
-/* ---- Admin dashboard entry ---- */
 #adminDashboardBtn {
     width: 100%;
     display: flex;
@@ -888,5 +885,166 @@
 
     .global-search-spinner {
         animation: none;
+    }
+}
+
+/* ============================================================
+   ADMIN GATE — password prompt
+   ============================================================ */
+
+.admin-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+
+.admin-gate[hidden] {
+    display: none !important;
+}
+
+.admin-gate-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 15, 45, .42);
+    backdrop-filter: blur(3px);
+    animation: adminGateFade .2s ease;
+}
+
+.admin-gate-card {
+    position: relative;
+    width: min(380px, 100%);
+    padding: 28px 26px 22px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow:
+        0 24px 60px rgba(31, 25, 87, .24),
+        0 4px 14px rgba(31, 25, 87, .08);
+    text-align: center;
+    animation: adminGateRise .28s cubic-bezier(.22, 1, .36, 1);
+}
+
+.admin-gate-card.shake {
+    animation: adminGateShake .4s cubic-bezier(.36, .07, .19, .97);
+}
+
+.admin-gate-icon {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 14px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #f1eaff;
+    color: #6b25df;
+    font-size: 22px;
+}
+
+.admin-gate-card h2 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #20235e;
+    letter-spacing: -.01em;
+}
+
+.admin-gate-copy {
+    margin: 0 0 18px;
+    font-size: .82rem;
+    color: #6d6e91;
+    line-height: 1.45;
+}
+
+.admin-gate-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 14px;
+    border: 1px solid #dedfec;
+    border-radius: 9px;
+    font-size: .9rem;
+    color: #20235e;
+    background: #fff;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .25s ease;
+}
+
+.admin-gate-input:focus {
+    border-color: #6b25df;
+    box-shadow: 0 0 0 3px rgba(107, 37, 223, .1);
+}
+
+.admin-gate-error {
+    min-height: 1.15rem;
+    margin-top: 10px;
+    color: #c81e3a;
+    font-size: .78rem;
+    text-align: left;
+}
+
+.admin-gate-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.admin-gate-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 9px;
+    font-size: .85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .25s ease, background .2s ease, color .2s ease;
+}
+
+.admin-gate-btn:active {
+    transform: scale(.97);
+}
+
+.admin-gate-btn.ghost {
+    background: #f3f2fa;
+    color: #4b4d6b;
+}
+
+.admin-gate-btn.ghost:hover {
+    background: #eae7f5;
+    color: #343565;
+}
+
+.admin-gate-btn.primary {
+    background: linear-gradient(135deg, #6b25df, #4d14b8);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(77, 20, 184, .25);
+}
+
+.admin-gate-btn.primary:hover {
+    box-shadow: 0 8px 22px rgba(77, 20, 184, .32);
+}
+
+@keyframes adminGateFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes adminGateRise {
+    from { opacity: 0; transform: translateY(10px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes adminGateShake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-6px); }
+    40%, 60% { transform: translateX(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-gate-backdrop,
+    .admin-gate-card,
+    .admin-gate-card.shake {
+        animation: none !important;
     }
 }
