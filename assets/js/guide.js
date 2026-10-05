@@ -572,6 +572,24 @@ function jumpTo(i) {
     window.__guideToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
   }
 
+  /*
+   * Default destinations for the three "Open …" buttons in the
+   * Suggested Templates card.
+   *
+   * Keys are matched against the button's visible label text
+   * (whitespace-normalized). Values are relative to the DSS root;
+   * the guide pages use <base href="../../../"> so these resolve
+   * to the repo root, same as the menu tab.
+   *
+   * To override for one specific guide, set data-target on that
+   * button in the guide's HTML — the explicit value always wins.
+   */
+  const DEFAULT_TEMPLATE_LINKS = {
+    "Open FBC Comments": "fbc-comments-guide.html",
+    "Open CORR Code":    "correction-code.html",
+    "Open EBS Response": "ebs-response-template.html"
+  };
+
   function bindTemplateButtons() {
     document.querySelectorAll(".template-copy").forEach((button) => {
       button.addEventListener("click", () => {
@@ -581,7 +599,16 @@ function jumpTo(i) {
 
     document.querySelectorAll(".template-link").forEach((button) => {
       button.addEventListener("click", () => {
-        const target = button.dataset.target;
+        // Normalize the label so emoji/spacing/extra whitespace don't matter.
+        const label = (button.textContent || "")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        const target =
+          (button.dataset.target && button.dataset.target.trim()) ||
+          DEFAULT_TEMPLATE_LINKS[label] ||
+          "";
+
         if (target) {
           window.location.href = target;
         } else {
