@@ -610,7 +610,13 @@ function jumpTo(i) {
           "";
 
         if (target) {
-          window.location.href = target;
+          // Resolve against <base> so we always navigate to an absolute
+          // URL — window.open is more reliable with absolute URLs.
+          const url = new URL(target, document.baseURI).href;
+
+          // Open in a new tab. "noopener,noreferrer" is the safe way to
+          // do this from script (equivalent to rel="noopener noreferrer").
+          window.open(url, "_blank", "noopener,noreferrer");
         } else {
           showToast("Reference tool link is not configured yet.");
         }
