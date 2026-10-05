@@ -86,144 +86,92 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     if (!host) return;
 
     host.classList.add("path-card");
-
-    /* --------------------------------------------------------
-       UPDATE EXPANDED STATE ON THE ACTUAL CARD
-       -------------------------------------------------------- */
     host.classList.toggle("path-expanded", state.pathExpanded);
 
     if (!host.dataset.pathHoverBound) {
-        host.dataset.pathHoverBound = "true";
+      host.dataset.pathHoverBound = "true";
 
-        host.addEventListener("mouseenter", () => {
-            if (state.path.length > 1) {
-                state.pathExpanded = true;
-                renderPath();
-            }
-        });
+      host.addEventListener("mouseenter", () => {
+        if (state.path.length > 1) {
+          state.pathExpanded = true;
+          renderPath();
+        }
+      });
 
-        host.addEventListener("mouseleave", () => {
-            if (state.pathExpanded) {
-                state.pathExpanded = false;
-                renderPath();
-            }
-        });
+      host.addEventListener("mouseleave", () => {
+        if (state.pathExpanded) {
+          state.pathExpanded = false;
+          renderPath();
+        }
+      });
     }
 
     /* --------------------------------------------------------
        NO PATH
        -------------------------------------------------------- */
     if (!state.path.length) {
-        host.classList.remove("path-expanded");
-        host.style.height = "170px";
+      host.classList.remove("path-expanded");
 
-        box.className = "path-empty";
-        box.innerHTML =
-            "No steps selected yet. The full path will appear here as you move through the steps.";
+      box.className = "path-empty";
+      box.innerHTML =
+        "No steps selected yet. The full path will appear here as you move through the steps.";
 
-        return;
+      return;
     }
 
     const lastIndex = state.path.length - 1;
 
     /* --------------------------------------------------------
-       SHOW ONLY CURRENT STEP WHEN COLLAPSED
-       SHOW ALL STEPS WHEN HOVERED
+       COLLAPSED = last step only
+       EXPANDED  = every step (scrollable via CSS)
        -------------------------------------------------------- */
     const visiblePath = state.pathExpanded
-        ? state.path
-        : [state.path[lastIndex]];
+      ? state.path
+      : [state.path[lastIndex]];
 
     box.className = state.pathExpanded
-        ? "path-list is-expanded"
-        : "path-list is-collapsed";
+      ? "path-list is-expanded"
+      : "path-list is-collapsed";
 
-    /* --------------------------------------------------------
-       RENDER PATH ITEMS
-       -------------------------------------------------------- */
     box.innerHTML = visiblePath.map((x) => {
-        const i = state.path.indexOf(x);
+      const i = state.path.indexOf(x);
 
-        const active =
-            i === lastIndex &&
-            !state.finalText;
+      const active =
+        i === lastIndex && !state.finalText;
 
-        const finalActive =
-            state.finalText &&
-            (
-                x.nextKey === "__final__" ||
-                isFinal(NODES[x.nextKey])
-            );
+      const finalActive =
+        state.finalText &&
+        (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
 
-        return `
-            <div class="path-item">
-                <button
-                    class="path-jump ${active || finalActive ? "active" : ""}"
-                    data-index="${i}"
-                    type="button"
-                >
-                    <div class="path-step">
-                        Step ${i + 1}
-                    </div>
-
-                    <div class="path-question">
-                        ${esc(x.question)}
-                    </div>
-
-                    <div class="path-answer">
-                        → ${esc(x.answer)}
-                    </div>
-                </button>
+      return `
+        <div class="path-item">
+          <button
+            class="path-jump ${active || finalActive ? "active" : ""}"
+            data-index="${i}"
+            type="button"
+          >
+            <div class="path-step">
+              Step ${i + 1}
             </div>
-        `;
+
+            <div class="path-question">
+              ${esc(x.question)}
+            </div>
+
+            <div class="path-answer">
+              → ${esc(x.answer)}
+            </div>
+          </button>
+        </div>
+      `;
     }).join("");
 
-    /* --------------------------------------------------------
-       MEASURE THE ACTUAL CARD CONTENT
-       -------------------------------------------------------- */
-
-    if (state.pathExpanded && state.path.length > 1) {
-
-        /*
-         * Temporarily remove the fixed height so the browser
-         * can calculate the real content height.
-         */
-        host.style.height = "auto";
-
-        requestAnimationFrame(() => {
-
-            const requiredHeight = host.scrollHeight;
-
-            /*
-             * Add a tiny amount of breathing room so the last
-             * path item never touches the bottom edge.
-             */
-            const finalHeight = requiredHeight + 2;
-
-            /*
-             * Set the measured height so CSS can animate
-             * from the collapsed height to the real height.
-             */
-            host.style.height = `${finalHeight}px`;
-        });
-
-    } else {
-
-        /*
-         * Normal collapsed state.
-         */
-        host.style.height = "170px";
-    }
-
-    /* --------------------------------------------------------
-       PATH JUMP BUTTONS
-       -------------------------------------------------------- */
     box.querySelectorAll(".path-jump").forEach(btn => {
-        btn.addEventListener("click", () => {
-            jumpTo(Number(btn.dataset.index));
-        });
+      btn.addEventListener("click", () => {
+        jumpTo(Number(btn.dataset.index));
+      });
     });
-}
+  }
 
   function updateRecommendation(text, final) {
     const box = $("recommendationBox");
