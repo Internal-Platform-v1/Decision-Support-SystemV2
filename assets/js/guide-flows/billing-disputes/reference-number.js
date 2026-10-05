@@ -71,7 +71,7 @@ start: {
   add_step1: {
     text: "Open the Reference Edits screen.",
     help: "CAPS > System - Reference Edits > Menu - Processing > Application - Edit Corrections",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-1.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-1.png",
     choices: [
       {
         label: "Continue",
@@ -85,7 +85,7 @@ start: {
   add_step2: {
     text: "The Reference Edits screen will open.",
     help: "Use this screen to begin adding the new reference entry.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-2.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-2.png",
     choices: [
       {
         label: "Continue",
@@ -99,7 +99,7 @@ start: {
   add_step3: {
     text: "Enter the Type and Reference Number, then click Add/Update.",
     help: "a. Enter the Type\nb. Enter the Reference Number\nc. Click Add/Update",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-3.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-3.png",
     choices: [
       {
         label: "Continue",
@@ -113,7 +113,7 @@ start: {
   add_step4: {
     text: "Click Submit at the top of the screen.",
     help: "After adding the new reference entry, click Submit to proceed.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-4.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-4.png",
     choices: [
       {
         label: "Continue",
@@ -127,7 +127,7 @@ start: {
   add_step5: {
     text: "Enter CORR in HU/Keyword.",
     help: "Move back to the correction flow and enter CORR in HU/Keyword.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-5.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-5.png",
     choices: [
       {
         label: "Continue",
@@ -141,7 +141,7 @@ start: {
   add_step6: {
     text: "Tab over to the correction code field.",
     help: "Move to the correction code field to identify the correct code for the reference number change.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-6.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-6.png",
     choices: [
       {
         label: "Continue",
@@ -155,7 +155,7 @@ start: {
   add_step7: {
     text: "Enter the correction code.",
     help: "EREF - if you are adding, updating, or removing the Reference No. per the BOL or any document provided by the customer at the time of pickup.\n\nCUSI - if you are adding, updating, or removing the Reference No. but not the BOL, or another document provided during pickup by the customer.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-7.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-7.png",
     choices: [
       {
         label: "Continue",
@@ -182,7 +182,7 @@ add_step8: {
   add_step9: {
     text: "Enter the required comment.",
     help: "VS-BLER-CASE#-ADDED\nPO/BL/SID/LOAD/SNBR NUMBER PER BOL",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-9.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-9.png",
     choices: [
       {
         label: "Continue",
@@ -196,7 +196,7 @@ add_step8: {
 add_step10: {
   text: "Select Accept All or F6 to complete the request.",
   help: "At the top of Corrections, select Accept All or F6. This completes the request.",
-  image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/add-step-10.png",
+  image: "guides/Billing%20Dispute%20Guides/reference-number/images/add-step-10.png",
   choices: [
     {
       label: "Continue",
@@ -227,7 +227,7 @@ add_step10: {
   edit_step1: {
     text: "Open the Reference Edits screen.",
     help: "CAPS > System - Reference Edits > Menu - Processing > Application - Edit Corrections",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-1.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-1.png",
     choices: [
       {
         label: "Continue",
@@ -241,7 +241,7 @@ add_step10: {
   edit_step2: {
     text: "Select the reference number to be changed on the Freight Bill box.",
     help: "When the Reference Edit screen opens, select the reference number that needs to be changed in the Reference Number(s) on Freight Bill box.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-2.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-2.png",
     choices: [
       {
         label: "Continue",
@@ -255,7 +255,7 @@ add_step10: {
   edit_step3: {
     text: "Enter the new Reference Number.",
     help: "Type the correct replacement value in the reference number field.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-3.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-3.png",
     choices: [
       {
         label: "Continue",
@@ -270,7 +270,7 @@ add_step10: {
     text: "Select Add/Update and then click Submit.",
     help: "After updating the value, click Add/Update and then click the Submit icon at the top of the screen.",
     note: "When updating multiple reference numbers on one PRO, repeat the edit process one reference number at a time before clicking Submit.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-4.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-4.png",
     choices: [
       {
         label: "Continue",
@@ -284,7 +284,7 @@ add_step10: {
   edit_step5: {
     text: "Enter CORR in HU/Keyword.",
     help: "Move back to the correction flow and enter CORR in HU/Keyword.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-5.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-5.png",
     choices: [
       {
         label: "Continue",
@@ -298,7 +298,7 @@ add_step10: {
   edit_step6: {
     text: "Tab over and enter the correction code.",
     help: "EREF - if you are adding, updating, or removing the Reference No. per the BOL or any document provided by the customer at the time of pickup.\n\nCUSI - if you are adding, updating, or removing the Reference No. but not the BOL, or another document provided during pickup by the customer.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-6.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-6.png",
     choices: [
       {
         label: "Continue",
@@ -325,7 +325,7 @@ edit_step7: {
   edit_step8: {
     text: "Enter the required comment.",
     help: "VS-BLER-CASE#-ADDED\nPO/BL/SID/LOAD/SNBR NUMBER PER BOL",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-8.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-8.png",
     choices: [
       {
         label: "Continue",
@@ -339,7 +339,7 @@ edit_step7: {
 edit_step9: {
   text: "Select Accept All or F6 to complete the request.",
   help: "At the top of Corrections, select Accept All or F6. This completes the request.",
-  image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/edit-step-9.png",
+  image: "guides/Billing%20Dispute%20Guides/reference-number/images/edit-step-9.png",
   choices: [
     {
       label: "Continue",
@@ -370,7 +370,7 @@ edit_step9: {
   delete_step1: {
     text: "Open the Reference Edits screen.",
     help: "CAPS > System - Reference Edits > Menu - Processing > Application - Edit Corrections",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-1.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-1.png",
     choices: [
       {
         label: "Continue",
@@ -384,7 +384,7 @@ edit_step9: {
   delete_step2: {
     text: "The Reference Edits screen will open.",
     help: "Use this screen to locate the reference entry that needs to be removed.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-2.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-2.png",
     choices: [
       {
         label: "Continue",
@@ -398,7 +398,7 @@ edit_step9: {
   delete_step3: {
     text: "Select the reference number that needs to be deleted.",
     help: "Highlight the correct reference number from the Freight Bill box before removing it.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-3.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-3.png",
     choices: [
       {
         label: "Continue",
@@ -412,7 +412,7 @@ edit_step9: {
   delete_step4: {
     text: "Delete the reference number and submit the request.",
     help: "Remove the selected reference number, then submit the correction request.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-4.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-4.png",
     choices: [
       {
         label: "Continue",
@@ -426,7 +426,7 @@ edit_step9: {
   delete_step5: {
     text: "Enter CORR in HU/Keyword.",
     help: "Move back to the correction flow and enter CORR in HU/Keyword.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-5.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-5.png",
     choices: [
       {
         label: "Continue",
@@ -440,7 +440,7 @@ edit_step9: {
   delete_step6: {
     text: "Tab over and enter the correction code.",
     help: "EREF - if you are adding, updating, or removing the Reference No. per the BOL or any document provided by the customer at the time of pickup.\n\nCUSI - if you are adding, updating, or removing the Reference No. but not the BOL, or another document provided during pickup by the customer.",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-6.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-6.png",
     choices: [
       {
         label: "Continue",
@@ -467,7 +467,7 @@ delete_step7: {
   delete_step8: {
     text: "Enter the required comment.",
     help: "VS-BLER-CASE#-DELETED\nPO/BL/SID/LOAD/SNBR NUMBER PER BOL",
-    image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-8.png",
+    image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-8.png",
     choices: [
       {
         label: "Continue",
@@ -481,7 +481,7 @@ delete_step7: {
 delete_step9: {
   text: "Select Accept All or F6 to complete the request.",
   help: "At the top of Corrections, select Accept All or F6. This completes the request.",
-  image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/delete-step-9.png",
+  image: "guides/Billing%20Dispute%20Guides/reference-number/images/delete-step-9.png",
   choices: [
     {
       label: "Continue",
@@ -555,7 +555,7 @@ NOTE: Make sure to do a warm transfer to the customer once you move the case to 
 demand_invoice_step_check_group_1: {
   text: "1. Go to Customer Profile and click Invoice Profile.",
   help: "Open the customer's Invoice Profile to check the Invoicing Setup / Invoice Group.",
-  image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/demand-invoice-check-step1.png",
+  image: "guides/Billing%20Dispute%20Guides/reference-number/images/demand-invoice-check-step1.png",
   choices: [
     {
       label: "Continue",
@@ -569,7 +569,7 @@ demand_invoice_step_check_group_1: {
 demand_invoice_step_check_group_2: {
   text: "2. Check the Invoice Group of the account.",
   help: "Review the Invoice Group shown on the account and confirm whether it is set to an email invoice/print group.",
-  image: "guides/Billing%20Dispute%20Guides/reference-number/reference-number-guide/demand-invoice-check-step2.png",
+  image: "guides/Billing%20Dispute%20Guides/reference-number/images/demand-invoice-check-step2.png",
   note: `Sample EMAIL Invoice/Print Groups
 
 EREG    EDA
