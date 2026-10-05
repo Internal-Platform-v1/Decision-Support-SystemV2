@@ -1161,59 +1161,58 @@ a {
 
 .guide-middle-column .path-card {
   position: absolute;
-
-  top: 0;
-  left: 0;
-  right: 0;
-
+  top: 0; left: 0; right: 0;
   width: 100%;
-
   height: 170px;
   min-height: 170px;
-
   box-sizing: border-box;
-
   z-index: 30;
-
   overflow: hidden;
-
   transition:
     height .22s ease,
+    max-height .22s ease,
     box-shadow .22s ease;
 }
-
-
-/* ------------------------------------------------------------
-   EXPANDED CARD
-   Height is supplied by JS based on actual steps.
-   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card.path-expanded {
   z-index: 100;
 
-  box-shadow:
-    0 14px 32px rgba(30, 20, 70, .16);
+  /* Let the card grow to fit content, but never taller than
+     the viewport. Adjust the 75vh / 600px caps to taste. */
+  height: auto;
+  max-height: min(75vh, 600px);
+
+  box-shadow: 0 14px 32px rgba(30, 20, 70, .16);
 }
-
-
-/* ------------------------------------------------------------
-   PATH CONTENT
-   ------------------------------------------------------------ */
 
 .guide-middle-column .path-card #pathBox {
   height: auto;
-
   margin: 0;
-
   overflow: hidden;
 }
 
-
-/* Expanded = show the complete path inside the card */
 .guide-middle-column .path-card.path-expanded #pathBox {
-  height: auto;
+  /*
+   * The 96px accounts for the card head (side-head + path-hint
+   * + paddings). Keeps the scrollbar from overlapping the header.
+   */
+  max-height: calc(min(75vh, 600px) - 96px);
 
-  overflow: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px; /* gives the scrollbar breathing room */
+}
+
+/* Optional — slim scrollbar that matches the DSS theme */
+.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar {
+  width: 6px;
+}
+.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
+  background: #cfc2ec;
+  border-radius: 999px;
+}
+.guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-thumb:hover {
+  background: #a998d8;
 }
 
 
