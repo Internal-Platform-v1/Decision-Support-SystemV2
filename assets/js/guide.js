@@ -304,7 +304,15 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
         </div>
       </button>`).join("");
 
-    const image = n.image ? `<div class="question-image" id="questionImage"><img src="${esc(n.image)}" alt="Guide reference image" loading="lazy"></div>` : "";
+   const imageList = Array.isArray(n.images)
+  ? n.images
+  : (n.image ? [n.image] : []);
+
+const image = imageList.length
+  ? `<div class="question-images">${imageList.map((src, idx) =>
+      `<div class="question-image" data-image-index="${idx}"><img src="${esc(src)}" alt="Guide reference image" loading="lazy"></div>`
+    ).join("")}</div>`
+  : "";
 
     $("stageCard").innerHTML = `
       <div class="stage-top">
@@ -335,7 +343,9 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
 
     $("inlineBack").onclick = goBack;
     $("inlineRestart").onclick = restart;
-    if ($("questionImage")) $("questionImage").onclick = () => openImageModal(n.image);
+    $("stageCard").querySelectorAll(".question-image").forEach(el => {
+  el.onclick = () => openImageModal(imageList[Number(el.dataset.imageIndex)]);
+});
     $("stageCard").querySelectorAll(".choice").forEach(btn => btn.addEventListener("click", () => choose(btn, n)));
 
     progress();
