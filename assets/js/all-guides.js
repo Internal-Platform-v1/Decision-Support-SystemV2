@@ -31,14 +31,14 @@
     ["Reference Number Update - Add/Edit/Delete", "guides/Billing%20Dispute%20Guides/reference-number/reference-number.html", "Manage reference number updates and ensure correct correction processing and invoice handling.", "billing", "fa-dollar-sign"],
 
     /* ========================= PRICING GENERAL — 8 ======================== */
-    ["Fuel Guide", "guides/Pricing%20Guides/pricing-guides-list/fuel-guide.html", "Review fuel-related pricing disputes using the correct guide and supporting validation steps.", "pricing", "fa-gas-pump"],
-    ["Surcharge Guide", "guides/Pricing%20Guides/pricing-guides-list/surcharge-guide.html", "Check surcharge disputes and verify the correct supporting logic before responding.", "pricing", "fa-receipt"],
-    ["ePRT Guide", "guides/Pricing%20Guides/pricing-guides-list/eprt-guide.html", "Use ePRT guidance when pricing results need exception handling or escalation review.", "pricing", "fa-file-lines"],
-    ["ePRT Submission", "guides/Pricing%20Guides/pricing-guides-list/eprt-submission.html", "Open the submission page when the case already requires formal ePRT routing.", "pricing", "fa-paper-plane"],
-    ["Checking EPRS", "guides/Pricing%20Guides/pricing-guides-list/checking-eprs.html", "Validate customer agreement and pricing setup using the EPRS reference tool.", "pricing", "fa-magnifying-glass"],
-    ["Base Rater", "guides/Pricing%20Guides/pricing-guides-list/base-rater.html", "Open the base rating tool when pricing needs direct rate validation support.", "pricing", "fa-calculator"],
-    ["Discount - AMC Guide", "guides/Pricing%20Guides/pricing-guides-list/discount-amc-guide.html", "Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.", "pricing", "fa-tags"],
-    ["Courtesy Discount Guide", "guides/Pricing%20Guides/pricing-guides-list/courtesy-discount.html", "Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.", "pricing", "fa-hand-holding-dollar"],
+    ["Fuel Guide", "guides/Pricing%20Guides/fuel-guide/fuel-guide.html", "Review fuel-related pricing disputes using the correct guide and supporting validation steps.", "pricing", "fa-gas-pump"],
+    ["Surcharge Guide", "guides/Pricing%20Guides/surcharge-guide/surcharge-guide.html", "Check surcharge disputes and verify the correct supporting logic before responding.", "pricing", "fa-receipt"],
+    ["ePRT Guide", "guides/Pricing%20Guides/eprt-guide/eprt-guide.html", "Use ePRT guidance when pricing results need exception handling or escalation review.", "pricing", "fa-file-lines"],
+    ["ePRT Submission", "guides/Pricing%20Guides/eprt-submission/eprt-submission.html", "Open the submission page when the case already requires formal ePRT routing.", "pricing", "fa-paper-plane"],
+    ["Checking EPRS", "guides/Pricing%20Guides/checking-eprs/checking-eprs.html", "Validate customer agreement and pricing setup using the EPRS reference tool.", "pricing", "fa-magnifying-glass"],
+    ["Base Rater", "guides/Pricing%20Guides/base-rater/base-rater.html", "Open the base rating tool when pricing needs direct rate validation support.", "pricing", "fa-calculator"],
+    ["Discount - AMC Guide", "guides/Pricing%20Guides/discount-amc-guide/discount-amc-guide.html", "Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.", "pricing", "fa-tags"],
+    ["Courtesy Discount Guide", "guides/Pricing%20Guides/courtesy-discount/courtesy-discount.html", "Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.", "pricing", "fa-hand-holding-dollar"],
 
     /* ========================= SURCHARGES — 14 ============================= */
     ["High Cost Fee", "guides/Other%20Surcharge%20Guides/other-surcharges/high-cost-fee.html", "Review high cost fee concerns and validate the appropriate surcharge handling.", "surcharge", "fa-dollar-sign"],
