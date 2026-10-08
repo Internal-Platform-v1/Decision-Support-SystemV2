@@ -1474,3 +1474,9 @@ a {
     min-height: 190px;
   }
 }
+
+.question-images {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
