@@ -224,6 +224,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
   function renderStart(node) {
     const ch = choices(node);
     const continueChoice = ch[0];
+    const reminderHtml = node.noteHtml || "";
     const reminder = node.note || "";
 
     const choiceHtml = continueChoice ? `
@@ -245,7 +246,11 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
           <div class="question-label"><i class="fa-solid fa-share-nodes"></i> Current Step</div>
           <div class="question-text">${esc(nodeText(node))}</div>
           ${node.help ? `<div class="question-help">${esc(node.help).replace(/\n/g, "<br>")}</div>` : ""}
-          ${reminder ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(reminder)}</div></div>` : ""}
+          ${reminderHtml
+            ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${reminderHtml}</div></div>`
+            : reminder
+              ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(reminder)}</div></div>`
+              : ""}
         </div>
         <div class="choices">${choiceHtml}</div>
       </div>
@@ -311,7 +316,11 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
           <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Decision Point</div>
           <div class="question-text">${esc(nodeText(n))}</div>
           ${n.help ? `<div class="question-help">${esc(n.help).replace(/\n/g, "<br>")}</div>` : ""}
-          ${n.note ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(n.note)}</div></div>` : ""}
+          ${n.noteHtml
+            ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${n.noteHtml}</div></div>`
+            : n.note
+              ? `<div class="note-card"><div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div><div class="note-body">${esc(n.note)}</div></div>`
+              : ""}
           ${image}
         </div>
         <div class="choices">${choicesHtml}</div>
