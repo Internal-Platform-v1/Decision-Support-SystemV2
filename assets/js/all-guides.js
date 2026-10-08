@@ -41,20 +41,20 @@
     ["Courtesy Discount Guide", "guides/Pricing%20Guides/courtesy-discount/courtesy-discount.html", "Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.", "pricing", "fa-hand-holding-dollar"],
 
     /* ========================= SURCHARGES — 14 ============================= */
-    ["High Cost Fee", "guides/Other%20Surcharge%20Guides/other-surcharges/high-cost-fee.html", "Review high cost fee concerns and validate the appropriate surcharge handling.", "surcharge", "fa-dollar-sign"],
-    ["Peak Surcharge Fee", "guides/Other%20Surcharge%20Guides/other-surcharges/peak-surcharge-fee.html", "Review peak surcharge concerns and determine the correct handling for period-based charges.", "surcharge", "fa-arrow-trend-up"],
-    ["California Compliance", "guides/Other%20Surcharge%20Guides/other-surcharges/california-compliance.html", "Review surcharge concerns tied to California compliance requirements and validation.", "surcharge", "fa-shield-halved"],
-    ["Zip Service Charge", "guides/Other%20Surcharge%20Guides/other-surcharges/zip-service-charge.html", "Validate location-based service charges and determine the appropriate surcharge action.", "surcharge", "fa-location-dot"],
-    ["Cross-Border Processing Fee", "guides/Other%20Surcharge%20Guides/other-surcharges/cross-border-processing-fee.html", "Review international processing fee concerns and validate the appropriate surcharge handling.", "surcharge", "fa-globe"],
-    ["Canadian Custom Inspection Fee", "guides/Other%20Surcharge%20Guides/other-surcharges/canadian-custom-inspection-fee.html", "Review Canadian inspection-related fee concerns and validate the applicable fee.", "surcharge", "fa-list-check"],
-    ["Canadian Surcharge Guide", "guides/Other%20Surcharge%20Guides/other-surcharges/canadian-surcharge-guide.html", "Review Canada-related surcharge concerns and determine the correct pricing action.", "surcharge", "fa-table-cells"],
-    ["Weighing Service Fee", "guides/Other%20Surcharge%20Guides/other-surcharges/weighing-service-guide.html", "Review weighing service fee disputes and determine whether the charge should remain or be removed.", "surcharge", "fa-weight-scale"],
-    ["NOST Guide", "guides/Other%20Surcharge%20Guides/other-surcharges/nost-guide.html", "Review NOST disputes, validate pickup and dashboard details, and determine the correct account action.", "surcharge", "fa-clipboard"],
-    ["Sort & Segregate Guide", "guides/Other%20Surcharge%20Guides/sort-and-segregate-guide.html", "Validate Sort & Segregate disputes and determine the correct surcharge handling.", "surcharge", "fa-list"],
-    ["Notify Fee Guide", "guides/Other%20Surcharge%20Guides/notify-fee-guide.html", "Validate Notify Fee disputes and determine whether the notification charge should remain or be removed.", "surcharge", "fa-bell"],
-    ["Lumper Fee Guide", "guides/Other%20Surcharge%20Guides/other-surcharges/lumper-fee-guide.html", "Handle Lumper fee disputes and validate the appropriate surcharge response and documentation.", "surcharge", "fa-bag-shopping"],
-    ["Storage Fee Guide", "guides/Other%20Surcharge%20Guides/other-surcharges/storage-fee-guide.html", "Validate storage fee disputes, calculations, supporting documents, and FedEx fault claims.", "surcharge", "fa-warehouse"],
-    ["Redelivery Handling Guide", "guides/Other%20Surcharge%20Guides/other-surcharges/redelivery-handling-guide.html", "Review second delivery attempts, receiving conditions, and customer refusal scenarios to validate the fee.", "surcharge", "fa-truck"],
+    ["High Cost Fee", "guides/Other%20Surcharge%20Guides/high-cost-fee/high-cost-fee.html", "Review high cost fee concerns and validate the appropriate surcharge handling.", "surcharge", "fa-dollar-sign"],
+    ["Peak Surcharge Fee", "guides/Other%20Surcharge%20Guides/peak-surcharge-fee/peak-surcharge-fee.html", "Review peak surcharge concerns and determine the correct handling for period-based charges.", "surcharge", "fa-arrow-trend-up"],
+    ["California Compliance", "guides/Other%20Surcharge%20Guides/california-compliance/california-compliance.html", "Review surcharge concerns tied to California compliance requirements and validation.", "surcharge", "fa-shield-halved"],
+    ["Zip Service Charge", "guides/Other%20Surcharge%20Guides/zip-service-charge/zip-service-charge.html", "Validate location-based service charges and determine the appropriate surcharge action.", "surcharge", "fa-location-dot"],
+    ["Cross-Border Processing Fee", "guides/Other%20Surcharge%20Guides/cross-border-processing-fee/cross-border-processing-fee.html", "Review international processing fee concerns and validate the appropriate surcharge handling.", "surcharge", "fa-globe"],
+    ["Canadian Custom Inspection Fee", "guides/Other%20Surcharge%20Guides/canadian-custom-inspection-fee/canadian-custom-inspection-fee.html", "Review Canadian inspection-related fee concerns and validate the applicable fee.", "surcharge", "fa-list-check"],
+    ["Canadian Surcharge Guide", "guides/Other%20Surcharge%20Guides/canadian-surcharge-guide/canadian-surcharge-guide.html", "Review Canada-related surcharge concerns and determine the correct pricing action.", "surcharge", "fa-table-cells"],
+    ["Weighing Service Fee", "guides/Other%20Surcharge%20Guides/weighing-service-guide/weighing-service-guide.html", "Review weighing service fee disputes and determine whether the charge should remain or be removed.", "surcharge", "fa-weight-scale"],
+    ["NOST Guide", "guides/Other%20Surcharge%20Guides/nost-guide/nost-guide.html", "Review NOST disputes, validate pickup and dashboard details, and determine the correct account action.", "surcharge", "fa-clipboard"],
+    ["Sort & Segregate Guide", "guides/Other%20Surcharge%20Guides/sort-and-segregate-guide/sort-and-segregate-guide.html", "Validate Sort & Segregate disputes and determine the correct surcharge handling.", "surcharge", "fa-list"],
+    ["Notify Fee Guide", "guides/Other%20Surcharge%20Guides/notify-fee-guide/notify-fee-guide.html", "Validate Notify Fee disputes and determine whether the notification charge should remain or be removed.", "surcharge", "fa-bell"],
+    ["Lumper Fee Guide", "guides/Other%20Surcharge%20Guides/lumper-fee-guide/lumper-fee-guide.html", "Handle Lumper fee disputes and validate the appropriate surcharge response and documentation.", "surcharge", "fa-bag-shopping"],
+    ["Storage Fee Guide", "guides/Other%20Surcharge%20Guides/storage-fee-guide/storage-fee-guide.html", "Validate storage fee disputes, calculations, supporting documents, and FedEx fault claims.", "surcharge", "fa-warehouse"],
+    ["Redelivery Handling Guide", "guides/Other%20Surcharge%20Guides/redelivery-handling-guide/redelivery-handling-guide.html", "Review second delivery attempts, receiving conditions, and customer refusal scenarios to validate the fee.", "surcharge", "fa-truck"],
 
     /* ========================= ACCOUNT HANDLING — 5 ======================= */
     ["Handling Inactive Account", "guides/Account%20Handling%20Guides/account-handling-guides-list/handling-notactive-guide.html", "Validate inactive, archived, deleted, or do-not-use accounts and determine the correct next action.", "account", "fa-user-xmark"],
@@ -106,7 +106,7 @@
     ["Handling Fee Guide", "guides/Other%20Guides/handling-fee-guide.html", "Validate Handling fee disputes involving usage, loading, unloading, assembly, and supporting documents.", "other", "fa-hand"],
     ["ISPI — Mass Adjustment Guide", "guides/Other%20Guides/ispi-guide.html", "Process mass adjustments including PRO entry, account changes, approvals, checks, and final processing.", "other", "fa-arrows-rotate"],
     ["All Shorts Guide", "guides/Other%20Guides/all-shorts-guide.html", "Handle All Short and Partial Short disputes using shipment history, claims, LOA documentation, and piece counts.", "other", "fa-boxes-stacked"],
-    ["Sales Write-Off Guide", "guides/Other%20Guides/sales-write-off-guide.html", "Review Sales Write-Off requests, validate PRO and debtor eligibility, and follow approval thresholds.", "other", "fa-file-pen"],
+    ["Sales Write-Off Guide", "guides/Other%20Guides/sales-write-off-guide.html", "Review Sales Write-Off requests, validate PRO debtor eligibility, and follow approval thresholds.", "other", "fa-file-pen"],
     ["Write-off in CAPS — Step by Step Procedure", "guides/Other%20Guides/wo-process-caps-guide.html", "Process write-offs in CAPS from Business Unit selection and PRO entry through comments, responses, and case closure.", "other", "fa-file-circle-xmark"]
   ];
 
