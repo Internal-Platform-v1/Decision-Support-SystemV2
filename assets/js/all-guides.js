@@ -57,11 +57,11 @@
     ["Redelivery Handling Guide", "guides/Other%20Surcharge%20Guides/redelivery-handling-guide/redelivery-handling-guide.html", "Review second delivery attempts, receiving conditions, and customer refusal scenarios to validate the fee.", "surcharge", "fa-truck"],
 
     /* ========================= ACCOUNT HANDLING — 5 ======================= */
-    ["Handling Inactive Account", "guides/Account%20Handling%20Guides/account-handling-guides-list/handling-notactive-guide.html", "Validate inactive, archived, deleted, or do-not-use accounts and determine the correct next action.", "account", "fa-user-xmark"],
-    ["Creating Customer's Account", "guides/Account%20Handling%20Guides/account-handling-guides-list/creating-customer-account.html", "Follow the correct setup process when creating a new customer account.", "account", "fa-user-plus"],
-    ["Steps on How to Create an Account", "guides/Account%20Handling%20Guides/account-handling-guides-list/account-creation-steps.html", "Follow the structured step-by-step process for complete customer account creation.", "account", "fa-list-check"],
-    ["Searching for Account Guide", "guides/Account%20Handling%20Guides/account-handling-guides-list/searching-account-guide.html", "Locate and validate the correct customer account before proceeding with account handling.", "account", "fa-user-magnifying-glass"],
-    ["Updating SCAC/BU Guide", "guides/Account%20Handling%20Guides/account-handling-guides-list/updating-pt-scacbu-guide.html", "Validate SCAC/BU update requests and determine the correct correction and update steps.", "account", "fa-list-check"],
+    ["Handling Inactive Account", "guides/Account%20Handling%20Guides/handling-notactive-guide/handling-notactive-guide.html", "Validate inactive, archived, deleted, or do-not-use accounts and determine the correct next action.", "account", "fa-user-xmark"],
+    ["Creating Customer's Account", "guides/Account%20Handling%20Guides/creating-customer-account/creating-customer-account.html", "Follow the correct setup process when creating a new customer account.", "account", "fa-user-plus"],
+    ["Steps on How to Create an Account", "guides/Account%20Handling%20Guides/account-creation-steps/account-creation-steps.html", "Follow the structured step-by-step process for complete customer account creation.", "account", "fa-list-check"],
+    ["Searching for Account Guide", "guides/Account%20Handling%20Guides/searching-account-guide/searching-account-guide.html", "Locate and validate the correct customer account before proceeding with account handling.", "account", "fa-user-magnifying-glass"],
+    ["Updating SCAC/BU Guide", "guides/Account%20Handling%20Guides/updating-pt-scacbu-guide/updating-pt-scacbu-guide.html", "Validate SCAC/BU update requests and determine the correct correction and update steps.", "account", "fa-list-check"],
 
     /* ========================= PAUD QUEUE — 17 ============================= */
     ["Regions and EHOT Queue Guide", "guides/PAUD%20Guides/region-and-ehot-queue.html", "Review and process region and EHOT queue requests including account, accessorial, service type, and related updates.", "paud", "fa-globe"],
@@ -106,7 +106,7 @@
     ["Handling Fee Guide", "guides/Other%20Guides/handling-fee-guide.html", "Validate Handling fee disputes involving usage, loading, unloading, assembly, and supporting documents.", "other", "fa-hand"],
     ["ISPI — Mass Adjustment Guide", "guides/Other%20Guides/ispi-guide.html", "Process mass adjustments including PRO entry, account changes, approvals, checks, and final processing.", "other", "fa-arrows-rotate"],
     ["All Shorts Guide", "guides/Other%20Guides/all-shorts-guide.html", "Handle All Short and Partial Short disputes using shipment history, claims, LOA documentation, and piece counts.", "other", "fa-boxes-stacked"],
-    ["Sales Write-Off Guide", "guides/Other%20Guides/sales-write-off-guide.html", "Review Sales Write-Off requests, validate PRO debtor eligibility, and follow approval thresholds.", "other", "fa-file-pen"],
+    ["Sales Write-Off Guide", "guides/Other%20Guides/sales-write-off-guide.html", "Review Sales Write-Off requests, validate PRO and debtor eligibility, and follow approval thresholds.", "other", "fa-file-pen"],
     ["Write-off in CAPS — Step by Step Procedure", "guides/Other%20Guides/wo-process-caps-guide.html", "Process write-offs in CAPS from Business Unit selection and PRO entry through comments, responses, and case closure.", "other", "fa-file-circle-xmark"]
   ];
 
