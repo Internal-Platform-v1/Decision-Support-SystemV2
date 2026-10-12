@@ -245,10 +245,6 @@ window.GUIDE_NODES = {
     ]
   },
 
-  irt_hino_final: {
-    text: "•A. If BOL states Hino % CH Robinson (CHRLTL), bill to account 848647918 should be used. <strong>CORR ACCR</strong>/n/n• B. If currently billing per the Bill of lading, use <strong>CORR VRFY</strong> and ACCEPT ALL./n/n• C. BOL has BT code which name & address are same as the Consignee's but no %, we used the account # provided.",
-    help: "Apply CORR ACCR for Hino % CH Robinson, CORR VRFY if billing matches, or use the provided account for BT code matching.",
-    choices: []
-  }
+text: "• A. If BOL states Hino % CH Robinson (CHRLTL), bill to account 848647918 should be used. CORR ACCR\n\n• B. If currently billing per the Bill of lading, use CORR VRFY and ACCEPT ALL.\n\n• C. BOL has BT code which name & address are same as the Consignee's but no %, we used the account # provided.",
 
 };
