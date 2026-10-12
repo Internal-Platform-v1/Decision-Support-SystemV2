@@ -183,6 +183,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
   function renderFinal(finalNode) {
     const text = finalNode.action || nodeText(finalNode) || "";
     const note = finalNode.note || "";
+    const imageSrc = finalNode.image || "";
 
     state.finalText = text;
     state.currentKey = "__final__";
@@ -211,6 +212,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
         <div class="final-title">Use this handling outcome</div>
         <div class="final-text">${esc(text)}</div>
         ${note ? `<div class="final-note">${esc(note)}</div>` : ""}
+        ${imageSrc ? `<div class="question-image" id="finalImage"><img src="${esc(imageSrc)}" alt="Guide reference image" loading="lazy"></div>` : ""}
         <div class="final-actions">
           <button class="action-btn" id="finalBack" type="button">Go Back</button>
           <button class="action-btn primary" id="finalRestart" type="button">Start Over</button>
@@ -219,6 +221,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
 
     $("finalBack").onclick = goBack;
     $("finalRestart").onclick = restart;
+    if ($("finalImage")) $("finalImage").onclick = () => openImageModal(imageSrc);
   }
 
   function renderStart(node) {
