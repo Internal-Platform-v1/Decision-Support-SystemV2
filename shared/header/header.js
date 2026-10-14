@@ -330,25 +330,108 @@
 
     /* ------------------------------------------------------------
        Global Search — DSS V2
+       Static catalog mirrors all-guides.js CATALOG.
        ------------------------------------------------------------ */
-    const DSS_GUIDE_SEARCH_SOURCES = [
-        "guides/Billing Dispute Guides/billing-dispute-guides.html",
-        "guides/Billing Dispute Guides/billing-dispute-guides (7).html",
-        "guides/Pricing General Guides/pricing-guides.html",
-        "guides/Pricing General Guides/pricing-guides-final.html",
-        "guides/pricing-guides.html",
-        "guides/Billing Dispute Guides/account-handling-guides.html",
-        "guides/Billing Dispute Guides/account-handling-guides-secured.html",
-        "guides/account-handling-guides.html",
-        "guides/PAUD Queue Guides/paud-queue-guides.html",
-        "guides/PAUD Queue Guides/paud-queue-guides-secured.html",
-        "guides/PAUD Queue Guides/paud-queue-guides-theme-ready.html",
-        "guides/paud-queue-guides.html",
-        "guides/Other Guides/other-guides.html",
-        "guides/other-guides.html"
+    const DSS_GUIDE_GROUPS = {
+        billing:   "Billing Dispute",
+        pricing:   "Pricing General",
+        surcharge: "Surcharges",
+        account:   "Account Handling",
+        paud:      "PAUD Queue",
+        other:     "Other Operational"
+    };
+
+    const DSS_GUIDE_CATALOG = [
+        /* Billing Dispute — 6 */
+        ["Debtor Update per BOL", "guides/Billing%20Dispute%20Guides/debtor-update-per-bol/debtor-update-per-bol.html", "Follow BOL terms to determine the correct debtor and ensure accurate billing setup.", "billing"],
+        ["Debtor Update per LOA", "guides/Billing%20Dispute%20Guides/debtor-update-per-loa/debtor-update-per-loa.html", "Use LOA to evaluate debtor update requests and determine the correct billing action.", "billing"],
+        ["Debtor Update per Reversal/Refusal", "guides/Billing%20Dispute%20Guides/debtor-update-per-rvsl/debtor-update-per-rvsl.html", "Evaluate reversal or refusal cases and determine the correct debtor and billing action.", "billing"],
+        ["Weight Update per BOL", "guides/Billing%20Dispute%20Guides/weight-update-per-bol/weight-update-per-bol.html", "Evaluate BOL-based weight and pallet discrepancies to determine the correct action or routing.", "billing"],
+        ["Service Level/Type Update per BOL", "guides/Billing%20Dispute%20Guides/service-level-type/service-level-type.html", "Evaluate service level disputes to confirm correct rating based on BOL details.", "billing"],
+        ["Reference Number Update - Add/Edit/Delete", "guides/Billing%20Dispute%20Guides/reference-number/reference-number.html", "Manage reference number updates and ensure correct correction processing and invoice handling.", "billing"],
+
+        /* Pricing General — 8 */
+        ["Fuel Guide", "guides/Pricing%20Guides/fuel-guide/fuel-guide.html", "Review fuel-related pricing disputes using the correct guide and supporting validation steps.", "pricing"],
+        ["Surcharge Guide", "guides/Pricing%20Guides/surcharge-guide/surcharge-guide.html", "Check surcharge disputes and verify the correct supporting logic before responding.", "pricing"],
+        ["ePRT Guide", "guides/Pricing%20Guides/eprt-guide/eprt-guide.html", "Use ePRT guidance when pricing results need exception handling or escalation review.", "pricing"],
+        ["ePRT Submission", "guides/Pricing%20Guides/eprt-submission/eprt-submission.html", "Open the submission page when the case already requires formal ePRT routing.", "pricing"],
+        ["Checking EPRS", "guides/Pricing%20Guides/checking-eprs/checking-eprs.html", "Validate customer agreement and pricing setup using the EPRS reference tool.", "pricing"],
+        ["Base Rater", "guides/Pricing%20Guides/base-rater/base-rater.html", "Open the base rating tool when pricing needs direct rate validation support.", "pricing"],
+        ["Discount - AMC Guide", "guides/Pricing%20Guides/discount-amc-guide/discount-amc-guide.html", "Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.", "pricing"],
+        ["Courtesy Discount Guide", "guides/Pricing%20Guides/courtesy-discount/courtesy-discount.html", "Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.", "pricing"],
+
+        /* Surcharges — 14 */
+        ["High Cost Fee", "guides/Other%20Surcharge%20Guides/high-cost-fee/high-cost-fee.html", "Review high cost fee concerns and validate the appropriate surcharge handling.", "surcharge"],
+        ["Peak Surcharge Fee", "guides/Other%20Surcharge%20Guides/peak-surcharge-fee/peak-surcharge-fee.html", "Review peak surcharge concerns and determine the correct handling for period-based charges.", "surcharge"],
+        ["California Compliance", "guides/Other%20Surcharge%20Guides/california-compliance/california-compliance.html", "Review surcharge concerns tied to California compliance requirements and validation.", "surcharge"],
+        ["Zip Service Charge", "guides/Other%20Surcharge%20Guides/zip-service-charge/zip-service-charge.html", "Validate location-based service charges and determine the appropriate surcharge action.", "surcharge"],
+        ["Cross-Border Processing Fee", "guides/Other%20Surcharge%20Guides/cross-border-processing-fee/cross-border-processing-fee.html", "Review international processing fee concerns and validate the appropriate surcharge handling.", "surcharge"],
+        ["Canadian Custom Inspection Fee", "guides/Other%20Surcharge%20Guides/canadian-custom-inspection-fee/canadian-custom-inspection-fee.html", "Review Canadian inspection-related fee concerns and validate the applicable fee.", "surcharge"],
+        ["Canadian Surcharge Guide", "guides/Other%20Surcharge%20Guides/canadian-surcharge-guide/canadian-surcharge-guide.html", "Review Canada-related surcharge concerns and determine the correct pricing action.", "surcharge"],
+        ["Weighing Service Fee", "guides/Other%20Surcharge%20Guides/weighing-service-guide/weighing-service-guide.html", "Review weighing service fee disputes and determine whether the charge should remain or be removed.", "surcharge"],
+        ["NOST Guide", "guides/Other%20Surcharge%20Guides/nost-guide/nost-guide.html", "Review NOST disputes, validate pickup and dashboard details, and determine the correct account action.", "surcharge"],
+        ["Sort & Segregate Guide", "guides/Other%20Surcharge%20Guides/sort-and-segregate-guide/sort-and-segregate-guide.html", "Validate Sort & Segregate disputes and determine the correct surcharge handling.", "surcharge"],
+        ["Notify Fee Guide", "guides/Other%20Surcharge%20Guides/notify-fee-guide/notify-fee-guide.html", "Validate Notify Fee disputes and determine whether the notification charge should remain or be removed.", "surcharge"],
+        ["Lumper Fee Guide", "guides/Other%20Surcharge%20Guides/lumper-fee-guide/lumper-fee-guide.html", "Handle Lumper fee disputes and validate the appropriate surcharge response and documentation.", "surcharge"],
+        ["Storage Fee Guide", "guides/Other%20Surcharge%20Guides/storage-fee-guide/storage-fee-guide.html", "Validate storage fee disputes, calculations, supporting documents, and FedEx fault claims.", "surcharge"],
+        ["Redelivery Handling Guide", "guides/Other%20Surcharge%20Guides/redelivery-handling-guide/redelivery-handling-guide.html", "Review second delivery attempts, receiving conditions, and customer refusal scenarios to validate the fee.", "surcharge"],
+
+        /* Account Handling — 5 */
+        ["Handling Inactive Account", "guides/Account%20Handling%20Guides/handling-notactive-guide/handling-notactive-guide.html", "Validate inactive, archived, deleted, or do-not-use accounts and determine the correct next action.", "account"],
+        ["Creating Customer's Account", "guides/Account%20Handling%20Guides/creating-customer-account/creating-customer-account.html", "Follow the correct setup process when creating a new customer account.", "account"],
+        ["Steps on How to Create an Account", "guides/Account%20Handling%20Guides/account-creation-steps/account-creation-steps.html", "Follow the structured step-by-step process for complete customer account creation.", "account"],
+        ["Searching for Account Guide", "guides/Account%20Handling%20Guides/searching-account-guide/searching-account-guide.html", "Locate and validate the correct customer account before proceeding with account handling.", "account"],
+        ["Updating SCAC/BU Guide", "guides/Account%20Handling%20Guides/updating-pt-scacbu-guide/updating-pt-scacbu-guide.html", "Validate SCAC/BU update requests and determine the correct correction and update steps.", "account"],
+
+        /* PAUD Queue — 18 */
+        ["Regions and EHOT Queue Guide", "guides/PAUD%20Guides/region-and-ehot-queue/region-and-ehot-queue.html", "Review and process region and EHOT queue requests including account, accessorial, service type, and related updates.", "paud"],
+        ["TPLO Guide", "guides/PAUD%20Guides/tplo-guide/tplo-guide.html", "Handle TPLO requests including SPOC validation, account mapping, special account routing, and billing handling.", "paud"],
+        ["TPHI Guide", "guides/PAUD%20Guides/tphi-guide/tphi-guide.html", "Follow the TEMP-SYS matching process to correctly map charge accounts and ensure proper debtor selection.", "paud"],
+        ["PAUD / TPKN Guide", "guides/PAUD%20Guides/paud-tpkn-guide/paud-tpkn-guide.html", "Follow the process for replacing Shipper Code requests, including account validation, auto-rating, and corrections.", "paud"],
+        ["CRAU — Request Decision Guide", "guides/PAUD%20Guides/crau-guide/crau-guide.html", "Handle CRAU requests through validation checks, request review, and the correct next action.", "paud"],
+        ["PAUD-FPAY Guide", "guides/PAUD%20Guides/paud-fpay-guide/paud-fpay-guide.html", "Review payment-related handling, account validation, and proper PAUD-FPAY workflow decisions.", "paud"],
+        ["COD (Collect on Delivery) Guide", "guides/PAUD%20Guides/cod-guide/cod-guide.html", "Handle COD additions or removals using BOL validation, LOA/CLP support, keywords, and automating steps.", "paud"],
+        ["Invalid Consignee/Shipper Account (ISPD)", "guides/PAUD%20Guides/ispd-guide/ispd-guide.html", "Review ISPD queue requests, validate account discrepancies, and apply the correct ACR correction path.", "paud"],
+        ["LMPB (Lumper Fee) Guide", "guides/PAUD%20Guides/lmpb-guide/lmpb-guide.html", "Handle Lumper fee requests, Sort & Segregate validation, prepaid/third-party handling, and CORR ACC processing.", "paud"],
+        ["IRT1–PO Number & Division Validation", "guides/PAUD%20Guides/irt1-po-number-division-guide/irt1-po-number-division-guide.html", "Validate PO number and division information and determine the correct billing terms, account, and correction action.", "paud"],
+        ["IRT/VSAT – Queue Guide", "guides/PAUD%20Guides/irt-vsat-guide/irt-vsat-guide.html", "Handle Graino, Rio Bravo, and Hino queue cases through validation, account mapping, and correction codes.", "paud"],
+        ["SAF2 Guide – NMFC, Reweigh & Weight Validation", "guides/PAUD%20Guides/saf2-guide/saf2-guide.html", "Validate NMFC classifications, pallet and tare weights, reweigh certificates, and billing corrections.", "paud"],
+        ["BLOA Guide – Accessorial & Terms Validation", "guides/PAUD%20Guides/bloa-guide/bloa-guide.html", "Validate accessorial terms against the Letter of Authority and determine the correct billing correction.", "paud"],
+        ["PAT8 – Multi-Company Queue Guide", "guides/PAUD%20Guides/pat8-guide/pat8-guide.html", "Handle EMERSON, FLMRS, Harte Hanks, Two Value Fabrics, and accessorial removal requests.", "paud"],
+        ["PAT7 – Special Invoice Review Guide", "guides/PAUD%20Guides/pat7-guide/pat7-guide.html", "Review special invoice handling, BOL imaging, reference edits, PO validation, and invoice posting actions.", "paud"],
+        ["PARS – Parker Hannifin Queue Guide", "guides/PAUD%20Guides/pars-guide/pars-guide.html", "Validate Parker Hannifin debtor handling, consignee updates, rate comparisons, and correction code selection.", "paud"],
+        ["CORT – Reconsignment Guide", "guides/PAUD%20Guides/cort-guide/cort-guide.html", "Handle reconsignment requests by validating weight, piece count, customer center, NEWP, and AUTO RATE requirements.", "paud"],
+        ["HOT – EHOT Queue Requests", "guides/PAUD%20Guides/hot-ehot-queue-guide/hot-ehot-queue-guide.html", "Handle HOT/EHOT requests including storage disputes, shipment detail updates, routing, redelivery, GAMD, and REDOT.", "paud"],
+
+        /* Other Operational — 24 */
+        ["OVC — General Guideline", "guides/Other%20Guides/ovc-general-guide/ovc-general-guide.html", "Official OVC guideline for handling customer claims and disputes.", "other"],
+        ["Reweigh — General Guide", "guides/Other%20Guides/reweigh-general-guide/reweigh-general-guide.html", "Decision guide for reweigh disputes and corrections.", "other"],
+        ["Correction Code Guide", "guides/Other%20Guides/correction-code-guide/correction-code-guide.html", "Decision tree to determine the correct CORR CODE.", "other"],
+        ["FedEx Direct Guide", "guides/Other%20Guides/fedex-direct-guide/fedex-direct-guide.html", "Decision tree for FedEx Direct disputes and validation.", "other"],
+        ["Class Update Guide", "guides/Other%20Guides/class-update-guide/class-update-guide.html", "Decision tree for handling Class Update requests.", "other"],
+        ["Rate & Volume Quote Guide", "guides/Other%20Guides/rate-volume-guide/rate-volume-guide.html", "Decision tree for validating LTL and Volume Quotes.", "other"],
+        ["Save a Day Guide/Early Delivery Fee", "guides/Other%20Guides/shave-a-day-guide/shave-a-day-guide.html", "Verify SHAD fees, LOA and service level details, delivery status, and the correct service correction.", "other"],
+        ["Verifying Tracking Number Guide", "guides/Other%20Guides/information-validation-guide/information-validation-guide.html", "Guide for validating freight tracking and shipment information.", "other"],
+        ["Missing Documents Guide", "guides/Other%20Guides/missing-docs-guide/missing-docs-guide.html", "Guide for requesting missing BOL and supporting documents.", "other"],
+        ["Keep or Remove Payment Guide", "guides/Other%20Guides/keep-or-remove-payment-guide/keep-or-remove-payment-guide.html", "Determine whether to keep or remove payment based on LOA, billing corrections, and pricing scenarios.", "other"],
+        ["Demand Invoice Guide", "guides/Other%20Guides/demand-invoice-guide/demand-invoice-guide.html", "Structured decision flow for demand invoice cases, PRO checks, resend scenarios, and invoice types.", "other"],
+        ["Recycled Pro Guide", "guides/Other%20Guides/recycled-pro-guide/recycled-pro-guide.html", "Identify recycled PRO issues, validate version history, and apply the correct resolution steps.", "other"],
+        ["Employee Discount Guide", "guides/Other%20Guides/employee-discount-guide/employee-discount-guide.html", "Validate employee discount eligibility and determine the correct billing handling.", "other"],
+        ["Void and Write Off Guide", "guides/Other%20Guides/void-and-wo-guide/void-and-wo-guide.html", "Follow the workflow for service errors, rebill scenarios, surcharge handling, PRO voiding, and write-offs.", "other"],
+        ["Pro Number Suffix Guide", "guides/Other%20Guides/pro-no-suffix/pro-no-suffix.html", "Identify correct handling based on PRO number suffix, including F0, CO, YO, and non-revenue scenarios.", "other"],
+        ["Volume Application Guide", "guides/Other%20Guides/volume-application/volume-application.html", "Review, validate, and process volume application requests using the correct workflow.", "other"],
+        ["Expedited Shipment / Priority Plus Guide", "guides/Other%20Guides/priority-plus-guide/priority-plus-guide.html", "Review Priority Plus or Expedited Shipment disputes and validate rate, service, BOL, and LOA support.", "other"],
+        ["Rerate Treatment Process Guide", "guides/Other%20Guides/rerate-treatment-process-guide/rerate-treatment-process-guide.html", "Determine the correct rerate treatment based on PRO age, pricing status, debtor updates, rebills, and corrections.", "other"],
+        ["Inbond Fee Guide", "guides/Other%20Guides/inbond-fee-guide/inbond-fee-guide.html", "Validate Inbond fee disputes using BOL documentation and Cargo Care indicators.", "other"],
+        ["Handling Fee Guide", "guides/Other%20Guides/handling-fee-guide/handling-fee-guide.html", "Validate Handling fee disputes involving usage, loading, unloading, assembly, and supporting documents.", "other"],
+        ["ISPI — Mass Adjustment Guide", "guides/Other%20Guides/ispi-guide/ispi-guide.html", "Process mass adjustments including PRO entry, account changes, approvals, checks, and final processing.", "other"],
+        ["All Shorts Guide", "guides/Other%20Guides/all-shorts-guide/all-shorts-guide.html", "Handle All Short and Partial Short disputes using shipment history, claims, LOA documentation, and piece counts.", "other"],
+        ["Sales Write-Off Guide", "guides/Other%20Guides/sales-write-off-guide/sales-write-off-guide.html", "Review Sales Write-Off requests, validate PRO and debtor eligibility, and follow approval thresholds.", "other"],
+        ["Write-off in CAPS — Step by Step Procedure", "guides/Other%20Guides/wo-process-caps-guide/wo-process-caps-guide.html", "Process write-offs in CAPS from Business Unit selection and PRO entry through comments, responses, and case closure.", "other"]
     ];
 
-    const DSS_GUIDE_SEARCH_CACHE_KEY = "dssV2GlobalGuideSearchIndex";
+    /* Bumped key so stale fetch-based caches are discarded. */
+    const DSS_GUIDE_SEARCH_CACHE_KEY = "dssV2GlobalGuideSearchIndex_v3";
     const DSS_GUIDE_SEARCH_CACHE_TTL = 10 * 60 * 1000;
 
     let globalGuideSearchIndex   = [];
@@ -507,39 +590,39 @@
         }
     }
 
-    async function fetchGuideSource(sourcePath) {
-        try {
-            const sourceUrl = new URL(sourcePath, document.baseURI).href;
-            const response = await fetch(sourceUrl, {
-                method: "GET",
-                cache: "no-cache",
-                credentials: "same-origin"
-            });
+    /* Build the index from the bundled catalog (mirrors all-guides.js). */
+    function buildStaticCatalogIndex(seen) {
+        const origin = window.location.origin;
 
-            if (!response.ok) return [];
+        DSS_GUIDE_CATALOG.forEach(function (row) {
+            const title       = row[0];
+            const path        = row[1];
+            const description = row[2];
+            const groupKey    = row[3];
+            const groupName   = DSS_GUIDE_GROUPS[groupKey] || "Guide Library";
 
-            const html = await response.text();
-            const parser = new DOMParser();
-            const documentFragment = parser.parseFromString(html, "text/html");
+            let absoluteUrl;
+            try {
+                absoluteUrl = new URL(path, origin + "/").href;
+            } catch (e) {
+                return;
+            }
 
-            const pageTitle = documentFragment.querySelector("h1")?.textContent
-                ?.replace(/\s+/g, " ")
-                .trim();
+            const searchable = normalizeSearchText([
+                title,
+                description,
+                groupName
+            ].join(" "));
 
-            const pageKicker = documentFragment.querySelector(".intro-kicker")?.textContent
-                ?.replace(/\s+/g, " ")
-                .trim();
-
-            const groupName = pageTitle || pageKicker || "Guide Library";
-            const cards = Array.from(documentFragment.querySelectorAll(".guide-card"));
-
-            return cards
-                .map(card => extractGuideFromCard(card, sourceUrl, groupName))
-                .filter(Boolean);
-        } catch (error) {
-            console.debug("Header: search source unavailable:", sourcePath);
-            return [];
-        }
+            addGuideToIndex({
+                title: title,
+                description: description,
+                keywords: "",
+                group: groupName,
+                url: absoluteUrl,
+                search: searchable
+            }, seen);
+        });
     }
 
     async function buildGlobalGuideSearchIndex() {
@@ -549,39 +632,37 @@
             const seen = new Set();
             globalGuideSearchIndex = [];
 
+            /* 1. Any cards already on the current page. */
             const currentPageUrl = window.location.href;
-            const currentPageTitle = document.querySelector(".group-hero h1")?.textContent
-                ?.replace(/\s+/g, " ")
-                .trim()
+            const currentPageTitle =
+                document.querySelector(".group-hero h1")?.textContent
+                    ?.replace(/\s+/g, " ").trim()
                 || document.title
                 || "Current Page";
 
-            getCurrentPageGuideCards().forEach(card => {
+            getCurrentPageGuideCards().forEach(function (card) {
                 addGuideToIndex(
                     extractGuideFromCard(card, currentPageUrl, currentPageTitle),
                     seen
                 );
             });
 
-            const groups = await Promise.all(
-                DSS_GUIDE_SEARCH_SOURCES.map(fetchGuideSource)
-            );
+            /* 2. Full static catalog. */
+            buildStaticCatalogIndex(seen);
 
-            groups.flat().forEach(guide => addGuideToIndex(guide, seen));
-
-            globalGuideSearchIndex.sort((a, b) =>
-                a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
-            );
+            globalGuideSearchIndex.sort(function (a, b) {
+                return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+            });
 
             globalGuideSearchReady = globalGuideSearchIndex.length > 0;
             saveSearchIndexCache();
 
             return globalGuideSearchIndex;
-        })().catch(error => {
+        })().catch(function (error) {
             console.error("Header: global guide search index failed:", error);
             globalGuideSearchReady = false;
             return globalGuideSearchIndex;
-        }).finally(() => {
+        }).finally(function () {
             globalGuideSearchPromise = null;
         });
 
