@@ -332,6 +332,10 @@
        Global Search — DSS V2
        Static catalog mirrors all-guides.js CATALOG.
        ------------------------------------------------------------ */
+
+    /* Change this if the repository name ever changes. */
+    const DSS_GUIDE_BASE_PATH = "/Decision-Support-SystemV2/";
+
     const DSS_GUIDE_GROUPS = {
         billing:   "Billing Dispute",
         pricing:   "Pricing General",
@@ -529,7 +533,7 @@
         } else if (link.startsWith("/")) {
             absoluteGuideUrl = new URL(link, document.baseURI).href;
         } else if (/^guides\//i.test(link)) {
-            absoluteGuideUrl = new URL("/" + link, new URL(document.baseURI).origin).href;
+            absoluteGuideUrl = new URL(link, document.baseURI).href;
         } else {
             absoluteGuideUrl = new URL(link, sourceUrl || document.baseURI).href;
         }
@@ -592,7 +596,7 @@
 
     /* Build the index from the bundled catalog (mirrors all-guides.js). */
     function buildStaticCatalogIndex(seen) {
-        const origin = window.location.origin;
+        const base = window.location.origin + DSS_GUIDE_BASE_PATH;
 
         DSS_GUIDE_CATALOG.forEach(function (row) {
             const title       = row[0];
@@ -603,7 +607,7 @@
 
             let absoluteUrl;
             try {
-                absoluteUrl = new URL(path, origin + "/").href;
+                absoluteUrl = new URL(path, base).href;
             } catch (e) {
                 return;
             }
