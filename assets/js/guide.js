@@ -182,6 +182,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
 
   function renderFinal(finalNode) {
     const text = finalNode.action || nodeText(finalNode) || "";
+    const textHtml = finalNode.textHtml || finalNode.actionHtml || "";
     const note = finalNode.note || "";
     const finalImageList = Array.isArray(finalNode.images)
       ? finalNode.images
@@ -212,7 +213,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
       <div class="final-card">
         <div class="final-badge"><i class="fa-solid fa-check"></i> Recommended Action</div>
         <div class="final-title">Use this handling outcome</div>
-        <div class="final-text">${esc(text)}</div>
+        <div class="final-text">${textHtml || esc(text)}</div>
         ${note ? `<div class="final-note">${esc(note)}</div>` : ""}
         ${finalImageList.length
           ? `<div class="question-images">${finalImageList.map((src, idx) =>
