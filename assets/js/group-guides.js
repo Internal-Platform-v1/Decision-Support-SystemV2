@@ -358,7 +358,7 @@
 
   /* ============================================================
      QUICK-CARD STYLE INTERACTION
-     
+
      Matches Main Dashboard behavior:
      clicking anywhere on the card opens the guide.
      ============================================================ */
@@ -433,32 +433,39 @@
 
 
 
-/* ============================================================
-   VIEW ALL GUIDES
-   ============================================================ */
+  /* ============================================================
+     VIEW ALL GUIDES
+     Mirrors the dashboard's [data-action="view-all"] handler.
+     ============================================================ */
 
-function initViewAll() {
+  function initViewAll() {
 
-  const buttons =
-    document.querySelectorAll(
-      '[data-action="view-all-guides"]'
-    );
+    const buttons =
+      document.querySelectorAll(
+        '[data-action="view-all"]'
+      );
 
-  buttons.forEach(function (button) {
+    buttons.forEach(function (button) {
 
-    button.addEventListener(
-      "click",
-      function () {
+      button.addEventListener(
+        "click",
+        function () {
 
-        window.location.href =
-          "../../all-guides.html";
+          /*
+           * Group pages sit two folders deep
+           * (guides/<Group>/<page>.html), so ../../ lands
+           * on the site root where all-guides.html lives.
+           */
 
-      }
-    );
+          window.location.href =
+            "../../all-guides.html";
 
-  });
+        }
+      );
 
-}
+    });
+
+  }
 
 
 
