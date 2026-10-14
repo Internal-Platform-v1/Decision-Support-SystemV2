@@ -209,7 +209,7 @@ window.GUIDE_NODES = {
   bol_less_30: {
     text: "Less than 30 Days",
     help: "Always check A–J Guideline before proceeding to BOL Review.",
-    note: "📘 View A–J Guideline — refer to the A–J guideline document before proceeding to BOL Review.",
+    noteHtml: `<div><button type="button" class="app-btn ghost" onclick="window.openAJModal && window.openAJModal()" style="cursor:pointer;">📘 View A–J Guideline</button></div>`,
     choices: [
       {
         label: "Continue",
@@ -340,7 +340,7 @@ window.GUIDE_NODES = {
 
   bol_send_email_process: {
     text: "Follow the 3 steps on the Sending Emails process to retrieve the BOL.",
-    note: "📩 Follow Sending Emails (Steps 1–3) — refer to the Sending Emails process document for the step-by-step procedure.",
+    noteHtml: `<a href="#" onclick="window.openEmailGuide && window.openEmailGuide(); return false;" class="aj-link">📩 Follow Sending Emails (Steps 1–3)</a>`,
     choices: []
   },
 
