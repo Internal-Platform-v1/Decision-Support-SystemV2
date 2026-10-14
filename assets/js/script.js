@@ -34,18 +34,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 "use strict";
 
-/* ---------- localStorage keys (shared with group pages) ---------- */
+/* localStorage keys — shared with group-guides.js / all-guides.js */
 const LS_USAGE   = "guideUsageCounts";
 const LS_HISTORY = "guideHistory";
 const LS_FAVS    = "guideFavorites";
 
-/* ---------- Static catalogue totals (display only) ---------- */
-const TOTAL_GUIDE_COUNT     = 75; // mirrors all-guides.js CATALOG length
-const TOTAL_TOOLS_COUNT     = 6;  // fixed list of tool/resource cards
+/* Static totals shown on the stat cards */
+const TOTAL_GUIDE_COUNT = 75;
+const TOTAL_TOOLS_COUNT = 6;
 
 
 /* ---------------------------------------------------------
-   localStorage helpers
+   Storage helpers
    --------------------------------------------------------- */
 
 function readJSON(key, fallback) {
@@ -62,12 +62,42 @@ function readJSON(key, fallback) {
 function writeJSON(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) { /* storage unavailable — ignore */ }
+  } catch (e) { /* storage unavailable */ }
 }
 
 
 /* ---------------------------------------------------------
-   Time formatter
+   Category + color from guide URL
+   Matches the visual vocabulary of the original data.
+   --------------------------------------------------------- */
+
+function categoryFromUrl(url) {
+  const u = String(url || "");
+
+  if (/Billing%20Dispute|Billing Dispute/i.test(u))
+    return { tag: "Billing Dispute", color: "purple" };
+
+  if (/Pricing/i.test(u))
+    return { tag: "Pricing", color: "orange" };
+
+  if (/Surcharge/i.test(u))
+    return { tag: "Surcharges", color: "blue" };
+
+  if (/Account%20Handling|Account Handling/i.test(u))
+    return { tag: "Account Handling", color: "green" };
+
+  if (/PAUD/i.test(u))
+    return { tag: "PAUD Queue", color: "indigo" };
+
+  if (/Other%20Guides|Other Guides/i.test(u))
+    return { tag: "Other Operational", color: "pink" };
+
+  return { tag: "Guide", color: "purple" };
+}
+
+
+/* ---------------------------------------------------------
+   Relative time — for Recent Activity
    --------------------------------------------------------- */
 
 function relativeTime(ts) {
@@ -75,21 +105,21 @@ function relativeTime(ts) {
   if (!isFinite(diff) || diff < 0) return "just now";
 
   const sec = Math.floor(diff / 1000);
-  if (sec < 45)  return "just now";
-  if (sec < 90)  return "1 min ago";
+  if (sec < 45) return "just now";
+  if (sec < 90) return "1 min ago";
 
   const min = Math.floor(sec / 60);
-  if (min < 60)  return `${min} mins ago`;
+  if (min < 60) return `${min} mins ago`;
 
   const hr = Math.floor(min / 60);
-  if (hr < 24)   return `${hr} hour${hr === 1 ? "" : "s"} ago`;
+  if (hr < 24) return `${hr} hour${hr === 1 ? "" : "s"} ago`;
 
   const day = Math.floor(hr / 24);
   if (day === 1) return "yesterday";
-  if (day < 7)   return `${day} days ago`;
+  if (day < 7) return `${day} days ago`;
 
   const wk = Math.floor(day / 7);
-  if (wk < 5)    return `${wk} week${wk === 1 ? "" : "s"} ago`;
+  if (wk < 5) return `${wk} week${wk === 1 ? "" : "s"} ago`;
 
   return new Date(Number(ts)).toLocaleDateString();
 }
@@ -154,8 +184,7 @@ function getRecentActivity(limit) {
 }
 
 function getFavoritesCount() {
-  const favs = readJSON(LS_FAVS, {});
-  return Object.keys(favs).length;
+  return Object.keys(readJSON(LS_FAVS, {})).length;
 }
 
 function getUniqueHistoryCount() {
@@ -195,10 +224,8 @@ const toast = document.getElementById("toast");
 
 function showToast(message) {
   if (!toast) return;
-
   toast.textContent = message;
   toast.classList.add("show");
-
   clearTimeout(window.toastTimer);
   window.toastTimer = setTimeout(function () {
     toast.classList.remove("show");
@@ -207,7 +234,8 @@ function showToast(message) {
 
 
 /* ---------------------------------------------------------
-   Panel rendering — Most Used + Recent Activity
+   Panels — Most Used + Recent Activity
+   Markup matches the original renderLists() exactly.
    --------------------------------------------------------- */
 
 const mostUsedList = document.getElementById("mostUsedList");
@@ -221,31 +249,40 @@ function renderLists() {
     const items = getMostUsed(5);
 
     if (!items.length) {
+      /* Minimal, no clickable / no star — safe default */
       mostUsedList.innerHTML =
-        '<div class="list-row list-empty"><span class="row-name">' +
-        'No usage yet — open a guide to start tracking.</span></div>';
+        '<div class="list-row"><span class="row-name">' +
+        'No usage yet — open a guide to start tracking.' +
+        "</span></div>";
     } else {
       mostUsedList.innerHTML = items.map(function (g, i) {
+        const cat   = categoryFromUrl(g.url);
         const isFav = !!favorites[g.url];
-        const rankColors = ["purple", "orange", "blue", "green", "pink"];
-        const color = rankColors[i % rankColors.length];
 
         return (
-          '<div class="list-row clickable" data-url="' + escapeAttr(g.url) +
-          '" data-name="' + escapeAttr(g.title) + '">' +
-            '<span class="rank ' + color + '">' +
+          '<div class="list-row clickable"' +
+          ' data-name="' + escapeAttr(g.title) + '"' +
+          ' data-url="'  + escapeAttr(g.url)   + '">' +
+
+            '<span class="rank ' + cat.color + '">' +
               String(i + 1).padStart(2, "0") +
             "</span>" +
+
             '<span class="row-name">' + escapeAttr(g.title) + "</span>" +
-            '<span class="tag">' +
-              g.count + " open" + (g.count === 1 ? "" : "s") +
+
+            '<span class="tag ' +
+              (cat.color === "orange" ? "orange" : "") + '">' +
+              escapeAttr(cat.tag) +
             "</span>" +
-            '<button class="star' + (isFav ? " active" : "") + '" ' +
-              'type="button" ' +
-              'aria-label="Favorite ' + escapeAttr(g.title) + '" ' +
-              'data-fav-url="' + escapeAttr(g.url) + '">' +
+
+            '<button class="star' + (isFav ? " active" : "") + '"' +
+              ' type="button"' +
+              ' aria-label="Favorite ' + escapeAttr(g.title) + '"' +
+              ' data-fav="' + i + '"' +
+              ' data-fav-url="' + escapeAttr(g.url) + '">' +
               (isFav ? "★" : "☆") +
             "</button>" +
+
           "</div>"
         );
       }).join("");
@@ -258,20 +295,28 @@ function renderLists() {
 
     if (!items.length) {
       recentList.innerHTML =
-        '<div class="list-row list-empty"><span class="row-name">' +
+        '<div class="list-row"><span class="row-name">' +
         'Nothing here yet — your recently opened guides will appear here.' +
         "</span></div>";
     } else {
       recentList.innerHTML = items.map(function (r) {
         return (
-          '<div class="list-row clickable" data-url="' + escapeAttr(r.url) +
-          '" data-name="' + escapeAttr(r.title) + '">' +
+          '<div class="list-row clickable"' +
+          ' data-name="' + escapeAttr(r.title) + '"' +
+          ' data-url="'  + escapeAttr(r.url)   + '">' +
+
             '<span class="recent-icon">' +
               '<span class="document-icon"></span>' +
             "</span>" +
+
             '<span class="row-name">' + escapeAttr(r.title) + "</span>" +
-            '<span class="recent-time">' + relativeTime(r.timestamp) + "</span>" +
+
+            '<span class="recent-time">' +
+              escapeAttr(relativeTime(r.timestamp)) +
+            "</span>" +
+
             '<span class="row-chevron">›</span>' +
+
           "</div>"
         );
       }).join("");
@@ -285,7 +330,7 @@ renderLists();
 
 
 /* ---------------------------------------------------------
-   Track + open a guide (same shape as group-guides.js)
+   Track + open a guide (same storage shape as group-guides.js)
    --------------------------------------------------------- */
 
 function trackAndOpen(url, title) {
@@ -311,7 +356,7 @@ function trackAndOpen(url, title) {
 
 
 /* ---------------------------------------------------------
-   Favorite toggle (used by the star on Most Used rows)
+   Favorite toggle
    --------------------------------------------------------- */
 
 function toggleFavorite(url, title) {
@@ -348,29 +393,20 @@ function openGuide(name) {
   const guideRoutes = {
     "Billing Dispute Guides":
       "guides/Billing%20Dispute%20Guides/billing-dispute-guides.html",
-
     "Pricing General Guides":
       "guides/Pricing%20Guides/pricing-guides.html",
-
     "Surcharges Guide":
       "guides/Other%20Surcharge%20Guides/surcharge-guides.html",
-
     "Account Handling Guide":
       "guides/Account%20Handling%20Guides/account-handling-guides.html",
-
     "PAUD Queue's Guide":
       "guides/PAUD%20Guides/paud-guides.html",
-
     "Other Operational Guides":
       "guides/Other%20Guides/other-guides.html"
   };
 
   const target = guideRoutes[name];
-
-  if (target) {
-    window.location.href = target;
-    return;
-  }
+  if (target) { window.location.href = target; return; }
 
   showToast("Opening " + name);
   console.log("Guide selected:", name);
@@ -383,19 +419,12 @@ function openGuideLibrary() {
 window.openGuideLibrary = openGuideLibrary;
 
 
-/* ---------------------------------------------------------
-   Quick Access cards — attach click + keyboard
-   --------------------------------------------------------- */
-
+/* Quick Access cards — click + keyboard */
 document.querySelectorAll(".quick-card").forEach(function (card) {
-  function activate() {
-    openGuide(card.dataset.guide);
-  }
+  function activate() { openGuide(card.dataset.guide); }
 
   card.addEventListener("click", function (event) {
-    if (event.target.closest(".arrow-btn")) {
-      event.stopPropagation();
-    }
+    if (event.target.closest(".arrow-btn")) event.stopPropagation();
     activate();
   });
 
@@ -416,14 +445,10 @@ document.querySelectorAll(".quick-card").forEach(function (card) {
 });
 
 
-/* ---------------------------------------------------------
-   View All / panel actions
-   --------------------------------------------------------- */
-
+/* View All / panel actions */
 document.querySelectorAll("[data-action]").forEach(function (button) {
   button.addEventListener("click", function () {
     const action = button.dataset.action;
-
     if (
       action === "view-all" ||
       action === "view-most" ||
@@ -434,21 +459,20 @@ document.querySelectorAll("[data-action]").forEach(function (button) {
   });
 });
 
-
-/* Footer / shared header hook */
 document.addEventListener("bdtools:explore-guides", function () {
   openGuideLibrary();
 });
 
 
 /* ---------------------------------------------------------
-   Delegated clicks: rows + favorites
+   Delegated click — rows + favorites
+   (matches original: `.clickable` opens, `.star` toggles)
    --------------------------------------------------------- */
 
 document.addEventListener("click", function (event) {
 
-  /* Favorite star */
-  const fav = event.target.closest(".star[data-fav-url]");
+  /* Favorite star first — must not trigger row nav */
+  const fav = event.target.closest(".star");
   if (fav) {
     event.preventDefault();
     event.stopPropagation();
@@ -464,8 +488,8 @@ document.addEventListener("click", function (event) {
     return;
   }
 
-  /* Row body (navigation) */
-  const row = event.target.closest(".list-row.clickable[data-url]");
+  /* Row body */
+  const row = event.target.closest(".list-row.clickable");
   if (row) {
     event.preventDefault();
     trackAndOpen(row.dataset.url, row.dataset.name);
@@ -474,7 +498,7 @@ document.addEventListener("click", function (event) {
 
 
 /* ---------------------------------------------------------
-   Search — cross-references the guide catalogue + user data
+   Search
    --------------------------------------------------------- */
 
 function performSearch(value) {
@@ -485,10 +509,8 @@ function performSearch(value) {
     return;
   }
 
-  /* Build searchable list from local data + known group labels */
   const usage = readJSON(LS_USAGE, {});
   const history = readJSON(LS_HISTORY, []);
-
   const pool = new Set();
 
   Object.keys(usage).forEach(function (u) {
@@ -497,16 +519,10 @@ function performSearch(value) {
   history.forEach(function (h) {
     if (h?.title) pool.add(h.title);
   });
-
   [
-    "Billing Dispute",
-    "Pricing General",
-    "Surcharges",
-    "Account Handling",
-    "PAUD Queue",
-    "Other Operational",
-    "All Guides"
-  ].forEach(function (label) { pool.add(label); });
+    "Billing Dispute", "Pricing General", "Surcharges",
+    "Account Handling", "PAUD Queue", "Other Operational", "All Guides"
+  ].forEach(function (l) { pool.add(l); });
 
   const matches = Array.from(pool).filter(function (item) {
     return item.toLowerCase().includes(q);
@@ -523,8 +539,6 @@ function performSearch(value) {
 
 window.performSearch = performSearch;
 
-
-/* Hero search */
 const heroSearchBtn = document.getElementById("heroSearchBtn");
 const heroSearch    = document.getElementById("heroSearch");
 
@@ -534,9 +548,7 @@ if (heroSearchBtn && heroSearch) {
   });
 
   heroSearch.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      performSearch(event.target.value);
-    }
+    if (event.key === "Enter") performSearch(event.target.value);
   });
 }
 
@@ -571,8 +583,7 @@ document.addEventListener("bdtools:search", function (event) {
 
 
 /* ---------------------------------------------------------
-   Cross-tab sync — refresh panels when another tab
-   modifies the same localStorage keys.
+   Cross-tab sync
    --------------------------------------------------------- */
 
 window.addEventListener("storage", function (event) {
