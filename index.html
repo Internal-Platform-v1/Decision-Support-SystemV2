@@ -24,6 +24,19 @@
         html.page-loading #welcome-name {
             visibility: hidden !important;
         }
+
+        /* =========================================================
+           Stats row: it was originally absolutely positioned inside
+           .hero. Now that it lives as a sibling of .hero, force it
+           back into normal flow so it sits between hero and Quick Access.
+           ========================================================= */
+        main > .stats-row {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            left: auto !important;
+        }
     </style>
 </head>
 <body data-waits-for-user="true">
@@ -287,7 +300,7 @@
         }
 
         window.bdToolsUserReady = function () {
-            window.dispatchEvent(new Event('bdtools:user-ready'));
+            window.dispatchEvent(new Event("bdtools:user-ready"));
         };
     })();
 </script>
