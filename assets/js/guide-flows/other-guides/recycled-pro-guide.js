@@ -39,7 +39,7 @@ window.GUIDE_NODES = {
   },
 
   click_history_icon: {
-    text: `Then you will click the History Icon <img src="history-icon.png" style="height:54px; width:auto; margin-left:8px; vertical-align:middle; border-radius:6px;">`,
+    text: `Then you will click the History Icon <img src="guides/Other%20Guides/recycled-pro-guide/images/history-icon.png" style="height:54px; width:auto; margin-left:8px; vertical-align:middle; border-radius:6px;">`,
     help: "Click the History Icon to view the PRO version history.",
     choices: [
       {
@@ -53,7 +53,7 @@ window.GUIDE_NODES = {
 
   freight_bill_variables: {
     text: "This will take you to a Freight Bill Variables page and you will see that there is old dates listed that are years and years old.",
-    image: "freight-bill-variables.png",
+    image: "guides/Other%20Guides/recycled-pro-guide/images/freight-bill-variables.png",
     help: "Review the old dates and version history on the Freight Bill Variables page.",
     choices: [
       {
