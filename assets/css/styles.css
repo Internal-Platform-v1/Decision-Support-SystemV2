@@ -589,3 +589,22 @@ button { cursor: pointer; }
 @media (max-width: 700px) {
   .my-guides-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   RECENT ACTIVITY — inline SVG document icon
+   ============================================================ */
+.recent-icon svg {
+  width: 11px;
+  height: 13px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.my-guides-grid .recent-icon svg {
+  width: 13px;
+  height: 15px;
+}
