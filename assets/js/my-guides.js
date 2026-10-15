@@ -57,15 +57,114 @@
       .replace(/[–—]/g, "-").replace(/\s+/g, " ").trim();
   }
 
+
+  /* ---------- per-guide icon (mirrors all-guides.js CATALOG) ---------- */
+
+  function guideIconFromUrl(url) {
+    const u = String(url || "").toLowerCase();
+
+    /* Billing Dispute */
+    if (/debtor-update-per-bol/.test(u))         return "fa-file-invoice-dollar";
+    if (/debtor-update-per-loa/.test(u))         return "fa-file-signature";
+    if (/debtor-update-per-rvsl/.test(u))        return "fa-right-left";
+    if (/weight-update-per-bol/.test(u))         return "fa-weight-scale";
+    if (/service-level-type/.test(u))            return "fa-truck-fast";
+    if (/reference-number/.test(u))              return "fa-dollar-sign";
+
+    /* Pricing General */
+    if (/fuel-guide/.test(u))                    return "fa-gas-pump";
+    if (/surcharge-guide/.test(u))               return "fa-receipt";
+    if (/eprt-guide/.test(u))                    return "fa-file-lines";
+    if (/eprt-submission/.test(u))               return "fa-paper-plane";
+    if (/checking-eprs/.test(u))                 return "fa-magnifying-glass";
+    if (/base-rater/.test(u))                    return "fa-calculator";
+    if (/discount-amc-guide/.test(u))            return "fa-tags";
+    if (/courtesy-discount/.test(u))             return "fa-hand-holding-dollar";
+
+    /* Surcharges */
+    if (/high-cost-fee/.test(u))                 return "fa-dollar-sign";
+    if (/peak-surcharge-fee/.test(u))            return "fa-arrow-trend-up";
+    if (/california-compliance/.test(u))         return "fa-shield-halved";
+    if (/zip-service-charge/.test(u))            return "fa-location-dot";
+    if (/cross-border-processing-fee/.test(u))   return "fa-globe";
+    if (/canadian-custom-inspection-fee/.test(u))return "fa-list-check";
+    if (/canadian-surcharge-guide/.test(u))      return "fa-table-cells";
+    if (/weighing-service-guide/.test(u))        return "fa-weight-scale";
+    if (/nost-guide/.test(u))                    return "fa-clipboard";
+    if (/sort-and-segregate-guide/.test(u))      return "fa-list";
+    if (/notify-fee-guide/.test(u))              return "fa-bell";
+    if (/lumper-fee-guide/.test(u))              return "fa-bag-shopping";
+    if (/storage-fee-guide/.test(u))             return "fa-warehouse";
+    if (/redelivery-handling-guide/.test(u))     return "fa-truck";
+
+    /* Account Handling */
+    if (/handling-notactive-guide/.test(u))      return "fa-user-xmark";
+    if (/creating-customer-account/.test(u))     return "fa-user-plus";
+    if (/account-creation-steps/.test(u))        return "fa-list-check";
+    if (/searching-account-guide/.test(u))       return "fa-user-magnifying-glass";
+    if (/updating-pt-scacbu-guide/.test(u))      return "fa-list-check";
+
+    /* PAUD Queue */
+    if (/region-and-ehot-queue/.test(u))         return "fa-globe";
+    if (/tplo-guide/.test(u))                    return "fa-sitemap";
+    if (/tphi-guide/.test(u))                    return "fa-diagram-project";
+    if (/paud-tpkn-guide/.test(u))               return "fa-boxes-stacked";
+    if (/crau-guide/.test(u))                    return "fa-clipboard-list";
+    if (/paud-fpay-guide/.test(u))               return "fa-credit-card";
+    if (/cod-guide/.test(u))                     return "fa-money-bill-transfer";
+    if (/ispd-guide/.test(u))                    return "fa-user-xmark";
+    if (/lmpb-guide/.test(u))                    return "fa-hand-holding-dollar";
+    if (/irt1-po-number-division-guide/.test(u)) return "fa-hashtag";
+    if (/irt-vsat-guide/.test(u))                return "fa-file-lines";
+    if (/saf2-guide/.test(u))                    return "fa-scale-balanced";
+    if (/bloa-guide/.test(u))                    return "fa-file-signature";
+    if (/pat8-guide/.test(u))                    return "fa-building";
+    if (/pat7-guide/.test(u))                    return "fa-clipboard-check";
+    if (/pars-guide/.test(u))                    return "fa-user-check";
+    if (/cort-guide/.test(u))                    return "fa-rotate";
+    if (/hot-ehot-queue-guide/.test(u))          return "fa-fire";
+
+    /* Other Operational */
+    if (/ovc-general-guide/.test(u))             return "fa-shield-halved";
+    if (/reweigh-general-guide/.test(u))         return "fa-weight-scale";
+    if (/correction-code-guide/.test(u))         return "fa-wand-magic-sparkles";
+    if (/fedex-direct-guide/.test(u))            return "fa-road";
+    if (/class-update-guide/.test(u))            return "fa-layer-group";
+    if (/rate-volume-guide/.test(u))             return "fa-chart-column";
+    if (/shave-a-day-guide/.test(u))             return "fa-calendar-day";
+    if (/information-validation-guide/.test(u))  return "fa-magnifying-glass-minus";
+    if (/missing-docs-guide/.test(u))            return "fa-file-circle-exclamation";
+    if (/keep-or-remove-payment-guide/.test(u))  return "fa-money-bill";
+    if (/demand-invoice-guide/.test(u))          return "fa-file-invoice";
+    if (/recycled-pro-guide/.test(u))            return "fa-recycle";
+    if (/employee-discount-guide/.test(u))       return "fa-user-tag";
+    if (/void-and-wo-guide/.test(u))             return "fa-file-circle-xmark";
+    if (/pro-no-suffix/.test(u))                 return "fa-list-ol";
+    if (/volume-application/.test(u))            return "fa-box-open";
+    if (/priority-plus-guide/.test(u))           return "fa-gauge-high";
+    if (/rerate-treatment-process-guide/.test(u))return "fa-rotate";
+    if (/inbond-fee-guide/.test(u))              return "fa-hand-holding-dollar";
+    if (/handling-fee-guide/.test(u))            return "fa-hand";
+    if (/ispi-guide/.test(u))                    return "fa-arrows-rotate";
+    if (/all-shorts-guide/.test(u))              return "fa-boxes-stacked";
+    if (/sales-write-off-guide/.test(u))         return "fa-file-pen";
+    if (/wo-process-caps-guide/.test(u))         return "fa-file-circle-xmark";
+
+    return "fa-file-lines";
+  }
+
+
+  /* ---------- category tag + color ---------- */
+
   function categoryFor(url) {
     const u = String(url || "");
-    if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",  color: "purple", icon: "fa-file-invoice-dollar" };
-    if (/Pricing/i.test(u))                             return { tag: "Pricing",          color: "orange", icon: "fa-tags"                };
-    if (/Surcharge/i.test(u))                           return { tag: "Surcharges",       color: "blue",   icon: "fa-receipt"             };
-    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green",  icon: "fa-user-gear"           };
-    if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",       color: "indigo", icon: "fa-diagram-project"     };
-    if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink",  icon: "fa-toolbox"             };
-    return { tag: "Guide", color: "purple", icon: "fa-file-lines" };
+    if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",  color: "purple" };
+    if (/Pricing/i.test(u))                             return { tag: "Pricing",          color: "orange" };
+    if (/Surcharge/i.test(u))                           return { tag: "Surcharges",       color: "blue"   };
+    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green"  };
+    if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",       color: "indigo" };
+    if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink"  };
+    return { tag: "Guide", color: "purple" };
   }
 
   function relativeTime(ts) {
@@ -190,6 +289,7 @@
 
   function renderMostUsed(item, index, favorites) {
     const cat   = categoryFor(item.url);
+    const icon  = guideIconFromUrl(item.url);
     const isFav = !!favorites[item.url];
 
     return (
@@ -197,8 +297,8 @@
         ' data-url="'  + escapeAttr(item.url)   + '"' +
         ' data-name="' + escapeAttr(item.title) + '">' +
 
-        '<span class="rank ' + cat.color + '">' +
-          String(index + 1).padStart(2, "0") +
+        '<span class="rank ' + cat.color + '" aria-hidden="true">' +
+          '<i class="fa-solid ' + icon + '"></i>' +
         '</span>' +
 
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
@@ -218,7 +318,8 @@
   }
 
   function renderRecent(item) {
-    const cat = categoryFor(item.url);
+    const cat  = categoryFor(item.url);
+    const icon = guideIconFromUrl(item.url);
 
     return (
       '<div class="list-row clickable"' +
@@ -226,7 +327,7 @@
         ' data-name="' + escapeAttr(item.title) + '">' +
 
         '<span class="recent-icon ' + cat.color + '" aria-hidden="true">' +
-          '<i class="fa-solid ' + cat.icon + '"></i>' +
+          '<i class="fa-solid ' + icon + '"></i>' +
         '</span>' +
 
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
@@ -238,18 +339,24 @@
   }
 
   function renderFavorites(item) {
-    const cat = categoryFor(item.url);
+    const cat  = categoryFor(item.url);
+    const icon = guideIconFromUrl(item.url);
 
     return (
       '<div class="list-row clickable"' +
         ' data-url="'  + escapeAttr(item.url)   + '"' +
         ' data-name="' + escapeAttr(item.title) + '">' +
 
-        '<span class="rank ' + cat.color + '">★</span>' +
+        '<span class="recent-icon ' + cat.color + '" aria-hidden="true">' +
+          '<i class="fa-solid ' + icon + '"></i>' +
+        '</span>' +
+
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
+
         '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' +
           escapeAttr(cat.tag) +
         '</span>' +
+
         '<button class="star active" type="button"' +
           ' aria-label="Remove favorite"' +
           ' data-fav-url="' + escapeAttr(item.url) + '">★</button>' +
