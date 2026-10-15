@@ -733,3 +733,15 @@ window.addEventListener("storage", function (event) {
     renderLists();
   }
 });
+
+/* Re-render panels when the page is restored from bfcache
+   (e.g. the user pressed Back from a guide). */
+window.addEventListener("pageshow", function () {
+  if (
+    document.getElementById("mostUsedList") ||
+    document.getElementById("recentList") ||
+    document.getElementById("favoritesList")
+  ) {
+    renderLists();
+  }
+});
