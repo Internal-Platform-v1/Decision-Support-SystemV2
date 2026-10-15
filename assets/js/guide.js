@@ -276,6 +276,9 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     $("startContinue")?.addEventListener("click", () => choice?.click());
     $("saveGuide")?.addEventListener("click", saveGuide);
 
+    /* Reflect the current favorites state on the button */
+    paintSaveGuideButton(isGuideSaved(getGuideFavoriteUrl()));
+
     progress();
     renderPath();
   }
@@ -522,23 +525,82 @@ function jumpTo(i) {
     renderNode(x.fromKey);
 }
 
-  function saveGuide() {
-    const key = "savedGuides";
-    let saved = [];
-    try { saved = JSON.parse(localStorage.getItem(key) || "[]"); } catch (_) {}
-   const guide = {
-  title: GUIDE_CONFIG.title || document.title || "Decision Guide",
-  url: window.location.pathname
-};
-    const exists = saved.some(x => x.url === guide.url);
-    saved = exists ? saved.filter(x => x.url !== guide.url) : [...saved, guide];
-    localStorage.setItem(key, JSON.stringify(saved));
 
-    const btn = $("saveGuide");
-    if (btn) {
-      btn.innerHTML = exists ? '<i class="fa-regular fa-star"></i> Save Guide' : '<i class="fa-solid fa-star"></i> Saved';
-      btn.classList.toggle("saved", !exists);
+  /* =========================================================
+     FAVORITES (shared with the dashboard + All Guides page)
+
+     Storage: localStorage["guideFavorites"]
+       {
+         "<absolute guide url>": {
+           title:     "Debtor Update per BOL",
+           url:       "<absolute guide url>",
+           timestamp: 1730000000000
+         },
+         ...
+       }
+     ========================================================= */
+
+  function getGuideFavoriteUrl() {
+    try {
+      return new URL(window.location.href).href;
+    } catch (e) {
+      return window.location.href;
     }
+  }
+
+  function readFavorites() {
+    try {
+      const raw = localStorage.getItem("guideFavorites");
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function writeFavorites(favs) {
+    try { localStorage.setItem("guideFavorites", JSON.stringify(favs)); }
+    catch (e) { /* storage unavailable */ }
+  }
+
+  function isGuideSaved(url) {
+    const favs = readFavorites();
+    return !!favs[url];
+  }
+
+  function paintSaveGuideButton(saved) {
+    const btn = $("saveGuide");
+    if (!btn) return;
+    btn.innerHTML = saved
+      ? '<i class="fa-solid fa-star"></i> Saved'
+      : '<i class="fa-regular fa-star"></i> Save Guide';
+    btn.classList.toggle("saved", saved);
+  }
+
+  function saveGuide() {
+    const url = getGuideFavoriteUrl();
+    const title =
+      GUIDE_CONFIG.title ||
+      document.querySelector(".guide-hero-copy h1")?.textContent?.trim() ||
+      document.title ||
+      "Decision Guide";
+
+    const favs = readFavorites();
+    let added;
+
+    if (favs[url]) {
+      delete favs[url];
+      added = false;
+      showToast("Removed from Favorites");
+    } else {
+      favs[url] = { title: title, url: url, timestamp: Date.now() };
+      added = true;
+      showToast("Added to Favorites");
+    }
+
+    writeFavorites(favs);
+    paintSaveGuideButton(added);
   }
 
 
