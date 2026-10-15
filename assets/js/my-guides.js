@@ -223,7 +223,13 @@
         ' data-url="'  + escapeAttr(item.url)   + '"' +
         ' data-name="' + escapeAttr(item.title) + '">' +
 
-        '<span class="recent-icon"><span class="document-icon"></span></span>' +
+        '<span class="recent-icon" aria-hidden="true">' +
+          '<svg viewBox="0 0 24 24">' +
+            '<path d="M6 3.5h8l4 4v13H6z"/>' +
+            '<path d="M14 3.5v4h4M9 12h6M9 15.5h4"/>' +
+          '</svg>' +
+        '</span>' +
+
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
         '<span class="recent-time">' + escapeAttr(relativeTime(item.timestamp)) + '</span>' +
         '<span class="row-chevron">›</span>' +
