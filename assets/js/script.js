@@ -34,12 +34,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 "use strict";
 
-/* localStorage keys — shared with group-guides.js / all-guides.js */
 const LS_USAGE   = "guideUsageCounts";
 const LS_HISTORY = "guideHistory";
 const LS_FAVS    = "guideFavorites";
 
-/* Static totals shown on the stat cards */
 const TOTAL_GUIDE_COUNT = 75;
 const TOTAL_TOOLS_COUNT = 6;
 
@@ -60,15 +58,12 @@ function readJSON(key, fallback) {
 }
 
 function writeJSON(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) { /* storage unavailable */ }
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 
 
 /* ---------------------------------------------------------
    Category + color from guide URL
-   Matches the visual vocabulary of the original data.
    --------------------------------------------------------- */
 
 function categoryFromUrl(url) {
@@ -76,19 +71,14 @@ function categoryFromUrl(url) {
 
   if (/Billing%20Dispute|Billing Dispute/i.test(u))
     return { tag: "Billing Dispute", color: "purple" };
-
   if (/Pricing/i.test(u))
     return { tag: "Pricing", color: "orange" };
-
   if (/Surcharge/i.test(u))
     return { tag: "Surcharges", color: "blue" };
-
   if (/Account%20Handling|Account Handling/i.test(u))
     return { tag: "Account Handling", color: "green" };
-
   if (/PAUD/i.test(u))
     return { tag: "PAUD Queue", color: "indigo" };
-
   if (/Other%20Guides|Other Guides/i.test(u))
     return { tag: "Other Operational", color: "pink" };
 
@@ -97,7 +87,7 @@ function categoryFromUrl(url) {
 
 
 /* ---------------------------------------------------------
-   Relative time — for Recent Activity
+   Relative time
    --------------------------------------------------------- */
 
 function relativeTime(ts) {
@@ -145,7 +135,7 @@ function escapeAttr(value) {
 
 function getMostUsed(limit) {
   const usage = readJSON(LS_USAGE, {});
-  return Object.keys(usage)
+  const list = Object.keys(usage)
     .map(function (url) {
       return {
         url: url,
@@ -157,8 +147,9 @@ function getMostUsed(limit) {
     .sort(function (a, b) {
       if (b.count !== a.count) return b.count - a.count;
       return a.title.localeCompare(b.title);
-    })
-    .slice(0, limit || 5);
+    });
+
+  return limit ? list.slice(0, limit) : list;
 }
 
 function getRecentActivity(limit) {
@@ -178,9 +169,25 @@ function getRecentActivity(limit) {
     if (seen.has(item.url)) continue;
     seen.add(item.url);
     unique.push(item);
-    if (unique.length >= (limit || 5)) break;
+    if (limit && unique.length >= limit) break;
   }
   return unique;
+}
+
+function getFavoritesList(limit) {
+  const favs = readJSON(LS_FAVS, {});
+  const list = Object.keys(favs)
+    .map(function (url) {
+      return {
+        url: url,
+        title: favs[url]?.title || "Untitled Guide",
+        timestamp: Number(favs[url]?.timestamp) || 0
+      };
+    })
+    .filter(function (g) { return g.url && g.title; })
+    .sort(function (a, b) { return b.timestamp - a.timestamp; });
+
+  return limit ? list.slice(0, limit) : list;
 }
 
 function getFavoritesCount() {
@@ -234,12 +241,12 @@ function showToast(message) {
 
 
 /* ---------------------------------------------------------
-   Panels — Most Used + Recent Activity
-   Markup matches the original renderLists() exactly.
+   Panels — Most Used / Recent / Favorites
    --------------------------------------------------------- */
 
-const mostUsedList = document.getElementById("mostUsedList");
-const recentList   = document.getElementById("recentList");
+const mostUsedList  = document.getElementById("mostUsedList");
+const recentList    = document.getElementById("recentList");
+const favoritesList = document.getElementById("favoritesList");
 
 function renderLists() {
   const favorites = readJSON(LS_FAVS, {});
@@ -249,7 +256,6 @@ function renderLists() {
     const items = getMostUsed(5);
 
     if (!items.length) {
-      /* Minimal, no clickable / no star — safe default */
       mostUsedList.innerHTML =
         '<div class="list-row"><span class="row-name">' +
         'No usage yet — open a guide to start tracking.' +
@@ -323,6 +329,45 @@ function renderLists() {
     }
   }
 
+  /* ---- Favorites ---- */
+  if (favoritesList) {
+    const items = getFavoritesList(5);
+
+    if (!items.length) {
+      favoritesList.innerHTML =
+        '<div class="list-row"><span class="row-name">' +
+        'No favorites yet — click the ☆ on any guide to save it.' +
+        "</span></div>";
+    } else {
+      favoritesList.innerHTML = items.map(function (g) {
+        const cat = categoryFromUrl(g.url);
+
+        return (
+          '<div class="list-row clickable"' +
+          ' data-name="' + escapeAttr(g.title) + '"' +
+          ' data-url="'  + escapeAttr(g.url)   + '">' +
+
+            '<span class="recent-icon">' +
+              '<span class="document-icon"></span>' +
+            "</span>" +
+
+            '<span class="row-name">' + escapeAttr(g.title) + "</span>" +
+
+            '<span class="tag ' +
+              (cat.color === "orange" ? "orange" : "") + '">' +
+              escapeAttr(cat.tag) +
+            "</span>" +
+
+            '<button class="star active" type="button"' +
+              ' aria-label="Remove favorite"' +
+              ' data-fav-url="' + escapeAttr(g.url) + '">★</button>' +
+
+          "</div>"
+        );
+      }).join("");
+    }
+  }
+
   updateStats();
 }
 
@@ -330,7 +375,7 @@ renderLists();
 
 
 /* ---------------------------------------------------------
-   Track + open a guide (same storage shape as group-guides.js)
+   Track + open
    --------------------------------------------------------- */
 
 function trackAndOpen(url, title) {
@@ -338,13 +383,11 @@ function trackAndOpen(url, title) {
 
   const safeTitle = title || "Untitled Guide";
 
-  /* History */
   const history = readJSON(LS_HISTORY, []);
   history.push({ title: safeTitle, url: url, timestamp: Date.now() });
   if (history.length > 100) history.splice(0, history.length - 100);
   writeJSON(LS_HISTORY, history);
 
-  /* Usage */
   const usage = readJSON(LS_USAGE, {});
   if (!usage[url]) usage[url] = { title: safeTitle, count: 0 };
   usage[url].title = safeTitle;
@@ -380,13 +423,13 @@ function toggleFavorite(url, title) {
   }
 
   writeJSON(LS_FAVS, favs);
-  updateStats();
+  renderLists();   /* refresh all three panels + stats */
   return added;
 }
 
 
 /* ---------------------------------------------------------
-   Quick Access cards — group landing pages
+   Quick Access cards
    --------------------------------------------------------- */
 
 function openGuide(name) {
@@ -415,11 +458,9 @@ function openGuide(name) {
 function openGuideLibrary() {
   window.location.href = "all-guides.html";
 }
-
 window.openGuideLibrary = openGuideLibrary;
 
 
-/* Quick Access cards — click + keyboard */
 document.querySelectorAll(".quick-card").forEach(function (card) {
   function activate() { openGuide(card.dataset.guide); }
 
@@ -445,17 +486,21 @@ document.querySelectorAll(".quick-card").forEach(function (card) {
 });
 
 
-/* View All / panel actions */
+/* ---------------------------------------------------------
+   View All / panel actions — each panel goes to its own page
+   --------------------------------------------------------- */
+
+const VIEW_ALL_ROUTES = {
+  "view-all":       "all-guides.html",
+  "view-most":      "most-used-guides.html",
+  "view-recent":    "recent-activity.html",
+  "view-favorites": "favorites.html"
+};
+
 document.querySelectorAll("[data-action]").forEach(function (button) {
   button.addEventListener("click", function () {
-    const action = button.dataset.action;
-    if (
-      action === "view-all" ||
-      action === "view-most" ||
-      action === "view-recent"
-    ) {
-      openGuideLibrary();
-    }
+    const target = VIEW_ALL_ROUTES[button.dataset.action];
+    if (target) window.location.href = target;
   });
 });
 
@@ -466,12 +511,10 @@ document.addEventListener("bdtools:explore-guides", function () {
 
 /* ---------------------------------------------------------
    Delegated click — rows + favorites
-   (matches original: `.clickable` opens, `.star` toggles)
    --------------------------------------------------------- */
 
 document.addEventListener("click", function (event) {
 
-  /* Favorite star first — must not trigger row nav */
   const fav = event.target.closest(".star");
   if (fav) {
     event.preventDefault();
@@ -481,14 +524,10 @@ document.addEventListener("click", function (event) {
     const url = fav.dataset.favUrl || row?.dataset.url;
     const title = row?.dataset.name;
 
-    const added = toggleFavorite(url, title);
-
-    fav.classList.toggle("active", added);
-    fav.textContent = added ? "★" : "☆";
+    toggleFavorite(url, title);
     return;
   }
 
-  /* Row body */
   const row = event.target.closest(".list-row.clickable");
   if (row) {
     event.preventDefault();
@@ -536,7 +575,6 @@ function performSearch(value) {
 
   console.log("Search:", q, matches);
 }
-
 window.performSearch = performSearch;
 
 const heroSearchBtn = document.getElementById("heroSearchBtn");
@@ -546,7 +584,6 @@ if (heroSearchBtn && heroSearch) {
   heroSearchBtn.addEventListener("click", function () {
     performSearch(heroSearch.value);
   });
-
   heroSearch.addEventListener("keydown", function (event) {
     if (event.key === "Enter") performSearch(event.target.value);
   });
