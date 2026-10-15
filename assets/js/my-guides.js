@@ -59,13 +59,13 @@
 
   function categoryFor(url) {
     const u = String(url || "");
-    if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",  color: "purple" };
-    if (/Pricing/i.test(u))                             return { tag: "Pricing",          color: "orange" };
-    if (/Surcharge/i.test(u))                           return { tag: "Surcharges",       color: "blue"   };
-    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green"  };
-    if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",       color: "indigo" };
-    if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink"  };
-    return { tag: "Guide", color: "purple" };
+    if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",  color: "purple", icon: "fa-file-invoice-dollar" };
+    if (/Pricing/i.test(u))                             return { tag: "Pricing",          color: "orange", icon: "fa-tags"                };
+    if (/Surcharge/i.test(u))                           return { tag: "Surcharges",       color: "blue",   icon: "fa-receipt"             };
+    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green",  icon: "fa-user-gear"           };
+    if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",       color: "indigo", icon: "fa-diagram-project"     };
+    if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink",  icon: "fa-toolbox"             };
+    return { tag: "Guide", color: "purple", icon: "fa-file-lines" };
   }
 
   function relativeTime(ts) {
@@ -218,16 +218,15 @@
   }
 
   function renderRecent(item) {
+    const cat = categoryFor(item.url);
+
     return (
       '<div class="list-row clickable"' +
         ' data-url="'  + escapeAttr(item.url)   + '"' +
         ' data-name="' + escapeAttr(item.title) + '">' +
 
-        '<span class="recent-icon" aria-hidden="true">' +
-          '<svg viewBox="0 0 24 24">' +
-            '<path d="M6 3.5h8l4 4v13H6z"/>' +
-            '<path d="M14 3.5v4h4M9 12h6M9 15.5h4"/>' +
-          '</svg>' +
+        '<span class="recent-icon ' + cat.color + '" aria-hidden="true">' +
+          '<i class="fa-solid ' + cat.icon + '"></i>' +
         '</span>' +
 
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
@@ -273,7 +272,6 @@
       });
     }
 
-    /* Update result counter */
     if (els.resultsText) {
       els.resultsText.textContent = q
         ? "Showing " + list.length + " of " + state.items.length +
@@ -281,10 +279,8 @@
         : "Showing " + list.length + " guide" + (list.length === 1 ? "" : "s");
     }
 
-    /* Toggle clear-search button (only present on some pages) */
     if (els.clearSearch) els.clearSearch.hidden = !q;
 
-    /* Empty state */
     if (!list.length) {
       if (els.list) els.list.innerHTML = "";
       if (els.noResults) els.noResults.hidden = false;
@@ -337,7 +333,6 @@
     updateCounts();
     render();
 
-    /* Highlight + navigate the three hero cards */
     document.querySelectorAll(".stat-card[data-view]").forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.view === VIEW);
 
@@ -353,7 +348,6 @@
       });
     });
 
-    /* Search */
     const input     = document.getElementById("guideSearch");
     const searchBtn = document.getElementById("searchButton");
 
@@ -388,7 +382,6 @@
       });
     }
 
-    /* Delegated click — favorite star + row open */
     if (els.list) {
       els.list.addEventListener("click", function (event) {
         const favBtn = event.target.closest(".star[data-fav-url]");
