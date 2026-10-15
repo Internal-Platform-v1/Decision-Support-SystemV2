@@ -59,12 +59,12 @@
 
   function categoryFor(url) {
     const u = String(url || "");
-    if (/Billing%20Dispute|Billing Dispute/i.test(u)) return { tag: "Billing Dispute",  color: "purple" };
-    if (/Pricing/i.test(u))                           return { tag: "Pricing",          color: "orange" };
-    if (/Surcharge/i.test(u))                         return { tag: "Surcharges",       color: "blue"   };
-    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green" };
-    if (/PAUD/i.test(u))                              return { tag: "PAUD Queue",       color: "indigo" };
-    if (/Other%20Guides|Other Guides/i.test(u))       return { tag: "Other Operational", color: "pink" };
+    if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",  color: "purple" };
+    if (/Pricing/i.test(u))                             return { tag: "Pricing",          color: "orange" };
+    if (/Surcharge/i.test(u))                           return { tag: "Surcharges",       color: "blue"   };
+    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green"  };
+    if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",       color: "indigo" };
+    if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink"  };
     return { tag: "Guide", color: "purple" };
   }
 
@@ -87,7 +87,7 @@
   }
 
 
-  /* ---------- data ---------- */
+  /* ---------- data readers ---------- */
 
   function getMostUsed() {
     const u = readJSON(LS_USAGE, {});
@@ -186,9 +186,9 @@
   const els = {};
 
 
-  /* ---------- render ---------- */
+  /* ---------- renderers ---------- */
 
-  function renderMostUsed(item, favorites) {
+  function renderMostUsed(item, index, favorites) {
     const cat   = categoryFor(item.url);
     const isFav = !!favorites[item.url];
 
@@ -198,7 +198,7 @@
         ' data-name="' + escapeAttr(item.title) + '">' +
 
         '<span class="rank ' + cat.color + '">' +
-          String(item._i + 1).padStart(2, "0") +
+          String(index + 1).padStart(2, "0") +
         '</span>' +
 
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
@@ -208,8 +208,7 @@
         '</span>' +
 
         '<button class="star' + (isFav ? " active" : "") + '"' +
-          ' type="button"' +
-          ' aria-label="Favorite"' +
+          ' type="button" aria-label="Favorite"' +
           ' data-fav-url="' + escapeAttr(item.url) + '">' +
           (isFav ? "★" : "☆") +
         '</button>' +
@@ -224,14 +223,9 @@
         ' data-url="'  + escapeAttr(item.url)   + '"' +
         ' data-name="' + escapeAttr(item.title) + '">' +
 
-        '<span class="recent-icon">' +
-          '<span class="document-icon"></span>' +
-        '</span>' +
-
+        '<span class="recent-icon"><span class="document-icon"></span></span>' +
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
-
         '<span class="recent-time">' + escapeAttr(relativeTime(item.timestamp)) + '</span>' +
-
         '<span class="row-chevron">›</span>' +
 
       '</div>'
@@ -247,13 +241,10 @@
         ' data-name="' + escapeAttr(item.title) + '">' +
 
         '<span class="rank ' + cat.color + '">★</span>' +
-
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
-
         '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' +
           escapeAttr(cat.tag) +
         '</span>' +
-
         '<button class="star active" type="button"' +
           ' aria-label="Remove favorite"' +
           ' data-fav-url="' + escapeAttr(item.url) + '">★</button>' +
@@ -261,6 +252,9 @@
       '</div>'
     );
   }
+
+
+  /* ---------- render ---------- */
 
   function render() {
     const favorites = readJSON(LS_FAVS, {});
@@ -273,34 +267,39 @@
       });
     }
 
-    if (!list.length) {
-      els.list.innerHTML = "";
-      els.noResults.hidden = false;
-      els.noResultsCopy.textContent = q
-        ? "No matching guides."
-        : META[VIEW].empty;
+    /* Update result counter */
+    if (els.resultsText) {
       els.resultsText.textContent = q
-        ? "0 of " + state.items.length + " guides"
-        : "Showing 0 guides";
-      els.clearSearch.hidden = !q;
+        ? "Showing " + list.length + " of " + state.items.length +
+          " · \u201C" + state.search + "\u201D"
+        : "Showing " + list.length + " guide" + (list.length === 1 ? "" : "s");
+    }
+
+    /* Toggle clear-search button (only present on some pages) */
+    if (els.clearSearch) els.clearSearch.hidden = !q;
+
+    /* Empty state */
+    if (!list.length) {
+      if (els.list) els.list.innerHTML = "";
+      if (els.noResults) els.noResults.hidden = false;
+      if (els.noResultsCopy) {
+        els.noResultsCopy.textContent = q
+          ? "No matching guides."
+          : META[VIEW].empty;
+      }
       return;
     }
 
-    els.noResults.hidden = true;
-    els.clearSearch.hidden = !q;
+    if (els.noResults) els.noResults.hidden = true;
 
-    els.list.innerHTML = list.map(function (item, i) {
-      item._i = i;
-      if (VIEW === "most-used") return renderMostUsed(item, favorites);
-      if (VIEW === "recent")    return renderRecent(item);
-      if (VIEW === "favorites") return renderFavorites(item);
-      return "";
-    }).join("");
-
-    els.resultsText.textContent = q
-      ? "Showing " + list.length + " of " + state.items.length +
-        " · \u201C" + state.search + "\u201D"
-      : "Showing " + list.length + " guide" + (list.length === 1 ? "" : "s");
+    if (els.list) {
+      els.list.innerHTML = list.map(function (item, i) {
+        if (VIEW === "most-used") return renderMostUsed(item, i, favorites);
+        if (VIEW === "recent")    return renderRecent(item);
+        if (VIEW === "favorites") return renderFavorites(item);
+        return "";
+      }).join("");
+    }
   }
 
   function updateCounts() {
@@ -319,10 +318,10 @@
   function init() {
     document.title = META[VIEW].pageTitle + " | BD Tools";
 
-    els.list         = document.getElementById("myGuidesList");
-    els.resultsText  = document.getElementById("resultsText");
-    els.clearSearch  = document.getElementById("clearSearch");
-    els.noResults    = document.getElementById("noResults");
+    els.list          = document.getElementById("myGuidesList");
+    els.resultsText   = document.getElementById("resultsText");
+    els.clearSearch   = document.getElementById("clearSearch");
+    els.noResults     = document.getElementById("noResults");
     els.noResultsCopy = document.getElementById("noResultsCopy");
 
     const titleEl = document.getElementById("libraryTitle");
@@ -384,28 +383,29 @@
     }
 
     /* Delegated click — favorite star + row open */
-    els.list.addEventListener("click", function (event) {
+    if (els.list) {
+      els.list.addEventListener("click", function (event) {
+        const favBtn = event.target.closest(".star[data-fav-url]");
+        if (favBtn) {
+          event.preventDefault();
+          event.stopPropagation();
+          const url  = favBtn.dataset.favUrl;
+          const item = state.items.find(function (i) { return i.url === url; });
+          toggleFavorite(url, item?.title);
 
-      const favBtn = event.target.closest(".star[data-fav-url]");
-      if (favBtn) {
-        event.preventDefault();
-        event.stopPropagation();
-        const url  = favBtn.dataset.favUrl;
-        const item = state.items.find(function (i) { return i.url === url; });
-        toggleFavorite(url, item?.title);
+          if (VIEW === "favorites") state.items = currentItems();
+          updateCounts();
+          render();
+          return;
+        }
 
-        if (VIEW === "favorites") state.items = currentItems();
-        updateCounts();
-        render();
-        return;
-      }
-
-      const row = event.target.closest(".list-row.clickable");
-      if (row) {
-        event.preventDefault();
-        trackAndOpen(row.dataset.url, row.dataset.name);
-      }
-    });
+        const row = event.target.closest(".list-row.clickable");
+        if (row) {
+          event.preventDefault();
+          trackAndOpen(row.dataset.url, row.dataset.name);
+        }
+      });
+    }
   }
 
   if (document.readyState === "loading") {
