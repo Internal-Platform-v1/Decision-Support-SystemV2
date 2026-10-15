@@ -52,9 +52,7 @@ function readJSON(key, fallback) {
     if (!raw) return fallback;
     const parsed = JSON.parse(raw);
     return parsed == null ? fallback : parsed;
-  } catch (e) {
-    return fallback;
-  }
+  } catch (e) { return fallback; }
 }
 
 function writeJSON(key, value) {
@@ -63,26 +61,27 @@ function writeJSON(key, value) {
 
 
 /* ---------------------------------------------------------
-   Category + color from guide URL
+   Category (tag + color + Font Awesome icon) from guide URL
+   Icons match what the group pages / all-guides.js use.
    --------------------------------------------------------- */
 
 function categoryFromUrl(url) {
   const u = String(url || "");
 
   if (/Billing%20Dispute|Billing Dispute/i.test(u))
-    return { tag: "Billing Dispute", color: "purple" };
+    return { tag: "Billing Dispute", color: "purple", icon: "fa-file-invoice-dollar" };
   if (/Pricing/i.test(u))
-    return { tag: "Pricing", color: "orange" };
+    return { tag: "Pricing", color: "orange", icon: "fa-tags" };
   if (/Surcharge/i.test(u))
-    return { tag: "Surcharges", color: "blue" };
+    return { tag: "Surcharges", color: "blue", icon: "fa-receipt" };
   if (/Account%20Handling|Account Handling/i.test(u))
-    return { tag: "Account Handling", color: "green" };
+    return { tag: "Account Handling", color: "green", icon: "fa-user-gear" };
   if (/PAUD/i.test(u))
-    return { tag: "PAUD Queue", color: "indigo" };
+    return { tag: "PAUD Queue", color: "indigo", icon: "fa-diagram-project" };
   if (/Other%20Guides|Other Guides/i.test(u))
-    return { tag: "Other Operational", color: "pink" };
+    return { tag: "Other Operational", color: "pink", icon: "fa-toolbox" };
 
-  return { tag: "Guide", color: "purple" };
+  return { tag: "Guide", color: "purple", icon: "fa-file-lines" };
 }
 
 
@@ -306,13 +305,15 @@ function renderLists() {
         "</span></div>";
     } else {
       recentList.innerHTML = items.map(function (r) {
+        const cat = categoryFromUrl(r.url);
+
         return (
           '<div class="list-row clickable"' +
           ' data-name="' + escapeAttr(r.title) + '"' +
           ' data-url="'  + escapeAttr(r.url)   + '">' +
 
-            '<span class="recent-icon">' +
-              '<span class="document-icon"></span>' +
+            '<span class="recent-icon ' + cat.color + '" aria-hidden="true">' +
+              '<i class="fa-solid ' + cat.icon + '"></i>' +
             "</span>" +
 
             '<span class="row-name">' + escapeAttr(r.title) + "</span>" +
@@ -347,8 +348,8 @@ function renderLists() {
           ' data-name="' + escapeAttr(g.title) + '"' +
           ' data-url="'  + escapeAttr(g.url)   + '">' +
 
-            '<span class="recent-icon">' +
-              '<span class="document-icon"></span>' +
+            '<span class="recent-icon ' + cat.color + '" aria-hidden="true">' +
+              '<i class="fa-solid ' + cat.icon + '"></i>' +
             "</span>" +
 
             '<span class="row-name">' + escapeAttr(g.title) + "</span>" +
@@ -423,7 +424,7 @@ function toggleFavorite(url, title) {
   }
 
   writeJSON(LS_FAVS, favs);
-  renderLists();   /* refresh all three panels + stats */
+  renderLists();
   return added;
 }
 
@@ -487,7 +488,7 @@ document.querySelectorAll(".quick-card").forEach(function (card) {
 
 
 /* ---------------------------------------------------------
-   View All / panel actions — each panel goes to its own page
+   View All / panel actions
    --------------------------------------------------------- */
 
 const VIEW_ALL_ROUTES = {
