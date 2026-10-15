@@ -277,7 +277,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     $("saveGuide")?.addEventListener("click", saveGuide);
 
     /* Reflect the current favorites state on the button */
-    paintSaveGuideButton(isGuideSaved(getGuideFavoriteUrl()));
+    paintSaveGuideButton(isGuideSaved(getGuideFavoriteKey()));
 
     progress();
     renderPath();
@@ -494,34 +494,11 @@ function jumpTo(i) {
     const x = state.path[i];
     if (!x) return;
 
-    /*
-     * Remove any later decisions.
-     * The clicked step becomes the current point
-     * in the decision flow.
-     */
     state.path = state.path.slice(0, i + 1);
-
-    /*
-     * Clear the final recommendation because we're
-     * going back into the decision flow.
-     */
     state.finalText = "";
-
-    /*
-     * Clear templates/recommendation from the previous
-     * final state.
-     */
     clearTemplates();
     updateRecommendation("", false);
 
-    /*
-     * IMPORTANT:
-     *
-     * x.fromKey is the node represented by this
-     * Selected Path item.
-     *
-     * Do NOT use x.nextKey here.
-     */
     renderNode(x.fromKey);
 }
 
@@ -531,20 +508,42 @@ function jumpTo(i) {
 
      Storage: localStorage["guideFavorites"]
        {
-         "<absolute guide url>": {
+         "<canonical guide url>": {
            title:     "Debtor Update per BOL",
-           url:       "<absolute guide url>",
+           url:       "<canonical guide url>",
            timestamp: 1730000000000
          },
          ...
        }
+
+     The key is normalized so that %20 and ' ' collapse to the
+     same value regardless of which form the browser returned
+     on a given load.
      ========================================================= */
 
-  function getGuideFavoriteUrl() {
+  function getGuideFavoriteKey() {
+    let raw = "";
+    try { raw = window.location.href || ""; } catch (e) { return ""; }
+    if (!raw) return "";
+
     try {
-      return new URL(window.location.href).href;
+      const u = new URL(raw);
+
+      /* Canonicalize every path segment to %-encoded form
+         so "Billing Dispute Guides" and "Billing%20Dispute%20Guides"
+         both map to the same key. */
+      const path = u.pathname
+        .split("/")
+        .map(function (seg) {
+          try { return encodeURIComponent(decodeURIComponent(seg)); }
+          catch (e) { return seg; }
+        })
+        .join("/");
+
+      return u.origin + path;
     } catch (e) {
-      return window.location.href;
+      /* Fallback: strip hash + query so at least it's stable. */
+      return String(raw).split("#")[0].split("?")[0];
     }
   }
 
@@ -553,20 +552,29 @@ function jumpTo(i) {
       const raw = localStorage.getItem("guideFavorites");
       if (!raw) return {};
       const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" ? parsed : {};
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return parsed;
+      }
+      return {};
     } catch (e) {
       return {};
     }
   }
 
   function writeFavorites(favs) {
-    try { localStorage.setItem("guideFavorites", JSON.stringify(favs)); }
-    catch (e) { /* storage unavailable */ }
+    try {
+      localStorage.setItem("guideFavorites", JSON.stringify(favs));
+      return true;
+    } catch (e) {
+      console.error("Could not write favorites to localStorage:", e);
+      return false;
+    }
   }
 
-  function isGuideSaved(url) {
+  function isGuideSaved(key) {
+    if (!key) return false;
     const favs = readFavorites();
-    return !!favs[url];
+    return !!favs[key];
   }
 
   function paintSaveGuideButton(saved) {
@@ -579,7 +587,12 @@ function jumpTo(i) {
   }
 
   function saveGuide() {
-    const url = getGuideFavoriteUrl();
+    const key = getGuideFavoriteKey();
+    if (!key) {
+      showToast("Could not determine this guide's address.");
+      return;
+    }
+
     const title =
       GUIDE_CONFIG.title ||
       document.querySelector(".guide-hero-copy h1")?.textContent?.trim() ||
@@ -589,18 +602,28 @@ function jumpTo(i) {
     const favs = readFavorites();
     let added;
 
-    if (favs[url]) {
-      delete favs[url];
+    if (favs[key]) {
+      delete favs[key];
       added = false;
-      showToast("Removed from Favorites");
     } else {
-      favs[url] = { title: title, url: url, timestamp: Date.now() };
+      favs[key] = { title: title, url: key, timestamp: Date.now() };
       added = true;
-      showToast("Added to Favorites");
     }
 
-    writeFavorites(favs);
+    const ok = writeFavorites(favs);
+
+    /* Verify the write by reading it back. */
+    const verified = ok && !!readFavorites()[key] === added;
+
+    if (!verified) {
+      console.error("Favorite was not persisted.", { key: key, added: added });
+      showToast("Could not save — please try again.");
+      paintSaveGuideButton(false);
+      return;
+    }
+
     paintSaveGuideButton(added);
+    showToast(added ? "Added to Favorites" : "Removed from Favorites");
   }
 
 
@@ -616,14 +639,6 @@ function jumpTo(i) {
   /*
    * Default destinations for the three "Open …" buttons in the
    * Suggested Templates card.
-   *
-   * Keys are matched against the button's visible label text
-   * (whitespace-normalized). Values are relative to the DSS root;
-   * the guide pages use <base href="../../../"> so these resolve
-   * to the repo root, same as the menu tab.
-   *
-   * To override for one specific guide, set data-target on that
-   * button in the guide's HTML — the explicit value always wins.
    */
   const DEFAULT_TEMPLATE_LINKS = {
     "Open FBC Comments": "fbc-comments-guide.html",
@@ -640,7 +655,6 @@ function jumpTo(i) {
 
     document.querySelectorAll(".template-link").forEach((button) => {
       button.addEventListener("click", () => {
-        // Normalize the label so emoji/spacing/extra whitespace don't matter.
         const label = (button.textContent || "")
           .replace(/\s+/g, " ")
           .trim();
@@ -651,12 +665,7 @@ function jumpTo(i) {
           "";
 
         if (target) {
-          // Resolve against <base> so we always navigate to an absolute
-          // URL — window.open is more reliable with absolute URLs.
           const url = new URL(target, document.baseURI).href;
-
-          // Open in a new tab. "noopener,noreferrer" is the safe way to
-          // do this from script (equivalent to rel="noopener noreferrer").
           window.open(url, "_blank", "noopener,noreferrer");
         } else {
           showToast("Reference tool link is not configured yet.");
@@ -686,8 +695,6 @@ function jumpTo(i) {
   }
 
 function init() {
-  // Render the guide first. Optional helper controls must never prevent
-  // the decision flow from appearing.
   renderNode(GUIDE_CONFIG.startNode || "start");
 
     $("restartGuide")?.addEventListener("click", restart);
@@ -701,6 +708,12 @@ function init() {
 
     $("imageModal")?.addEventListener("click", (event) => {
       if (event.target.id === "imageModal") closeImageModal();
+    });
+
+    /* If this page was restored from bfcache (back/forward navigation),
+       re-paint the Save button so it reflects any changes made elsewhere. */
+    window.addEventListener("pageshow", () => {
+      paintSaveGuideButton(isGuideSaved(getGuideFavoriteKey()));
     });
 
     window.guideEngine = {
