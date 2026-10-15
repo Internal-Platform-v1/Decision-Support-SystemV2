@@ -656,3 +656,52 @@ button { cursor: pointer; }
 @media (max-width: 700px) {
     .my-guides-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   CLEAR CONTROLS — testing helpers
+   ============================================================ */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-clear {
+  border: 0;
+  background: transparent;
+  color: #b0b1c2;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: color .15s ease, background .15s ease;
+}
+.panel-clear:hover {
+  color: #c81e3a;
+  background: #fdeef1;
+}
+
+.row-clear {
+  border: 0;
+  background: transparent;
+  color: #c5c7d5;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  opacity: 0;
+  transition: opacity .15s ease, color .15s ease;
+  font-family: inherit;
+}
+.list-row:hover .row-clear {
+  opacity: 1;
+}
+.row-clear:hover {
+  color: #c81e3a;
+}
+.my-guides-grid .row-clear {
+  font-size: 15px;
+}
