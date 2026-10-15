@@ -4,15 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recent Activity | BD Tools</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/guide-themes.css" />
+  <link rel="stylesheet" href="assets/css/all-guides.css" />
   <link rel="stylesheet" href="assets/css/page-loader.css" />
+
   <script>
     document.documentElement.classList.add("page-loading");
     document.documentElement.setAttribute("aria-busy", "true");
   </script>
 </head>
-<body data-view="recent" data-waits-for-user="true">
 
+<body data-view="recent" data-waits-for-user="true">
   <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
     <div class="page-loader-inner">
       <div class="page-loader-mark" aria-hidden="true">
@@ -27,20 +31,102 @@
     <div id="header-placeholder"></div>
 
     <main>
-      <section class="section my-guides-section">
-        <div class="section-heading">
-          <h2><span class="heading-bar"></span><span id="pageTitle">Recent Activity</span></h2>
-          <a class="view-all my-guides-back" href="index.html">← Back to Dashboard</a>
+      <section class="hero all-guides-hero">
+        <div class="hero-copy">
+          <h1>Recent <span>Activity</span></h1>
+          <p>
+            Guides you opened recently.<br class="desktop-only" />
+            Jump back into where you left off.
+          </p>
+
+          <div class="hero-search">
+            <span class="search-icon"></span>
+            <input
+              id="guideSearch"
+              type="search"
+              autocomplete="off"
+              placeholder="Search for guides..."
+              aria-label="Search guides"
+            />
+            <button id="searchButton" type="button">Search</button>
+          </div>
         </div>
 
-        <div class="panel my-guides-panel">
-          <div id="myGuidesList" class="list my-guides-list"></div>
+        <div class="hero-art" aria-hidden="true"></div>
+
+        <section class="stats-row guide-filter-row" aria-label="Views"
+                 style="grid-template-columns: repeat(3, 1fr);">
+          <button class="stat-card guide-filter" type="button" data-view="most-used">
+            <div class="stat-icon purple">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 16l5-5 3.5 3.5L20 7"/>
+                <path d="M15 7h5v5"/>
+              </svg>
+            </div>
+            <div class="filter-copy">
+              <strong id="count-most">0</strong>
+              <small>Most Used</small>
+            </div>
+          </button>
+
+          <button class="stat-card guide-filter" type="button" data-view="recent">
+            <div class="stat-icon blue">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="8.5"/>
+                <path d="M12 7.5v5l3.3 2"/>
+              </svg>
+            </div>
+            <div class="filter-copy">
+              <strong id="count-recent">0</strong>
+              <small>Recent Activity</small>
+            </div>
+          </button>
+
+          <button class="stat-card guide-filter" type="button" data-view="favorites">
+            <div class="stat-icon pink">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m12 3.8 2.55 5.18 5.72.83-4.14 4.04.98 5.7L12 16.86 6.89 19.55l.98-5.7-4.14-4.04 5.72-.83L12 3.8Z"/>
+              </svg>
+            </div>
+            <div class="filter-copy">
+              <strong id="count-fav">0</strong>
+              <small>Favorites</small>
+            </div>
+          </button>
+        </section>
+      </section>
+
+      <section class="section library-section" id="guideLibrary">
+        <div class="library-heading">
+          <div class="library-heading-copy">
+            <h2>
+              <span class="heading-bar"></span>
+              <span id="libraryTitle">Recent Activity</span>
+            </h2>
+            <p id="resultsText">Showing all guides</p>
+          </div>
+
+          <div class="library-actions">
+            <button id="clearSearch" class="soft-action" type="button" hidden>Clear Search</button>
+            <button id="sortButton" class="soft-action" type="button">Sort A–Z <span>↕</span></button>
+          </div>
+        </div>
+
+        <div id="guideGrid" class="guide-grid" aria-live="polite"></div>
+
+        <div id="noResults" class="no-results" hidden>
+          <div class="no-results-icon">⌕</div>
+          <h3>Nothing to show yet</h3>
+          <p id="noResultsCopy">Open a guide to start tracking.</p>
+          <a href="index.html" class="soft-action">← Back to Dashboard</a>
         </div>
       </section>
     </main>
 
     <div id="footer-placeholder"></div>
   </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="shared/include.js"></script>
   <script src="assets/js/my-guides.js"></script>
