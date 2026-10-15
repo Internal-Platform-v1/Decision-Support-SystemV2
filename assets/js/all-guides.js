@@ -1,15 +1,11 @@
 /* ============================================================
    DSS V2 — ALL GUIDES
-   Static catalog. No JSON. No database.
-
-   IMPORTANT:
-   - This page intentionally owns its guide catalog so it cannot
-     silently fall back to the 25 "Other Operational" cards.
-   - Routes match the current root/guides/<Group Folder>/ layout.
-   - Uses the existing DSS localStorage history, usage and favorites.
+   Static catalog. Uses GuideStore for canonical URLs + dedup.
    ============================================================ */
 (function () {
   "use strict";
+
+  const Store = window.GuideStore;
 
   const GROUPS = {
     all:      { label: "All Guides",       color: "purple", icon: "fa-layer-group" },
@@ -22,7 +18,7 @@
   };
 
   const CATALOG = [
-    /* ========================= BILLING DISPUTE — 6 ========================= */
+    /* Billing Dispute */
     ["Debtor Update per BOL", "guides/Billing%20Dispute%20Guides/debtor-update-per-bol/debtor-update-per-bol.html", "Follow BOL terms to determine the correct debtor and ensure accurate billing setup.", "billing", "fa-file-invoice-dollar"],
     ["Debtor Update per LOA", "guides/Billing%20Dispute%20Guides/debtor-update-per-loa/debtor-update-per-loa.html", "Use LOA to evaluate debtor update requests and determine the correct billing action.", "billing", "fa-file-signature"],
     ["Debtor Update per Reversal/Refusal", "guides/Billing%20Dispute%20Guides/debtor-update-per-rvsl/debtor-update-per-rvsl.html", "Evaluate reversal or refusal cases and determine the correct debtor and billing action.", "billing", "fa-right-left"],
@@ -30,7 +26,7 @@
     ["Service Level/Type Update per BOL", "guides/Billing%20Dispute%20Guides/service-level-type/service-level-type.html", "Evaluate service level disputes to confirm correct rating based on BOL details.", "billing", "fa-truck-fast"],
     ["Reference Number Update - Add/Edit/Delete", "guides/Billing%20Dispute%20Guides/reference-number/reference-number.html", "Manage reference number updates and ensure correct correction processing and invoice handling.", "billing", "fa-dollar-sign"],
 
-    /* ========================= PRICING GENERAL — 8 ======================== */
+    /* Pricing General */
     ["Fuel Guide", "guides/Pricing%20Guides/fuel-guide/fuel-guide.html", "Review fuel-related pricing disputes using the correct guide and supporting validation steps.", "pricing", "fa-gas-pump"],
     ["Surcharge Guide", "guides/Pricing%20Guides/surcharge-guide/surcharge-guide.html", "Check surcharge disputes and verify the correct supporting logic before responding.", "pricing", "fa-receipt"],
     ["ePRT Guide", "guides/Pricing%20Guides/eprt-guide/eprt-guide.html", "Use ePRT guidance when pricing results need exception handling or escalation review.", "pricing", "fa-file-lines"],
@@ -40,7 +36,7 @@
     ["Discount - AMC Guide", "guides/Pricing%20Guides/discount-amc-guide/discount-amc-guide.html", "Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.", "pricing", "fa-tags"],
     ["Courtesy Discount Guide", "guides/Pricing%20Guides/courtesy-discount/courtesy-discount.html", "Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.", "pricing", "fa-hand-holding-dollar"],
 
-    /* ========================= SURCHARGES — 14 ============================= */
+    /* Surcharges */
     ["High Cost Fee", "guides/Other%20Surcharge%20Guides/high-cost-fee/high-cost-fee.html", "Review high cost fee concerns and validate the appropriate surcharge handling.", "surcharge", "fa-dollar-sign"],
     ["Peak Surcharge Fee", "guides/Other%20Surcharge%20Guides/peak-surcharge-fee/peak-surcharge-fee.html", "Review peak surcharge concerns and determine the correct handling for period-based charges.", "surcharge", "fa-arrow-trend-up"],
     ["California Compliance", "guides/Other%20Surcharge%20Guides/california-compliance/california-compliance.html", "Review surcharge concerns tied to California compliance requirements and validation.", "surcharge", "fa-shield-halved"],
@@ -56,14 +52,14 @@
     ["Storage Fee Guide", "guides/Other%20Surcharge%20Guides/storage-fee-guide/storage-fee-guide.html", "Validate storage fee disputes, calculations, supporting documents, and FedEx fault claims.", "surcharge", "fa-warehouse"],
     ["Redelivery Handling Guide", "guides/Other%20Surcharge%20Guides/redelivery-handling-guide/redelivery-handling-guide.html", "Review second delivery attempts, receiving conditions, and customer refusal scenarios to validate the fee.", "surcharge", "fa-truck"],
 
-    /* ========================= ACCOUNT HANDLING — 5 ======================= */
+    /* Account Handling */
     ["Handling Inactive Account", "guides/Account%20Handling%20Guides/handling-notactive-guide/handling-notactive-guide.html", "Validate inactive, archived, deleted, or do-not-use accounts and determine the correct next action.", "account", "fa-user-xmark"],
     ["Creating Customer's Account", "guides/Account%20Handling%20Guides/creating-customer-account/creating-customer-account.html", "Follow the correct setup process when creating a new customer account.", "account", "fa-user-plus"],
     ["Steps on How to Create an Account", "guides/Account%20Handling%20Guides/account-creation-steps/account-creation-steps.html", "Follow the structured step-by-step process for complete customer account creation.", "account", "fa-list-check"],
     ["Searching for Account Guide", "guides/Account%20Handling%20Guides/searching-account-guide/searching-account-guide.html", "Locate and validate the correct customer account before proceeding with account handling.", "account", "fa-user-magnifying-glass"],
     ["Updating SCAC/BU Guide", "guides/Account%20Handling%20Guides/updating-pt-scacbu-guide/updating-pt-scacbu-guide.html", "Validate SCAC/BU update requests and determine the correct correction and update steps.", "account", "fa-list-check"],
 
-    /* ========================= PAUD QUEUE — 18 ============================= */
+    /* PAUD Queue */
     ["Regions and EHOT Queue Guide", "guides/PAUD%20Guides/region-and-ehot-queue/region-and-ehot-queue.html", "Review and process region and EHOT queue requests including account, accessorial, service type, and related updates.", "paud", "fa-globe"],
     ["TPLO Guide", "guides/PAUD%20Guides/tplo-guide/tplo-guide.html", "Handle TPLO requests including SPOC validation, account mapping, special account routing, and billing handling.", "paud", "fa-sitemap"],
     ["TPHI Guide", "guides/PAUD%20Guides/tphi-guide/tphi-guide.html", "Follow the TEMP-SYS matching process to correctly map charge accounts and ensure proper debtor selection.", "paud", "fa-diagram-project"],
@@ -83,7 +79,7 @@
     ["CORT – Reconsignment Guide", "guides/PAUD%20Guides/cort-guide/cort-guide.html", "Handle reconsignment requests by validating weight, piece count, customer center, NEWP, and AUTO RATE requirements.", "paud", "fa-rotate"],
     ["HOT – EHOT Queue Requests", "guides/PAUD%20Guides/hot-ehot-queue-guide/hot-ehot-queue-guide.html", "Handle HOT/EHOT requests including storage disputes, shipment detail updates, routing, redelivery, GAMD, and REDOT.", "paud", "fa-fire"],
 
-    /* ========================= OTHER OPERATIONAL — 24 ===================== */
+    /* Other Operational */
     ["OVC — General Guideline", "guides/Other%20Guides/ovc-general-guide/ovc-general-guide.html", "Official OVC guideline for handling customer claims and disputes.", "other", "fa-shield-halved"],
     ["Reweigh — General Guide", "guides/Other%20Guides/reweigh-general-guide/reweigh-general-guide.html", "Decision guide for reweigh disputes and corrections.", "other", "fa-weight-scale"],
     ["Correction Code Guide", "guides/Other%20Guides/correction-code-guide/correction-code-guide.html", "Decision tree to determine the correct CORR CODE.", "other", "fa-wand-magic-sparkles"],
@@ -119,11 +115,8 @@
   function $(id) { return document.getElementById(id); }
 
   function normalizeText(value) {
-    return String(value || "")
-      .toLowerCase()
-      .replace(/[–—]/g, "-")
-      .replace(/\s+/g, " ")
-      .trim();
+    return String(value || "").toLowerCase()
+      .replace(/[–—]/g, "-").replace(/\s+/g, " ").trim();
   }
 
   function slug(value) {
@@ -132,33 +125,9 @@
 
   function escapeHtml(value) {
     return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
-  }
-
-  function getHistory() {
-    try { return JSON.parse(localStorage.getItem("guideHistory")) || []; }
-    catch (e) { return []; }
-  }
-  function saveHistory(value) {
-    try { localStorage.setItem("guideHistory", JSON.stringify(value)); } catch (e) {}
-  }
-  function getUsage() {
-    try { return JSON.parse(localStorage.getItem("guideUsageCounts")) || {}; }
-    catch (e) { return {}; }
-  }
-  function saveUsage(value) {
-    try { localStorage.setItem("guideUsageCounts", JSON.stringify(value)); } catch (e) {}
-  }
-  function getFavorites() {
-    try { return JSON.parse(localStorage.getItem("guideFavorites")) || {}; }
-    catch (e) { return {}; }
-  }
-  function saveFavorites(value) {
-    try { localStorage.setItem("guideFavorites", JSON.stringify(value)); } catch (e) {}
   }
 
   function buildGuides() {
@@ -167,6 +136,7 @@
         id: slug(item[0]) || ("guide-" + index),
         title: item[0],
         url: item[1],
+        absoluteUrl: Store ? Store.canonicalGuideUrl(item[1]) : item[1],
         description: item[2],
         group: item[3],
         icon: item[4],
@@ -174,19 +144,6 @@
         keywords: normalizeText(item[0] + " " + item[2] + " " + GROUPS[item[3]].label)
       };
     });
-  }
-
-  function trackGuide(guide) {
-    const history = getHistory();
-    history.push({ title: guide.title, url: guide.url, timestamp: Date.now() });
-    if (history.length > 100) history.splice(0, history.length - 100);
-    saveHistory(history);
-
-    const usage = getUsage();
-    if (!usage[guide.url]) usage[guide.url] = { title: guide.title, count: 0 };
-    usage[guide.url].title = guide.title;
-    usage[guide.url].count += 1;
-    saveUsage(usage);
   }
 
   function matches(guide) {
@@ -215,19 +172,38 @@
     }, 1800);
   }
 
+  function isFavoriteGuide(guide) {
+    if (!Store) return false;
+    return Store.isFavorite(guide.absoluteUrl);
+  }
+
   function toggleFavorite(id) {
-    const favorites = getFavorites();
     const guide = allGuides.find(function (g) { return g.id === id; });
     if (!guide) return;
 
-    if (favorites[id]) {
-      delete favorites[id];
-      showToast("Removed from Favorites");
+    let added;
+    if (Store) {
+      added = Store.toggleFavorite(guide.title, guide.absoluteUrl);
     } else {
-      favorites[id] = { title: guide.title, url: guide.url, timestamp: Date.now() };
-      showToast("Added to Favorites");
+      /* fallback keyed by URL */
+      try {
+        const favs = JSON.parse(localStorage.getItem("guideFavorites") || "{}");
+        if (favs[guide.absoluteUrl]) {
+          delete favs[guide.absoluteUrl];
+          added = false;
+        } else {
+          favs[guide.absoluteUrl] = {
+            title: guide.title,
+            url: guide.absoluteUrl,
+            timestamp: Date.now()
+          };
+          added = true;
+        }
+        localStorage.setItem("guideFavorites", JSON.stringify(favs));
+      } catch (e) { return; }
     }
-    saveFavorites(favorites);
+
+    showToast(added ? "Added to Favorites" : "Removed from Favorites");
     render();
   }
 
@@ -236,16 +212,17 @@
       showToast("This guide does not have a valid route yet.");
       return;
     }
-    trackGuide(guide);
-    window.location.href = guide.url;
+    if (Store) {
+      Store.trackOpen(guide.title, guide.absoluteUrl);
+    }
+    window.location.href = guide.absoluteUrl || guide.url;
   }
 
   function render() {
     const list = visibleGuides();
-    const favorites = getFavorites();
 
     els.guideGrid.innerHTML = list.map(function (guide) {
-      const favorite = !!favorites[guide.id];
+      const favorite = isFavoriteGuide(guide);
       const group = GROUPS[guide.group];
       return `
         <article class="guide-card group-${guide.group}" data-id="${escapeHtml(guide.id)}" tabindex="0" aria-label="${escapeHtml(guide.title)}">
