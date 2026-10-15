@@ -518,10 +518,39 @@ button { cursor: pointer; }
     text-decoration: none;
 }
 
+/* ---- Scrollable 3-column grid ----
+   The container is capped so the app-shell never grows past the
+   viewport. If there are more items than fit, the grid scrolls
+   internally and the footer stays visible. */
 .my-guides-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
+
+    /* ~5 rows of 48px + 4 gaps of 12px = 288px → cap at 320px
+       to leave room for the section header + footer. */
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 6px;   /* room for scrollbar */
+
+    /* Smooth scroll for trackpad/touch */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #d9d5e6 transparent;
+}
+
+.my-guides-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.my-guides-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+.my-guides-grid::-webkit-scrollbar-thumb {
+    background: #d9d5e6;
+    border-radius: 999px;
+}
+.my-guides-grid::-webkit-scrollbar-thumb:hover {
+    background: #c4bfd9;
 }
 
 .my-guides-grid .list-row {
@@ -548,8 +577,8 @@ button { cursor: pointer; }
     cursor: pointer;
 }
 
-.my-guides-grid .rank      { width: 30px; height: 22px; font-size: 9px; }
-.my-guides-grid .star      { width: 20px; font-size: 17px; }
+.my-guides-grid .rank        { width: 30px; height: 22px; font-size: 9px; }
+.my-guides-grid .star        { width: 20px; font-size: 17px; }
 .my-guides-grid .recent-icon { width: 26px; height: 26px; border-radius: 7px; }
 .my-guides-grid .recent-icon i { font-size: 12px; }
 .my-guides-grid .recent-time { width: auto; min-width: 60px; font-size: 10px; }
