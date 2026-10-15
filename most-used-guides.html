@@ -99,5 +99,11 @@
   <script src="shared/include.js"></script>
   <script src="assets/js/my-guides.js"></script>
   <script src="assets/js/page-loader.js"></script>
+
+  <script>
+    window.bdToolsUserReady = function () {
+      window.dispatchEvent(new Event("bdtools:user-ready"));
+    };
+  </script>
 </body>
 </html>
