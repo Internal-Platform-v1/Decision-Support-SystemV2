@@ -515,8 +515,7 @@ button { cursor: pointer; }
 }
 
 /* ============================================================
-   MY GUIDES PAGES — same list-row style as the index page,
-   arranged in a 3-column grid.
+   MY GUIDES PAGES — list-row style in a 3-column grid
    ============================================================ */
 .my-guides-section {
   padding: 22px 5.6% 28px;
@@ -566,39 +565,19 @@ button { cursor: pointer; }
   cursor: pointer;
 }
 
-.my-guides-grid .rank {
-  width: 30px;
-  height: 22px;
-  font-size: 9px;
-}
+.my-guides-grid .rank { width: 30px; height: 22px; font-size: 9px; }
+.my-guides-grid .star { width: 20px; font-size: 17px; }
+.my-guides-grid .recent-icon { width: 24px; height: 24px; }
+.my-guides-grid .recent-time { width: auto; min-width: 60px; font-size: 10px; }
 
-.my-guides-grid .star {
-  width: 20px;
-  font-size: 17px;
-}
-
-.my-guides-grid .recent-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.my-guides-grid .recent-time {
-  width: auto;
-  min-width: 60px;
-  font-size: 10px;
-}
-
-/* Three hero cards highlight state */
 .stat-card[data-view] {
   cursor: pointer;
   transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
 }
-
 .stat-card[data-view]:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(41,32,94,.09);
 }
-
 .stat-card[data-view].active {
   border-color: #6b25df;
   box-shadow: 0 0 0 2px rgba(107,37,223,.12), var(--shadow);
@@ -607,7 +586,6 @@ button { cursor: pointer; }
 @media (max-width: 1000px) {
   .my-guides-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
 @media (max-width: 700px) {
   .my-guides-grid { grid-template-columns: 1fr; }
 }
