@@ -608,3 +608,39 @@ button { cursor: pointer; }
   width: 13px;
   height: 15px;
 }
+
+/* ============================================================
+   RECENT ACTIVITY — per-category icon (matches group / all-guides)
+   ============================================================ */
+.recent-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  background: #f1eaff;
+  color: #7131dc;
+  flex: 0 0 auto;
+}
+
+.recent-icon i {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.recent-icon.purple { background: #f1eaff; color: #7131dc; }
+.recent-icon.orange { background: #fff0e4; color: #ff6d17; }
+.recent-icon.blue   { background: #eaf0ff; color: #3865df; }
+.recent-icon.green  { background: #e8f7e7; color: #3e9346; }
+.recent-icon.indigo { background: #eef0ff; color: #4a56d6; }
+.recent-icon.pink   { background: #ffeaf0; color: #ec3970; }
+
+.my-guides-grid .recent-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+}
+
+.my-guides-grid .recent-icon i {
+  font-size: 12px;
+}
