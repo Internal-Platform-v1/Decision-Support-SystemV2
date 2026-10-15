@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BD Tools — Main Menu</title>
 
-    <!-- main styles (content only) -->
     <link rel="stylesheet" href="assets/css/styles.css" />
-    <!-- shared component styles (loaded dynamically by include.js) -->
     <link rel="stylesheet" href="assets/css/page-loader.css" />
 
     <script>
@@ -27,7 +25,6 @@
     </style>
 </head>
 <body data-waits-for-user="true">
-    <!-- GLOBAL PAGE LOADER -->
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
         <div class="page-loader-inner">
             <div class="page-loader-mark" aria-hidden="true">
@@ -39,10 +36,8 @@
     </div>
 
     <div class="app-shell">
-        <!-- ===== HEADER PLACEHOLDER ===== -->
         <div id="header-placeholder"></div>
 
-        <!-- ===== MAIN CONTENT ===== -->
         <main>
             <!-- HERO -->
             <section class="hero">
@@ -84,7 +79,7 @@
                     </div>
                 </div>
 
-                <!-- STATS — inside hero, absolutely positioned per styles.css -->
+                <!-- STATS — inside hero -->
                 <section class="stats-row">
                     <div class="stat-card">
                         <div class="stat-icon purple">
@@ -122,7 +117,6 @@
 
                 <div class="quick-grid">
 
-                    <!-- Card 1 -->
                     <article class="quick-card purple-card" data-guide="Billing Dispute Guides">
                         <div class="quick-icon purple-bg">
                             <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -137,7 +131,6 @@
                         <button class="arrow-btn">→</button>
                     </article>
 
-                    <!-- Card 2 -->
                     <article class="quick-card orange-card" data-guide="Pricing General Guides">
                         <div class="quick-icon orange-bg">
                             <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -151,7 +144,6 @@
                         <button class="arrow-btn">→</button>
                     </article>
 
-                    <!-- Card 3 -->
                     <article class="quick-card blue-card" data-guide="Surcharges Guide">
                         <div class="quick-icon blue-bg">
                             <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -166,7 +158,6 @@
                         <button class="arrow-btn">→</button>
                     </article>
 
-                    <!-- Card 4 -->
                     <article class="quick-card green-card" data-guide="Account Handling Guide">
                         <div class="quick-icon green-bg">
                             <svg class="ui-icon quick-svg user-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -181,7 +172,6 @@
                         <button class="arrow-btn">→</button>
                     </article>
 
-                    <!-- Card 5 – PAUD Queue's Guide -->
                     <article class="quick-card indigo-card" data-guide="PAUD Queue's Guide">
                         <div class="quick-icon indigo-bg">
                             <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -196,7 +186,6 @@
                         <button class="arrow-btn">→</button>
                     </article>
 
-                    <!-- Card 6 -->
                     <article class="quick-card pink-card" data-guide="Other Operational Guides">
                         <div class="quick-icon pink-bg">
                             <svg class="ui-icon quick-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -214,7 +203,7 @@
                 </div>
             </section>
 
-            <!-- LOWER GRID -->
+            <!-- LOWER GRID — 3 panels -->
             <section class="lower-grid">
                 <div class="panel">
                     <div class="panel-heading">
@@ -231,23 +220,26 @@
                     </div>
                     <div id="recentList" class="list recent-list"></div>
                 </div>
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h2>Favorites</h2>
+                        <button class="view-all" data-action="view-favorites">View All <span>→</span></button>
+                    </div>
+                    <div id="favoritesList" class="list recent-list"></div>
+                </div>
             </section>
         </main>
 
-        <!-- ===== FOOTER PLACEHOLDER ===== -->
         <div id="footer-placeholder"></div>
     </div>
 
     <div class="toast" id="toast"></div>
 
-<!-- Firebase — app + firestore only (auth and storage SDKs removed) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
-    /* =========================================================
-       FIREBASE INITIALIZATION
-       ========================================================= */
     const firebaseConfig = {
         apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
         authDomain: "bdgg-database.firebaseapp.com",
@@ -262,22 +254,15 @@
     }
 </script>
 
-<!-- Shared components -->
 <script src="shared/include.js"></script>
-
-<!-- Dashboard -->
 <script src="assets/js/script.js"></script>
 <script src="assets/js/page-loader.js"></script>
 
 <script>
-    /* =========================================================
-       NO-AUTH BOOTSTRAP
-       ========================================================= */
     (function () {
         var name = '';
-        try {
-            name = (localStorage.getItem('bd_display_name') || '').trim();
-        } catch (e) { /* storage unavailable — ignore */ }
+        try { name = (localStorage.getItem('bd_display_name') || '').trim(); }
+        catch (e) {}
 
         if (name) {
             var el = document.getElementById('currentUserName');
