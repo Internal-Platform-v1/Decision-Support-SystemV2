@@ -1,6 +1,7 @@
 /* ============================================================
-   MY GUIDES — shared logic for the three "View All" pages
-   (Most Used / Recent Activity / Favorites)
+   MY GUIDES — Most Used / Recent Activity / Favorites
+   Renders into the same .guide-card structure as all-guides.js
+   so the three pages visually match the All Guides page.
    Driven by <body data-view="most-used|recent|favorites">
    ============================================================ */
 
@@ -13,16 +14,28 @@
 
   const VIEW = document.body.dataset.view || "most-used";
 
-  const TITLES = {
-    "most-used": "Most Used Guides",
-    "recent":    "Recent Activity",
-    "favorites": "Favorites"
+  const META = {
+    "most-used": {
+      title:     "Most Used Guides",
+      noResults: "Open a guide from the dashboard or a group page to start tracking."
+    },
+    "recent": {
+      title:     "Recent Activity",
+      noResults: "Nothing here yet — your recently opened guides will appear here."
+    },
+    "favorites": {
+      title:     "Favorites",
+      noResults: "No favorites yet — click the ☆ on any guide to save it here."
+    }
   };
 
-  const EMPTY = {
-    "most-used": "No usage yet — open a guide from the dashboard or a group page to start tracking.",
-    "recent":    "Nothing here yet — your recently opened guides will appear here.",
-    "favorites": "No favorites yet — click the ☆ on any guide to save it here."
+  const CATEGORY = {
+    billing:   { label: "Billing Dispute",   group: "billing",   icon: "fa-file-invoice-dollar" },
+    pricing:   { label: "Pricing General",   group: "pricing",   icon: "fa-tags"                },
+    surcharge: { label: "Surcharges",        group: "surcharge", icon: "fa-receipt"             },
+    account:   { label: "Account Handling",  group: "account",   icon: "fa-user-gear"           },
+    paud:      { label: "PAUD Queue",        group: "paud",      icon: "fa-diagram-project"     },
+    other:     { label: "Other Operational", group: "other",     icon: "fa-toolbox"             }
   };
 
 
@@ -41,41 +54,44 @@
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
   }
 
-  function escapeAttr(value) {
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
+  function escapeHtml(v) {
+    return String(v || "")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
   }
 
-  function categoryFromUrl(url) {
+  function normalizeText(v) {
+    return String(v || "").toLowerCase()
+      .replace(/[–—]/g, "-").replace(/\s+/g, " ").trim();
+  }
+
+  function categoryFor(url) {
     const u = String(url || "");
-    if (/Billing%20Dispute|Billing Dispute/i.test(u)) return { tag: "Billing Dispute",  color: "purple" };
-    if (/Pricing/i.test(u))                           return { tag: "Pricing",          color: "orange" };
-    if (/Surcharge/i.test(u))                         return { tag: "Surcharges",       color: "blue"   };
-    if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green" };
-    if (/PAUD/i.test(u))                              return { tag: "PAUD Queue",       color: "indigo" };
-    if (/Other%20Guides|Other Guides/i.test(u))       return { tag: "Other Operational", color: "pink" };
-    return { tag: "Guide", color: "purple" };
+    if (/Billing%20Dispute|Billing Dispute/i.test(u))     return CATEGORY.billing;
+    if (/Pricing/i.test(u))                               return CATEGORY.pricing;
+    if (/Surcharge/i.test(u))                             return CATEGORY.surcharge;
+    if (/Account%20Handling|Account Handling/i.test(u))   return CATEGORY.account;
+    if (/PAUD/i.test(u))                                  return CATEGORY.paud;
+    if (/Other%20Guides|Other Guides/i.test(u))           return CATEGORY.other;
+    return CATEGORY.billing;
   }
 
   function relativeTime(ts) {
     const diff = Date.now() - Number(ts || 0);
     if (!isFinite(diff) || diff < 0) return "just now";
-    const sec = Math.floor(diff / 1000);
-    if (sec < 45) return "just now";
-    if (sec < 90) return "1 min ago";
-    const min = Math.floor(sec / 60);
-    if (min < 60) return min + " mins ago";
-    const hr = Math.floor(min / 60);
-    if (hr < 24) return hr + " hour" + (hr === 1 ? "" : "s") + " ago";
-    const day = Math.floor(hr / 24);
-    if (day === 1) return "yesterday";
-    if (day < 7) return day + " days ago";
-    const wk = Math.floor(day / 7);
-    if (wk < 5) return wk + " week" + (wk === 1 ? "" : "s") + " ago";
+    const s = Math.floor(diff / 1000);
+    if (s < 45) return "just now";
+    if (s < 90) return "1 min ago";
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + " mins ago";
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + " hour" + (h === 1 ? "" : "s") + " ago";
+    const d = Math.floor(h / 24);
+    if (d === 1) return "yesterday";
+    if (d < 7) return d + " days ago";
+    const w = Math.floor(d / 7);
+    if (w < 5) return w + " week" + (w === 1 ? "" : "s") + " ago";
     return new Date(Number(ts)).toLocaleDateString();
   }
 
@@ -83,13 +99,13 @@
   /* ---------- data readers ---------- */
 
   function getMostUsed() {
-    const usage = readJSON(LS_USAGE, {});
-    return Object.keys(usage)
+    const u = readJSON(LS_USAGE, {});
+    return Object.keys(u)
       .map(function (url) {
         return {
           url: url,
-          title: usage[url]?.title || "Untitled Guide",
-          count: Number(usage[url]?.count) || 0
+          title: u[url]?.title || "Untitled Guide",
+          count: Number(u[url]?.count) || 0
         };
       })
       .filter(function (g) { return g.url && g.title; })
@@ -100,33 +116,40 @@
   }
 
   function getRecent() {
-    const history = readJSON(LS_HISTORY, []);
-    if (!Array.isArray(history)) return [];
-    const sorted = history
-      .filter(function (h) { return h && h.url && h.title; })
+    const h = readJSON(LS_HISTORY, []);
+    if (!Array.isArray(h)) return [];
+    const sorted = h
+      .filter(function (i) { return i && i.url && i.title; })
       .sort(function (a, b) { return Number(b.timestamp || 0) - Number(a.timestamp || 0); });
     const seen = new Set();
-    const unique = [];
-    sorted.forEach(function (item) {
-      if (seen.has(item.url)) return;
-      seen.add(item.url);
-      unique.push(item);
+    const out = [];
+    sorted.forEach(function (i) {
+      if (seen.has(i.url)) return;
+      seen.add(i.url);
+      out.push(i);
     });
-    return unique;
+    return out;
   }
 
   function getFavorites() {
-    const favs = readJSON(LS_FAVS, {});
-    return Object.keys(favs)
+    const f = readJSON(LS_FAVS, {});
+    return Object.keys(f)
       .map(function (url) {
         return {
           url: url,
-          title: favs[url]?.title || "Untitled Guide",
-          timestamp: Number(favs[url]?.timestamp) || 0
+          title: f[url]?.title || "Untitled Guide",
+          timestamp: Number(f[url]?.timestamp) || 0
         };
       })
       .filter(function (g) { return g.url && g.title; })
       .sort(function (a, b) { return b.timestamp - a.timestamp; });
+  }
+
+  function currentItems() {
+    if (VIEW === "most-used") return getMostUsed();
+    if (VIEW === "recent")    return getRecent();
+    if (VIEW === "favorites") return getFavorites();
+    return [];
   }
 
 
@@ -136,135 +159,275 @@
     if (!url) return;
     const safeTitle = title || "Untitled Guide";
 
-    const history = readJSON(LS_HISTORY, []);
-    history.push({ title: safeTitle, url: url, timestamp: Date.now() });
-    if (history.length > 100) history.splice(0, history.length - 100);
-    writeJSON(LS_HISTORY, history);
+    const h = readJSON(LS_HISTORY, []);
+    h.push({ title: safeTitle, url: url, timestamp: Date.now() });
+    if (h.length > 100) h.splice(0, h.length - 100);
+    writeJSON(LS_HISTORY, h);
 
-    const usage = readJSON(LS_USAGE, {});
-    if (!usage[url]) usage[url] = { title: safeTitle, count: 0 };
-    usage[url].title = safeTitle;
-    usage[url].count = (Number(usage[url].count) || 0) + 1;
-    writeJSON(LS_USAGE, usage);
+    const u = readJSON(LS_USAGE, {});
+    if (!u[url]) u[url] = { title: safeTitle, count: 0 };
+    u[url].title = safeTitle;
+    u[url].count = (Number(u[url].count) || 0) + 1;
+    writeJSON(LS_USAGE, u);
 
     window.location.href = url;
   }
 
-
-  /* ---------- renderers ---------- */
-
-  function emptyState() {
-    return '<div class="list-row"><span class="row-name">' +
-      (EMPTY[VIEW] || "Nothing to show yet.") +
-      "</span></div>";
+  function toggleFavorite(url, title) {
+    if (!url) return false;
+    const f = readJSON(LS_FAVS, {});
+    let added;
+    if (f[url]) {
+      delete f[url];
+      added = false;
+    } else {
+      f[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() };
+      added = true;
+    }
+    writeJSON(LS_FAVS, f);
+    return added;
   }
 
-  function renderMostUsed(items) {
-    return items.map(function (g, i) {
-      const cat = categoryFromUrl(g.url);
-      return (
-        '<div class="list-row clickable"' +
-        ' data-name="' + escapeAttr(g.title) + '"' +
-        ' data-url="'  + escapeAttr(g.url)   + '">' +
-          '<span class="rank ' + cat.color + '">' +
-            String(i + 1).padStart(2, "0") +
-          "</span>" +
-          '<span class="row-name">' + escapeAttr(g.title) + "</span>" +
-          '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' +
-            escapeAttr(cat.tag) +
-          "</span>" +
-          '<span class="recent-time">' +
-            g.count + " open" + (g.count === 1 ? "" : "s") +
-          "</span>" +
-        "</div>"
-      );
-    }).join("");
+
+  /* ---------- state ---------- */
+
+  const state = {
+    items: [],
+    search: "",
+    sortAZ: true
+  };
+
+  const els = {};
+
+
+  /* ---------- render ---------- */
+
+  function renderCard(item, favorites) {
+    const cat   = categoryFor(item.url);
+    const isFav = !!favorites[item.url];
+
+    let description;
+    if (VIEW === "most-used") {
+      description = "Opened " + item.count + " time" + (item.count === 1 ? "" : "s");
+    } else if (VIEW === "recent") {
+      description = "Opened " + relativeTime(item.timestamp);
+    } else {
+      description = "Saved " + relativeTime(item.timestamp);
+    }
+
+    return (
+      '<article class="guide-card group-' + cat.group + '"' +
+        ' data-id="' + escapeHtml(item.url) + '"' +
+        ' data-search="' + escapeHtml(normalizeText(item.title + " " + cat.label)) + '"' +
+        ' tabindex="0" aria-label="' + escapeHtml(item.title) + '">' +
+
+        '<button class="favorite-button ' + (isFav ? "active" : "") + '"' +
+          ' type="button" data-favorite="' + escapeHtml(item.url) + '"' +
+          ' aria-label="' + (isFav ? "Remove from" : "Add to") + ' favorites">' +
+          (isFav ? "★" : "☆") +
+        '</button>' +
+
+        '<div class="guide-top">' +
+          '<span class="guide-icon" aria-hidden="true">' +
+            '<i class="fa-solid ' + cat.icon + '"></i>' +
+          '</span>' +
+          '<span class="guide-group">' + escapeHtml(cat.label) + '</span>' +
+        '</div>' +
+
+        '<h3>' + escapeHtml(item.title) + '</h3>' +
+        '<p class="description">' + escapeHtml(description) + '</p>' +
+
+        '<div class="guide-footer">' +
+          '<span class="guide-badge">' +
+            '<i class="fa-solid ' + cat.icon + '"></i>' + escapeHtml(cat.label) +
+          '</span>' +
+          '<button class="open-guide" type="button"' +
+            ' data-open-guide="' + escapeHtml(item.url) + '">' +
+            'Open <span>→</span>' +
+          '</button>' +
+        '</div>' +
+
+      '</article>'
+    );
   }
 
-  function renderRecent(items) {
-    return items.map(function (r) {
-      return (
-        '<div class="list-row clickable"' +
-        ' data-name="' + escapeAttr(r.title) + '"' +
-        ' data-url="'  + escapeAttr(r.url)   + '">' +
-          '<span class="recent-icon"><span class="document-icon"></span></span>' +
-          '<span class="row-name">' + escapeAttr(r.title) + "</span>" +
-          '<span class="recent-time">' + escapeAttr(relativeTime(r.timestamp)) + "</span>" +
-          '<span class="row-chevron">›</span>' +
-        "</div>"
-      );
-    }).join("");
+  function filtered() {
+    let list = state.items.slice();
+
+    if (state.search) {
+      const q = normalizeText(state.search);
+      list = list.filter(function (item) {
+        return normalizeText(item.title).includes(q);
+      });
+    }
+
+    list.sort(function (a, b) {
+      const r = a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+      return state.sortAZ ? r : -r;
+    });
+
+    return list;
   }
 
-  function renderFavorites(items) {
-    return items.map(function (g) {
-      const cat = categoryFromUrl(g.url);
-      return (
-        '<div class="list-row clickable"' +
-        ' data-name="' + escapeAttr(g.title) + '"' +
-        ' data-url="'  + escapeAttr(g.url)   + '">' +
-          '<span class="rank ' + cat.color + '">★</span>' +
-          '<span class="row-name">' + escapeAttr(g.title) + "</span>" +
-          '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' +
-            escapeAttr(cat.tag) +
-          "</span>" +
-          '<span class="recent-time">' + escapeAttr(relativeTime(g.timestamp)) + "</span>" +
-          '<button class="star active" type="button" aria-label="Remove favorite"' +
-            ' data-fav-url="' + escapeAttr(g.url) + '">★</button>' +
-        "</div>"
-      );
+  function render() {
+    const favorites = readJSON(LS_FAVS, {});
+    const list = filtered();
+    const total = state.items.length;
+
+    els.guideGrid.innerHTML = list.map(function (item) {
+      return renderCard(item, favorites);
     }).join("");
+
+    if (state.search) {
+      els.resultsText.textContent =
+        "Showing " + list.length + " of " + total +
+        " · Search: \u201C" + state.search + "\u201D";
+    } else {
+      els.resultsText.textContent =
+        "Showing " + total + " guide" + (total === 1 ? "" : "s");
+    }
+
+    els.noResults.hidden = list.length !== 0;
+    if (list.length === 0 && els.noResultsCopy) {
+      els.noResultsCopy.textContent = META[VIEW].noResults;
+    }
+    els.clearSearch.hidden = !state.search;
+  }
+
+  function updateCounts() {
+    const em = document.getElementById("count-most");
+    const er = document.getElementById("count-recent");
+    const ef = document.getElementById("count-fav");
+
+    if (em) em.textContent = getMostUsed().length;
+    if (er) er.textContent = getRecent().length;
+    if (ef) ef.textContent = getFavorites().length;
   }
 
 
   /* ---------- init ---------- */
 
   function init() {
-    const heading = document.getElementById("pageTitle");
-    const list = document.getElementById("myGuidesList");
+    document.title = META[VIEW].title + " | BD Tools";
 
-    if (heading) heading.textContent = TITLES[VIEW] || "Guides";
-    document.title = (TITLES[VIEW] || "Guides") + " | BD Tools";
+    els.guideGrid      = document.getElementById("guideGrid");
+    els.resultsText    = document.getElementById("resultsText");
+    els.clearSearch    = document.getElementById("clearSearch");
+    els.sortButton     = document.getElementById("sortButton");
+    els.noResults      = document.getElementById("noResults");
+    els.noResultsCopy  = document.getElementById("noResultsCopy");
 
-    let html;
-    if (VIEW === "most-used") {
-      const items = getMostUsed();
-      html = items.length ? renderMostUsed(items) : emptyState();
-    } else if (VIEW === "recent") {
-      const items = getRecent();
-      html = items.length ? renderRecent(items) : emptyState();
-    } else if (VIEW === "favorites") {
-      const items = getFavorites();
-      html = items.length ? renderFavorites(items) : emptyState();
-    } else {
-      html = emptyState();
+    state.items = currentItems();
+    updateCounts();
+    render();
+
+    /* Highlight the current view's card */
+    document.querySelectorAll(".guide-filter[data-view]").forEach(function (btn) {
+      btn.classList.toggle("active", btn.dataset.view === VIEW);
+    });
+
+    /* Navigate between views */
+    document.querySelectorAll(".guide-filter[data-view]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const target = this.dataset.view;
+        if (target === VIEW) return;
+        const page = {
+          "most-used": "most-used-guides.html",
+          "recent":    "recent-activity.html",
+          "favorites": "favorites.html"
+        }[target];
+        if (page) window.location.href = page;
+      });
+    });
+
+    /* Search */
+    const input = document.getElementById("guideSearch");
+    const searchBtn = document.getElementById("searchButton");
+
+    if (input) {
+      input.addEventListener("input", function () {
+        state.search = this.value.trim();
+        render();
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          state.search = this.value.trim();
+          render();
+        }
+      });
     }
 
-    if (list) list.innerHTML = html;
+    if (searchBtn) {
+      searchBtn.addEventListener("click", function () {
+        if (input) {
+          state.search = input.value.trim();
+          render();
+        }
+      });
+    }
 
-    document.addEventListener("click", function (event) {
+    if (els.clearSearch) {
+      els.clearSearch.addEventListener("click", function () {
+        state.search = "";
+        if (input) input.value = "";
+        render();
+      });
+    }
 
-      /* Remove favorite (star) */
-      const favBtn = event.target.closest(".star[data-fav-url]");
+    if (els.sortButton) {
+      els.sortButton.addEventListener("click", function () {
+        state.sortAZ = !state.sortAZ;
+        this.innerHTML = (state.sortAZ ? "Sort A–Z" : "Sort Z–A") + ' <span>↕</span>';
+        render();
+      });
+    }
+
+    /* Grid clicks */
+    els.guideGrid.addEventListener("click", function (event) {
+
+      const favBtn = event.target.closest("[data-favorite]");
       if (favBtn) {
         event.preventDefault();
         event.stopPropagation();
-        const url = favBtn.dataset.favUrl;
-        const favs = readJSON(LS_FAVS, {});
-        if (favs[url]) {
-          delete favs[url];
-          writeJSON(LS_FAVS, favs);
+        const url = favBtn.dataset.favorite;
+        const item = state.items.find(function (i) { return i.url === url; });
+        toggleFavorite(url, item?.title);
+
+        if (VIEW === "favorites") {
+          state.items = currentItems();
         }
-        init();
+        updateCounts();
+        render();
         return;
       }
 
-      /* Open guide */
-      const row = event.target.closest(".list-row.clickable");
-      if (row) {
+      const openBtn = event.target.closest("[data-open-guide]");
+      if (openBtn) {
         event.preventDefault();
-        trackAndOpen(row.dataset.url, row.dataset.name);
+        event.stopPropagation();
+        const url = openBtn.dataset.openGuide;
+        const item = state.items.find(function (i) { return i.url === url; });
+        trackAndOpen(url, item?.title);
+        return;
       }
+
+      const card = event.target.closest(".guide-card");
+      if (card) {
+        const url = card.dataset.id;
+        const item = state.items.find(function (i) { return i.url === url; });
+        trackAndOpen(url, item?.title);
+      }
+    });
+
+    els.guideGrid.addEventListener("keydown", function (event) {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const card = event.target.closest(".guide-card");
+      if (!card || event.target.closest("button")) return;
+      event.preventDefault();
+      const url = card.dataset.id;
+      const item = state.items.find(function (i) { return i.url === url; });
+      trackAndOpen(url, item?.title);
     });
   }
 
