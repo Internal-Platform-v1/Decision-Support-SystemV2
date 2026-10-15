@@ -1,24 +1,16 @@
 /* DSS V2 — REUSABLE GUIDE ENGINE
-   Functional logic for all decision guides.
-   Individual guide flows are loaded separately.
+   Uses GuideStore for canonical favorites.
 */
 
 (function () {
   "use strict";
-
-  /*
-   * The individual guide-flow file must be loaded
-   * before this guide.js file.
-   *
-   * Example:
-   * assets/js/guide-flows/debtor-update-per-bol.js
-   */
 
 const GUIDE_CONFIG = window.GUIDE_CONFIG || {};
 const NODES = window.GUIDE_NODES || {};
 
 const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
 
+  const Store = window.GuideStore;
   const MAX_STEPS = 8;
 
   const state = {
@@ -106,28 +98,15 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
       });
     }
 
-    /* --------------------------------------------------------
-       NO PATH
-       -------------------------------------------------------- */
     if (!state.path.length) {
       host.classList.remove("path-expanded");
-
       box.className = "path-empty";
-      box.innerHTML =
-        "No steps selected yet. The full path will appear here as you move through the steps.";
-
+      box.innerHTML = "No steps selected yet. The full path will appear here as you move through the steps.";
       return;
     }
 
     const lastIndex = state.path.length - 1;
-
-    /* --------------------------------------------------------
-       COLLAPSED = last step only
-       EXPANDED  = every step (scrollable via CSS)
-       -------------------------------------------------------- */
-    const visiblePath = state.pathExpanded
-      ? state.path
-      : [state.path[lastIndex]];
+    const visiblePath = state.pathExpanded ? state.path : [state.path[lastIndex]];
 
     box.className = state.pathExpanded
       ? "path-list is-expanded"
@@ -135,41 +114,22 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
 
     box.innerHTML = visiblePath.map((x) => {
       const i = state.path.indexOf(x);
-
-      const active =
-        i === lastIndex && !state.finalText;
-
-      const finalActive =
-        state.finalText &&
-        (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
+      const active = i === lastIndex && !state.finalText;
+      const finalActive = state.finalText && (x.nextKey === "__final__" || isFinal(NODES[x.nextKey]));
 
       return `
         <div class="path-item">
-          <button
-            class="path-jump ${active || finalActive ? "active" : ""}"
-            data-index="${i}"
-            type="button"
-          >
-            <div class="path-step">
-              Step ${i + 1}
-            </div>
-
-            <div class="path-question">
-              ${esc(x.question)}
-            </div>
-
-            <div class="path-answer">
-              → ${esc(x.answer)}
-            </div>
+          <button class="path-jump ${active || finalActive ? "active" : ""}" data-index="${i}" type="button">
+            <div class="path-step">Step ${i + 1}</div>
+            <div class="path-question">${esc(x.question)}</div>
+            <div class="path-answer">→ ${esc(x.answer)}</div>
           </button>
         </div>
       `;
     }).join("");
 
     box.querySelectorAll(".path-jump").forEach(btn => {
-      btn.addEventListener("click", () => {
-        jumpTo(Number(btn.dataset.index));
-      });
+      btn.addEventListener("click", () => { jumpTo(Number(btn.dataset.index)); });
     });
   }
 
@@ -194,9 +154,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     progress();
     renderPath();
     updateRecommendation(text, true);
-    // Static JavaScript references generate the three outputs.
-    // Do not call the old Firestore template loader here because it clears
-    // the generated values and replaces them with blank values.
+
     window.dispatchEvent(new CustomEvent("guide-final-recommendation", {
       detail: {
         guideId: GUIDE_CONFIG.id,
@@ -276,9 +234,7 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     $("startContinue")?.addEventListener("click", () => choice?.click());
     $("saveGuide")?.addEventListener("click", saveGuide);
 
-    /* Reflect the current favorites state on the button */
-    paintSaveGuideButton(isGuideSaved(getGuideFavoriteKey()));
-
+    paintSaveGuideButton();
     progress();
     renderPath();
   }
@@ -295,15 +251,8 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
       return;
     }
 
-    if (key === "start") {
-      renderStart(n);
-      return;
-    }
-
-    if (isFinal(n)) {
-      renderFinal(n);
-      return;
-    }
+    if (key === "start") { renderStart(n); return; }
+    if (isFinal(n)) { renderFinal(n); return; }
 
     const idx = state.path.findIndex(x => x.fromKey === key);
     const prev = state.path.findIndex(x => x.nextKey === key);
@@ -319,15 +268,12 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
         </div>
       </button>`).join("");
 
-   const imageList = Array.isArray(n.images)
-  ? n.images
-  : (n.image ? [n.image] : []);
-
-const image = imageList.length
-  ? `<div class="question-images">${imageList.map((src, idx) =>
-      `<div class="question-image" data-image-index="${idx}"><img src="${esc(src)}" alt="Guide reference image" loading="lazy"></div>`
-    ).join("")}</div>`
-  : "";
+    const imageList = Array.isArray(n.images) ? n.images : (n.image ? [n.image] : []);
+    const image = imageList.length
+      ? `<div class="question-images">${imageList.map((src, idx) =>
+          `<div class="question-image" data-image-index="${idx}"><img src="${esc(src)}" alt="Guide reference image" loading="lazy"></div>`
+        ).join("")}</div>`
+      : "";
 
     $("stageCard").innerHTML = `
       <div class="stage-top">
@@ -359,8 +305,8 @@ const image = imageList.length
     $("inlineBack").onclick = goBack;
     $("inlineRestart").onclick = restart;
     $("stageCard").querySelectorAll(".question-image").forEach(el => {
-  el.onclick = () => openImageModal(imageList[Number(el.dataset.imageIndex)]);
-});
+      el.onclick = () => openImageModal(imageList[Number(el.dataset.imageIndex)]);
+    });
     $("stageCard").querySelectorAll(".choice").forEach(btn => btn.addEventListener("click", () => choose(btn, n)));
 
     progress();
@@ -373,84 +319,38 @@ const image = imageList.length
     const action = btn.dataset.action;
     const note = btn.dataset.note;
 
-    /*
-     * The INTRO / START screen is not part of the
-     * decision path.
-     *
-     * Therefore clicking "Continue" from the intro
-     * should NOT create a Selected Path step.
-     */
     if (state.currentKey === "start") {
         state.currentKey = next;
         state.finalText = "";
         clearTemplates();
         updateRecommendation("", false);
-
         renderNode(next);
         return;
     }
 
-    /*
-     * If the user changes an earlier decision,
-     * remove everything after that decision.
-     */
-    const existing = state.path.findIndex(
-        x => x.fromKey === state.currentKey
-    );
+    const existing = state.path.findIndex(x => x.fromKey === state.currentKey);
+    if (existing >= 0) state.path = state.path.slice(0, existing);
 
-    if (existing >= 0) {
-        state.path = state.path.slice(0, existing);
-    }
+    const reached = state.path.findIndex(x => x.nextKey === state.currentKey);
+    if (existing < 0 && reached >= 0) state.path = state.path.slice(0, reached + 1);
 
-    /*
-     * Prevent duplicate / stale path entries when
-     * navigating back into an existing branch.
-     */
-    const reached = state.path.findIndex(
-        x => x.nextKey === state.currentKey
-    );
+    state.history.push({ key: state.currentKey, path: [...state.path] });
 
-    if (existing < 0 && reached >= 0) {
-        state.path = state.path.slice(0, reached + 1);
-    }
-
-    /*
-     * Save history before adding the new decision.
-     */
-    state.history.push({
-        key: state.currentKey,
-        path: [...state.path]
-    });
-
-    /*
-     * Add ONLY real decision steps.
-     *
-     * The "start" intro never reaches this section.
-     */
     state.path.push({
         question: nodeText(node),
         answer: label,
         fromKey: state.currentKey,
         nextKey: action ? "__final__" : next,
-        finalNode: action
-            ? { action, note }
-            : null
+        finalNode: action ? { action, note } : null
     });
 
     btn.classList.add("selected");
-
     progress();
     renderPath();
 
-    /*
-     * Continue to the selected answer.
-     */
     setTimeout(() => {
-        if (action) {
-            renderFinal({ action, note });
-        } else {
-            renderNode(next);
-        }
+        if (action) renderFinal({ action, note });
+        else renderNode(next);
     }, 100);
 }
 
@@ -483,103 +383,41 @@ const image = imageList.length
     state.history = [];
     state.finalText = "";
     state.pathExpanded = false;
-state.currentKey = GUIDE_CONFIG.startNode || "start";
-clearTemplates();
-updateRecommendation("", false);
-renderNode(GUIDE_CONFIG.startNode || "start");
+    state.currentKey = GUIDE_CONFIG.startNode || "start";
+    clearTemplates();
+    updateRecommendation("", false);
+    renderNode(GUIDE_CONFIG.startNode || "start");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-function jumpTo(i) {
+  function jumpTo(i) {
     const x = state.path[i];
     if (!x) return;
-
     state.path = state.path.slice(0, i + 1);
     state.finalText = "";
     clearTemplates();
     updateRecommendation("", false);
-
     renderNode(x.fromKey);
-}
+  }
 
 
   /* =========================================================
-     FAVORITES (shared with the dashboard + All Guides page)
-
-     Storage: localStorage["guideFavorites"]
-       {
-         "<canonical guide url>": {
-           title:     "Debtor Update per BOL",
-           url:       "<canonical guide url>",
-           timestamp: 1730000000000
-         },
-         ...
-       }
-
-     The key is normalized so that %20 and ' ' collapse to the
-     same value regardless of which form the browser returned
-     on a given load.
+     FAVORITES — via GuideStore
      ========================================================= */
 
-  function getGuideFavoriteKey() {
-    let raw = "";
-    try { raw = window.location.href || ""; } catch (e) { return ""; }
-    if (!raw) return "";
-
-    try {
-      const u = new URL(raw);
-
-      /* Canonicalize every path segment to %-encoded form
-         so "Billing Dispute Guides" and "Billing%20Dispute%20Guides"
-         both map to the same key. */
-      const path = u.pathname
-        .split("/")
-        .map(function (seg) {
-          try { return encodeURIComponent(decodeURIComponent(seg)); }
-          catch (e) { return seg; }
-        })
-        .join("/");
-
-      return u.origin + path;
-    } catch (e) {
-      /* Fallback: strip hash + query so at least it's stable. */
-      return String(raw).split("#")[0].split("?")[0];
-    }
+  function getCurrentGuideUrl() {
+    if (Store) return Store.canonicalGuideUrl(window.location.href);
+    return window.location.href;
   }
 
-  function readFavorites() {
-    try {
-      const raw = localStorage.getItem("guideFavorites");
-      if (!raw) return {};
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        return parsed;
-      }
-      return {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function writeFavorites(favs) {
-    try {
-      localStorage.setItem("guideFavorites", JSON.stringify(favs));
-      return true;
-    } catch (e) {
-      console.error("Could not write favorites to localStorage:", e);
-      return false;
-    }
-  }
-
-  function isGuideSaved(key) {
-    if (!key) return false;
-    const favs = readFavorites();
-    return !!favs[key];
-  }
-
-  function paintSaveGuideButton(saved) {
+  function paintSaveGuideButton() {
     const btn = $("saveGuide");
     if (!btn) return;
+
+    const saved = Store
+      ? Store.isFavorite(window.location.href)
+      : false;
+
     btn.innerHTML = saved
       ? '<i class="fa-solid fa-star"></i> Saved'
       : '<i class="fa-regular fa-star"></i> Save Guide';
@@ -587,42 +425,33 @@ function jumpTo(i) {
   }
 
   function saveGuide() {
-    const key = getGuideFavoriteKey();
-    if (!key) {
-      showToast("Could not determine this guide's address.");
-      return;
-    }
-
     const title =
       GUIDE_CONFIG.title ||
       document.querySelector(".guide-hero-copy h1")?.textContent?.trim() ||
       document.title ||
       "Decision Guide";
 
-    const favs = readFavorites();
-    let added;
+    let added = false;
 
-    if (favs[key]) {
-      delete favs[key];
-      added = false;
+    if (Store) {
+      added = Store.toggleFavorite(title, window.location.href);
     } else {
-      favs[key] = { title: title, url: key, timestamp: Date.now() };
-      added = true;
+      /* fallback: same canonicalizer inline */
+      try {
+        const u = new URL(window.location.href);
+        const key = u.origin + u.pathname.split("/").map(function (s) {
+          try { return encodeURIComponent(decodeURIComponent(s)); }
+          catch (e) { return s; }
+        }).join("/");
+
+        const favs = JSON.parse(localStorage.getItem("guideFavorites") || "{}");
+        if (favs[key]) { delete favs[key]; added = false; }
+        else { favs[key] = { title: title, url: key, timestamp: Date.now() }; added = true; }
+        localStorage.setItem("guideFavorites", JSON.stringify(favs));
+      } catch (e) { added = false; }
     }
 
-    const ok = writeFavorites(favs);
-
-    /* Verify the write by reading it back. */
-    const verified = ok && !!readFavorites()[key] === added;
-
-    if (!verified) {
-      console.error("Favorite was not persisted.", { key: key, added: added });
-      showToast("Could not save — please try again.");
-      paintSaveGuideButton(false);
-      return;
-    }
-
-    paintSaveGuideButton(added);
+    paintSaveGuideButton();
     showToast(added ? "Added to Favorites" : "Removed from Favorites");
   }
 
@@ -636,10 +465,6 @@ function jumpTo(i) {
     window.__guideToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
   }
 
-  /*
-   * Default destinations for the three "Open …" buttons in the
-   * Suggested Templates card.
-   */
   const DEFAULT_TEMPLATE_LINKS = {
     "Open FBC Comments": "fbc-comments-guide.html",
     "Open CORR Code":    "correction-code.html",
@@ -655,10 +480,7 @@ function jumpTo(i) {
 
     document.querySelectorAll(".template-link").forEach((button) => {
       button.addEventListener("click", () => {
-        const label = (button.textContent || "")
-          .replace(/\s+/g, " ")
-          .trim();
-
+        const label = (button.textContent || "").replace(/\s+/g, " ").trim();
         const target =
           (button.dataset.target && button.dataset.target.trim()) ||
           DEFAULT_TEMPLATE_LINKS[label] ||
@@ -710,11 +532,7 @@ function init() {
       if (event.target.id === "imageModal") closeImageModal();
     });
 
-    /* If this page was restored from bfcache (back/forward navigation),
-       re-paint the Save button so it reflects any changes made elsewhere. */
-    window.addEventListener("pageshow", () => {
-      paintSaveGuideButton(isGuideSaved(getGuideFavoriteKey()));
-    });
+    window.addEventListener("pageshow", () => { paintSaveGuideButton(); });
 
     window.guideEngine = {
       restart,
