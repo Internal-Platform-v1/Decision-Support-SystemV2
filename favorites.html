@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Favorites | BD Tools</title>
 
-  <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="assets/css/page-loader.css" />
 
   <script>
@@ -79,7 +79,10 @@
       <section class="section my-guides-section">
         <div class="section-heading">
           <h2><span class="heading-bar"></span><span id="libraryTitle">Favorites</span></h2>
-          <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
+          <div class="panel-actions">
+            <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
+            <button class="panel-clear" type="button" data-clear-all="view" title="Clear all (testing)">Clear All</button>
+          </div>
         </div>
 
         <p id="resultsText" class="library-results">Showing 0 guides</p>
@@ -97,10 +100,10 @@
     <div id="footer-placeholder"></div>
   </div>
 
-<script src="shared/include.js"></script>
-<script src="assets/js/guide-store.js"></script>
-<script src="assets/js/my-guides.js"></script>
-<script src="assets/js/page-loader.js"></script>
+  <script src="shared/include.js"></script>
+  <script src="assets/js/guide-store.js"></script>
+  <script src="assets/js/my-guides.js"></script>
+  <script src="assets/js/page-loader.js"></script>
 
   <script>
     window.bdToolsUserReady = function () {
