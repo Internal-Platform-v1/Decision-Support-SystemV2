@@ -381,13 +381,6 @@ button { cursor: pointer; }
     padding: 0;
 }
 .star.active { color: #ffb414; }
-.recent-icon {
-    width: 20px; height: 20px;
-    border-radius: 5px;
-    background: #f0e7ff; color: #6d20d5;
-    display: grid; place-items: center;
-}
-.recent-icon .document-icon { width: 10px; height: 13px; }
 .recent-time {
     font-size: 10px; color: #8c8da7;
     width: 57px; text-align: right;
@@ -475,157 +468,23 @@ button { cursor: pointer; }
 }
 
 /* ============================================================
-   MY GUIDES PAGES (Most Used / Recent Activity / Favorites)
-   ============================================================ */
-.my-guides-section {
-    padding: 24px 5.6% 24px;
-}
-
-.my-guides-section .section-heading {
-    margin-bottom: 14px;
-}
-
-.my-guides-back {
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.my-guides-panel {
-    min-height: 420px;
-    padding: 12px 18px 10px;
-}
-
-.my-guides-panel .list-row {
-    height: 40px;
-    font-size: 11px;
-}
-
-.my-guides-panel .rank {
-    width: 30px;
-    height: 22px;
-    font-size: 9px;
-}
-
-.my-guides-panel .recent-time {
-    font-size: 10px;
-    width: auto;
-    min-width: 57px;
-}
-
-/* ============================================================
-   MY GUIDES PAGES — list-row style in a 3-column grid
-   ============================================================ */
-.my-guides-section {
-  padding: 22px 5.6% 28px;
-}
-
-.my-guides-section .section-heading {
-  margin-bottom: 4px;
-}
-
-.my-guides-section .library-results {
-  font-size: 10px;
-  color: #8c8da7;
-  margin: 0 0 16px;
-}
-
-.my-guides-back {
-  text-decoration: none;
-}
-
-.my-guides-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.my-guides-grid .list-row {
-  height: auto;
-  min-height: 48px;
-  padding: 10px 14px;
-  border: 1px solid #e8e9f1;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(41,32,94,.035);
-  font-size: 11px;
-  gap: 10px;
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-}
-
-.my-guides-grid .list-row:last-child {
-  border-bottom: 1px solid #e8e9f1;
-}
-
-.my-guides-grid .list-row.clickable:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(41,32,94,.08);
-  border-color: #d8d5ef;
-  cursor: pointer;
-}
-
-.my-guides-grid .rank { width: 30px; height: 22px; font-size: 9px; }
-.my-guides-grid .star { width: 20px; font-size: 17px; }
-.my-guides-grid .recent-icon { width: 24px; height: 24px; }
-.my-guides-grid .recent-time { width: auto; min-width: 60px; font-size: 10px; }
-
-.stat-card[data-view] {
-  cursor: pointer;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-}
-.stat-card[data-view]:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(41,32,94,.09);
-}
-.stat-card[data-view].active {
-  border-color: #6b25df;
-  box-shadow: 0 0 0 2px rgba(107,37,223,.12), var(--shadow);
-}
-
-@media (max-width: 1000px) {
-  .my-guides-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 700px) {
-  .my-guides-grid { grid-template-columns: 1fr; }
-}
-
-/* ============================================================
-   RECENT ACTIVITY — inline SVG document icon
-   ============================================================ */
-.recent-icon svg {
-  width: 11px;
-  height: 13px;
-  display: block;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.my-guides-grid .recent-icon svg {
-  width: 13px;
-  height: 15px;
-}
-
-/* ============================================================
-   RECENT ACTIVITY — per-category icon (matches group / all-guides)
+   RECENT ACTIVITY — per-guide icon chip
+   Category colors + Font Awesome glyphs (mirrors group pages)
    ============================================================ */
 .recent-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
-  background: #f1eaff;
-  color: #7131dc;
-  flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    background: #f1eaff;
+    color: #7131dc;
+    flex: 0 0 auto;
 }
 
 .recent-icon i {
-  font-size: 11px;
-  line-height: 1;
+    font-size: 11px;
+    line-height: 1;
 }
 
 .recent-icon.purple { background: #f1eaff; color: #7131dc; }
@@ -635,12 +494,83 @@ button { cursor: pointer; }
 .recent-icon.indigo { background: #eef0ff; color: #4a56d6; }
 .recent-icon.pink   { background: #ffeaf0; color: #ec3970; }
 
-.my-guides-grid .recent-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
+/* Icon inside .rank (Most Used page) */
+.rank i { font-size: 10px; line-height: 1; }
+
+/* ============================================================
+   MY GUIDES PAGES (Most Used / Recent Activity / Favorites)
+   ============================================================ */
+.my-guides-section {
+    padding: 22px 5.6% 28px;
 }
 
-.my-guides-grid .recent-icon i {
-  font-size: 12px;
+.my-guides-section .section-heading {
+    margin-bottom: 4px;
+}
+
+.my-guides-section .library-results {
+    font-size: 10px;
+    color: #8c8da7;
+    margin: 0 0 16px;
+}
+
+.my-guides-back {
+    text-decoration: none;
+}
+
+.my-guides-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.my-guides-grid .list-row {
+    height: auto;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid #e8e9f1;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(41,32,94,.035);
+    font-size: 11px;
+    gap: 10px;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.my-guides-grid .list-row:last-child {
+    border-bottom: 1px solid #e8e9f1;
+}
+
+.my-guides-grid .list-row.clickable:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(41,32,94,.08);
+    border-color: #d8d5ef;
+    cursor: pointer;
+}
+
+.my-guides-grid .rank      { width: 30px; height: 22px; font-size: 9px; }
+.my-guides-grid .star      { width: 20px; font-size: 17px; }
+.my-guides-grid .recent-icon { width: 26px; height: 26px; border-radius: 7px; }
+.my-guides-grid .recent-icon i { font-size: 12px; }
+.my-guides-grid .recent-time { width: auto; min-width: 60px; font-size: 10px; }
+
+/* Highlight state for the 3 hero cards (Most Used / Recent / Favorites) */
+.stat-card[data-view] {
+    cursor: pointer;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.stat-card[data-view]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(41,32,94,.09);
+}
+.stat-card[data-view].active {
+    border-color: #6b25df;
+    box-shadow: 0 0 0 2px rgba(107,37,223,.12), var(--shadow);
+}
+
+@media (max-width: 1000px) {
+    .my-guides-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+    .my-guides-grid { grid-template-columns: 1fr; }
 }
