@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 /* =========================================================
    BD TOOLS — MAIN DASHBOARD JS
-   Reads all data through GuideStore (canonical + dedup).
    ========================================================= */
 
 "use strict";
@@ -38,9 +37,13 @@ const Store = window.GuideStore;
 const TOTAL_GUIDE_COUNT = 75;
 const TOTAL_TOOLS_COUNT = 6;
 
+const LS_USAGE   = "guideUsageCounts";
+const LS_HISTORY = "guideHistory";
+const LS_FAVS    = "guideFavorites";
+
 
 /* ---------------------------------------------------------
-   Fallbacks — used only if GuideStore is not loaded
+   Storage helpers (fallback)
    --------------------------------------------------------- */
 
 function readJSONFallback(key, fallback) {
@@ -58,7 +61,7 @@ function writeJSONFallback(key, value) {
 
 
 /* ---------------------------------------------------------
-   Per-guide icon — mirrors all-guides.js CATALOG
+   Per-guide icon
    --------------------------------------------------------- */
 
 function guideIconFromUrl(url) {
@@ -184,15 +187,14 @@ function escapeAttr(value) {
 
 
 /* ---------------------------------------------------------
-   Data reads — via GuideStore when available
+   Data reads (via GuideStore when available)
    --------------------------------------------------------- */
 
 function getMostUsedList(limit) {
   let items;
-  if (Store) {
-    items = Store.getMostUsed();
-  } else {
-    const usage = readJSONFallback("guideUsageCounts", {});
+  if (Store) items = Store.getMostUsed();
+  else {
+    const usage = readJSONFallback(LS_USAGE, {});
     items = Object.keys(usage).map(function (url) {
       return { url: url, title: usage[url]?.title || "Untitled Guide", count: Number(usage[url]?.count) || 0 };
     }).sort(function (a, b) { return b.count - a.count; });
@@ -202,10 +204,9 @@ function getMostUsedList(limit) {
 
 function getRecentList(limit) {
   let items;
-  if (Store) {
-    items = Store.getHistory();
-  } else {
-    const h = readJSONFallback("guideHistory", []);
+  if (Store) items = Store.getHistory();
+  else {
+    const h = readJSONFallback(LS_HISTORY, []);
     items = Array.isArray(h) ? h.slice().reverse() : [];
   }
   return limit ? items.slice(0, limit) : items;
@@ -213,10 +214,9 @@ function getRecentList(limit) {
 
 function getFavoriteList(limit) {
   let items;
-  if (Store) {
-    items = Store.getFavoriteList();
-  } else {
-    const f = readJSONFallback("guideFavorites", {});
+  if (Store) items = Store.getFavoriteList();
+  else {
+    const f = readJSONFallback(LS_FAVS, {});
     items = Object.keys(f).map(function (url) {
       return { url: url, title: f[url]?.title || "Untitled Guide", timestamp: Number(f[url]?.timestamp) || 0 };
     });
@@ -224,13 +224,8 @@ function getFavoriteList(limit) {
   return limit ? items.slice(0, limit) : items;
 }
 
-function getFavoritesCount() {
-  return getFavoriteList().length;
-}
-
-function getUniqueHistoryCount() {
-  return getRecentList().length;
-}
+function getFavoritesCount() { return getFavoriteList().length; }
+function getUniqueHistoryCount() { return getRecentList().length; }
 
 
 /* ---------------------------------------------------------
@@ -274,13 +269,14 @@ const recentList    = document.getElementById("recentList");
 const favoritesList = document.getElementById("favoritesList");
 
 function renderLists() {
+
   /* ---- Most Used ---- */
   if (mostUsedList) {
     const items = getMostUsedList(5);
     if (!items.length) {
       mostUsedList.innerHTML = '<div class="list-row"><span class="row-name">No usage yet — open a guide to start tracking.</span></div>';
     } else {
-      mostUsedList.innerHTML = items.map(function (g, i) {
+      mostUsedList.innerHTML = items.map(function (g) {
         const cat = categoryFromUrl(g.url);
         const icon = guideIconFromUrl(g.url);
         return (
@@ -353,15 +349,15 @@ function trackAndOpen(url, title) {
   if (Store) {
     Store.trackOpen(title, url);
   } else {
-    const h = readJSONFallback("guideHistory", []);
+    const h = readJSONFallback(LS_HISTORY, []);
     h.push({ title: title || "Untitled Guide", url: url, timestamp: Date.now() });
     if (h.length > 100) h.splice(0, h.length - 100);
-    writeJSONFallback("guideHistory", h);
+    writeJSONFallback(LS_HISTORY, h);
 
-    const u = readJSONFallback("guideUsageCounts", {});
+    const u = readJSONFallback(LS_USAGE, {});
     if (!u[url]) u[url] = { title: title || "Untitled Guide", count: 0 };
     u[url].count = (Number(u[url].count) || 0) + 1;
-    writeJSONFallback("guideUsageCounts", u);
+    writeJSONFallback(LS_USAGE, u);
   }
 
   window.location.href = url;
@@ -374,10 +370,10 @@ function toggleFavorite(url, title) {
   if (Store) {
     added = Store.toggleFavorite(title, url);
   } else {
-    const favs = readJSONFallback("guideFavorites", {});
+    const favs = readJSONFallback(LS_FAVS, {});
     if (favs[url]) { delete favs[url]; added = false; }
     else { favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() }; added = true; }
-    writeJSONFallback("guideFavorites", favs);
+    writeJSONFallback(LS_FAVS, favs);
   }
 
   showToast(added ? "Added to Favorites" : "Removed from Favorites");
@@ -404,14 +400,11 @@ function openGuide(name) {
   showToast("Opening " + name);
 }
 
-function openGuideLibrary() {
-  window.location.href = "all-guides.html";
-}
+function openGuideLibrary() { window.location.href = "all-guides.html"; }
 window.openGuideLibrary = openGuideLibrary;
 
 document.querySelectorAll(".quick-card").forEach(function (card) {
   function activate() { openGuide(card.dataset.guide); }
-
   card.addEventListener("click", function (event) {
     if (event.target.closest(".arrow-btn")) event.stopPropagation();
     activate();
@@ -441,10 +434,11 @@ document.addEventListener("bdtools:explore-guides", function () { openGuideLibra
 
 
 /* ---------------------------------------------------------
-   Delegated click
+   Delegated click — stars + rows only (no clears on dashboard)
    --------------------------------------------------------- */
 
 document.addEventListener("click", function (event) {
+
   const fav = event.target.closest(".star");
   if (fav) {
     event.preventDefault();
@@ -507,7 +501,6 @@ document.addEventListener("bdtools:search", function (event) {
 });
 
 
-/* Re-render on bfcache restore + cross-tab sync */
 window.addEventListener("pageshow", function () {
   if (document.getElementById("mostUsedList") ||
       document.getElementById("recentList") ||
@@ -517,9 +510,7 @@ window.addEventListener("pageshow", function () {
 });
 
 window.addEventListener("storage", function (event) {
-  if (event.key === "guideUsageCounts" ||
-      event.key === "guideHistory" ||
-      event.key === "guideFavorites") {
+  if (event.key === LS_USAGE || event.key === LS_HISTORY || event.key === LS_FAVS) {
     renderLists();
   }
 });
