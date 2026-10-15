@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Most Used Guides | BD Tools</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/page-loader.css" />
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
+</head>
+<body data-view="most-used" data-waits-for-user="true">
+
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading BD Tools…</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <div id="header-placeholder"></div>
+
+    <main>
+      <section class="section my-guides-section">
+        <div class="section-heading">
+          <h2><span class="heading-bar"></span><span id="pageTitle">Most Used Guides</span></h2>
+          <a class="view-all my-guides-back" href="index.html">← Back to Dashboard</a>
+        </div>
+
+        <div class="panel my-guides-panel">
+          <div id="myGuidesList" class="list my-guides-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+  </div>
+
+  <script src="shared/include.js"></script>
+  <script src="assets/js/my-guides.js"></script>
+  <script src="assets/js/page-loader.js"></script>
+</body>
+</html>
