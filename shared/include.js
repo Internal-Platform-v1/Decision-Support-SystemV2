@@ -444,3 +444,16 @@
 
 
 })();
+
+
+/* ------------------------------------------------------------
+   Auto-inject GuideStore on every page.
+   Runs synchronously, BEFORE include.js does anything else,
+   so guide-store.js is available to every page script.
+   ------------------------------------------------------------ */
+(function () {
+  if (!window.__guideStoreInjected) {
+    window.__guideStoreInjected = true;
+    document.write('<script src="assets/js/guide-store.js"><\/script>');
+  }
+})();
