@@ -784,6 +784,13 @@
                 const target = this.getAttribute("data-guide-url");
                 if (!target) return;
 
+                const titleEl = this.querySelector(".global-search-result-copy strong");
+                const title = titleEl ? titleEl.textContent.trim() : "Untitled Guide";
+
+                if (window.GuideStore) {
+                    window.GuideStore.trackOpen(title, target);
+                }
+
                 ui.panel.classList.remove("open");
                 ui.root.classList.remove("has-results");
                 window.location.href = target;
@@ -814,7 +821,10 @@
         const results = searchGlobalGuides(query);
         renderSearchResults(query, results);
 
-        if (openFirstOnEnter && results[0]) {
+               if (openFirstOnEnter && results[0]) {
+            if (window.GuideStore) {
+                window.GuideStore.trackOpen(results[0].title, results[0].url);
+            }
             window.location.href = results[0].url;
         }
 
