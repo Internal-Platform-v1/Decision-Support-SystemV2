@@ -272,7 +272,7 @@ function renderLists() {
 
   /* ---- Most Used ---- */
   if (mostUsedList) {
-    const items = getMostUsedList(5);
+    const items = getMostUsedList();          /* was: getMostUsedList(5) */
     if (!items.length) {
       mostUsedList.innerHTML = '<div class="list-row"><span class="row-name">No usage yet — open a guide to start tracking.</span></div>';
     } else {
@@ -293,7 +293,7 @@ function renderLists() {
 
   /* ---- Recent ---- */
   if (recentList) {
-    const items = getRecentList(5);
+    const items = getRecentList();            /* was: getRecentList(5) */
     if (!items.length) {
       recentList.innerHTML = '<div class="list-row"><span class="row-name">Nothing here yet — your recently opened guides will appear here.</span></div>';
     } else {
@@ -314,7 +314,7 @@ function renderLists() {
 
   /* ---- Favorites ---- */
   if (favoritesList) {
-    const items = getFavoriteList(5);
+    const items = getFavoriteList();          /* was: getFavoriteList(5) */
     if (!items.length) {
       favoritesList.innerHTML = '<div class="list-row"><span class="row-name">No favorites yet — click the ☆ on any guide to save it.</span></div>';
     } else {
