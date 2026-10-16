@@ -748,7 +748,7 @@ button { cursor: pointer; }
    their panel instead of growing the page.
    ============================================================ */
 .panel .list {
-    max-height: 200px;         /* ~6 rows at 31px each */
+    max-height: 155px;         /* ~6 rows at 31px each */
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 4px;        /* room for the scrollbar */
