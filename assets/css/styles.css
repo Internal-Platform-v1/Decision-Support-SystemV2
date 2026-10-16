@@ -784,3 +784,33 @@ button { cursor: pointer; }
 .my-guides-grid .open-count i {
   font-size: 8px;
 }
+
+/* ============================================================
+   DASHBOARD PANELS — internal vertical scroll
+   Most Used / Recent Activity / Favorites lists scroll inside
+   their panel instead of growing the page.
+   ============================================================ */
+.panel .list {
+  max-height: 200px;         /* ~6 rows at 31px each */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;        /* room for the scrollbar */
+
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #d9d5e6 transparent;
+}
+
+.panel .list::-webkit-scrollbar {
+  width: 8px;
+}
+.panel .list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.panel .list::-webkit-scrollbar-thumb {
+  background: #d9d5e6;
+  border-radius: 999px;
+}
+.panel .list::-webkit-scrollbar-thumb:hover {
+  background: #c4bfd9;
+}
