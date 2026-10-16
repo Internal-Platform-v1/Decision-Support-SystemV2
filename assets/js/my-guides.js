@@ -314,11 +314,16 @@
     const cat = categoryFor(item.url);
     const icon = guideIconFromUrl(item.url);
     const isFav = Store ? Store.isFavorite(item.url) : false;
+    const count = Number(item.count) || 0;
+    const countLabel = count + " " + (count === 1 ? "open" : "opens");
 
     return (
       '<div class="list-row clickable" data-url="' + escapeAttr(item.url) + '" data-name="' + escapeAttr(item.title) + '">' +
         '<span class="rank ' + cat.color + '" aria-hidden="true"><i class="fa-solid ' + icon + '"></i></span>' +
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
+        '<span class="open-count" title="' + escapeAttr(countLabel) + '">' +
+          '<i class="fa-solid fa-arrow-pointer"></i>' + count + '×' +
+        '</span>' +
         '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' + escapeAttr(cat.tag) + '</span>' +
         '<button class="star' + (isFav ? " active" : "") + '" type="button" aria-label="Favorite" data-fav-url="' + escapeAttr(item.url) + '">' + (isFav ? "★" : "☆") + '</button>' +
         '<button class="row-clear" type="button" aria-label="Remove" title="Clear" data-clear-row="usage" data-clear-url="' + escapeAttr(item.url) + '">×</button>' +
