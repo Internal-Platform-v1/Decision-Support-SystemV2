@@ -125,15 +125,20 @@
      VIEW ALL GUIDES
      ============================================================ */
 
-  function initViewAll() {
-    const buttons = document.querySelectorAll('[data-action="view-all"]');
+function initViewAll() {
+  const buttons = document.querySelectorAll('[data-action="view-all"]');
 
-    buttons.forEach(function (button) {
-      button.addEventListener("click", function () {
-        window.location.href = "../../all-guides.html";
-      });
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      // <base href="../../"> already points at the site root.
+      // Resolve "all-guides.html" against it instead of adding more "..".
+      const target = new URL("all-guides.html", document.baseURI).href;
+      window.location.href = target;
     });
-  }
+  });
+}
 
 
   /* ============================================================
