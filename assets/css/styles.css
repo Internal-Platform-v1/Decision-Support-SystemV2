@@ -661,128 +661,85 @@ button { cursor: pointer; }
    CLEAR CONTROLS — testing helpers (View All pages only)
    ============================================================ */
 .panel-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .panel-clear {
-  border: 0;
-  background: transparent;
-  color: #b0b1c2;
-  font-size: 8px;
-  font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: color .15s ease, background .15s ease;
+    border: 0;
+    background: transparent;
+    color: #b0b1c2;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: color .15s ease, background .15s ease;
 }
 .panel-clear:hover {
-  color: #c81e3a;
-  background: #fdeef1;
-}
-
-.row-clear {
-  border: 0;
-  background: transparent;
-  color: #c5c7d5;
-  font-size: 13px;
-  line-height: 1;
-  padding: 0 2px;
-  cursor: pointer;
-  flex: 0 0 auto;
-  opacity: 0;
-  transition: opacity .15s ease, color .15s ease;
-  font-family: inherit;
-}
-.list-row:hover .row-clear {
-  opacity: 1;
-}
-.row-clear:hover {
-  color: #c81e3a;
-}
-.my-guides-grid .row-clear {
-  font-size: 15px;
-}
-
-/* ============================================================
-   CLEAR CONTROLS — testing helpers (View All pages only)
-   ============================================================ */
-.panel-clear {
-  border: 0;
-  background: transparent;
-  color: #b0b1c2;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: color .15s ease, background .15s ease;
-}
-.panel-clear:hover {
-  color: #c81e3a;
-  background: #fdeef1;
+    color: #c81e3a;
+    background: #fdeef1;
 }
 
 /* Standalone Clear All bar under the grid */
 .my-guides-clear-bar {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
 }
 
 .row-clear {
-  border: 0;
-  background: transparent;
-  color: #c5c7d5;
-  font-size: 13px;
-  line-height: 1;
-  padding: 0 2px;
-  cursor: pointer;
-  flex: 0 0 auto;
-  opacity: 0;
-  transition: opacity .15s ease, color .15s ease;
-  font-family: inherit;
+    border: 0;
+    background: transparent;
+    color: #c5c7d5;
+    font-size: 13px;
+    line-height: 1;
+    padding: 0 2px;
+    cursor: pointer;
+    flex: 0 0 auto;
+    opacity: 0;
+    transition: opacity .15s ease, color .15s ease;
+    font-family: inherit;
 }
 .list-row:hover .row-clear {
-  opacity: 1;
+    opacity: 1;
 }
 .row-clear:hover {
-  color: #c81e3a;
+    color: #c81e3a;
 }
 .my-guides-grid .row-clear {
-  font-size: 15px;
+    font-size: 15px;
 }
 
 /* ============================================================
    MOST USED — open count badge
    ============================================================ */
 .open-count {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 3px 7px;
-  border-radius: 10px;
-  background: #f1eaff;
-  color: #6c24cf;
-  font-size: 7px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  flex: 0 0 auto;
-  white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 7px;
+    border-radius: 10px;
+    background: #f1eaff;
+    color: #6c24cf;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 .open-count i {
-  font-size: 7px;
-  opacity: 0.75;
+    font-size: 7px;
+    opacity: 0.75;
 }
 .my-guides-grid .open-count {
-  font-size: 9px;
-  padding: 3px 8px;
+    font-size: 9px;
+    padding: 3px 8px;
 }
 .my-guides-grid .open-count i {
-  font-size: 8px;
+    font-size: 8px;
 }
 
 /* ============================================================
@@ -791,26 +748,26 @@ button { cursor: pointer; }
    their panel instead of growing the page.
    ============================================================ */
 .panel .list {
-  max-height: 200px;         /* ~6 rows at 31px each */
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;        /* room for the scrollbar */
+    max-height: 200px;         /* ~6 rows at 31px each */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;        /* room for the scrollbar */
 
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #d9d5e6 transparent;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #d9d5e6 transparent;
 }
 
 .panel .list::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 .panel .list::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 .panel .list::-webkit-scrollbar-thumb {
-  background: #d9d5e6;
-  border-radius: 999px;
+    background: #d9d5e6;
+    border-radius: 999px;
 }
 .panel .list::-webkit-scrollbar-thumb:hover {
-  background: #c4bfd9;
+    background: #c4bfd9;
 }
