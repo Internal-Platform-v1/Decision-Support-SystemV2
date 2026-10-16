@@ -755,3 +755,32 @@ button { cursor: pointer; }
 .my-guides-grid .row-clear {
   font-size: 15px;
 }
+
+/* ============================================================
+   MOST USED — open count badge
+   ============================================================ */
+.open-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: #f1eaff;
+  color: #6c24cf;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.open-count i {
+  font-size: 7px;
+  opacity: 0.75;
+}
+.my-guides-grid .open-count {
+  font-size: 9px;
+  padding: 3px 8px;
+}
+.my-guides-grid .open-count i {
+  font-size: 8px;
+}
