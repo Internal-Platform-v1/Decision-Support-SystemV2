@@ -1,6 +1,8 @@
 /* ============================================================
    MY GUIDES — Most Used / Recent Activity / Favorites
-   Reads through GuideStore for canonical URLs + dedup.
+   Uses GuideStore for canonical URLs + dedup.
+   Includes testing clear controls (row × and Clear All).
+   Clear handlers use document-level delegation so they always fire.
    ============================================================ */
 
 (function () {
@@ -9,10 +11,20 @@
   const Store = window.GuideStore;
   const VIEW = document.body.dataset.view || "most-used";
 
+  const LS_USAGE   = "guideUsageCounts";
+  const LS_HISTORY = "guideHistory";
+  const LS_FAVS    = "guideFavorites";
+
   const META = {
     "most-used": { pageTitle: "Most Used Guides", empty: "No usage yet — open a guide to start tracking." },
     "recent":    { pageTitle: "Recent Activity",  empty: "Nothing here yet — your recently opened guides will appear here." },
     "favorites": { pageTitle: "Favorites",        empty: "No favorites yet — click the ☆ on any guide to save it here." }
+  };
+
+  const VIEW_TO_WHICH = {
+    "most-used": "usage",
+    "recent":    "history",
+    "favorites": "favorites"
   };
 
 
@@ -27,12 +39,23 @@
     } catch (e) { return fallback; }
   }
 
+  function writeJSON(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
   function escapeAttr(v) {
     return String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
   }
 
   function normalize(v) {
     return String(v || "").toLowerCase().replace(/[–—]/g, "-").replace(/\s+/g, " ").trim();
+  }
+
+  function sameGuideUrl(a, b) {
+    if (!a || !b) return false;
+    const ca = Store ? Store.canonicalGuideUrl(a) : a;
+    const cb = Store ? Store.canonicalGuideUrl(b) : b;
+    return ca === cb;
   }
 
   function guideIconFromUrl(url) {
@@ -144,24 +167,35 @@
     return new Date(Number(ts)).toLocaleDateString();
   }
 
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(window.__myGuidesToast);
+    window.__myGuidesToast = setTimeout(function () {
+      toast.classList.remove("show");
+    }, 1600);
+  }
 
-  /* ---------- data (via GuideStore) ---------- */
+
+  /* ---------- data ---------- */
 
   function fallbackMostUsed() {
-    const u = readJSON("guideUsageCounts", {});
+    const u = readJSON(LS_USAGE, {});
     return Object.keys(u).map(function (url) {
       return { url: url, title: u[url]?.title || "Untitled Guide", count: Number(u[url]?.count) || 0 };
     }).sort(function (a, b) { return b.count - a.count; });
   }
 
   function fallbackRecent() {
-    const h = readJSON("guideHistory", []);
+    const h = readJSON(LS_HISTORY, []);
     if (!Array.isArray(h)) return [];
     return h.slice().reverse();
   }
 
   function fallbackFavorites() {
-    const f = readJSON("guideFavorites", {});
+    const f = readJSON(LS_FAVS, {});
     return Object.keys(f).map(function (url) {
       return { url: url, title: f[url]?.title || "Untitled Guide", timestamp: Number(f[url]?.timestamp) || 0 };
     }).sort(function (a, b) { return b.timestamp - a.timestamp; });
@@ -179,20 +213,18 @@
 
   function trackAndOpen(url, title) {
     if (!url) return;
-
     if (Store) {
       Store.trackOpen(title, url);
     } else {
-      const h = readJSON("guideHistory", []);
+      const h = readJSON(LS_HISTORY, []);
       h.push({ title: title || "Untitled Guide", url: url, timestamp: Date.now() });
-      localStorage.setItem("guideHistory", JSON.stringify(h.slice(-100)));
+      writeJSON(LS_HISTORY, h.slice(-100));
 
-      const u = readJSON("guideUsageCounts", {});
+      const u = readJSON(LS_USAGE, {});
       if (!u[url]) u[url] = { title: title || "Untitled Guide", count: 0 };
       u[url].count = (Number(u[url].count) || 0) + 1;
-      localStorage.setItem("guideUsageCounts", JSON.stringify(u));
+      writeJSON(LS_USAGE, u);
     }
-
     window.location.href = url;
   }
 
@@ -200,21 +232,85 @@
     if (!url) return false;
     if (Store) return Store.toggleFavorite(title, url);
 
-    const f = readJSON("guideFavorites", {});
+    const f = readJSON(LS_FAVS, {});
     let added;
     if (f[url]) { delete f[url]; added = false; }
     else { f[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() }; added = true; }
-    localStorage.setItem("guideFavorites", JSON.stringify(f));
+    writeJSON(LS_FAVS, f);
     return added;
   }
 
 
-  /* ---------- state + renderers ---------- */
+  /* ---------- clear helpers ---------- */
+
+  function clearOneRow(which, rawUrl) {
+    if (!rawUrl) return;
+
+    if (which === "usage") {
+      const u = readJSON(LS_USAGE, {});
+      Object.keys(u).forEach(function (k) {
+        if (sameGuideUrl(k, rawUrl)) delete u[k];
+      });
+      writeJSON(LS_USAGE, u);
+      showToast("Removed from Most Used");
+
+    } else if (which === "history") {
+      const h = readJSON(LS_HISTORY, []);
+      if (Array.isArray(h)) {
+        const filtered = h.filter(function (item) {
+          return !(item && sameGuideUrl(item.url, rawUrl));
+        });
+        writeJSON(LS_HISTORY, filtered);
+      }
+      showToast("Removed from Recent");
+
+    } else if (which === "favorites") {
+      const f = readJSON(LS_FAVS, {});
+      Object.keys(f).forEach(function (k) {
+        if (sameGuideUrl(k, rawUrl)) delete f[k];
+      });
+      writeJSON(LS_FAVS, f);
+      showToast("Removed from Favorites");
+    }
+
+    state.items = currentItems();
+    updateCounts();
+    render();
+  }
+
+  function clearAllRows() {
+    const which = VIEW_TO_WHICH[VIEW];
+    if (!which) return;
+
+    const key =
+      which === "usage"     ? LS_USAGE :
+      which === "history"   ? LS_HISTORY :
+      which === "favorites" ? LS_FAVS : "";
+
+    if (!key) return;
+
+    const label = META[VIEW].pageTitle;
+
+    if (!window.confirm("Clear all " + label + "? This cannot be undone.")) return;
+
+    try { localStorage.removeItem(key); } catch (e) {}
+
+    state.items = currentItems();
+    updateCounts();
+    render();
+    showToast("Cleared " + label);
+  }
+
+
+  /* ---------- state ---------- */
 
   const state = { items: [], search: "" };
   const els = {};
 
-  function renderMostUsed(item, index) {
+
+  /* ---------- renderers ---------- */
+
+  function renderMostUsed(item) {
     const cat = categoryFor(item.url);
     const icon = guideIconFromUrl(item.url);
     const isFav = Store ? Store.isFavorite(item.url) : false;
@@ -225,6 +321,7 @@
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
         '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' + escapeAttr(cat.tag) + '</span>' +
         '<button class="star' + (isFav ? " active" : "") + '" type="button" aria-label="Favorite" data-fav-url="' + escapeAttr(item.url) + '">' + (isFav ? "★" : "☆") + '</button>' +
+        '<button class="row-clear" type="button" aria-label="Remove" title="Clear" data-clear-row="usage" data-clear-url="' + escapeAttr(item.url) + '">×</button>' +
       '</div>'
     );
   }
@@ -239,6 +336,7 @@
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
         '<span class="recent-time">' + escapeAttr(relativeTime(item.timestamp)) + '</span>' +
         '<span class="row-chevron">›</span>' +
+        '<button class="row-clear" type="button" aria-label="Remove" title="Clear" data-clear-row="history" data-clear-url="' + escapeAttr(item.url) + '">×</button>' +
       '</div>'
     );
   }
@@ -253,6 +351,7 @@
         '<span class="row-name">' + escapeAttr(item.title) + '</span>' +
         '<span class="tag ' + (cat.color === "orange" ? "orange" : "") + '">' + escapeAttr(cat.tag) + '</span>' +
         '<button class="star active" type="button" aria-label="Remove favorite" data-fav-url="' + escapeAttr(item.url) + '">★</button>' +
+        '<button class="row-clear" type="button" aria-label="Remove" title="Clear" data-clear-row="favorites" data-clear-url="' + escapeAttr(item.url) + '">×</button>' +
       '</div>'
     );
   }
@@ -279,8 +378,8 @@
     if (els.noResults) els.noResults.hidden = true;
 
     if (els.list) {
-      els.list.innerHTML = list.map(function (item, i) {
-        if (VIEW === "most-used") return renderMostUsed(item, i);
+      els.list.innerHTML = list.map(function (item) {
+        if (VIEW === "most-used") return renderMostUsed(item);
         if (VIEW === "recent")    return renderRecent(item);
         if (VIEW === "favorites") return renderFavorites(item);
         return "";
@@ -321,6 +420,7 @@
     updateCounts();
     render();
 
+    /* Hero view-switcher cards */
     document.querySelectorAll(".stat-card[data-view]").forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.view === VIEW);
       btn.addEventListener("click", function () {
@@ -331,6 +431,7 @@
       });
     });
 
+    /* Search */
     const input     = document.getElementById("guideSearch");
     const searchBtn = document.getElementById("searchButton");
 
@@ -343,8 +444,18 @@
     if (searchBtn) searchBtn.addEventListener("click", function () { if (input) { state.search = input.value.trim(); render(); } });
     if (els.clearSearch) els.clearSearch.addEventListener("click", function () { state.search = ""; if (input) input.value = ""; render(); });
 
+    /* Delegated clicks inside the grid */
     if (els.list) {
       els.list.addEventListener("click", function (event) {
+
+        const rowClear = event.target.closest("[data-clear-row]");
+        if (rowClear) {
+          event.preventDefault();
+          event.stopPropagation();
+          clearOneRow(rowClear.dataset.clearRow, rowClear.dataset.clearUrl);
+          return;
+        }
+
         const favBtn = event.target.closest(".star[data-fav-url]");
         if (favBtn) {
           event.preventDefault();
@@ -366,6 +477,19 @@
       });
     }
   }
+
+  /* ============================================================
+     DOCUMENT-LEVEL CLEAR HANDLER
+     Attached ONCE at script load — never gets lost on re-render.
+     ============================================================ */
+  document.addEventListener("click", function (event) {
+    const clearAllBtn = event.target.closest("[data-clear-all]");
+    if (!clearAllBtn) return;
+    event.preventDefault();
+    event.stopPropagation();
+    clearAllRows();
+  });
+
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
