@@ -39,6 +39,7 @@ html { scroll-behavior: smooth; }
   --cg-pastel: #e8f7e7;   --cg-ink: #3e9346;   /* green   */
   --ci-pastel: #eef0ff;   --ci-ink: #4a56d6;   /* indigo  */
   --cp-pastel: #ffeaf0;   --cp-ink: #ec3970;   /* pink    */
+  --cr-pastel: #ffe4e6;   --cr-ink: #d93644;   /* red     */
 
   /* — Bottom accent colors — */
   --acc-purple: #d7c9ff;
@@ -47,6 +48,7 @@ html { scroll-behavior: smooth; }
   --acc-green:  #d0f0d2;
   --acc-indigo: #c5c9ff;
   --acc-pink:   #ffd0df;
+  --acc-red:    #ffc2c5;
 }
 
 /* ============================================================
@@ -660,15 +662,18 @@ img { display: block; max-width: 100%; }
 }
 
 /* ============================================================
-   SIDE CARDS — mirrors .panel from main
+   SIDE CARDS — mirrors .panel, with per-card accent stripe
    ============================================================ */
 .side-card {
+  position: relative;
   border: 1px solid var(--line-2);
+  border-bottom: 2px solid var(--acc-purple);
   border-radius: 8px;
   background: #fff;
   padding: 13px 14px;
   box-shadow: var(--shadow-card);
 }
+
 .side-head {
   display: flex;
   align-items: center;
@@ -688,6 +693,8 @@ img { display: block; max-width: 100%; }
   border-radius: 8px;
   font-size: 11px;
 }
+
+/* Default icon chip = purple (Selected Path) */
 .purple-icon {
   background: var(--ch-pastel);
   color: var(--ch-ink);
@@ -696,11 +703,31 @@ img { display: block; max-width: 100%; }
   background: var(--co-pastel);
   color: var(--co-ink);
 }
+
 .side-description {
   margin: -3px 0 10px;
   color: var(--muted-2);
   font-size: 9.5px;
   line-height: 1.5;
+}
+
+/* Per-card bottom accent + icon chip overrides */
+.path-card           { border-bottom-color: var(--acc-purple); }
+.recommendation-card { border-bottom-color: var(--acc-orange); }
+.snapshot-card       { border-bottom-color: var(--acc-red);    }
+.info-card           { border-bottom-color: var(--acc-blue);   }
+
+.recommendation-card .side-icon {
+  background: var(--co-pastel);
+  color: var(--co-ink);
+}
+.snapshot-card .side-icon {
+  background: var(--cr-pastel);
+  color: var(--cr-ink);
+}
+.info-card .side-icon {
+  background: var(--cb-pastel);
+  color: var(--cb-ink);
 }
 
 /* ============================================================
