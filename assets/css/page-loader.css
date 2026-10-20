@@ -96,3 +96,24 @@ html.page-loading .page-content {
         animation: none;
     }
 }
+
+/* ============================================================
+   PAGE LOADER — DARK MODE
+   Applied via html[data-theme="dark"] which is set by the
+   inline <head> bootstrap script BEFORE the first paint.
+   This ensures no light-flash when the page loads.
+   ============================================================ */
+
+html[data-theme="dark"] .page-loader {
+    background: #0b0b17;
+}
+html[data-theme="dark"] .page-loader-text {
+    color: #b8b8d4;
+}
+html[data-theme="dark"] .page-loader-ring {
+    border-color: rgba(167, 139, 250, .18);
+    border-top-color: #c4b5fd;
+}
+html[data-theme="dark"] .page-loader-dot {
+    background: #c4b5fd;
+}
