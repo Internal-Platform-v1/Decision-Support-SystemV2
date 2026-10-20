@@ -144,6 +144,9 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     const text = finalNode.action || nodeText(finalNode) || "";
     const textHtml = finalNode.textHtml || finalNode.actionHtml || "";
     const note = finalNode.note || "";
+
+    // Load the Comment / CORR / Email templates for this final recommendation.
+    loadTemplates(text);
     const finalImageList = Array.isArray(finalNode.images)
       ? finalNode.images
       : (finalNode.image ? [finalNode.image] : []);
