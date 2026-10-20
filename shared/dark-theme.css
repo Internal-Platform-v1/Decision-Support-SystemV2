@@ -672,7 +672,7 @@ html[data-theme="dark"] .wave {
     border-top-color: rgba(255, 159, 77, .9) !important;
 }
 html[data-theme="dark"] .wave-two {
-    border-top-color: rgba(255, 255, 255, .28) !important;
+    border-top-color: rgba(255, 255, 255, .25) !important;
 }
 html[data-theme="dark"] .quote-mark {
     opacity: .85 !important;
