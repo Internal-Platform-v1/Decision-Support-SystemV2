@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Templates Management | Decision Support System</title>
+
+  <link rel="stylesheet" href="../../shared/header/admin-header.css" />
+  <link rel="stylesheet" href="admin-templates.css" />
+</head>
+
+<body data-admin-page="templates" data-admin-title="Templates Management">
+
+  <!-- Shared Admin Console shell -->
+  <div id="adminHeader"></div>
+
+  <!-- =========================================================
+       TEMPLATES MANAGEMENT
+       ========================================================= -->
+  <main class="at-main">
+
+    <!-- PAGE HEADING -->
+    <section class="at-heading">
+      <div>
+        <span class="at-eyebrow">TEMPLATES MANAGEMENT</span>
+        <h1>Suggested Templates</h1>
+        <p>
+          Edit the Comment, CORR Code, and Email that appear
+          when a guide reaches a final recommendation.
+        </p>
+      </div>
+    </section>
+
+    <!-- GUIDE PICKER -->
+    <section class="at-guide-picker">
+      <label for="atGuideSelect">Guide</label>
+      <select id="atGuideSelect" aria-label="Select guide">
+        <option value="">Loading guides…</option>
+      </select>
+      <span class="at-guide-meta" id="atGuideMeta"></span>
+    </section>
+
+    <!-- TWO PANEL WORKSPACE -->
+    <section class="at-workspace">
+
+      <!-- LEFT: RECOMMENDATION LIST -->
+      <aside class="at-panel at-recommendations" aria-label="Recommendations">
+        <header class="at-panel-head">
+          <div>
+            <span>FINAL RECOMMENDATIONS</span>
+            <h2>Select a recommendation</h2>
+          </div>
+          <span class="at-count" id="atRecommendationCount">—</span>
+        </header>
+
+        <div class="at-rec-list" id="atRecommendationList">
+          <p class="at-empty">Select a guide to load its recommendations.</p>
+        </div>
+      </aside>
+
+      <!-- RIGHT: EDITOR -->
+      <section class="at-panel at-editor" aria-label="Template editor">
+        <header class="at-panel-head">
+          <div>
+            <span>SUGGESTED TEMPLATES</span>
+            <h2 id="atEditorTitle">No recommendation selected</h2>
+            <p id="atEditorSubtitle" class="at-editor-subtitle">
+              Pick a recommendation on the left to edit its templates.
+            </p>
+          </div>
+        </header>
+
+        <div class="at-editor-body" id="atEditorBody" hidden>
+
+          <div class="at-edit-field">
+            <label for="atComment">
+              <span>Suggested Comment</span>
+              <small>Internal case notes shown to the agent.</small>
+            </label>
+            <textarea id="atComment" rows="5" placeholder="Comment text…"></textarea>
+          </div>
+
+          <div class="at-edit-field">
+            <label for="atCorr">
+              <span>Suggested CORR Code</span>
+              <small>Corrective code guidance.</small>
+            </label>
+            <textarea id="atCorr" rows="4" placeholder="CORR code text…"></textarea>
+          </div>
+
+          <div class="at-edit-field">
+            <label for="atEmail">
+              <span>Suggested Email</span>
+              <small>Customer communication shown to the agent.</small>
+            </label>
+            <textarea id="atEmail" rows="6" placeholder="Email body…"></textarea>
+          </div>
+
+          <div class="at-editor-footer">
+            <span class="at-doc-ids" id="atDocIds"></span>
+            <div class="at-editor-actions">
+              <button type="button" class="at-btn ghost" id="atReset" disabled>Reset</button>
+              <button type="button" class="at-btn primary" id="atSave" disabled>
+                <i class="fa-solid fa-floppy-disk"></i> Save Templates
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="at-editor-placeholder" id="atEditorPlaceholder">
+          <div class="at-editor-placeholder-icon">✎</div>
+          <p>No recommendation selected.</p>
+          <small>Choose a final recommendation on the left to start editing.</small>
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="at-toast" id="atToast" role="status" aria-live="polite"></div>
+
+  <!-- Firebase SDK (same config as the rest of the app) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    window.auth = firebase.auth();
+  </script>
+
+  <!-- Shared header + manifest + admin-templates logic -->
+  <script src="../../shared/header/admin-header.js"></script>
+  <script src="../../assets/js/guide-flows/manifest.js"></script>
+  <script src="admin-templates.js"></script>
+</body>
+</html>
