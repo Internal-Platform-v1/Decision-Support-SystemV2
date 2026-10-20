@@ -12,7 +12,21 @@ window.GUIDE_CONFIG = {
 
 window.GUIDE_NODES = {
 
-  start: {
+start: {
+    text: "PAUD / TPKN Guide",
+    help: "This guide walks you through a code replacement request — either the Shipper Code or the Consignee Code. You'll be guided step by step to check the debtor, validate the account, auto-rate, and complete the correction if needed.\n\nHave the PRO open and the correction request window ready before you begin.",
+    note: "Use this guide for PAUD / TPKN queue only. If the request does not match either branch, move the PRO accordingly.",
+    choices: [
+      {
+        label: "Get Started",
+        next: "choose_request_type",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Begin the guided flow."
+      }
+    ]
+},
+
+choose_request_type: {
     text: "What is the request?",
     help: "Choose the type of code replacement request.",
     choices: [
@@ -29,7 +43,7 @@ window.GUIDE_NODES = {
         desc: "Use the consignee replacement flow."
       }
     ]
-  },
+},
 
   /* ================= SHIPPER BRANCH ================= */
 
