@@ -1,0 +1,786 @@
+/* ============================================================
+   DSS V2 — DARK THEME
+   Applies to every page (dashboard, group pages, guide pages).
+   Activated via: <html data-theme="dark">
+
+   Scoped with html[data-theme="dark"] so it never touches
+   light mode. Overrides are additive — no need to edit any
+   existing stylesheet.
+
+   Depends on:
+   - header/header.css  (already handles .topbar and its
+                         descendants)
+   - This file (handles everything else)
+   ============================================================ */
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    /* ---- token remap (used by guide.css and styles.css) ---- */
+    --purple:  #a78bfa;
+    --purple2: #c4b5fd;
+    --purple3: #8b5cf6;
+    --purple-icon: #c4b5fd;
+    --orange:  #ff9f4d;
+    --orange2: #ffb26e;
+
+    --ink:     #e7e7f2;
+    --ink-2:   #d0d0e4;
+    --muted:   #9a9ab6;
+    --muted-2: #8b8ba8;
+
+    --line:    #2a2a44;
+    --line-2:  #26263f;
+    --line-3:  #232338;
+    --row-line:#232338;
+
+    --shadow:            0 5px 20px rgba(0, 0, 0, .45);
+    --shadow-card:       0 3px 11px rgba(0, 0, 0, .35);
+    --shadow-card-hover: 0 8px 20px rgba(0, 0, 0, .5);
+    --shadow-shell:      0 2px 12px rgba(0, 0, 0, .5);
+
+    /* Pastel icon surfaces → dimmer versions that keep hue */
+    --ch-pastel: rgba(167,139,250,.14);  --ch-ink: #c4b5fd;
+    --co-pastel: rgba(255,159,77,.14);   --co-ink: #ffb26e;
+    --cb-pastel: rgba(99,155,255,.14);   --cb-ink: #93b4ff;
+    --cg-pastel: rgba(96,196,110,.14);   --cg-ink: #86d693;
+    --ci-pastel: rgba(129,140,248,.14);  --ci-ink: #a5acff;
+    --cp-pastel: rgba(244,114,182,.14);  --cp-ink: #ffa3c2;
+    --cr-pastel: rgba(248,113,113,.14);  --cr-ink: #ff9ea1;
+
+    /* Accent stripes */
+    --acc-purple: #4c3f78;
+    --acc-orange: #7a4a2a;
+    --acc-blue:   #3d4a80;
+    --acc-green:  #3d6644;
+    --acc-indigo: #42478a;
+    --acc-pink:   #7a3d54;
+    --acc-red:    #7a3d44;
+}
+
+/* ============================================================
+   BASE / SHELL
+   ============================================================ */
+html[data-theme="dark"] body {
+    background: #0b0b17;
+    color: var(--ink);
+}
+
+html[data-theme="dark"] .app-shell {
+    background: #17172a;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .5);
+}
+
+html[data-theme="dark"] .guide-page,
+html[data-theme="dark"] .group-page,
+html[data-theme="dark"] main {
+    background: transparent;
+}
+
+/* ============================================================
+   PAGE LOADER
+   ============================================================ */
+html[data-theme="dark"] .page-loader {
+    background: #0b0b17;
+}
+html[data-theme="dark"] .page-loader-text { color: #b8b8d4; }
+html[data-theme="dark"] .page-loader-ring {
+    border-color: rgba(167,139,250,.18);
+    border-top-color: #c4b5fd;
+}
+html[data-theme="dark"] .page-loader-dot { background: #c4b5fd; }
+
+/* ============================================================
+   HERO (dashboard + group pages)
+   ============================================================ */
+html[data-theme="dark"] .hero,
+html[data-theme="dark"] .group-hero {
+    background-color: #1a1a30;
+    background-blend-mode: multiply;
+}
+
+html[data-theme="dark"] .group-hero {
+    background: #1a1a30;
+}
+html[data-theme="dark"] .group-hero::after {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(15,15,28,.88) 0%,
+            rgba(15,15,28,.65) 31%,
+            rgba(15,15,28,.2) 59%,
+            rgba(15,15,28,0) 75%
+        );
+}
+html[data-theme="dark"] .group-hero-image {
+    opacity: .55;
+}
+
+html[data-theme="dark"] .hero h1,
+html[data-theme="dark"] .group-hero h1 {
+    color: #ece9ff;
+}
+
+html[data-theme="dark"] .hero p,
+html[data-theme="dark"] .group-hero-copy > p {
+    color: #b0b0cc;
+}
+
+/* Kicker pill */
+html[data-theme="dark"] .intro-kicker {
+    background: rgba(167,139,250,.14);
+    border-color: rgba(167,139,250,.28);
+    color: #d4c5ff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+}
+html[data-theme="dark"] .intro-kicker i { color: #ffb26e; }
+
+/* Hero search bar */
+html[data-theme="dark"] .hero-search {
+    background: #1e1e33;
+    border-color: #2f2f4a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .35);
+}
+html[data-theme="dark"] .hero-search:focus-within {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167,139,250,.16),
+                0 4px 12px rgba(0, 0, 0, .4);
+}
+html[data-theme="dark"] .hero-search input {
+    color: #e7e7f2;
+    background: transparent;
+}
+html[data-theme="dark"] .hero-search input::placeholder {
+    color: #7a7a94;
+}
+html[data-theme="dark"] .hero-search > i,
+html[data-theme="dark"] .hero-search .search-icon {
+    color: #8b8ba8;
+    border-color: #8b8ba8;
+}
+html[data-theme="dark"] .hero-search .search-icon:after {
+    background: #8b8ba8;
+}
+html[data-theme="dark"] .hero-search-button,
+html[data-theme="dark"] .hero-search button {
+    background: #7c3aed;
+    color: #fff;
+}
+html[data-theme="dark"] .hero-search-button:hover,
+html[data-theme="dark"] .hero-search button:hover {
+    background: #6d28d9;
+}
+html[data-theme="dark"] .hero-search > button[aria-label] {
+    background: #26263f;
+    color: #a8a8c4;
+}
+html[data-theme="dark"] .hero-search > button[aria-label]:hover {
+    background: #2f2f4a;
+}
+
+/* ============================================================
+   STATS ROW / GUIDE FILTER CARDS
+   ============================================================ */
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .stat-card.guide-filter {
+    background: rgba(28, 28, 48, .97);
+    border-color: #2c2c47;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .4);
+    color: #e7e7f2;
+}
+html[data-theme="dark"] .stat-card strong,
+html[data-theme="dark"] .guide-filter strong {
+    color: #ece9ff;
+}
+html[data-theme="dark"] .stat-card small,
+html[data-theme="dark"] .guide-filter small {
+    color: #9a9ab6;
+}
+html[data-theme="dark"] .stat-card.guide-filter:hover {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .55);
+}
+html[data-theme="dark"] .stat-card.guide-filter.active {
+    border-color: var(--filter-color, #a78bfa);
+    box-shadow:
+        0 7px 20px rgba(0, 0, 0, .5),
+        inset 0 -2px 0 var(--filter-color, #a78bfa);
+}
+
+/* Pastel icons inside stats — dim surfaces, bright glyph */
+html[data-theme="dark"] .stat-icon.purple { background: rgba(167,139,250,.14); color: #c4b5fd; }
+html[data-theme="dark"] .stat-icon.orange { background: rgba(255,159,77,.14); color: #ffb26e; }
+html[data-theme="dark"] .stat-icon.blue   { background: rgba(99,155,255,.14); color: #93b4ff; }
+html[data-theme="dark"] .stat-icon.green  { background: rgba(96,196,110,.14); color: #86d693; }
+html[data-theme="dark"] .stat-icon.indigo { background: rgba(129,140,248,.14); color: #a5acff; }
+html[data-theme="dark"] .stat-icon.pink   { background: rgba(244,114,182,.14); color: #ffa3c2; }
+html[data-theme="dark"] .stat-icon.yellow { background: rgba(241,169,25,.14); color: #ffcc66; }
+
+/* ============================================================
+   SECTION HEADINGS
+   ============================================================ */
+html[data-theme="dark"] .section-heading h2,
+html[data-theme="dark"] .library-heading h2,
+html[data-theme="dark"] .panel-heading h2 {
+    color: #ece9ff;
+}
+html[data-theme="dark"] .heading-bar { background: #a78bfa; }
+
+html[data-theme="dark"] .library-results,
+html[data-theme="dark"] #resultsText,
+html[data-theme="dark"] .my-guides-section .library-results {
+    color: #8b8ba8;
+}
+
+html[data-theme="dark"] .view-all { color: #c4b5fd; }
+html[data-theme="dark"] .view-all:hover { color: #ddd0ff; }
+
+/* ============================================================
+   DASHBOARD QUICK CARDS (.quick-card / .guide-card)
+   ============================================================ */
+html[data-theme="dark"] .quick-card,
+html[data-theme="dark"] .guide-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    border-bottom-color: #2f2f4a;
+    box-shadow: 0 3px 11px rgba(0, 0, 0, .35);
+    color: #e7e7f2;
+}
+html[data-theme="dark"] .quick-card:hover,
+html[data-theme="dark"] .guide-card:hover {
+    box-shadow: 0 9px 22px rgba(0, 0, 0, .55);
+    border-color: #3a3a58;
+    background: #20203a;
+}
+html[data-theme="dark"] .quick-card h3,
+html[data-theme="dark"] .guide-card h3 {
+    color: #ece9ff;
+}
+html[data-theme="dark"] .quick-card p,
+html[data-theme="dark"] .guide-card .description {
+    color: #9a9ab6;
+}
+html[data-theme="dark"] .arrow-btn,
+html[data-theme="dark"] .open-guide {
+    color: #c4b5fd;
+}
+
+/* Card bottom accents — dimmer hues */
+html[data-theme="dark"] .quick-card.purple-card:after,
+html[data-theme="dark"] .quick-card::after            { background: #4c3f78; }
+html[data-theme="dark"] .quick-card.orange-card:after { background: #7a4a2a; }
+html[data-theme="dark"] .quick-card.blue-card:after   { background: #3d4a80; }
+html[data-theme="dark"] .quick-card.green-card:after  { background: #3d6644; }
+html[data-theme="dark"] .quick-card.indigo-card:after { background: #42478a; }
+html[data-theme="dark"] .quick-card.pink-card:after   { background: #7a3d54; }
+
+/* Pastel icon backgrounds inside quick cards */
+html[data-theme="dark"] .purple-bg { background: rgba(167,139,250,.14); color: #c4b5fd; }
+html[data-theme="dark"] .orange-bg { background: rgba(255,159,77,.14);  color: #ffb26e; }
+html[data-theme="dark"] .blue-bg   { background: rgba(99,155,255,.14);  color: #93b4ff; }
+html[data-theme="dark"] .green-bg  { background: rgba(96,196,110,.14);  color: #86d693; }
+html[data-theme="dark"] .indigo-bg { background: rgba(129,140,248,.14); color: #a5acff; }
+html[data-theme="dark"] .pink-bg   { background: rgba(244,114,182,.14); color: #ffa3c2; }
+
+/* Group cards (.all-guides page) */
+html[data-theme="dark"] .guide-icon {
+    background: var(--card-soft, rgba(167,139,250,.14));
+    color: var(--card-accent, #c4b5fd);
+}
+html[data-theme="dark"] .guide-group,
+html[data-theme="dark"] .guide-badge {
+    background: #26263f;
+    color: #9a9ab6;
+}
+html[data-theme="dark"] .favorite-button {
+    background: #1e1e33;
+    border-color: #2f2f4a;
+    color: #8b8ba8;
+}
+html[data-theme="dark"] .favorite-button:hover {
+    background: #2a2415;
+    border-color: #6b5318;
+    color: #ffcc66;
+}
+html[data-theme="dark"] .favorite-button.active { color: #ffcc66; }
+
+/* ============================================================
+   DASHBOARD LOWER GRID — panels & lists
+   ============================================================ */
+html[data-theme="dark"] .panel {
+    background: #1c1c30;
+    border-color: #26263f;
+    color: #e7e7f2;
+}
+html[data-theme="dark"] .list-row {
+    border-bottom-color: #26263f;
+    color: #d0d0e4;
+}
+html[data-theme="dark"] .list-row:hover {
+    background: #20203a;
+}
+html[data-theme="dark"] .row-name { color: #ece9ff; }
+html[data-theme="dark"] .recent-time,
+html[data-theme="dark"] .row-chevron { color: #8b8ba8; }
+html[data-theme="dark"] .star { color: #4a4a68; }
+html[data-theme="dark"] .star.active { color: #ffcc66; }
+html[data-theme="dark"] .rank { background: rgba(167,139,250,.16); color: #c4b5fd; }
+html[data-theme="dark"] .rank.orange { background: rgba(255,159,77,.16); color: #ffb26e; }
+html[data-theme="dark"] .rank.green  { background: rgba(96,196,110,.16); color: #86d693; }
+html[data-theme="dark"] .rank.blue   { background: rgba(99,155,255,.16); color: #93b4ff; }
+html[data-theme="dark"] .tag { background: rgba(167,139,250,.16); color: #c4b5fd; }
+html[data-theme="dark"] .tag.orange { background: rgba(255,159,77,.16); color: #ffb26e; }
+
+/* Recent activity category chips */
+html[data-theme="dark"] .recent-icon.purple { background: rgba(167,139,250,.14); color: #c4b5fd; }
+html[data-theme="dark"] .recent-icon.orange { background: rgba(255,159,77,.14);  color: #ffb26e; }
+html[data-theme="dark"] .recent-icon.blue   { background: rgba(99,155,255,.14);  color: #93b4ff; }
+html[data-theme="dark"] .recent-icon.green  { background: rgba(96,196,110,.14);  color: #86d693; }
+html[data-theme="dark"] .recent-icon.indigo { background: rgba(129,140,248,.14); color: #a5acff; }
+html[data-theme="dark"] .recent-icon.pink   { background: rgba(244,114,182,.14); color: #ffa3c2; }
+
+/* My Guides compact rows */
+html[data-theme="dark"] .my-guides-grid .list-row {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+html[data-theme="dark"] .my-guides-grid .list-row.clickable:hover {
+    background: #20203a;
+    border-color: #3a3a58;
+    box-shadow: 0 6px 16px rgba(0,0,0,.45);
+}
+
+/* Open-count badge */
+html[data-theme="dark"] .open-count {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+
+/* Panel scrollbar */
+html[data-theme="dark"] .panel .list::-webkit-scrollbar-thumb,
+html[data-theme="dark"] .my-guides-grid::-webkit-scrollbar-thumb {
+    background: #3a3a58;
+}
+html[data-theme="dark"] .panel .list::-webkit-scrollbar-thumb:hover,
+html[data-theme="dark"] .my-guides-grid::-webkit-scrollbar-thumb:hover {
+    background: #4a4a68;
+}
+
+/* Panel action buttons */
+html[data-theme="dark"] .panel-clear { color: #8b8ba8; }
+html[data-theme="dark"] .panel-clear:hover {
+    color: #ff9ea1;
+    background: rgba(248,113,113,.1);
+}
+html[data-theme="dark"] .row-clear { color: #6a6a88; }
+html[data-theme="dark"] .row-clear:hover { color: #ff9ea1; }
+
+/* Soft action (all-guides page) */
+html[data-theme="dark"] .soft-action {
+    background: #1c1c30;
+    border-color: #2f2f4a;
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .soft-action:hover {
+    background: #20203a;
+    border-color: #3a3a58;
+}
+html[data-theme="dark"] .active-filter-pill {
+    background: #1c1c30;
+    border-color: #2f2f4a;
+    color: #8b8ba8;
+}
+html[data-theme="dark"] .active-filter-pill strong { color: #c4b5fd; }
+html[data-theme="dark"] .active-filter-pill button {
+    background: #26263f;
+    color: #b8b8d4;
+}
+html[data-theme="dark"] .active-filter-pill button:hover {
+    background: #8b5cf6;
+    color: #fff;
+}
+
+/* No-results block */
+html[data-theme="dark"] .no-results {
+    background: #17172a;
+    border-color: #2f2f4a;
+    color: #9a9ab6;
+}
+html[data-theme="dark"] .no-results h3 { color: #ece9ff; }
+html[data-theme="dark"] .no-results p  { color: #9a9ab6; }
+html[data-theme="dark"] .no-results > i,
+html[data-theme="dark"] .no-results-icon {
+    color: #c4b5fd;
+    background: rgba(167,139,250,.14);
+}
+html[data-theme="dark"] .no-results button {
+    background: #7c3aed;
+    color: #fff;
+}
+
+/* ============================================================
+   GUIDE PAGE — hero + progress + stage
+   ============================================================ */
+html[data-theme="dark"] .guide-hero-card {
+    /* Keep the gradient — it already reads well on dark */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .5);
+}
+
+html[data-theme="dark"] .progress-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: 0 3px 11px rgba(0, 0, 0, .35);
+}
+html[data-theme="dark"] .progress-title { color: #ece9ff; }
+html[data-theme="dark"] .progress-status { color: #9a9ab6; }
+html[data-theme="dark"] .progress-bar { background: #232338; }
+html[data-theme="dark"] .progress-fill {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa, #ffb26e);
+}
+
+html[data-theme="dark"] .stage-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    border-bottom-color: var(--acc-purple);
+    box-shadow: 0 3px 11px rgba(0, 0, 0, .35);
+}
+html[data-theme="dark"] .stage-top {
+    background: #20203a;
+    border-bottom-color: #26263f;
+}
+html[data-theme="dark"] .stage-badge {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .stage-badge.alt {
+    background: rgba(255,159,77,.16);
+    color: #ffb26e;
+}
+
+/* Question */
+html[data-theme="dark"] .question-card {
+    background: linear-gradient(135deg, #1c1c30 0%, #20203a 100%);
+    border-color: #26263f;
+}
+html[data-theme="dark"] .question-label {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .question-text { color: #ece9ff; }
+html[data-theme="dark"] .question-help { color: #9a9ab6; }
+
+/* Note card */
+html[data-theme="dark"] .note-card {
+    background: rgba(255,159,77,.08);
+    border-color: rgba(255,159,77,.28);
+}
+html[data-theme="dark"] .note-head { color: #ffb26e; }
+html[data-theme="dark"] .note-body { color: #b8b8d4; }
+
+/* ============================================================
+   CHOICES
+   ============================================================ */
+html[data-theme="dark"] .choice {
+    background: #1c1c30;
+    border-color: #26263f;
+    border-bottom-color: var(--acc-purple);
+    box-shadow: 0 3px 11px rgba(0, 0, 0, .35);
+    color: #e7e7f2;
+}
+html[data-theme="dark"] .choice:hover {
+    background: #20203a;
+    border-color: #3a3a58;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .5);
+}
+html[data-theme="dark"] .choice.selected {
+    background: rgba(139,92,246,.14);
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 2px rgba(167,139,250,.24),
+                0 8px 20px rgba(0, 0, 0, .5);
+}
+html[data-theme="dark"] .choice-title { color: #ece9ff; }
+html[data-theme="dark"] .choice-desc  { color: #9a9ab6; }
+html[data-theme="dark"] .choice-icon {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .choice.selected .choice-icon {
+    background: rgba(167,139,250,.28);
+}
+
+/* Decision footer */
+html[data-theme="dark"] .decision-footer {
+    background: #20203a;
+    border-top-color: #26263f;
+}
+html[data-theme="dark"] .footer-step { color: #8b8ba8; }
+html[data-theme="dark"] .footer-step strong { color: #e7e7f2; }
+
+/* ============================================================
+   ACTION BUTTONS
+   ============================================================ */
+html[data-theme="dark"] .action-btn {
+    background: #20203a;
+    border-color: #2f2f4a;
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .action-btn:hover {
+    background: #26263f;
+    border-color: #3a3a58;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .4);
+}
+html[data-theme="dark"] .action-btn.primary {
+    background: #7c3aed;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(124,58,237,.4);
+}
+html[data-theme="dark"] .action-btn.primary:hover {
+    background: #6d28d9;
+    box-shadow: 0 6px 16px rgba(124,58,237,.5);
+}
+
+/* ============================================================
+   FINAL CARD
+   ============================================================ */
+html[data-theme="dark"] .final-card {
+    background: linear-gradient(135deg, #1f1b33, #1c1c30);
+    border-color: #2f2a4a;
+    border-bottom-color: var(--acc-purple);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .5);
+}
+html[data-theme="dark"] .final-badge {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .final-title { color: #9a9ab6; }
+html[data-theme="dark"] .final-text  { color: #ece9ff; }
+html[data-theme="dark"] .final-note {
+    background: #20203a;
+    border-color: #26263f;
+    color: #b8b8d4;
+}
+
+/* ============================================================
+   SIDE CARDS
+   ============================================================ */
+html[data-theme="dark"] .side-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: 0 3px 11px rgba(0, 0, 0, .35);
+}
+html[data-theme="dark"] .side-head { color: #ece9ff; }
+html[data-theme="dark"] .side-description { color: #8b8ba8; }
+
+html[data-theme="dark"] .purple-icon {
+    background: rgba(167,139,250,.14);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .orange-icon {
+    background: rgba(255,159,77,.14);
+    color: #ffb26e;
+}
+
+html[data-theme="dark"] .path-card           { border-bottom-color: var(--acc-purple); }
+html[data-theme="dark"] .recommendation-card { border-bottom-color: var(--acc-orange); }
+html[data-theme="dark"] .snapshot-card       { border-bottom-color: var(--acc-red); }
+html[data-theme="dark"] .info-card           { border-bottom-color: var(--acc-blue); }
+
+html[data-theme="dark"] .recommendation-card .side-icon {
+    background: rgba(255,159,77,.14);
+    color: #ffb26e;
+}
+html[data-theme="dark"] .snapshot-card .side-icon {
+    background: rgba(248,113,113,.14);
+    color: #ff9ea1;
+}
+html[data-theme="dark"] .info-card .side-icon {
+    background: rgba(99,155,255,.14);
+    color: #93b4ff;
+}
+
+/* Path / timeline */
+html[data-theme="dark"] .path-hint { color: #8b8ba8; }
+html[data-theme="dark"] .path-hint i { color: #c4b5fd; }
+html[data-theme="dark"] .path-empty {
+    background: #17172a;
+    border-color: #2f2f4a;
+    color: #8b8ba8;
+}
+html[data-theme="dark"] .path-list::before {
+    background: linear-gradient(to bottom, #4c3f78, #26263f);
+}
+html[data-theme="dark"] .path-item::before {
+    background: #1c1c30;
+    border-color: #4a4a68;
+}
+html[data-theme="dark"] .path-item:has(.path-jump.active)::before {
+    border-color: #c4b5fd;
+    box-shadow: 0 0 0 3px rgba(167,139,250,.2);
+}
+html[data-theme="dark"] .path-jump:hover {
+    background: #20203a;
+    border-color: #26263f;
+}
+html[data-theme="dark"] .path-jump.active {
+    background: rgba(167,139,250,.14);
+    border-color: rgba(167,139,250,.32);
+}
+html[data-theme="dark"] .path-step { color: #c4b5fd; }
+html[data-theme="dark"] .path-question { color: #ece9ff; }
+html[data-theme="dark"] .path-answer { color: #9a9ab6; }
+html[data-theme="dark"] .path-card.path-expanded {
+    box-shadow: 0 14px 32px rgba(0, 0, 0, .6);
+}
+html[data-theme="dark"] .guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
+    background: #3a3a58;
+}
+
+/* Recommendation */
+html[data-theme="dark"] .recommendation {
+    background: rgba(255,159,77,.08);
+    border-color: rgba(255,159,77,.28);
+    color: #d0d0e4;
+}
+html[data-theme="dark"] .recommendation.empty {
+    background: #17172a;
+    border-color: #26263f;
+    color: #8b8ba8;
+}
+html[data-theme="dark"] .recommendation.empty::before { background: #3a3a58; }
+
+/* Snapshot metrics */
+html[data-theme="dark"] .metric {
+    background: #17172a;
+    border-color: #26263f;
+}
+html[data-theme="dark"] .metric-k { color: #8b8ba8; }
+html[data-theme="dark"] .metric-v { color: #ece9ff; }
+
+/* Guide info list */
+html[data-theme="dark"] .guide-info-list dt { color: #8b8ba8; }
+html[data-theme="dark"] .guide-info-list dd { color: #d0d0e4; }
+
+/* ============================================================
+   TEMPLATE CARDS
+   ============================================================ */
+html[data-theme="dark"] .template-card {
+    background: #1c1c30;
+    border-color: #26263f;
+}
+html[data-theme="dark"] .template-card:has(.code-soft)  { border-bottom-color: var(--acc-green); }
+html[data-theme="dark"] .template-card:has(.email-soft) { border-bottom-color: var(--acc-orange); }
+
+html[data-theme="dark"] .template-head {
+    background: #20203a;
+    border-bottom-color: #26263f;
+}
+html[data-theme="dark"] .template-title { color: #ece9ff; }
+html[data-theme="dark"] .template-sub   { color: #8b8ba8; }
+html[data-theme="dark"] .template-box   { color: #b8b8d4; }
+html[data-theme="dark"] .template-box.empty { color: #6a6a88; }
+
+html[data-theme="dark"] .template-foot {
+    background: #20203a;
+    border-top-color: #26263f;
+}
+html[data-theme="dark"] .template-link {
+    background: #26263f;
+    border-color: #2f2f4a;
+    color: #b8b8d4;
+}
+html[data-theme="dark"] .template-link:hover {
+    background: rgba(167,139,250,.14);
+    border-color: rgba(167,139,250,.32);
+    color: #d4c5ff;
+}
+html[data-theme="dark"] .template-copy {
+    background: #7c3aed;
+    color: #fff;
+}
+html[data-theme="dark"] .template-copy:hover { background: #6d28d9; }
+html[data-theme="dark"] .template-copy.copied {
+    background: rgba(96,196,110,.24);
+    color: #86d693;
+}
+
+/* Pastel template icons */
+html[data-theme="dark"] .purple-soft { background: rgba(167,139,250,.14); color: #c4b5fd; }
+html[data-theme="dark"] .code-soft   { background: rgba(96,196,110,.14);  color: #86d693; }
+html[data-theme="dark"] .email-soft  { background: rgba(255,159,77,.14);  color: #ffb26e; }
+
+/* Save guide pill */
+html[data-theme="dark"] .save-guide-button {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .save-guide-button:hover {
+    background: rgba(167,139,250,.24);
+}
+html[data-theme="dark"] .save-guide-button.saved {
+    background: rgba(255,159,77,.16);
+    color: #ffb26e;
+}
+
+/* ============================================================
+   IMAGE + MODAL
+   ============================================================ */
+html[data-theme="dark"] .question-image {
+    background: #1c1c30;
+    border-color: #26263f;
+}
+html[data-theme="dark"] .question-image:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .5);
+}
+
+html[data-theme="dark"] .image-modal {
+    background: rgba(0, 0, 0, .85);
+}
+html[data-theme="dark"] .image-modal img {
+    background: #1c1c30;
+}
+html[data-theme="dark"] .image-modal-close {
+    background: #26263f;
+    color: #e7e7f2;
+}
+html[data-theme="dark"] .image-modal-close:hover {
+    background: #2f2f4a;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+html[data-theme="dark"] .toast {
+    background: #20203a;
+    color: #ece9ff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .6);
+    border: 1px solid #2f2f4a;
+}
+
+/* ============================================================
+   DASHBOARD STAT CARD — active "View" states
+   ============================================================ */
+html[data-theme="dark"] .stat-card[data-view]:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .5);
+}
+html[data-theme="dark"] .stat-card[data-view].active {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 2px rgba(167,139,250,.24),
+                0 5px 20px rgba(0, 0, 0, .4);
+}
+
+/* ============================================================
+   UPDATE BANNER placeholder — border/background only,
+   its own file owns the inner look
+   ============================================================ */
+html[data-theme="dark"] #update-banner-placeholder .dss-update-banner {
+    box-shadow: 0 3px 11px rgba(0, 0, 0, .35);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme="dark"] * {
+        transition: none !important;
+    }
+}
