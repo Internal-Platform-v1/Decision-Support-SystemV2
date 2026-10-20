@@ -1700,3 +1700,15 @@ html[data-theme="dark"] #oneclickModal .oneclick-input:focus {
         transition: none !important;
     }
 }
+
+/* ============================================================
+   DARK-MODE HERO IMAGES
+   Swaps each hero background image for its dark-mode variant.
+   ============================================================ */
+
+/* ---- Dashboard hero (index.html) ---- */
+html[data-theme="dark"] .hero {
+    background-image: url("../images/hero-dark-background.png");
+    background-color: #1a1a30;
+    background-blend-mode: normal;
+}
