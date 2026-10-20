@@ -13,14 +13,17 @@
   const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
   const db=()=>window.db||(window.firebase&&firebase.firestore?firebase.firestore():null);
   const auth=()=>window.auth||(window.firebase&&firebase.auth?firebase.auth():null);
+
   function toast(m){const t=$('toast');if(!t)return;t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2600)}
   function initials(name,email){const n=String(name||'').trim();if(!n)return String(email||'AD').slice(0,2).toUpperCase();const p=n.split(/\s+/);return(p.length>1?p[0][0]+p[p.length-1][0]:p[0].slice(0,2)).toUpperCase()}
   function authEmail(){return String(state.auth?.email||window.currentUser?.email||window.currentUserProfile?.email||'').trim().toLowerCase()}
   function userName(){return window.currentUserProfile?.displayName||window.currentUserProfile?.name||state.auth?.displayName||state.auth?.email?.split('@')[0]||'Admin'}
 
+  // FIX #1: single loadAdminProfile (was duplicated).
+  // FIX #2: getAuth() -> auth() to avoid ReferenceError.
   async function loadAdminProfile(){
     const d=db();
-    const user=state.auth || window.currentUser || getAuth()?.currentUser;
+    const user=state.auth || window.currentUser || auth()?.currentUser;
     if(!d || !user || !user.email) return;
     const email=String(user.email).trim().toLowerCase();
     try{
@@ -37,74 +40,454 @@
     }
   }
 
-  async function loadAdminProfile(){
-    const d=db();
-    const user=state.auth || window.currentUser || getAuth()?.currentUser;
-    if(!d || !user || !user.email) return;
-    const email=String(user.email).trim().toLowerCase();
-    try{
-      const snap=await d.collection(USERS_COLLECTION).doc(email).get();
-      const data=snap.exists ? (snap.data() || {}) : {};
-      window.currentUserProfile={
-        uid:user.uid,
-        email:user.email,
-        displayName:String(data.name || data.displayName || user.displayName || email.split('@')[0]).replace(/\s+vndr$/i,'').trim(),
-        role:String(data.role || '').trim()
-      };
-    }catch(e){
-      console.info('Admin profile lookup unavailable:',e.code||e.message);
-    }
-  }
   function setIdentity(){const n=userName(),r=window.currentUserProfile?.role||'System Administrator',i=initials(n,authEmail());['sidebarUserName'].forEach(id=>$(id)&&($(id).textContent=n));if($('sidebarUserRole'))$('sidebarUserRole').textContent=r;if($('sidebarAvatar'))$('sidebarAvatar').textContent=i;if($('topAvatar'))$('topAvatar').textContent=i;if($('heroUserName'))$('heroUserName').textContent=n+'!'}
   function updateClock(){const n=new Date(),d=n.toLocaleDateString('en-US',{timeZone:'Asia/Manila',weekday:'short',month:'short',day:'2-digit',year:'numeric'}),t=n.toLocaleTimeString('en-US',{timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'});if($('currentDateText'))$('currentDateText').textContent=d;if($('currentTimeText'))$('currentTimeText').textContent=t}
-  async function waitAuth(timeout=15000){const a=auth();if(!a)throw Error('Firebase Authentication is unavailable.');if(a.currentUser){state.auth=a.currentUser;authReady=true;return a.currentUser}return new Promise((resolve,reject)=>{let done=false,unsub=a.onAuthStateChanged(u=>{if(done)return;done=true;unsub&&unsub();if(!u){reject(Error('No authenticated Firebase user is available.'));return}state.auth=u;authReady=true;resolve(u)});setTimeout(()=>{if(!done){done=true;unsub&&unsub();if(a.currentUser){state.auth=a.currentUser;authReady=true;resolve(a.currentUser)}else reject(Error('No authenticated Firebase user is available.'))}},timeout)})}
+
+  async function waitAuth(timeout=15000){
+    const a=auth();
+    if(!a)throw Error('Firebase Authentication is unavailable.');
+    if(a.currentUser){state.auth=a.currentUser;authReady=true;return a.currentUser}
+    return new Promise((resolve,reject)=>{
+      let settled=false;
+      let unsub=null;
+      const finish=(fn,val)=>{if(settled)return;settled=true;try{unsub&&unsub()}catch(_){};fn(val)};
+      unsub=a.onAuthStateChanged(u=>{
+        if(u){state.auth=u;authReady=true;finish(resolve,u)}
+        else finish(reject,Error('No authenticated Firebase user is available.'))
+      });
+      setTimeout(()=>{
+        if(settled)return;
+        if(a.currentUser){state.auth=a.currentUser;authReady=true;finish(resolve,a.currentUser)}
+        else finish(reject,Error('No authenticated Firebase user is available.'))
+      },timeout);
+    });
+  }
+
   function loadActivity(){try{state.activity=JSON.parse(localStorage.getItem('dss_admin_activity')||'[]');if(!Array.isArray(state.activity))state.activity=[]}catch{state.activity=[]}if(!state.activity.length)state.activity=[{type:'login',action:'Admin Dashboard Opened',details:'Administration workspace initialized',time:new Date().toISOString()}]}
   function saveActivity(type,action,details){state.activity=[{type,action,details,time:new Date().toISOString()},...state.activity].slice(0,30);try{localStorage.setItem('dss_admin_activity',JSON.stringify(state.activity))}catch{}}
   function rel(v){if(!v)return'—';const d=v.toDate?v.toDate():new Date(v),m=Math.floor(Math.max(0,Date.now()-d.getTime())/60000),h=Math.floor(m/60),days=Math.floor(h/24);if(m<1)return'Just now';if(m<60)return`${m} min${m===1?'':'s'} ago`;if(h<24)return`${h} hour${h===1?'':'s'} ago`;return days===1?'Yesterday':`${days} days ago`}
   function dateOnly(v){if(!v)return'—';const d=v.toDate?v.toDate():new Date(v);if(Number.isNaN(d.getTime()))return'—';return d.toLocaleDateString('en-US',{timeZone:'Asia/Manila',month:'short',day:'numeric',year:'numeric'})}
-  async function loadUsers(){const d=db();if(!d)throw Error('Firestore is not initialized.');if(!authReady)await waitAuth();try{const s=await d.collection(USERS_COLLECTION).get();state.users=s.docs.map(doc=>{const x=doc.data()||{};return{id:doc.id,email:x.email||doc.id,name:x.name||x.displayName||doc.id,role:String(x.role||'User').trim(),region:x.region||x.country||'All regions',active:x.active!==false,createdAt:x.createdAt||null,updatedAt:x.updatedAt||null}}).sort((a,b)=>String(a.name).localeCompare(String(b.name)));setStats();renderRecentUsers();renderRegions();renderUserActivity();renderUsers();if($('sidebarConnectionText'))$('sidebarConnectionText').textContent=`Firebase connected · ${state.users.length} approved users`}catch(e){if($('sidebarConnectionText'))$('sidebarConnectionText').textContent=e.code==='permission-denied'?'Permission denied for approved_users':'User data unavailable';throw e}}
+
+  async function loadUsers(){
+    const d=db();
+    if(!d)throw Error('Firestore is not initialized.');
+    if(!authReady)await waitAuth();
+    try{
+      const s=await d.collection(USERS_COLLECTION).get();
+      state.users=s.docs.map(doc=>{const x=doc.data()||{};return{id:doc.id,email:x.email||doc.id,name:x.name||x.displayName||doc.id,role:String(x.role||'User').trim(),region:x.region||x.country||'All regions',active:x.active!==false,createdAt:x.createdAt||null,updatedAt:x.updatedAt||null}}).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+      setStats();
+      renderRecentUsers();
+      renderRegions();
+      renderUserActivity();
+      renderUsers();
+      if($('sidebarConnectionText'))$('sidebarConnectionText').textContent=`Firebase connected · ${state.users.length} approved users`;
+    }catch(e){
+      if($('sidebarConnectionText'))$('sidebarConnectionText').textContent=e.code==='permission-denied'?'Permission denied for approved_users':'User data unavailable';
+      throw e;
+    }
+  }
   function setStats(){const total=state.users.length,active=state.users.filter(u=>u.active!==false).length;if($('kpiTotalUsers'))$('kpiTotalUsers').textContent=total;if($('kpiActiveUsers'))$('kpiActiveUsers').textContent=active}
-  async function loadTemplates(){const d=db();if(!d)return;const cols=[TEMPLATE_COLLECTION,...guideRegistry.map(g=>g.templateCollection).filter(Boolean)].filter((v,i,a)=>a.indexOf(v)===i);let docs=[];for(const c of cols){try{const s=await d.collection(c).get();s.docs.forEach(x=>docs.push(x.id))}catch(e){console.info('Template source unavailable:',c,e.code||e.message)}}state.templateTotal=docs.length;state.commentTemplates=docs.filter(x=>x.startsWith('comment__')).length;state.corrTemplates=docs.filter(x=>x.startsWith('corr__')).length;state.emailTemplates=docs.filter(x=>x.startsWith('email__')).length;if($('kpiTemplates'))$('kpiTemplates').textContent=state.templateTotal}
-  async function loadAnnouncements(){const d=db();if(!d)return;try{const s=await d.collection('announcements').get();state.announcementTotal=s.size;if($('kpiAnnouncements'))$('kpiAnnouncements').textContent=s.size;if($('notificationBadge')){$('notificationBadge').textContent=s.size;$('notificationBadge').hidden=s.size===0}if($('kpiAnnouncementDelta'))$('kpiAnnouncementDelta').textContent='Connected'}catch{state.announcementTotal=null;if($('kpiAnnouncements'))$('kpiAnnouncements').textContent='—';if($('notificationBadge'))$('notificationBadge').hidden=true;if($('kpiAnnouncementDelta'))$('kpiAnnouncementDelta').textContent='Not linked'}}
+
+  async function loadTemplates(){
+    const d=db();if(!d)return;
+    const cols=[TEMPLATE_COLLECTION,...guideRegistry.map(g=>g.templateCollection).filter(Boolean)].filter((v,i,a)=>a.indexOf(v)===i);
+    let docs=[];
+    for(const c of cols){try{const s=await d.collection(c).get();s.docs.forEach(x=>docs.push(x.id))}catch(e){console.info('Template source unavailable:',c,e.code||e.message)}}
+    state.templateTotal=docs.length;
+    state.commentTemplates=docs.filter(x=>x.startsWith('comment__')).length;
+    state.corrTemplates=docs.filter(x=>x.startsWith('corr__')).length;
+    state.emailTemplates=docs.filter(x=>x.startsWith('email__')).length;
+    if($('kpiTemplates'))$('kpiTemplates').textContent=state.templateTotal;
+  }
+  async function loadAnnouncements(){
+    const d=db();if(!d)return;
+    try{
+      const s=await d.collection('announcements').get();
+      state.announcementTotal=s.size;
+      if($('kpiAnnouncements'))$('kpiAnnouncements').textContent=s.size;
+      if($('notificationBadge')){$('notificationBadge').textContent=s.size;$('notificationBadge').hidden=s.size===0}
+      if($('kpiAnnouncementDelta'))$('kpiAnnouncementDelta').textContent='Connected';
+    }catch{
+      state.announcementTotal=null;
+      if($('kpiAnnouncements'))$('kpiAnnouncements').textContent='—';
+      if($('notificationBadge'))$('notificationBadge').hidden=true;
+      if($('kpiAnnouncementDelta'))$('kpiAnnouncementDelta').textContent='Not linked';
+    }
+  }
 
   async function loadGuideUsageStats(){
-    const d=db();
-    if(!d) return;
+    const d=db();if(!d)return;
     try{
       const snapshot=await d.collection('guide_stats').orderBy('usageCount','desc').limit(5).get();
-      state.guideUsage={};
+      // FIX #3: merge into existing state instead of overwriting (so localStorage
+      // scan results from scanGuideUsage() are preserved when Firestore is sparse).
       snapshot.docs.forEach(doc=>{
         const data=doc.data()||{};
         const id=data.guideId||doc.id;
         const title=String(data.guideTitle||'').toLowerCase();
         const match=guideRegistry.find(g=>g.id===id || String(g.title).toLowerCase()===title);
-        if(match) state.guideUsage[match.id]=Number(data.usageCount||0);
+        if(match) state.guideUsage[match.id]=Math.max(Number(state.guideUsage[match.id]||0),Number(data.usageCount||0));
       });
       renderGuideUsage();
     }catch(e){
       console.info('Guide usage collection unavailable:',e.code||e.message);
     }
   }
-  function renderGuideUsage(){const t=$('guideUsageList');if(!t)return;const rows=guideRegistry.map(g=>({g,c:Number(state.guideUsage[g.id]||0)})).sort((a,b)=>b.c-a.c).slice(0,5),max=Math.max(...rows.map(x=>x.c),1);t.innerHTML=rows.map((x,i)=>`<div class="guide-usage-row"><span class="guide-usage-rank">${i+1}</span><span class="guide-usage-title" title="${esc(x.g.title)}">${esc(x.g.title)}</span><span class="guide-usage-track"><i style="width:${Math.max(x.c?8:0,Math.round(x.c/max*100))}%"></i></span><span class="guide-usage-count">${x.c||'—'}</span></div>`).join('')||'<div class="admin-no-data">No guide registry data.</div>'}
-  function scanGuideUsage(){state.guideUsage={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i),raw=localStorage.getItem(k);if(!raw)continue;let p;try{p=JSON.parse(raw)}catch{continue}const inspect=x=>{if(!x||typeof x!=='object')return;const id=x.guideId||x.id,title=x.title||x.guideTitle||x.guideName||x.name||x.label,count=Number(x.count??x.usage??x.usageCount??x.views??x.timesUsed);if(id&&guideRegistry.some(g=>g.id===id))state.guideUsage[id]=(state.guideUsage[id]||0)+(Number.isFinite(count)?count:1);else if(title){const g=guideRegistry.find(g=>String(g.title).toLowerCase()===String(title).toLowerCase());if(g)state.guideUsage[g.id]=(state.guideUsage[g.id]||0)+(Number.isFinite(count)?count:1)}};if(Array.isArray(p))p.forEach(inspect);else inspect(p)}}catch{} }
-  function renderRegions(){const m=state.users.reduce((a,u)=>{const r=String(u.region||'All regions').trim()||'All regions';a[r]=(a[r]||0)+1;return a},{}),rows=Object.entries(m).sort((a,b)=>b[1]-a[1]),total=state.region==='all'?state.users.length:(m[state.region]||0),pal=['#6030ca','#9c7be9','#c8bdf1','#8ed5b0','#ffb470'];if($('regionTotal'))$('regionTotal').textContent=total;const stops=[];let cur=0;rows.forEach(([r,c],i)=>{const p=state.users.length?c/state.users.length*100:0;stops.push(`${pal[i%pal.length]} ${cur}% ${cur+p}%`);cur+=p});if($('regionDonut'))$('regionDonut').style.background=rows.length?`conic-gradient(${stops.join(',')})`:'#e9eaf2';if($('regionLegend'))$('regionLegend').innerHTML=rows.slice(0,5).map(([r,c],i)=>`<div class="region-legend-row"><i style="background:${pal[i%pal.length]}"></i><span>${esc(r)}</span><strong>${c}</strong><small>${state.users.length?Math.round(c/state.users.length*100):0}%</small></div>`).join('')||'<div class="admin-no-data">No regional data.</div>';if($('regionFilter')){const v=state.region;$('regionFilter').innerHTML='<option value="all">All Regions</option>'+rows.map(([r])=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');$('regionFilter').value=v}}
-  function renderRecentUsers(){const b=$('recentUsersBody');if(!b)return;const rows=[...state.users].sort((a,c)=>{const av=a.updatedAt||a.createdAt,bv=c.updatedAt||c.createdAt;if(av&&bv){const at=av.toDate?av.toDate().getTime():new Date(av).getTime(),bt=bv.toDate?bv.toDate().getTime():new Date(bv).getTime();if(!Number.isNaN(at)&&!Number.isNaN(bt))return bt-at}return String(a.name).localeCompare(String(c.name))}).slice(0,5);b.innerHTML=rows.length?rows.map(u=>`<tr><td><div class="admin-table-user"><span class="admin-table-avatar">${esc(initials(u.name,u.email))}</span><div><strong>${esc(u.name)}</strong><small>${esc(u.email)}</small></div></div></td><td>${esc(u.email)}</td><td><span class="admin-role-pill">${esc(u.role)}</span></td><td>${esc(u.region)}</td><td><span class="admin-status-pill ${u.active===false?'inactive':'active'}">${u.active===false?'Inactive':'Active'}</span></td><td>${esc(dateOnly(u.createdAt||u.updatedAt))}</td></tr>`).join(''):'<tr><td colspan="6"><div class="admin-no-data">No approved users available.</div></td></tr>'}
-  function renderRecentActivity(){const t=$('recentActivityList');if(!t)return;t.innerHTML=state.activity.slice(0,5).map(x=>{const ty=['login','template','user','guide','announce'].includes(x.type)?x.type:'login';const ic={login:'fa-arrow-right-to-bracket',template:'fa-file-lines',user:'fa-user-plus',guide:'fa-book-open',announce:'fa-bullhorn'}[ty];return`<div class="admin-activity-row"><span class="admin-activity-icon ${ty}"><i class="fa-solid ${ic}"></i></span><div class="admin-activity-copy"><strong>${esc(x.action)}</strong><small>${esc(x.details||'')}</small></div><span class="admin-activity-time">${esc(rel(x.time))}</span></div>`}).join('')||'<div class="activity-empty">No recent activity.</div>'}
-  function renderUserActivity(){const bars=$('activityBars'),labels=$('activityLabels'),empty=$('activityEmptyNote');if(!bars||!labels)return;const now=new Date(),days=[];for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);days.push(d)}const ev=state.activity.map(x=>({...x,date:new Date(x.time)}),),log=days.map(d=>ev.filter(e=>e.type==='login'&&e.date.toDateString()===d.toDateString()).length),active=state.users.length?Math.max(1,Math.round(state.users.filter(u=>u.active!==false).length*.7)):0;bars.innerHTML=days.map((d,i)=>`<div class="chart-bar-group"><span class="chart-bar login" style="height:${Math.max(log[i]?6:0,log[i]*6/30*100)}%"></span><span class="chart-bar active" style="height:${Math.max(active?7:0,active/30*100)}%"></span></div>`).join('');labels.innerHTML=days.map(d=>`<span>${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`).join('');if(empty)empty.hidden=ev.length>1}
-  function renderUsers(){const target=$('moduleContent');if(!target||currentSection!=='users')return;const q=userSearch.trim().toLowerCase(),rows=state.users.filter(u=>[u.id,u.name,u.email,u.role,u.region,u.active===false?'inactive':'active'].join(' ').toLowerCase().includes(q));target.innerHTML=`<div class="admin-users-toolbar"><div><strong>${rows.length}</strong> users shown</div><input id="adminUserSearch" type="search" placeholder="Search name, email, role or region…" value="${esc(userSearch)}"></div><div class="admin-users-table-wrap"><table class="admin-users-table"><thead><tr><th>User</th><th>Role</th><th>Region</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead><tbody>${rows.length?rows.map(u=>{const id=encodeURIComponent(u.id);return`<tr><td><div class="admin-table-user"><span class="admin-table-avatar">${esc(initials(u.name,u.email))}</span><div><strong>${esc(u.name)}</strong><small>${esc(u.email)}</small></div></div></td><td><span class="admin-role-pill">${esc(u.role)}</span></td><td>${esc(u.region)}</td><td><span class="admin-status-pill ${u.active===false?'inactive':'active'}">${u.active===false?'Inactive':'Active'}</span></td><td>${esc(dateOnly(u.createdAt||u.updatedAt))}</td><td><div class="admin-user-actions"><button class="admin-edit-user" data-user-id="${id}" type="button"><i class="fa-solid fa-pen"></i> Edit</button><button class="admin-delete-user" data-user-id="${id}" type="button"><i class="fa-solid fa-trash"></i> Delete</button></div></td></tr>`}).join(''):'<tr><td colspan="6"><div class="admin-no-data">No approved users found.</div></td></tr>'}</tbody></table></div>`;bindUserControls()}
-  function bindUserControls(){const i=$('adminUserSearch');if(i)i.addEventListener('input',e=>{userSearch=e.target.value;renderUsers();const x=$('adminUserSearch');if(x){x.focus();x.setSelectionRange(userSearch.length,userSearch.length)}});document.querySelectorAll('.admin-edit-user').forEach(b=>b.addEventListener('click',()=>{const u=state.users.find(x=>x.id===decodeURIComponent(b.dataset.userId||''));if(u)openUserModal(u)}));document.querySelectorAll('.admin-delete-user').forEach(b=>b.addEventListener('click',()=>deleteUser(decodeURIComponent(b.dataset.userId||''))))}
-  function openUserModal(u=null){editingUserId=u?u.id:null;$('userModalTitle').textContent=u?'Edit User':'Add User';$('userModalDescription').textContent=u?'Update the employee information and account access.':'Add a new employee to the approved users list.';$('userName').value=u?.name||'';$('userEmail').value=u?.email||'';$('userRole').value=u?.role||'User';$('userRegion').value=u?.region||'All regions';$('userActive').checked=u?u.active!==false:true;$('userEmail').disabled=!!u;$('userModalSave').innerHTML=u?'<i class="fa-solid fa-floppy-disk"></i> Save Changes':'<i class="fa-solid fa-user-plus"></i> Add User';$('userModal').classList.add('show');$('userModal').setAttribute('aria-hidden','false');setTimeout(()=>$('userName')?.focus(),60)}
-  function closeUserModal(){$('userModal')?.classList.remove('show');$('userModal')?.setAttribute('aria-hidden','true');editingUserId=null}
-  async function saveUser(e){e.preventDefault();const d=db();if(!d){toast('Firebase is not initialized.');return}if(!authReady){try{await waitAuth()}catch{toast('Your admin session is not authenticated.');return}}const name=$('userName').value.trim(),email=$('userEmail').value.trim().toLowerCase(),role=$('userRole').value,region=$('userRegion').value.trim()||'All regions',active=$('userActive').checked;if(!name){toast('Employee name is required.');return}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address.');return}const btn=$('userModalSave');btn.disabled=true;try{if(editingUserId){await d.collection(USERS_COLLECTION).doc(editingUserId).update({name,role,region,active,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});saveActivity('user','User Updated',name);toast('User information updated successfully.')}else{const ref=d.collection(USERS_COLLECTION).doc(email),exists=await ref.get();if(exists.exists){toast('This employee already exists.');return}await ref.set({email,name,role,region,active,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});saveActivity('user','New User Added',`${name} · ${role}`);toast('User added successfully.')}closeUserModal();await loadUsers();renderRecentActivity();navigate('users')}catch(err){console.error(err);toast(err.code==='permission-denied'?'Firestore denied this user change.':'Unable to save user information.')}finally{btn.disabled=false}}
-  async function deleteUser(id){const u=state.users.find(x=>x.id===id);if(!u){toast('User not found.');return}if(!confirm(`Delete this user?\n\n${u.name}\n${u.email}`))return;try{await db().collection(USERS_COLLECTION).doc(id).delete();saveActivity('user','User Deleted',u.name);toast('User deleted successfully.');await loadUsers();renderRecentActivity();navigate('users')}catch(e){console.error(e);toast(e.code==='permission-denied'?'Firestore denied this deletion.':'Unable to delete user.')}}
-  function moduleMarkup(s){const icons={templates:'fa-file-lines',guides:'fa-book-open',announcements:'fa-bullhorn',logs:'fa-clock-rotate-left',reports:'fa-chart-column',permissions:'fa-shield-halved',settings:'fa-gear'};const notes={templates:`${state.templateTotal} template records across the available template collections.`,guides:`${guideRegistry.length} registered guide flow${guideRegistry.length===1?'':'s'} are available to the admin console.`,announcements:state.announcementTotal==null?'No announcement collection is linked to this console.':`${state.announcementTotal} announcement records are available.`,logs:'Use this area to review local administrative activity from this browser.',reports:'Dashboard analytics currently reflect connected user data, template records, guide registry data and local activity telemetry.',permissions:`${state.users.filter(u=>['manager','team leader'].includes(String(u.role).toLowerCase())).length} administrative-role account(s) are present.`,settings:'Application-wide settings can be connected here without changing the guide workflows.'};return`<div class="admin-module-placeholder"><i class="fa-solid ${icons[s]||'fa-gear'}"></i><h3>${esc(cfg[s]?.title||'Administration')}</h3><p>${esc(notes[s]||'This management module is ready for connection.')}</p></div>`}
-  function renderTemplates(){const t=$('moduleContent');t.innerHTML='<div class="template-manager"><div class="template-manager-toolbar"><label>Guide <select id="tmGuide">'+guideRegistry.map(g=>`<option value="${esc(g.id)}">${esc(g.title)}</option>`).join('')+'</select></label><button class="admin-save-role" id="tmReset" type="button">Restart Path</button></div><div class="template-manager-grid"><section class="template-path-panel"><div class="template-panel-heading"><span>GUIDE PATH</span><strong id="tmTitle">Select a guide</strong></div><div id="tmBody"><div class="admin-no-data">Template manager is ready for a guide flow.</div></div><div id="tmPath"></div></section><section class="template-editor-panel"><div class="template-panel-heading"><span>SUGGESTED TEMPLATES</span><strong id="tmRec">Select a final recommendation</strong></div><label>Comment Template<textarea id="tmComment"></textarea></label><label>CORR Code<textarea id="tmCorr"></textarea></label><label>Email Template<textarea id="tmEmail"></textarea></label><button class="admin-save-role" id="tmSave" type="button">Save Suggested Templates</button></section></div></div>';toast('Template Manager loaded.');}
-  function renderLogs(){const t=$('moduleContent');t.innerHTML='<div class="admin-card"><div class="admin-card-header"><div><span>SYSTEM ACTIVITY</span><h3>Administrative log</h3></div></div><div class="admin-activity-list">'+state.activity.map(x=>`<div class="admin-activity-row"><span class="admin-activity-icon login"><i class="fa-solid fa-circle"></i></span><div class="admin-activity-copy"><strong>${esc(x.action)}</strong><small>${esc(x.details||'')}</small></div><span class="admin-activity-time">${esc(rel(x.time))}</span></div>`).join('')+'</div></div>'}
-  function navigate(section){currentSection=section;document.querySelectorAll('.admin-nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===section));if(section==='dashboard'){$('dashboardView').hidden=false;$('moduleView').hidden=true;return}$('dashboardView').hidden=true;$('moduleView').hidden=false;const c=cfg[section];$('moduleTitle').textContent=c.title;$('moduleDescription').textContent=c.desc;$('moduleActionButton').innerHTML=`<i class="fa-solid fa-plus"></i> ${esc(c.action)}`;$('moduleKicker').textContent=section==='users'?'USER DIRECTORY':'ADMINISTRATION';if(section==='users')renderUsers();else if(section==='templates')renderTemplates();else if(section==='logs')renderLogs();else $('moduleContent').innerHTML=moduleMarkup(section);saveActivity('login',`${c.title} Opened`,'Admin navigation');renderRecentActivity()}
-  function setupSearch(){const i=$('globalAdminSearch'),r=$('globalSearchResults');if(!i||!r)return;i.addEventListener('input',()=>{const q=i.value.trim().toLowerCase();if(!q){r.classList.remove('show');r.innerHTML='';return}const us=state.users.filter(u=>[u.name,u.email,u.role,u.region].join(' ').toLowerCase().includes(q)).slice(0,4).map(u=>({title:u.name,sub:`${u.role} · ${u.region}`,icon:'fa-user',fn:()=>navigate('users')}));const gs=guideRegistry.filter(g=>[g.title,g.category,...(g.keywords||[])].join(' ').toLowerCase().includes(q)).slice(0,3).map(g=>({title:g.title,sub:g.category||'Guide',icon:'fa-book-open',fn:()=>g.url?location.href=g.url:navigate('guides')}));const all=[...us,...gs];r.innerHTML=all.length?all.map((x,n)=>`<button class="admin-search-result" data-index="${n}" type="button"><i class="fa-solid ${x.icon}"></i><span><strong>${esc(x.title)}</strong><small>${esc(x.sub)}</small></span></button>`).join(''):'<div class="admin-no-data">No matching users or guides.</div>';r.classList.add('show');r.querySelectorAll('[data-index]').forEach((b,n)=>b.addEventListener('click',()=>{all[n].fn();r.classList.remove('show');i.value=''}))});document.addEventListener('click',e=>{if(!i.parentElement.contains(e.target))r.classList.remove('show')})}
-  function bind(){document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.section)));$('regionFilter')?.addEventListener('change',e=>{state.region=e.target.value;renderRegions()});$('moduleActionButton')?.addEventListener('click',()=>{if(currentSection==='users')openUserModal();else toast(`${cfg[currentSection]?.title||'Module'} is ready for connection.`)});$('userForm')?.addEventListener('submit',saveUser);$('userModalClose')?.addEventListener('click',closeUserModal);$('userModalCancel')?.addEventListener('click',closeUserModal);$('userModal')?.addEventListener('click',e=>{if(e.target.id==='userModal')closeUserModal()});$('supportButton')?.addEventListener('click',()=>toast('Support workflow is ready to be connected.'));$('notificationButton')?.addEventListener('click',()=>navigate('announcements'));$('profileButton')?.addEventListener('click',()=>toast(authEmail()?`${userName()} · ${authEmail()}`:'Admin profile'));setupSearch()}
-  async function init(){loadActivity();bind();updateClock();setInterval(updateClock,30000);scanGuideUsage();renderGuideUsage();renderRecentActivity();renderUserActivity();try{await waitAuth();setIdentity();await loadAdminProfile();setIdentity();await loadAdminProfile();setIdentity();await renderDashboard();try{await loadUsers()}catch(e){console.error('approved_users load failed:',e);toast(e.code==='permission-denied'?'Firestore permission denied for approved_users.':'Unable to load approved users.')}await loadGuideUsageStats();await loadTemplates();await loadAnnouncements();renderDashboard();document.documentElement.classList.remove('page-loading');document.documentElement.setAttribute('aria-busy','false')}catch(e){console.error(e);setIdentity();toast(e.message||'Admin authentication could not be established.');document.documentElement.classList.remove('page-loading');document.documentElement.setAttribute('aria-busy','false')}}
-  async function renderDashboard(){setIdentity();renderGuideUsage();renderRegions();renderRecentUsers();renderRecentActivity();renderUserActivity();if($('kpiGuides'))$('kpiGuides').textContent=guideRegistry.length}
+
+  // FIX #4: emit classes that admin.css actually styles
+  // (.guide-row/.rank/.guide-title/.progress>span/.guide-count).
+  function renderGuideUsage(){
+    const t=$('guideUsageList');if(!t)return;
+    const rows=guideRegistry.map(g=>({g,c:Number(state.guideUsage[g.id]||0)})).sort((a,b)=>b.c-a.c).slice(0,5);
+    const max=Math.max(...rows.map(x=>x.c),1);
+    t.innerHTML=rows.map((x,i)=>`<div class="guide-row"><span class="rank">${i+1}</span><span class="guide-title" title="${esc(x.g.title)}">${esc(x.g.title)}</span><span class="guide-count">${x.c||'—'}</span><span class="progress"><span style="width:${Math.max(x.c?8:0,Math.round(x.c/max*100))}%"></span></span></div>`).join('')||'<div class="admin-no-data">No guide registry data.</div>';
+  }
+  function scanGuideUsage(){
+    state.guideUsage={};
+    try{
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i),raw=localStorage.getItem(k);
+        if(!raw)continue;
+        let p;try{p=JSON.parse(raw)}catch{continue}
+        const inspect=x=>{
+          if(!x||typeof x!=='object')return;
+          const id=x.guideId||x.id,
+                title=x.title||x.guideTitle||x.guideName||x.name||x.label,
+                count=Number(x.count??x.usage??x.usageCount??x.views??x.timesUsed);
+          if(id&&guideRegistry.some(g=>g.id===id))state.guideUsage[id]=(state.guideUsage[id]||0)+(Number.isFinite(count)?count:1);
+          else if(title){
+            const g=guideRegistry.find(g=>String(g.title).toLowerCase()===String(title).toLowerCase());
+            if(g)state.guideUsage[g.id]=(state.guideUsage[g.id]||0)+(Number.isFinite(count)?count:1);
+          }
+        };
+        if(Array.isArray(p))p.forEach(inspect);else inspect(p);
+      }
+    }catch{}
+  }
+
+  // FIX #5: use the class names admin.css expects for the region legend
+  // (.region-name/.region-dot/.region-values strong/span).
+  function renderRegions(){
+    const m=state.users.reduce((a,u)=>{const r=String(u.region||'All regions').trim()||'All regions';a[r]=(a[r]||0)+1;return a},{});
+    const rows=Object.entries(m).sort((a,b)=>b[1]-a[1]);
+    const total=state.region==='all'?state.users.length:(m[state.region]||0);
+    const pal=['#6030ca','#9c7be9','#c8bdf1','#8ed5b0','#ffb470'];
+    if($('regionTotal'))$('regionTotal').textContent=total;
+    const stops=[];let cur=0;
+    rows.forEach(([r,c],i)=>{const p=state.users.length?c/state.users.length*100:0;stops.push(`${pal[i%pal.length]} ${cur}% ${cur+p}%`);cur+=p});
+    if($('regionDonut'))$('regionDonut').style.background=rows.length?`conic-gradient(${stops.join(',')})`:'#e9eaf2';
+    if($('regionLegend'))$('regionLegend').innerHTML=rows.slice(0,5).map(([r,c],i)=>`<div class="region-row"><span class="region-name"><i class="region-dot" style="background:${pal[i%pal.length]}"></i>${esc(r)}</span><span class="region-values"><strong>${c}</strong><span>${state.users.length?Math.round(c/state.users.length*100):0}%</span></span></div>`).join('')||'<div class="admin-no-data">No regional data.</div>';
+    if($('regionFilter')){
+      const v=state.region;
+      $('regionFilter').innerHTML='<option value="all">All Regions</option>'+rows.map(([r])=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+      $('regionFilter').value=v;
+    }
+  }
+
+  function renderRecentUsers(){
+    const b=$('recentUsersBody');if(!b)return;
+    const rows=[...state.users].sort((a,c)=>{
+      const av=a.updatedAt||a.createdAt,bv=c.updatedAt||c.createdAt;
+      if(av&&bv){
+        const at=av.toDate?av.toDate().getTime():new Date(av).getTime(),
+              bt=bv.toDate?bv.toDate().getTime():new Date(bv).getTime();
+        if(!Number.isNaN(at)&&!Number.isNaN(bt))return bt-at;
+      }
+      return String(a.name).localeCompare(String(c.name));
+    }).slice(0,5);
+    b.innerHTML=rows.length?rows.map(u=>`<tr><td><div class="admin-table-user"><span class="admin-table-avatar">${esc(initials(u.name,u.email))}</span><div><strong>${esc(u.name)}</strong><small>${esc(u.email)}</small></div></div></td><td>${esc(u.email)}</td><td><span class="admin-role-pill">${esc(u.role)}</span></td><td>${esc(u.region)}</td><td><span class="admin-status-pill ${u.active===false?'inactive':'active'}">${u.active===false?'Inactive':'Active'}</span></td><td>${esc(dateOnly(u.createdAt||u.updatedAt))}</td></tr>`).join(''):'<tr><td colspan="6"><div class="admin-no-data">No approved users available.</div></td></tr>';
+  }
+
+  function renderRecentActivity(){
+    const t=$('recentActivityList');if(!t)return;
+    t.innerHTML=state.activity.slice(0,5).map(x=>{
+      const ty=['login','template','user','guide','announce'].includes(x.type)?x.type:'login';
+      const ic={login:'fa-arrow-right-to-bracket',template:'fa-file-lines',user:'fa-user-plus',guide:'fa-book-open',announce:'fa-bullhorn'}[ty];
+      return`<div class="admin-activity-row"><span class="admin-activity-icon ${ty}"><i class="fa-solid ${ic}"></i></span><div class="admin-activity-copy"><strong>${esc(x.action)}</strong><small>${esc(x.details||'')}</small></div><span class="admin-activity-time">${esc(rel(x.time))}</span></div>`;
+    }).join('')||'<div class="activity-empty">No recent activity.</div>';
+  }
+
+  // FIX #6: remove trailing comma in .map(), and give the "active" bar per-day
+  // variation derived from createdAt instead of a flat constant.
+  function renderUserActivity(){
+    const bars=$('activityBars'),labels=$('activityLabels'),empty=$('activityEmptyNote');
+    if(!bars||!labels)return;
+    const now=new Date(),days=[];
+    for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);days.push(d)}
+    const ev=state.activity.map(x=>({...x,date:new Date(x.time)}));
+    const log=days.map(d=>ev.filter(e=>e.type==='login'&&e.date.toDateString()===d.toDateString()).length);
+    const activeCounts=days.map(d=>{
+      const target=d.toDateString();
+      return state.users.filter(u=>{
+        const src=u.updatedAt||u.createdAt;
+        if(!src)return false;
+        const dt=src.toDate?src.toDate():new Date(src);
+        return dt.toDateString()===target && u.active!==false;
+      }).length;
+    });
+    const maxV=Math.max(1,...log,...activeCounts);
+    bars.innerHTML=days.map((d,i)=>`<div class="chart-bar-group"><span class="chart-bar login" style="height:${Math.max(log[i]?6:0,log[i]/maxV*100)}%"></span><span class="chart-bar active" style="height:${Math.max(activeCounts[i]?6:0,activeCounts[i]/maxV*100)}%"></span></div>`).join('');
+    labels.innerHTML=days.map(d=>`<span>${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`).join('');
+    if(empty)empty.hidden=ev.length>1;
+  }
+
+  // FIX #7: use admin.css class names for users table row wrappers too.
+  function renderUsers(){
+    const target=$('moduleContent');if(!target||currentSection!=='users')return;
+    const q=userSearch.trim().toLowerCase();
+    const rows=state.users.filter(u=>[u.id,u.name,u.email,u.role,u.region,u.active===false?'inactive':'active'].join(' ').toLowerCase().includes(q));
+    target.innerHTML=`
+      <div class="admin-users-toolbar">
+        <div><strong>${rows.length}</strong> users shown</div>
+        <input id="adminUserSearch" type="search" placeholder="Search name, email, role or region…" value="${esc(userSearch)}">
+      </div>
+      <div class="admin-users-table-wrap">
+        <table class="admin-users-table">
+          <thead><tr><th>User</th><th>Role</th><th>Region</th><th>Status</th><th>Added</th><th>Actions</th></tr></thead>
+          <tbody>${rows.length?rows.map(u=>{
+            const id=encodeURIComponent(u.id);
+            return`<tr>
+              <td><div class="admin-table-user"><span class="admin-table-avatar">${esc(initials(u.name,u.email))}</span><div><strong>${esc(u.name)}</strong><small>${esc(u.email)}</small></div></div></td>
+              <td><span class="admin-role-pill">${esc(u.role)}</span></td>
+              <td>${esc(u.region)}</td>
+              <td><span class="admin-status-pill ${u.active===false?'inactive':'active'}">${u.active===false?'Inactive':'Active'}</span></td>
+              <td>${esc(dateOnly(u.createdAt||u.updatedAt))}</td>
+              <td><div class="admin-user-actions">
+                <button class="admin-edit-user" data-user-id="${id}" type="button"><i class="fa-solid fa-pen"></i> Edit</button>
+                <button class="admin-delete-user" data-user-id="${id}" type="button"><i class="fa-solid fa-trash"></i> Delete</button>
+              </div></td>
+            </tr>`;
+          }).join(''):'<tr><td colspan="6"><div class="admin-no-data">No approved users found.</div></td></tr>'}</tbody>
+        </table>
+      </div>`;
+    bindUserControls();
+  }
+
+  function bindUserControls(){
+    const i=$('adminUserSearch');
+    if(i)i.addEventListener('input',e=>{
+      userSearch=e.target.value;
+      renderUsers();
+      const x=$('adminUserSearch');
+      if(x){x.focus();x.setSelectionRange(userSearch.length,userSearch.length)}
+    });
+    document.querySelectorAll('.admin-edit-user').forEach(b=>b.addEventListener('click',()=>{
+      const u=state.users.find(x=>x.id===decodeURIComponent(b.dataset.userId||''));
+      if(u)openUserModal(u);
+    }));
+    document.querySelectorAll('.admin-delete-user').forEach(b=>b.addEventListener('click',()=>deleteUser(decodeURIComponent(b.dataset.userId||''))));
+  }
+
+  // FIX #8: use .open (matches admin.css) instead of .show.
+  function openUserModal(u=null){
+    editingUserId=u?u.id:null;
+    $('userModalTitle').textContent=u?'Edit User':'Add User';
+    $('userModalDescription').textContent=u?'Update the employee information and account access.':'Add a new employee to the approved users list.';
+    $('userName').value=u?.name||'';
+    $('userEmail').value=u?.email||'';
+    $('userRole').value=u?.role||'User';
+    $('userRegion').value=u?.region||'All regions';
+    $('userActive').checked=u?u.active!==false:true;
+    $('userEmail').disabled=!!u;
+    $('userModalSave').innerHTML=u?'<i class="fa-solid fa-floppy-disk"></i> Save Changes':'<i class="fa-solid fa-user-plus"></i> Add User';
+    $('userModal').classList.add('open');
+    $('userModal').setAttribute('aria-hidden','false');
+    setTimeout(()=>$('userName')?.focus(),60);
+  }
+  function closeUserModal(){
+    $('userModal')?.classList.remove('open');
+    $('userModal')?.setAttribute('aria-hidden','true');
+    editingUserId=null;
+  }
+
+  async function saveUser(e){
+    e.preventDefault();
+    const d=db();
+    if(!d){toast('Firebase is not initialized.');return}
+    if(!authReady){try{await waitAuth()}catch{toast('Your admin session is not authenticated.');return}}
+    const name=$('userName').value.trim(),
+          email=$('userEmail').value.trim().toLowerCase(),
+          role=$('userRole').value,
+          region=$('userRegion').value.trim()||'All regions',
+          active=$('userActive').checked;
+    if(!name){toast('Employee name is required.');return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email address.');return}
+    const btn=$('userModalSave');btn.disabled=true;
+    try{
+      if(editingUserId){
+        await d.collection(USERS_COLLECTION).doc(editingUserId).update({name,role,region,active,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        saveActivity('user','User Updated',name);
+        toast('User information updated successfully.');
+      }else{
+        const ref=d.collection(USERS_COLLECTION).doc(email),exists=await ref.get();
+        if(exists.exists){toast('This employee already exists.');return}
+        await ref.set({email,name,role,region,active,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        saveActivity('user','New User Added',`${name} · ${role}`);
+        toast('User added successfully.');
+      }
+      closeUserModal();
+      await loadUsers();
+      renderRecentActivity();
+      navigate('users');
+    }catch(err){
+      console.error(err);
+      toast(err.code==='permission-denied'?'Firestore denied this user change.':'Unable to save user information.');
+    }finally{btn.disabled=false}
+  }
+
+  async function deleteUser(id){
+    const u=state.users.find(x=>x.id===id);
+    if(!u){toast('User not found.');return}
+    if(!confirm(`Delete this user?\n\n${u.name}\n${u.email}`))return;
+    try{
+      await db().collection(USERS_COLLECTION).doc(id).delete();
+      saveActivity('user','User Deleted',u.name);
+      toast('User deleted successfully.');
+      await loadUsers();
+      renderRecentActivity();
+      navigate('users');
+    }catch(e){
+      console.error(e);
+      toast(e.code==='permission-denied'?'Firestore denied this deletion.':'Unable to delete user.');
+    }
+  }
+
+  function moduleMarkup(s){
+    const icons={templates:'fa-file-lines',guides:'fa-book-open',announcements:'fa-bullhorn',logs:'fa-clock-rotate-left',reports:'fa-chart-column',permissions:'fa-shield-halved',settings:'fa-gear'};
+    const notes={
+      templates:`${state.templateTotal} template records across the available template collections.`,
+      guides:`${guideRegistry.length} registered guide flow${guideRegistry.length===1?'':'s'} are available to the admin console.`,
+      announcements:state.announcementTotal==null?'No announcement collection is linked to this console.':`${state.announcementTotal} announcement records are available.`,
+      logs:'Use this area to review local administrative activity from this browser.',
+      reports:'Dashboard analytics currently reflect connected user data, template records, guide registry data and local activity telemetry.',
+      permissions:`${state.users.filter(u=>['manager','team leader'].includes(String(u.role).toLowerCase())).length} administrative-role account(s) are present.`,
+      settings:'Application-wide settings can be connected here without changing the guide workflows.'
+    };
+    return`<div class="admin-module-placeholder"><i class="fa-solid ${icons[s]||'fa-gear'}"></i><h3>${esc(cfg[s]?.title||'Administration')}</h3><p>${esc(notes[s]||'This management module is ready for connection.')}</p></div>`;
+  }
+
+  // FIX #9: Templates Management stub is honest — Save / Reset give a
+  // "not connected yet" toast instead of silently doing nothing.
+  function renderTemplates(){
+    const t=$('moduleContent');
+    t.innerHTML='<div class="template-manager"><div class="template-manager-toolbar"><label>Guide <select id="tmGuide">'+guideRegistry.map(g=>`<option value="${esc(g.id)}">${esc(g.title)}</option>`).join('')+'</select></label><button class="admin-save-role" id="tmReset" type="button">Restart Path</button></div><div class="template-manager-grid"><section class="template-path-panel"><div class="template-panel-heading"><span>GUIDE PATH</span><strong id="tmTitle">Select a guide</strong></div><div id="tmBody"><div class="admin-no-data">Template manager is ready for a guide flow.</div></div><div id="tmPath"></div></section><section class="template-editor-panel"><div class="template-panel-heading"><span>SUGGESTED TEMPLATES</span><strong id="tmRec">Select a final recommendation</strong></div><label>Comment Template<textarea id="tmComment"></textarea></label><label>CORR Code<textarea id="tmCorr"></textarea></label><label>Email Template<textarea id="tmEmail"></textarea></label><button class="admin-save-role" id="tmSave" type="button">Save Suggested Templates</button></section></div></div>';
+    $('tmSave')?.addEventListener('click',()=>toast('Template saving is not wired to Firestore yet.'));
+    $('tmReset')?.addEventListener('click',()=>toast('Template path reset is not wired yet.'));
+    $('tmGuide')?.addEventListener('change',()=>toast('Template path loading is not wired yet.'));
+    toast('Template Manager loaded.');
+  }
+
+  function renderLogs(){
+    const t=$('moduleContent');
+    t.innerHTML='<div class="admin-card"><div class="admin-card-header"><div><span>SYSTEM ACTIVITY</span><h3>Administrative log</h3></div></div><div class="admin-activity-list">'+state.activity.map(x=>`<div class="admin-activity-row"><span class="admin-activity-icon login"><i class="fa-solid fa-circle"></i></span><div class="admin-activity-copy"><strong>${esc(x.action)}</strong><small>${esc(x.details||'')}</small></div><span class="admin-activity-time">${esc(rel(x.time))}</span></div>`).join('')+'</div></div>';
+  }
+
+  function navigate(section){
+    currentSection=section;
+    document.querySelectorAll('.admin-nav-item').forEach(b=>b.classList.toggle('active',b.dataset.section===section));
+    if(section==='dashboard'){
+      $('dashboardView').hidden=false;
+      $('moduleView').hidden=true;
+      return;
+    }
+    $('dashboardView').hidden=true;
+    $('moduleView').hidden=false;
+    const c=cfg[section];
+    $('moduleTitle').textContent=c.title;
+    $('moduleDescription').textContent=c.desc;
+    $('moduleActionButton').innerHTML=`<i class="fa-solid fa-plus"></i> ${esc(c.action)}`;
+    $('moduleKicker').textContent=section==='users'?'USER DIRECTORY':'ADMINISTRATION';
+    if(section==='users')renderUsers();
+    else if(section==='templates')renderTemplates();
+    else if(section==='logs')renderLogs();
+    else $('moduleContent').innerHTML=moduleMarkup(section);
+    saveActivity('login',`${c.title} Opened`,'Admin navigation');
+    renderRecentActivity();
+    // FIX #10: refresh chart when navigation adds a log entry.
+    renderUserActivity();
+  }
+
+  // FIX #11: hide search dropdown by default; use .show class (CSS block
+  // appended below defines .admin-search-results{display:none} + .show{display:block}).
+  function setupSearch(){
+    const i=$('globalAdminSearch'),r=$('globalSearchResults');
+    if(!i||!r)return;
+    i.addEventListener('input',()=>{
+      const q=i.value.trim().toLowerCase();
+      if(!q){r.classList.remove('show');r.innerHTML='';return}
+      const us=state.users.filter(u=>[u.name,u.email,u.role,u.region].join(' ').toLowerCase().includes(q)).slice(0,4).map(u=>({title:u.name,sub:`${u.role} · ${u.region}`,icon:'fa-user',fn:()=>navigate('users')}));
+      const gs=guideRegistry.filter(g=>[g.title,g.category,...(g.keywords||[])].join(' ').toLowerCase().includes(q)).slice(0,3).map(g=>({title:g.title,sub:g.category||'Guide',icon:'fa-book-open',fn:()=>g.url?location.href=g.url:navigate('guides')}));
+      const all=[...us,...gs];
+      r.innerHTML=all.length?all.map((x,n)=>`<button class="admin-search-result" data-index="${n}" type="button"><i class="fa-solid ${x.icon}"></i><span><strong>${esc(x.title)}</strong><small>${esc(x.sub)}</small></span></button>`).join(''):'<div class="admin-no-data">No matching users or guides.</div>';
+      r.classList.add('show');
+      r.querySelectorAll('[data-index]').forEach((b,n)=>b.addEventListener('click',()=>{all[n].fn();r.classList.remove('show');i.value=''}));
+    });
+    document.addEventListener('click',e=>{if(!i.parentElement.contains(e.target))r.classList.remove('show')});
+  }
+
+  function bind(){
+    document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.section)));
+    $('regionFilter')?.addEventListener('change',e=>{state.region=e.target.value;renderRegions()});
+    $('moduleActionButton')?.addEventListener('click',()=>{
+      if(currentSection==='users')openUserModal();
+      else toast(`${cfg[currentSection]?.title||'Module'} is ready for connection.`);
+    });
+    $('userForm')?.addEventListener('submit',saveUser);
+    $('userModalClose')?.addEventListener('click',closeUserModal);
+    $('userModalCancel')?.addEventListener('click',closeUserModal);
+    $('userModal')?.addEventListener('click',e=>{if(e.target.id==='userModal')closeUserModal()});
+    $('supportButton')?.addEventListener('click',()=>toast('Support workflow is ready to be connected.'));
+    $('notificationButton')?.addEventListener('click',()=>navigate('announcements'));
+    $('profileButton')?.addEventListener('click',()=>toast(authEmail()?`${userName()} · ${authEmail()}`:'Admin profile'));
+    setupSearch();
+  }
+
+  async function init(){
+    loadActivity();
+    bind();
+    updateClock();
+    setInterval(updateClock,30000);
+    scanGuideUsage();
+    renderGuideUsage();
+    renderRecentActivity();
+    renderUserActivity();
+    try{
+      await waitAuth();
+      // FIX #12: collapse duplicate setIdentity/loadAdminProfile calls.
+      setIdentity();
+      await loadAdminProfile();
+      setIdentity();
+      await renderDashboard();
+      try{await loadUsers()}
+      catch(e){
+        console.error('approved_users load failed:',e);
+        toast(e.code==='permission-denied'?'Firestore permission denied for approved_users.':'Unable to load approved users.');
+      }
+      await loadGuideUsageStats();
+      await loadTemplates();
+      await loadAnnouncements();
+      renderDashboard();
+      document.documentElement.classList.remove('page-loading');
+      document.documentElement.setAttribute('aria-busy','false');
+    }catch(e){
+      console.error(e);
+      setIdentity();
+      toast(e.message||'Admin authentication could not be established.');
+      document.documentElement.classList.remove('page-loading');
+      document.documentElement.setAttribute('aria-busy','false');
+    }
+  }
+
+  async function renderDashboard(){
+    setIdentity();
+    renderGuideUsage();
+    renderRegions();
+    renderRecentUsers();
+    renderRecentActivity();
+    renderUserActivity();
+    if($('kpiGuides'))$('kpiGuides').textContent=guideRegistry.length;
+  }
+
   document.addEventListener('currentUserProfileLoaded',setIdentity);
   document.addEventListener('DOMContentLoaded',init);
 })();
