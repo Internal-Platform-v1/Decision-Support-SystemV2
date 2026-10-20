@@ -664,8 +664,8 @@ html[data-theme="dark"] #update-banner-placeholder .dss-update-banner {
    ============================================================ */
 html[data-theme="dark"] .footer-banner,
 html[data-theme="dark"] body .footer-banner {
-    background-image: linear-gradient(110deg, #101020 0%, #131326 48%, #0c0c18 100%) !important;
-    background-color: #101020 !important;
+    background-image: linear-gradient(110deg, #0c0c18 0%, #101020 48%, #08080f 100%) !important;
+    background-color: #0c0c18 !important;
     color: #ece9ff !important;
 }
 html[data-theme="dark"] .wave {
