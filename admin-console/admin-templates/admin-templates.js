@@ -13,6 +13,18 @@
     manifest: () => Array.isArray(window.GUIDE_FLOW_MANIFEST) ? window.GUIDE_FLOW_MANIFEST : []
   };
 
+  /* Resolve a manifest flowPath to a URL the browser can fetch.
+     - Absolute ("/foo", "https://…") → returned as-is.
+     - Relative → prefixed with window.GUIDE_FLOW_REPO_ROOT.
+       (Falls back to "/" if the manifest didn't declare a root.) */
+  function resolveFlowPath(path) {
+    const p = String(path || "").trim();
+    if (!p) return p;
+    if (p.startsWith("/") || /^[a-z]+:\/\//i.test(p)) return p;
+    const root = window.GUIDE_FLOW_REPO_ROOT || "/";
+    return root.replace(/\/+$/, "/") + p.replace(/^\/+/, "");
+  }
+
   /* ------------------------------------------------------------
      STATE
      ------------------------------------------------------------ */
@@ -106,9 +118,13 @@
     window.GUIDE_NODES  = undefined;
 
     try {
-      await injectScriptOnce(guide.flowPath);
-    } finally {
-      // Snapshot before restoring.
+      await injectScriptOnce(resolveFlowPath(guide.flowPath));
+    } catch (err) {
+      // Restore globals before re-throwing so we don't leave the page
+      // in a half-initialised state.
+      window.GUIDE_CONFIG = prevConfig;
+      window.GUIDE_NODES  = prevNodes;
+      throw err;
     }
 
     const snapshot = {
@@ -328,8 +344,6 @@
       email:   ($("atEmail")?.value || "").trim()
     };
 
-    // Firestore rejects empty strings in doc.set if using FieldValue.serverTimestamp,
-    // so we store the text as-is (empty string is allowed for a { text: "" } doc).
     const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp();
 
     const button = $("atSave");
