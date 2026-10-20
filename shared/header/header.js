@@ -1,6 +1,6 @@
 /* ============================================================
-   shared/header.js — V5
-   Header behavior + settings menu + admin password gate
+   shared/header.js — V6
+   Header behavior + settings menu + admin password gate + theme
    Runs once after header.html has been inserted.
 
    ADMIN PASSWORD: "fedex-admin-2026"
@@ -10,6 +10,7 @@
     "use strict";
 
     const ROLE_KEY  = "bd_role";
+    const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
 
     /* >>> EDIT THIS LINE TO CHANGE THE PASSWORD <<< */
@@ -53,6 +54,71 @@
         if (role !== "admin") clearAdminUnlocked();
 
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
+    }
+
+    /* ------------------------------------------------------------
+       Theme (light / dark)
+       ------------------------------------------------------------ */
+    function getStoredTheme() {
+        try {
+            const v = localStorage.getItem(THEME_KEY);
+            if (v === "dark" || v === "light") return v;
+        } catch (e) { /* storage unavailable */ }
+
+        try {
+            if (window.matchMedia &&
+                window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                return "dark";
+            }
+        } catch (e) { /* no matchMedia */ }
+
+        return "light";
+    }
+
+    function applyTheme(theme) {
+        const safe = theme === "dark" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", safe);
+
+        document.querySelectorAll(".theme-option").forEach(function (opt) {
+            const active = opt.dataset.themeChoice === safe;
+            opt.classList.toggle("active", active);
+            opt.setAttribute("aria-checked", String(active));
+        });
+    }
+
+    function setTheme(theme) {
+        const safe = theme === "dark" ? "dark" : "light";
+        try { localStorage.setItem(THEME_KEY, safe); } catch (e) {}
+        applyTheme(safe);
+        document.dispatchEvent(
+            new CustomEvent("bdthemechange", { detail: { theme: safe } })
+        );
+        return safe;
+    }
+
+    function setupTheme() {
+        /* Paint the stored / system theme immediately. */
+        applyTheme(getStoredTheme());
+
+        document.querySelectorAll(".theme-option").forEach(function (opt) {
+            opt.addEventListener("click", function (event) {
+                event.stopPropagation();
+                setTheme(this.dataset.themeChoice);
+            });
+        });
+
+        /* Follow OS theme changes ONLY while user hasn't picked one. */
+        if (window.matchMedia) {
+            const mq = window.matchMedia("(prefers-color-scheme: dark)");
+            const handler = function (event) {
+                let stored = null;
+                try { stored = localStorage.getItem(THEME_KEY); } catch (e) {}
+                if (stored === "dark" || stored === "light") return;
+                applyTheme(event.matches ? "dark" : "light");
+            };
+            if (mq.addEventListener) mq.addEventListener("change", handler);
+            else if (mq.addListener) mq.addListener(handler);
+        }
     }
 
     /* ------------------------------------------------------------
@@ -897,6 +963,7 @@
        One-time startup
        ------------------------------------------------------------ */
     function start() {
+        setupTheme();
         setupAdminGate();
         setupSettings();
         setupCaseDirectory();
