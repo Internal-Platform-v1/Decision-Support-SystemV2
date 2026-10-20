@@ -77,6 +77,36 @@
             <div class="settings-menu" id="settingsMenu" role="menu">
                 <div class="settings-heading">Settings</div>
 
+                <!-- Theme group -->
+                <div class="settings-group">
+                    <div class="settings-label" id="themeLabel">Theme</div>
+
+                    <div class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
+                        <button
+                            type="button"
+                            class="theme-option"
+                            data-theme-choice="light"
+                            role="radio"
+                            aria-checked="true"
+                        >
+                            <span class="theme-option-icon" aria-hidden="true">☀</span>
+                            <span>Light</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="theme-option"
+                            data-theme-choice="dark"
+                            role="radio"
+                            aria-checked="false"
+                        >
+                            <span class="theme-option-icon" aria-hidden="true">☾</span>
+                            <span>Dark</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- View mode group -->
                 <div class="settings-group">
                     <div class="settings-label" id="roleLabel">View mode</div>
 
