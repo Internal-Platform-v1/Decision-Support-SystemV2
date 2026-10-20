@@ -5,6 +5,7 @@
 
    Loads:
    - Header
+   - Dark theme overrides
    - Update Banner
    - Footer
 
@@ -25,6 +26,8 @@
    │   ├── update-banner.html
    │   ├── update-banner.css
    │   └── update-banner.js
+   │
+   ├── dark-theme.css
    │
    └── include.js
 
@@ -352,6 +355,31 @@
 
             console.error(
                 "DSS V2 Header loader error:",
+                error
+            );
+
+        }
+
+
+        /* -----------------------------------------------------
+           DARK THEME OVERRIDES
+           Loads AFTER header CSS so its selectors
+           (scoped with html[data-theme="dark"]) can
+           override every page stylesheet loaded earlier.
+           ----------------------------------------------------- */
+
+        try {
+
+            await loadCss(
+                "shared/dark-theme.css"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "DSS V2 dark theme loader error:",
                 error
             );
 
