@@ -191,20 +191,25 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
     });
   }
 
-  function renderStart(node) {
+function renderStart(node) {
     const ch = choices(node);
-    const continueChoice = ch[0];
     const reminderHtml = node.noteHtml || "";
     const reminder = node.note || "";
+    const isSingle = ch.length === 1;
 
-    const choiceHtml = continueChoice ? `
-      <button class="choice start-choice" data-next="${esc(continueChoice.next || "")}" data-label="${esc(continueChoice.label || "")}" data-action="${esc(continueChoice.action || "")}" data-note="${esc(continueChoice.note || "")}" type="button">
-        <div class="choice-icon"><i class="${continueChoice.icon || "fa-solid fa-arrow-right"}"></i></div>
+    const choiceHtml = ch.map((c) => `
+      <button class="choice${isSingle ? " start-choice" : ""}"
+              data-next="${esc(c.next || "")}"
+              data-label="${esc(c.label || "")}"
+              data-action="${esc(c.action || "")}"
+              data-note="${esc(c.note || "")}"
+              type="button">
+        <div class="choice-icon"><i class="${c.icon || "fa-solid fa-arrow-right"}"></i></div>
         <div class="choice-body">
-          <div class="choice-title">${esc(continueChoice.label || "Continue")}</div>
-          <div class="choice-desc">${esc(continueChoice.desc || "Start the decision flow.")}</div>
+          <div class="choice-title">${esc(c.label || "Continue")}</div>
+          <div class="choice-desc">${esc(c.desc || "Start the decision flow.")}</div>
         </div>
-      </button>` : "";
+      </button>`).join("");
 
     $("stageCard").innerHTML = `
       <div class="stage-top">
@@ -226,18 +231,21 @@ const TEMPLATE_COLLECTION = GUIDE_CONFIG.templateCollection;
       </div>
       <div class="decision-footer">
         <div class="footer-step">DECISION GUIDE<strong>Ready to begin</strong></div>
-        <div class="decision-actions"><button class="action-btn primary" id="startContinue" type="button">Continue <i class="fa-solid fa-arrow-right"></i></button></div>
+        <div class="decision-actions">${isSingle ? '<button class="action-btn primary" id="startContinue" type="button">Continue <i class="fa-solid fa-arrow-right"></i></button>' : ''}</div>
       </div>`;
 
-    const choice = $("stageCard").querySelector(".choice");
-    if (choice) choice.addEventListener("click", () => choose(choice, node));
-    $("startContinue")?.addEventListener("click", () => choice?.click());
+    $("stageCard").querySelectorAll(".choice").forEach(btn => {
+        btn.addEventListener("click", () => choose(btn, node));
+    });
+    $("startContinue")?.addEventListener("click", () => {
+        $("stageCard").querySelector(".choice")?.click();
+    });
     $("saveGuide")?.addEventListener("click", saveGuide);
 
     paintSaveGuideButton();
     progress();
     renderPath();
-  }
+}
 
   function renderNode(key) {
     state.currentKey = key;
