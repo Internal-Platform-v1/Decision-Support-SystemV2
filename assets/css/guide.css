@@ -310,7 +310,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* ============================================================
-   STAGE CARD
+   STAGE CARD — matches .quick-card / .side-card accent
    ============================================================ */
 .stage-card {
   margin-top: 14px;
@@ -319,6 +319,7 @@ img { display: block; max-width: 100%; }
   display: flex;
   flex-direction: column;
   border: 1px solid var(--line-2);
+  border-bottom: 2px solid var(--acc-purple);
   border-radius: 9px;
   background: #fff;
   box-shadow: var(--shadow-card);
@@ -340,8 +341,8 @@ img { display: block; max-width: 100%; }
   gap: 6px;
   padding: 5px 9px;
   border-radius: 999px;
-  background: #f1eaff;
-  color: #6d2ce0;
+  background: var(--ch-pastel);
+  color: var(--ch-ink);
   font-size: 7.5px;
   font-weight: 800;
   text-transform: uppercase;
@@ -349,7 +350,7 @@ img { display: block; max-width: 100%; }
 }
 .stage-badge i { font-size: 8px; }
 .stage-badge.alt {
-  background: #fff0e4;
+  background: var(--co-pastel);
   color: #b45309;
 }
 
@@ -608,7 +609,7 @@ img { display: block; max-width: 100%; }
   margin: 16px;
   padding: 18px 20px;
   border: 1px solid #e0d5f4;
-  border-bottom: 2px solid #d7c9ff;
+  border-bottom: 2px solid var(--acc-purple);
   border-radius: 9px;
   background: linear-gradient(135deg, #faf7ff, #fff);
   box-shadow: var(--shadow-card-hover);
