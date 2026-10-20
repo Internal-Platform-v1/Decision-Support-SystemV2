@@ -4,20 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Templates Management | Decision Support System</title>
+  <link rel="icon" href="data:,">
 
   <link rel="stylesheet" href="../../shared/header/admin-header.css" />
   <link rel="stylesheet" href="admin-templates.css" />
-  <link rel="icon" href="data:,">
 </head>
 
 <body data-admin-page="templates" data-admin-title="Templates Management">
 
-  <!-- Shared Admin Console shell -->
   <div id="adminHeader"></div>
 
-  <!-- =========================================================
-       TEMPLATES MANAGEMENT
-       ========================================================= -->
   <main class="at-main">
 
     <!-- PAGE HEADING -->
@@ -26,40 +22,72 @@
         <span class="at-eyebrow">TEMPLATES MANAGEMENT</span>
         <h1>Suggested Templates</h1>
         <p>
-          Edit the Comment, CORR Code, and Email that appear
-          when a guide reaches a final recommendation.
+          Edit the Comment, CORR Code, and Email that appear when a guide
+          reaches a final recommendation.
         </p>
       </div>
     </section>
 
-    <!-- GUIDE PICKER -->
+    <!-- GUIDE PICKER + VIEW TOGGLE -->
     <section class="at-guide-picker">
       <label for="atGuideSelect">Guide</label>
       <select id="atGuideSelect" aria-label="Select guide">
         <option value="">Loading guides…</option>
       </select>
       <span class="at-guide-meta" id="atGuideMeta"></span>
+
+      <div class="at-view-toggle" role="tablist" aria-label="View mode">
+        <button type="button" class="at-view-btn" data-view="list" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          List
+        </button>
+        <button type="button" class="at-view-btn" data-view="chart" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 7l-1 3M14 17l-1-3M17 12h-3"/></svg>
+          Chart
+        </button>
+      </div>
     </section>
 
     <!-- TWO PANEL WORKSPACE -->
-    <section class="at-workspace">
+    <section class="at-workspace" id="atWorkspace">
 
-      <!-- LEFT: RECOMMENDATION LIST -->
-      <aside class="at-panel at-recommendations" aria-label="Recommendations">
+      <!-- LEFT: LIST VIEW / CHART VIEW -->
+      <aside class="at-panel at-left-panel" aria-label="Recommendations">
         <header class="at-panel-head">
           <div>
-            <span>FINAL RECOMMENDATIONS</span>
-            <h2>Select a recommendation</h2>
+            <span id="atLeftEyebrow">FINAL RECOMMENDATIONS</span>
+            <h2 id="atLeftTitle">Select a recommendation</h2>
           </div>
           <span class="at-count" id="atRecommendationCount">—</span>
         </header>
 
+        <!-- LIST VIEW -->
         <div class="at-rec-list" id="atRecommendationList">
           <p class="at-empty">Select a guide to load its recommendations.</p>
         </div>
+
+        <!-- CHART VIEW -->
+        <div class="at-chart-host" id="atChartHost" hidden>
+          <div class="at-chart-toolbar">
+            <div class="at-chart-hint">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+              Drag to pan · scroll to zoom · click a node to expand
+            </div>
+            <div class="at-chart-controls">
+              <button type="button" class="at-chart-btn" id="atZoomOut" aria-label="Zoom out">−</button>
+              <button type="button" class="at-chart-btn" id="atZoomIn" aria-label="Zoom in">+</button>
+              <button type="button" class="at-chart-btn" id="atZoomReset" aria-label="Reset view">Reset</button>
+              <button type="button" class="at-chart-btn" id="atExpandAll" aria-label="Expand all">Expand all</button>
+              <button type="button" class="at-chart-btn" id="atCollapseAll" aria-label="Collapse all">Collapse all</button>
+            </div>
+          </div>
+          <div class="at-chart-viewport" id="atChartViewport">
+            <svg class="at-chart-svg" id="atChartSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+        </div>
       </aside>
 
-      <!-- RIGHT: EDITOR -->
+      <!-- RIGHT: EDITOR / PREVIEW -->
       <section class="at-panel at-editor" aria-label="Template editor">
         <header class="at-panel-head">
           <div>
@@ -71,8 +99,8 @@
           </div>
         </header>
 
+        <!-- TEMPLATE EDITOR (leaves) -->
         <div class="at-editor-body" id="atEditorBody" hidden>
-
           <div class="at-edit-field">
             <label for="atComment">
               <span>Suggested Comment</span>
@@ -102,29 +130,30 @@
             <div class="at-editor-actions">
               <button type="button" class="at-btn ghost" id="atReset" disabled>Reset</button>
               <button type="button" class="at-btn primary" id="atSave" disabled>
-                <i class="fa-solid fa-floppy-disk"></i> Save Templates
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="at-btn-icon"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>
+                Save Templates
               </button>
             </div>
           </div>
-
         </div>
 
+        <!-- NODE PREVIEW (middle nodes) -->
+        <div class="at-node-preview" id="atNodePreview" hidden></div>
+
+        <!-- PLACEHOLDER -->
         <div class="at-editor-placeholder" id="atEditorPlaceholder">
           <div class="at-editor-placeholder-icon">✎</div>
           <p>No recommendation selected.</p>
           <small>Choose a final recommendation on the left to start editing.</small>
         </div>
-
       </section>
 
     </section>
 
   </main>
 
-  <!-- Toast -->
   <div class="at-toast" id="atToast" role="status" aria-live="polite"></div>
 
-  <!-- Firebase SDK (same config as the rest of the app) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -142,7 +171,6 @@
     window.auth = firebase.auth();
   </script>
 
-  <!-- Shared header + manifest + admin-templates logic -->
   <script src="../../shared/header/admin-header.js"></script>
   <script src="../../assets/js/guide-flows/manifest.js"></script>
   <script src="admin-templates.js"></script>
