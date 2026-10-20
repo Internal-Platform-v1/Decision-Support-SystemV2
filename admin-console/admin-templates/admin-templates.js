@@ -33,15 +33,12 @@
     loadedTemplates: { comment: "", corr: "", email: "" },
     firebaseReady: false,
 
-    // graph
-    graph: null,                // { rootKey, nodes: Map, edges: [] }
-    expanded: new Set(),        // set of node keys that are expanded
-    activePathKeys: new Set(),  // keys along the active leaf's path
-    view: "list",               // 'list' | 'chart'
-    savedLeaves: new Set(),     // leaves that have any saved template
-    savedCheckDone: false,
+    graph: null,
+    expanded: new Set(),
+    activePathKeys: new Set(),
+    view: "list",
+    savedLeaves: new Set(),
 
-    // pan/zoom
     zoom: 1,
     panX: 20,
     panY: 20
@@ -156,13 +153,14 @@
   }
 
   /* ------------------------------------------------------------
-     BUILD GRAPH
+     BUILD GRAPH (deduped edges — DAG-safe)
      ------------------------------------------------------------ */
   function buildGraph(nodes, startKey) {
     const graph = {
       rootKey: startKey,
-      nodes: new Map(),  // key -> { key, label, meta, node, parentKeys: [] }
-      edges: []          // { from, to, choiceLabel }
+      nodes: new Map(),
+      edges: [],
+      edgeSet: new Set()   // "from→to" dedupe
     };
 
     function ensure(key, parentKey, choiceLabel) {
@@ -178,15 +176,18 @@
         });
       }
       if (parentKey != null) {
-        graph.nodes.get(key).parentKeys.push(parentKey);
-        graph.edges.push({ from: parentKey, to: key, choiceLabel: choiceLabel || "" });
+        const sig = `${parentKey}→${key}`;
+        if (!graph.edgeSet.has(sig)) {
+          graph.edgeSet.add(sig);
+          graph.nodes.get(key).parentKeys.push(parentKey);
+          graph.edges.push({ from: parentKey, to: key, choiceLabel: choiceLabel || "" });
+        }
       }
       return graph.nodes.get(key);
     }
 
     ensure(startKey, null, "");
 
-    // BFS so the graph is complete even if a node is reachable only via one path.
     const queue = [startKey];
     const seen = new Set([startKey]);
     while (queue.length) {
@@ -209,62 +210,88 @@
   }
 
   /* ------------------------------------------------------------
-     LAYOUT
-     Left-to-right tidy tree.
+     VISIBILITY + LAYOUT (cycle-safe, DAG-safe)
      ------------------------------------------------------------ */
   const NODE_W = 190;
   const NODE_H = 46;
-  const H_GAP = 26;   // between columns
-  const V_GAP = 14;   // between siblings
+  const H_GAP = 26;
+  const V_GAP = 14;
 
   function computeVisibleSubtree(graph) {
-    // A node is visible if all ancestors are expanded. Root is always visible.
     const visible = new Set();
     if (!graph) return visible;
-    const stack = [graph.rootKey];
-    visible.add(graph.rootKey);
-    while (stack.length) {
-      const key = stack.pop();
-      if (graph.rootKey !== key && !state.expanded.has(key)) continue;
-      if (graph.rootKey === key && !state.expanded.has(key) && key === graph.rootKey) {
-        // root is always expanded enough to show its direct children once expanded
+
+    // Deduplicated adjacency for visibility walking.
+    const adj = new Map();
+    graph.edges.forEach(e => {
+      if (!adj.has(e.from)) adj.set(e.from, []);
+      adj.get(e.from).push(e.to);
+    });
+    adj.forEach(arr => {
+      const seen = new Set();
+      for (let i = arr.length - 1; i >= 0; i--) {
+        if (seen.has(arr[i])) arr.splice(i, 1);
+        else seen.add(arr[i]);
       }
-      const kids = graph.edges.filter(e => e.from === key).map(e => e.to);
-      kids.forEach(k => {
-        visible.add(k);
-        if (state.expanded.has(key)) stack.push(k);
-      });
-    }
-    // Recompute cleanly: expand from root
-    const out = new Set();
-    function walk(k, parentExpanded) {
-      out.add(k);
+    });
+
+    function walk(key, parentExpanded) {
+      if (visible.has(key)) return;
+      visible.add(key);
       if (!parentExpanded) return;
-      const kids = graph.edges.filter(e => e.from === k).map(e => e.to);
-      kids.forEach(kk => walk(kk, state.expanded.has(k)));
+      const kids = adj.get(key) || [];
+      kids.forEach(k => walk(k, state.expanded.has(key)));
     }
     walk(graph.rootKey, true);
-    return out;
+    return visible;
   }
 
   function layoutGraph(graph) {
     const positions = new Map();
     const visible = computeVisibleSubtree(graph);
-    const childrenOf = (key) => graph.edges.filter(e => e.from === key && visible.has(e.to)).map(e => e.to);
 
-    // compute subtree height for each visible node
+    // Deduplicated child resolution + cache.
+    const childCache = new Map();
+    const childrenOf = (key) => {
+      if (childCache.has(key)) return childCache.get(key);
+      const seen = new Set();
+      const out = [];
+      graph.edges.forEach(e => {
+        if (e.from !== key) return;
+        if (!visible.has(e.to)) return;
+        if (seen.has(e.to)) return;
+        seen.add(e.to);
+        out.push(e.to);
+      });
+      childCache.set(key, out);
+      return out;
+    };
+
+    // Cycle-safe, memoised subtree height.
     const heights = new Map();
+    const inStack = new Set();
     function heightOf(key) {
       if (heights.has(key)) return heights.get(key);
+      if (inStack.has(key)) return NODE_H;
+      inStack.add(key);
       const kids = childrenOf(key);
-      if (!kids.length) { heights.set(key, NODE_H); return NODE_H; }
-      const sum = kids.reduce((acc, k) => acc + heightOf(k), 0) + V_GAP * (kids.length - 1);
-      const h = Math.max(NODE_H, sum);
+      let h;
+      if (!kids.length) {
+        h = NODE_H;
+      } else {
+        const sum = kids.reduce((acc, k) => acc + heightOf(k), 0) + V_GAP * (kids.length - 1);
+        h = Math.max(NODE_H, sum);
+      }
+      inStack.delete(key);
       heights.set(key, h);
       return h;
     }
 
+    // Place each node exactly once (DAG nodes appear once).
+    const placed = new Set();
     function place(key, x, y) {
+      if (placed.has(key)) return;
+      placed.add(key);
       positions.set(key, { x, y });
       const kids = childrenOf(key);
       if (!kids.length) return;
@@ -355,7 +382,6 @@
 
     const { positions, visible } = layoutGraph(state.graph);
 
-    // compute bounds
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     positions.forEach(({ x, y }, key) => {
       if (!visible.has(key)) return;
@@ -366,7 +392,6 @@
     });
     if (!isFinite(minX)) { minX = 0; minY = 0; maxX = NODE_W; maxY = NODE_H; }
 
-    // Fit to viewport with padding
     const rect = vp.getBoundingClientRect();
     const vw = Math.max(320, rect.width);
     const vh = Math.max(240, rect.height);
@@ -385,9 +410,13 @@
     const edges = [];
     const nodes = [];
 
-    // Edges first (behind nodes)
+    // Edges — dedupe at draw time too, in case cache holds a pre-dedupe graph.
+    const drawnEdge = new Set();
     state.graph.edges.forEach(e => {
       if (!visible.has(e.from) || !visible.has(e.to)) return;
+      const sig = `${e.from}→${e.to}`;
+      if (drawnEdge.has(sig)) return;
+      drawnEdge.add(sig);
       const p1 = positions.get(e.from);
       const p2 = positions.get(e.to);
       if (!p1 || !p2) return;
@@ -401,7 +430,6 @@
       edges.push(`<path class="at-edge${isActive ? " is-active" : ""}" d="${path}" />`);
     });
 
-    // Nodes
     positions.forEach(({ x, y }, key) => {
       if (!visible.has(key)) return;
       const meta = state.graph.nodes.get(key);
@@ -422,9 +450,7 @@
         hasKids && !isExpanded ? "at-node-collapsed" : ""
       ].filter(Boolean).join(" ");
 
-      const title = isRoot
-        ? "Start"
-        : truncate(meta.label, 26);
+      const title = isRoot ? "Start" : truncate(meta.label, 26);
       const metaText = isLeaf
         ? (isSaved ? "Templates saved" : "Edit templates")
         : (hasKids ? (isExpanded ? "Click to collapse" : "Click to expand") : "");
@@ -449,12 +475,10 @@
       </g>
     `;
 
-    // Click handling
     svg.querySelectorAll("[data-node-key]").forEach(g => {
       g.addEventListener("click", (event) => {
         event.stopPropagation();
-        const key = g.dataset.nodeKey;
-        handleChartNodeClick(key);
+        handleChartNodeClick(g.dataset.nodeKey);
       });
     });
   }
@@ -473,24 +497,19 @@
     if (!meta) return;
 
     if (meta.isLeaf) {
-      // Select leaf → open editor + highlight path
       selectRecommendation(key);
       return;
     }
 
-    // Middle node: toggle expansion
     if (state.expanded.has(key)) state.expanded.delete(key);
     else state.expanded.add(key);
     renderChart();
-
-    // Also show read-only preview for middle nodes
     showNodePreview(key);
   }
 
   function computeActivePathTo(key) {
     const path = new Set();
     if (!state.graph) return path;
-    // BFS from root to key
     const queue = [{ k: state.graph.rootKey, chain: [state.graph.rootKey] }];
     const visited = new Set();
     while (queue.length) {
@@ -502,7 +521,7 @@
       if (visited.has(k)) continue;
       visited.add(k);
       state.graph.edges.filter(e => e.from === k).forEach(e => {
-        queue.push({ k: e.to, chain: [...chain, e.to] });
+        if (!visited.has(e.to)) queue.push({ k: e.to, chain: [...chain, e.to] });
       });
     }
     return path;
@@ -518,25 +537,22 @@
   }
 
   /* ------------------------------------------------------------
-     SELECT RECOMMENDATION (LIST + CHART)
+     SELECT RECOMMENDATION
      ------------------------------------------------------------ */
   function selectRecommendation(key) {
     if (!key) return;
     state.activeRecommendationKey = key;
 
-    // List highlight
     document.querySelectorAll(".at-rec-item").forEach(btn => {
       btn.classList.toggle("is-active", btn.dataset.recKey === key);
     });
 
-    // Chart path highlight
     if (state.view === "chart" && state.graph) {
       const path = ensurePathExpandedTo(key);
       state.activePathKeys = path;
       renderChart();
     }
 
-    // Load templates into editor
     loadRecommendationTemplates();
   }
 
@@ -627,10 +643,7 @@
     if (!guide || !rec) return;
 
     const db = firestore();
-    if (!db) {
-      showToast("Firestore is not initialized.", true);
-      return;
-    }
+    if (!db) { showToast("Firestore is not initialized.", true); return; }
 
     setEditorHeader(rec.label, `Editing templates for "${rec.label}"`);
     setDocIdsDisplay(rec.normalized);
@@ -659,7 +672,6 @@
       fillEditor(state.loadedTemplates);
       setButtonsDisabled(false);
 
-      // Mark leaf as saved if any template has content
       const anySaved = !!(state.loadedTemplates.comment || state.loadedTemplates.corr || state.loadedTemplates.email);
       if (anySaved) state.savedLeaves.add(rec.key);
       else state.savedLeaves.delete(rec.key);
@@ -695,8 +707,6 @@
 
   /* ------------------------------------------------------------
      PRE-CHECK WHICH LEAVES ALREADY HAVE TEMPLATES
-     Reads all docs in the template collection once and marks
-     leaves with any saved comment__ / corr__ / email__ doc.
      ------------------------------------------------------------ */
   async function precheckSavedTemplates() {
     const guide = state.guides.find(g => g.id === state.activeGuideId);
@@ -709,12 +719,10 @@
       snap.docs.forEach(doc => {
         const data = doc.data() || {};
         if (!data.text) return;
-        const id = doc.id;
-        const m = id.match(/^(comment|corr|email)__(.+)$/);
+        const m = doc.id.match(/^(comment|corr|email)__(.+)$/);
         if (!m) return;
         present.add(m[2]);
       });
-      // Map each saved normalized slug back to a leaf key
       state.recommendations.forEach(r => {
         if (present.has(r.normalized)) state.savedLeaves.add(r.key);
       });
@@ -806,6 +814,8 @@
     state.recommendations = [];
     state.activeRecommendationKey = "";
     state.savedLeaves = new Set();
+    // Force graph rebuild with dedupe even if cache holds an old graph.
+    delete state.flowCache[guideId];
 
     const meta = $("atGuideMeta");
     if (meta) meta.textContent = "Loading flow…";
@@ -834,7 +844,6 @@
         "Pick a recommendation on the left to edit its templates.");
       setDocIdsDisplay("");
 
-      // async — mark already-saved leaves
       precheckSavedTemplates();
     } catch (err) {
       console.error(err);
@@ -854,12 +863,10 @@
     state.view = view === "chart" ? "chart" : "list";
     try { localStorage.setItem("at_view", state.view); } catch (_) {}
 
-    // Buttons
     document.querySelectorAll(".at-view-btn").forEach(btn => {
       btn.setAttribute("aria-selected", String(btn.dataset.view === state.view));
     });
 
-    // Panels
     const list = $("atRecommendationList");
     const chart = $("atChartHost");
     const leftEyebrow = $("atLeftEyebrow");
@@ -872,7 +879,6 @@
     if (leftTitle) leftTitle.textContent = state.view === "chart" ? "Visual decision tree" : "Select a recommendation";
 
     if (state.view === "chart") {
-      // Defer so the viewport has non-zero dimensions
       requestAnimationFrame(() => renderChart());
     }
   }
@@ -886,6 +892,7 @@
 
     let dragging = false;
     let startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+    let rafId = 0;
 
     vp.addEventListener("mousedown", e => {
       if (e.target.closest(".at-node")) return;
@@ -898,7 +905,11 @@
       if (!dragging) return;
       state.panX = startPanX + (e.clientX - startX);
       state.panY = startPanY + (e.clientY - startY);
-      renderChart();
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        renderChart();
+      });
     });
     window.addEventListener("mouseup", () => {
       dragging = false;
@@ -906,11 +917,15 @@
     });
 
     vp.addEventListener("wheel", e => {
-      if (!state.view || state.view !== "chart") return;
+      if (state.view !== "chart") return;
       e.preventDefault();
       const direction = e.deltaY > 0 ? 0.9 : 1.1;
       state.zoom = Math.max(0.35, Math.min(2.4, state.zoom * direction));
-      renderChart();
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        renderChart();
+      });
     }, { passive: false });
   }
 
@@ -945,13 +960,11 @@
   function init() {
     populateGuideSelect();
 
-    // Restore last view
     try {
       const saved = localStorage.getItem("at_view");
       state.view = saved === "chart" ? "chart" : "list";
     } catch (_) { state.view = "list"; }
 
-    // Wire up view buttons + apply initial view
     document.querySelectorAll(".at-view-btn").forEach(btn => {
       btn.addEventListener("click", () => setView(btn.dataset.view));
     });
@@ -969,7 +982,6 @@
     setupPanZoom();
     setupChartControls();
 
-    // Rerender chart on window resize (positions depend on viewport size)
     let resizeT;
     window.addEventListener("resize", () => {
       clearTimeout(resizeT);
