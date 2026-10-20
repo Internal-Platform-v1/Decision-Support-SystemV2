@@ -3,35 +3,11 @@
    ------------------------------------------------------------
    Central shared-component loader.
 
-   Loads:
-   - Header
-   - Dark theme overrides
-   - Update Banner
-   - Footer
-
-   Shared component structure:
-
-   shared/
-   ├── header/
-   │   ├── header.html
-   │   ├── header.css
-   │   └── header.js
-   │
-   ├── footer/
-   │   ├── footer.html
-   │   ├── footer.css
-   │   └── footer.js
-   │
-   ├── update-banner/
-   │   ├── update-banner.html
-   │   ├── update-banner.css
-   │   └── update-banner.js
-   │
-   ├── dark-theme.css
-   │
-   └── include.js
-
-   Pages only need to load this file.
+   Loads (in this order):
+   1. Header
+   2. Update Banner
+   3. Footer
+   4. Dark theme overrides  ← ALWAYS LAST, so it wins the cascade
 
    ============================================================ */
 
@@ -39,445 +15,144 @@
 
     "use strict";
 
-
-    /* =========================================================
-       LOAD HTML
-       ========================================================= */
-
     function loadText(url) {
-
-        return fetch(url, {
-            cache: "no-cache"
-        })
-
-        .then(function (response) {
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Unable to load " +
-                    url +
-                    " (" +
-                    response.status +
-                    ")"
-                );
-
-            }
-
-            return response.text();
-
-        });
-
+        return fetch(url, { cache: "no-cache" })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load " + url + " (" + response.status + ")"
+                    );
+                }
+                return response.text();
+            });
     }
-
-
-    /* =========================================================
-       LOAD CSS
-       ========================================================= */
 
     function loadCss(url) {
-
         return new Promise(function (resolve, reject) {
-
-            if (
-                document.querySelector(
-                    'link[data-shared-style="' + url + '"]'
-                )
-            ) {
-
+            if (document.querySelector('link[data-shared-style="' + url + '"]')) {
                 resolve();
-
                 return;
-
             }
-
-
-            const link =
-                document.createElement("link");
-
-
+            const link = document.createElement("link");
             link.rel = "stylesheet";
-
             link.href = url;
-
             link.dataset.sharedStyle = url;
-
-
-            link.onload = function () {
-
-                resolve();
-
-            };
-
-
+            link.onload = function () { resolve(); };
             link.onerror = function () {
-
-                reject(
-                    new Error(
-                        "Unable to load stylesheet " +
-                        url
-                    )
-                );
-
+                reject(new Error("Unable to load stylesheet " + url));
             };
-
-
             document.head.appendChild(link);
-
         });
-
     }
-
-
-    /* =========================================================
-       LOAD JAVASCRIPT
-       ========================================================= */
 
     function loadScript(url) {
-
         return new Promise(function (resolve, reject) {
-
-            if (
-                document.querySelector(
-                    'script[data-shared-script="' + url + '"]'
-                )
-            ) {
-
+            if (document.querySelector('script[data-shared-script="' + url + '"]')) {
                 resolve();
-
                 return;
-
             }
-
-
-            const script =
-                document.createElement("script");
-
-
+            const script = document.createElement("script");
             script.src = url;
-
             script.dataset.sharedScript = url;
-
-
-            script.onload = function () {
-
-                resolve();
-
-            };
-
-
+            script.onload = function () { resolve(); };
             script.onerror = function () {
-
-                reject(
-                    new Error(
-                        "Unable to load script " +
-                        url
-                    )
-                );
-
+                reject(new Error("Unable to load script " + url));
             };
-
-
             document.body.appendChild(script);
-
         });
-
     }
-
-
-    /* =========================================================
-       LOAD HEADER
-       ========================================================= */
 
     async function loadHeader() {
+        const placeholder = document.getElementById("header-placeholder");
+        if (!placeholder) return;
 
-        const placeholder =
-            document.getElementById(
-                "header-placeholder"
-            );
+        const headerHtml = await loadText("shared/header/header.html");
+        placeholder.innerHTML = headerHtml;
 
+        await loadCss("shared/header/header.css");
+        await loadScript("shared/header/header.js");
 
-        if (!placeholder) {
-
-            return;
-
-        }
-
-
-        const headerHtml =
-            await loadText(
-                "shared/header/header.html"
-            );
-
-
-        placeholder.innerHTML =
-            headerHtml;
-
-
-        await loadCss(
-            "shared/header/header.css"
-        );
-
-
-        await loadScript(
-            "shared/header/header.js"
-        );
-
-
-        window.dispatchEvent(
-            new Event(
-                "bdtools:header-ready"
-            )
-        );
-
+        window.dispatchEvent(new Event("bdtools:header-ready"));
     }
-
-
-    /* =========================================================
-       LOAD UPDATE BANNER
-       ========================================================= */
 
     async function loadUpdateBanner() {
+        const placeholder = document.getElementById("update-banner-placeholder");
+        if (!placeholder) return;
 
-        const placeholder =
-            document.getElementById(
-                "update-banner-placeholder"
-            );
+        const bannerHtml = await loadText("shared/update-banner/update-banner.html");
+        placeholder.innerHTML = bannerHtml;
 
+        await loadCss("shared/update-banner/update-banner.css");
+        await loadScript("shared/update-banner/update-banner.js");
 
-        /*
-         * Pages that do not have an update-banner
-         * placeholder simply skip the component.
-         */
-
-        if (!placeholder) {
-
-            return;
-
-        }
-
-
-        const bannerHtml =
-            await loadText(
-                "shared/update-banner/update-banner.html"
-            );
-
-
-        placeholder.innerHTML =
-            bannerHtml;
-
-
-        await loadCss(
-            "shared/update-banner/update-banner.css"
-        );
-
-
-        await loadScript(
-            "shared/update-banner/update-banner.js"
-        );
-
-
-        window.dispatchEvent(
-            new Event(
-                "bdtools:update-banner-ready"
-            )
-        );
-
+        window.dispatchEvent(new Event("bdtools:update-banner-ready"));
     }
-
-
-    /* =========================================================
-       LOAD FOOTER
-       ========================================================= */
 
     async function loadFooter() {
+        const placeholder = document.getElementById("footer-placeholder");
+        if (!placeholder) return;
 
-        const placeholder =
-            document.getElementById(
-                "footer-placeholder"
-            );
+        const footerHtml = await loadText("shared/footer/footer.html");
+        placeholder.innerHTML = footerHtml;
 
+        await loadCss("shared/footer/footer.css");
+        await loadScript("shared/footer/footer.js");
 
-        if (!placeholder) {
-
-            return;
-
-        }
-
-
-        const footerHtml =
-            await loadText(
-                "shared/footer/footer.html"
-            );
-
-
-        placeholder.innerHTML =
-            footerHtml;
-
-
-        await loadCss(
-            "shared/footer/footer.css"
-        );
-
-
-        await loadScript(
-            "shared/footer/footer.js"
-        );
-
-
-        window.dispatchEvent(
-            new Event(
-                "bdtools:footer-ready"
-            )
-        );
-
+        window.dispatchEvent(new Event("bdtools:footer-ready"));
     }
-
-
-    /* =========================================================
-       START SHARED COMPONENT LOADING
-       ========================================================= */
 
     async function start() {
 
-
-        /* -----------------------------------------------------
-           HEADER
-           ----------------------------------------------------- */
-
+        /* HEADER */
         try {
-
             await loadHeader();
-
+        } catch (error) {
+            console.error("DSS V2 Header loader error:", error);
         }
 
-        catch (error) {
-
-            console.error(
-                "DSS V2 Header loader error:",
-                error
-            );
-
+        /* UPDATE BANNER */
+        try {
+            await loadUpdateBanner();
+        } catch (error) {
+            console.error("DSS V2 Update Banner loader error:", error);
         }
 
+        /* FOOTER */
+        try {
+            await loadFooter();
+        } catch (error) {
+            console.error("DSS V2 Footer loader error:", error);
+        }
 
         /* -----------------------------------------------------
            DARK THEME OVERRIDES
-           Loads AFTER header CSS so its selectors
-           (scoped with html[data-theme="dark"]) can
-           override every page stylesheet loaded earlier.
+           -----------------------------------------------------
+           Loads LAST, after header/footer/banner CSS. This
+           guarantees every `html[data-theme="dark"] ...` rule
+           in dark-theme.css wins the cascade against the
+           light-mode rules in the component stylesheets.
            ----------------------------------------------------- */
-
         try {
-
-            await loadCss(
-                "shared/dark-theme.css"
-            );
-
+            await loadCss("shared/dark-theme.css");
+        } catch (error) {
+            console.error("DSS V2 dark theme loader error:", error);
         }
 
-        catch (error) {
-
-            console.error(
-                "DSS V2 dark theme loader error:",
-                error
-            );
-
-        }
-
-
-        /* -----------------------------------------------------
-           UPDATE BANNER
-           ----------------------------------------------------- */
-
-        try {
-
-            await loadUpdateBanner();
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "DSS V2 Update Banner loader error:",
-                error
-            );
-
-        }
-
-
-        /* -----------------------------------------------------
-           FOOTER
-           ----------------------------------------------------- */
-
-        try {
-
-            await loadFooter();
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "DSS V2 Footer loader error:",
-                error
-            );
-
-        }
-
-
-        /* -----------------------------------------------------
-           ALL SHARED COMPONENTS READY
-           ----------------------------------------------------- */
-
-        window.dispatchEvent(
-            new Event(
-                "bdtools:shared-ready"
-            )
-        );
-
+        /* ALL SHARED COMPONENTS READY */
+        window.dispatchEvent(new Event("bdtools:shared-ready"));
     }
 
-
-    /* =========================================================
-       INITIALIZATION
-       =========================================================
-
-       Works whether include.js is loaded from:
-       - <head>
-       - bottom of <body>
-
-       ========================================================= */
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            start,
-            {
-                once: true
-            }
-        );
-
-    }
-
-    else {
-
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", start, { once: true });
+    } else {
         start();
-
     }
-
 
 })();
 
 
 /* ------------------------------------------------------------
    Auto-inject GuideStore on every page.
-   Runs synchronously, BEFORE include.js does anything else,
-   so guide-store.js is available to every page script.
    ------------------------------------------------------------ */
 (function () {
   if (!window.__guideStoreInjected) {
