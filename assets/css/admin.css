@@ -1427,3 +1427,202 @@ html:not(.page-loading) .page-loader,
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
+
+
+/* ============================================================================
+   ADMIN.JS-REQUIRED STYLES
+   Classes emitted by assets/js/admin.js that weren't yet defined.
+   No layout, spacing, or color changes to existing components.
+   ============================================================================ */
+
+/* Search dropdown: hidden by default, shown via .show (JS toggles this). */
+.admin-search-results{ display:none; }
+.admin-search-results.show{ display:block; }
+.admin-search-result{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 11px;
+  border:0;
+  border-radius:8px;
+  background:#fff;
+  color:#1b2030;
+  text-align:left;
+  font-size:11px;
+  cursor:pointer;
+}
+.admin-search-result:hover{ background:#faf8ff; }
+.admin-search-result i{ color:#6b4df5; font-size:12px; width:14px; text-align:center; }
+.admin-search-result span{ min-width:0; display:flex; flex-direction:column; }
+.admin-search-result strong{ font-weight:700; line-height:13px; }
+.admin-search-result small{ color:#8b95a7; font-size:10px; line-height:12px; margin-top:1px; }
+
+/* Generic empty-state helper used throughout admin.js. */
+.admin-no-data{
+  padding:14px 8px;
+  color:#8b95a7;
+  font-size:11px;
+  text-align:center;
+}
+
+/* Users table: avatar + pills (used by renderRecentUsers and renderUsers). */
+.admin-table-user{ display:flex; align-items:center; gap:9px; }
+.admin-table-avatar{
+  width:28px;height:28px;
+  flex:0 0 28px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:#6b4df5;
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+}
+.admin-table-user > div{ min-width:0; display:flex; flex-direction:column; }
+.admin-table-user strong{ color:#161b2b; font-size:10px; line-height:12px; font-weight:650; }
+.admin-table-user small{ color:#98a1b1; font-size:9px; line-height:11px; margin-top:1px; }
+
+.admin-role-pill{
+  display:inline-block;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#eeeaff;
+  color:#4a37c0;
+  font-size:9px;
+  font-weight:750;
+  line-height:11px;
+  white-space:nowrap;
+}
+.admin-status-pill{
+  display:inline-block;
+  padding:3px 8px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:750;
+  line-height:11px;
+  white-space:nowrap;
+}
+.admin-status-pill.active{ background:#e7faf4; color:#0a8a68; }
+.admin-status-pill.inactive{ background:#f1f1f5; color:#6c7485; }
+
+/* Users module: toolbar + table wrapper + row action buttons. */
+.admin-users-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 14px;
+  color:#647188;
+  font-size:11px;
+}
+.admin-users-toolbar strong{ color:#161b2b; }
+.admin-users-toolbar input{
+  width:min(320px,50vw);
+  height:34px;
+  padding:0 11px;
+  border:1px solid #dfe2eb;
+  border-radius:9px;
+  background:#fbfbfd;
+  color:#232a3b;
+  font-size:11px;
+  outline:none;
+}
+.admin-users-toolbar input:focus{
+  border-color:#c9c2f4;
+  box-shadow:0 0 0 3px rgba(107,77,245,.08);
+  background:#fff;
+}
+.admin-users-table-wrap{
+  overflow:auto;
+  border:1px solid #e2e4ee;
+  border-radius:12px;
+  background:#fff;
+}
+.admin-users-table{
+  width:100%;
+  border-collapse:collapse;
+  text-align:left;
+  font-size:11px;
+}
+.admin-users-table thead tr{ background:#fafafd; }
+.admin-users-table th{
+  height:36px;
+  padding:0 14px;
+  color:#8f98a9;
+  font-size:9px;
+  font-weight:750;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.admin-users-table td{
+  height:52px;
+  padding:0 14px;
+  border-top:1px solid #ececf1;
+  color:#647188;
+  font-size:10px;
+  vertical-align:middle;
+}
+.admin-users-table tbody tr:hover{ background:#faf8ff; }
+.admin-user-actions{ display:flex; gap:6px; }
+.admin-edit-user,.admin-delete-user{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  height:26px;
+  padding:0 9px;
+  border-radius:7px;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+.admin-edit-user{ color:#4a37c0; background:#eeeaff; }
+.admin-edit-user:hover{ background:#e2dbff; }
+.admin-delete-user{ color:#c0303a; background:#fbeff0; }
+.admin-delete-user:hover{ background:#f7dfe1; }
+
+/* Region legend: match admin.css's own .region-name/.region-dot/.region-values
+   naming so renderRegions() renders as intended. */
+.region-legend .region-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  color:#687389;
+  font-size:10px;
+  line-height:12px;
+}
+
+/* Guide usage list: admin.js now emits .guide-row / .rank / .guide-title /
+   .progress > span / .guide-count, which admin.css already targets. No CSS
+   needed here — this note is just documentation. */
+
+/* Template Manager stub: keep it minimal and unstyled-extra (only used when
+   the module is opened, and only after the honest "not wired" toast). */
+.template-manager{ display:flex; flex-direction:column; gap:14px; }
+.template-manager-toolbar{ display:flex; align-items:center; gap:12px; }
+.template-manager-toolbar label{ display:flex; align-items:center; gap:8px; color:#647188; font-size:11px; }
+.template-manager-toolbar select{
+  height:32px; padding:0 9px;
+  border:1px solid #dfe2eb; border-radius:8px;
+  background:#fbfbfd; color:#232a3b; font-size:11px;
+}
+.template-manager-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.template-path-panel,.template-editor-panel{
+  border:1px solid #e2e4ee; border-radius:12px; background:#fff; padding:14px;
+}
+.template-panel-heading{ display:flex; flex-direction:column; gap:2px; margin-bottom:10px; }
+.template-panel-heading span{ color:#8f98a9; font-size:9px; font-weight:750; letter-spacing:.11em; }
+.template-panel-heading strong{ color:#111526; font-size:12px; font-weight:750; }
+.template-editor-panel label{ display:flex; flex-direction:column; gap:5px; margin-bottom:9px; color:#465167; font-size:10px; font-weight:700; }
+.template-editor-panel textarea{
+  width:100%; min-height:70px; padding:8px 10px;
+  border:1px solid #dfe2ea; border-radius:8px;
+  background:#fbfbfd; color:#232a3b; font-size:11px; resize:vertical;
+}
+.template-editor-panel textarea:focus{ border-color:#c9c2f4; box-shadow:0 0 0 3px rgba(107,77,245,.08); background:#fff; outline:none; }
+.admin-save-role{
+  height:32px; padding:0 12px; border-radius:8px;
+  background:#6b4df5; color:#fff; font-size:10px; font-weight:750; cursor:pointer;
+}
+.admin-save-role:hover{ background:#7658ff; }
