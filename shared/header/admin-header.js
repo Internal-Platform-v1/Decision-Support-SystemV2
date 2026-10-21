@@ -4,22 +4,16 @@
 (() => {
   "use strict";
 
-  (function adminGuard() {
-    const UNLOCK_KEY = "bd_admin_unlocked";
-    const HOME_URL = "/Decision-Support-SystemV2/index.html";
-
-    function isUnlocked() {
-      try {
-        const raw = localStorage.getItem(UNLOCK_KEY);
-        if (!raw) return false;
-        const obj = JSON.parse(raw);
-        return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
-      } catch (_) { return false; }
-    }
-
-    if (!isUnlocked()) {
-      window.location.replace(HOME_URL);
-      return;
+  // IMMEDIATE HARD REDIRECT IF NOT UNLOCKED
+  (function checkAuth() {
+    try {
+      const raw = localStorage.getItem("bd_admin_unlocked");
+      const obj = raw ? JSON.parse(raw) : null;
+      if (!obj || typeof obj.exp !== "number" || obj.exp <= Date.now()) {
+        window.location.replace("/Decision-Support-SystemV2/index.html");
+      }
+    } catch (e) {
+      window.location.replace("/Decision-Support-SystemV2/index.html");
     }
   })();
 
@@ -189,7 +183,6 @@
         const role = btn.dataset.role;
         apply(role);
         if (role === "user") {
-          // Wipe unlock token when switching back to user
           localStorage.removeItem("bd_admin_unlocked");
           window.location.href = "/Decision-Support-SystemV2/index.html";
         }
