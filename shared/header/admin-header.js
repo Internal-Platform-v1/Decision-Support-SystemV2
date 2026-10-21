@@ -5,11 +5,11 @@
 (() => {
   "use strict";
 
-     /* ============================================================
+       /* ============================================================
      ADMIN PAGE GUARD
      Blocks access unless the password gate in shared/header.js
-     was passed. Same sessionStorage key. Shows an inline password
-     prompt if not unlocked.
+     was passed. Same sessionStorage key. Fully inline-styled
+     so it does not depend on any external CSS.
      ============================================================ */
   (function adminGuard() {
     const UNLOCK_KEY = "bd_admin_unlocked";
@@ -33,48 +33,61 @@
 
     if (isUnlocked() && isAdminRole()) return;
 
+    // Hide the page immediately to avoid a flash.
     document.documentElement.style.visibility = "hidden";
 
     function showGate() {
-      let gate = document.getElementById("adminGate");
+      const existing = document.getElementById("adminGate");
+      if (existing) existing.remove();
 
-      if (!gate) {
-        gate = document.createElement("div");
-        gate.id = "adminGate";
-        gate.className = "admin-gate";
-        gate.innerHTML = `
-          <div class="admin-gate-backdrop"></div>
-          <div class="admin-gate-card" role="dialog" aria-modal="true">
-            <div class="admin-gate-icon" aria-hidden="true">🛡️</div>
-            <h2>Admin access</h2>
-            <p class="admin-gate-copy">Enter the admin password to open the dashboard.</p>
-            <input type="password" id="adminGateInput" class="admin-gate-input"
-                   placeholder="Admin password" autocomplete="off" spellcheck="false">
-            <div class="admin-gate-error" id="adminGateError" role="alert"></div>
-            <div class="admin-gate-actions">
-              <button type="button" class="admin-gate-btn ghost" id="adminGateCancel">Cancel</button>
-              <button type="button" class="admin-gate-btn primary" id="adminGateSubmit">Unlock</button>
-            </div>
+      const gate = document.createElement("div");
+      gate.id = "adminGate";
+      gate.style.cssText =
+        "position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:20px;" +
+        "font-family:Inter,Arial,sans-serif;background:rgba(20,15,45,.55);backdrop-filter:blur(4px)";
+      gate.innerHTML = `
+        <div id="agCard" style="width:min(380px,100%);padding:28px 26px 22px;background:#fff;border-radius:16px;
+                    box-shadow:0 24px 60px rgba(31,25,87,.24);text-align:center">
+          <div style="width:44px;height:44px;margin:0 auto 14px;display:grid;place-items:center;
+                      border-radius:50%;background:#f1eaff;color:#6b25df;font-size:22px">🛡️</div>
+          <h2 style="margin:0 0 6px;font-size:1.05rem;font-weight:800;color:#20235e">Admin access</h2>
+          <p style="margin:0 0 18px;font-size:.82rem;color:#6d6e91;line-height:1.45">
+            Enter the admin password to open the dashboard.
+          </p>
+          <input id="agInput" type="password" placeholder="Admin password" autocomplete="off"
+                 style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #dedfec;
+                        border-radius:9px;font-size:.9rem;color:#20235e;background:#fff;outline:none">
+          <div id="agError" style="min-height:1.15rem;margin-top:10px;color:#c81e3a;
+                                   font-size:.78rem;text-align:left"></div>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button id="agCancel" type="button"
+                    style="flex:1;padding:10px 14px;border:0;border-radius:9px;
+                           font-size:.85rem;font-weight:700;background:#f3f2fa;color:#4b4d6b;cursor:pointer">
+              Cancel
+            </button>
+            <button id="agSubmit" type="button"
+                    style="flex:1;padding:10px 14px;border:0;border-radius:9px;
+                           font-size:.85rem;font-weight:700;background:linear-gradient(135deg,#6b25df,#4d14b8);
+                           color:#fff;cursor:pointer">
+              Unlock
+            </button>
           </div>
-        `;
-        document.body.appendChild(gate);
-      }
-
-      gate.hidden = false;
+        </div>
+      `;
+      document.body.appendChild(gate);
       document.documentElement.style.visibility = "";
 
-      const input  = document.getElementById("adminGateInput");
-      const error  = document.getElementById("adminGateError");
-      const submit = document.getElementById("adminGateSubmit");
-      const cancel = document.getElementById("adminGateCancel");
-      const card   = gate.querySelector(".admin-gate-card");
+      const input  = gate.querySelector("#agInput");
+      const error  = gate.querySelector("#agError");
+      const submit = gate.querySelector("#agSubmit");
+      const cancel = gate.querySelector("#agCancel");
+      const card   = gate.querySelector("#agCard");
 
-      setTimeout(() => input && input.focus(), 60);
+      setTimeout(() => input.focus(), 60);
 
       function attempt() {
         const val = input.value;
         if (!val) { error.textContent = "Enter the admin password."; input.focus(); return; }
-
         if (val === ADMIN_PASSWORD) {
           try {
             sessionStorage.setItem(UNLOCK_KEY,
@@ -84,13 +97,12 @@
           window.location.reload();
           return;
         }
-
         error.textContent = "Incorrect password.";
         input.value = "";
         input.focus();
-        card.classList.remove("shake");
+        card.style.animation = "none";
         void card.offsetWidth;
-        card.classList.add("shake");
+        card.style.animation = "agShake .4s";
       }
 
       submit.addEventListener("click", attempt);
@@ -99,8 +111,8 @@
         if (e.key === "Escape") { e.preventDefault(); window.location.replace(HOME_URL); }
       });
       cancel.addEventListener("click", function () { window.location.replace(HOME_URL); });
-      gate.querySelector(".admin-gate-backdrop")?.addEventListener("click", function () {
-        window.location.replace(HOME_URL);
+      gate.addEventListener("click", function (e) {
+        if (e.target === gate) window.location.replace(HOME_URL);
       });
     }
 
@@ -110,7 +122,7 @@
       showGate();
     }
   })();
-
+   
   const CONFIG = {
     htmlPath: "../../shared/header/admin-header.html",
     timeZone: "Asia/Manila",
