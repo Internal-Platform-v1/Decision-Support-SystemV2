@@ -7,11 +7,8 @@
 
   /* ============================================================
      ADMIN PAGE GUARD
-     Blocks access unless the password gate in shared/header.js
-     was passed. Same sessionStorage key. Fully inline-styled
-     so it does not depend on any external CSS.
      ============================================================ */
-    (function adminGuard() {
+  (function adminGuard() {
     const UNLOCK_KEY = "bd_admin_unlocked";
     const ROLE_KEY   = "bd_role";
     const ADMIN_PASSWORD = "fedex-admin-2026";
@@ -19,7 +16,6 @@
 
     function isUnlocked() {
       try {
-        // CHANGED: sessionStorage is changed to localStorage
         const raw = localStorage.getItem(UNLOCK_KEY);
         if (!raw) return false;
         const obj = JSON.parse(raw);
@@ -89,7 +85,6 @@
         if (!val) { error.textContent = "Enter the admin password."; input.focus(); return; }
         if (val === ADMIN_PASSWORD) {
           try {
-            // CHANGED: sessionStorage is changed to localStorage, saves for 7 days
             const expiry = Date.now() + (7 * 24 * 60 * 60 * 1000);
             localStorage.setItem(UNLOCK_KEY, JSON.stringify({ exp: expiry }));
             localStorage.setItem(ROLE_KEY, "admin");
@@ -218,10 +213,6 @@
     setText("adminPageTitle", title);
   }
 
-  /* ------------------------------------------------------------
-     HERO VISIBILITY — only show on the dashboard page.
-     Removes the hero element from the DOM on every other page.
-     ------------------------------------------------------------ */
   function applyHeroVisibility() {
     const key = getPageKey();
     if (key === "dashboard") return;
@@ -268,26 +259,66 @@
     });
   }
 
-  function setupDropdown() {
-    const button = document.getElementById("adminUserMenu");
-    const dropdown = document.getElementById("adminUserDropdown");
+  // REPLACED: setupDropdown() -> setupSettingsDropdown()
+  function setupSettingsDropdown() {
+    const btn = document.getElementById("adminSettingsBtn");
+    const dropdown = document.getElementById("adminSettingsDropdown");
+    if (!btn || !dropdown) return;
 
-    if (!button || !dropdown) return;
-
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      const open = button.getAttribute("aria-expanded") === "true";
-      button.setAttribute("aria-expanded", String(!open));
-      dropdown.hidden = open;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = !dropdown.hidden;
+      dropdown.hidden = isOpen;
+      btn.setAttribute("aria-expanded", String(!isOpen));
     });
 
-    document.addEventListener("click", event => {
-      if (!dropdown.hidden &&
-          !dropdown.contains(event.target) &&
-          !button.contains(event.target)) {
+    document.addEventListener("click", (e) => {
+      if (!dropdown.hidden && !dropdown.contains(e.target) && !btn.contains(e.target)) {
         dropdown.hidden = true;
-        button.setAttribute("aria-expanded", "false");
+        btn.setAttribute("aria-expanded", "false");
       }
+    });
+  }
+
+  function setupTheme() {
+    const apply = (theme) => {
+      document.documentElement.setAttribute("data-theme", theme);
+      document.querySelectorAll(".admin-theme-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.themeChoice === theme);
+      });
+    };
+    
+    let storedTheme = localStorage.getItem("bd_theme") || "light";
+    apply(storedTheme);
+
+    document.querySelectorAll(".admin-theme-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const theme = btn.dataset.themeChoice;
+        localStorage.setItem("bd_theme", theme);
+        apply(theme);
+      });
+    });
+  }
+
+  function setupRole() {
+    const apply = (role) => {
+      document.querySelectorAll(".admin-role-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.role === role);
+      });
+      localStorage.setItem("bd_role", role);
+    };
+
+    let storedRole = localStorage.getItem("bd_role") || "admin";
+    apply(storedRole);
+
+    document.querySelectorAll(".admin-role-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const role = btn.dataset.role;
+        apply(role);
+        if (role === "user") {
+          window.location.href = "/Decision-Support-SystemV2/index.html";
+        }
+      });
     });
   }
 
@@ -300,8 +331,9 @@
           if (typeof window.adminLogout === "function") {
             window.adminLogout();
           } else {
-            localStorage.removeItem("currentUser");
-            location.href = "login.html";
+            localStorage.removeItem("bd_admin_unlocked");
+            localStorage.removeItem("bd_role");
+            window.location.href = "/Decision-Support-SystemV2/index.html";
           }
         }
 
@@ -357,12 +389,16 @@
       mount.innerHTML = await response.text();
 
       applyHeroVisibility();
-
       applyUser();
       setActiveNavigation();
       updateClock();
       setupNavigation();
-      setupDropdown();
+      
+      // CHANGED: Using the new functions
+      setupSettingsDropdown();
+      setupTheme();
+      setupRole();
+      
       setupActions();
       setupSearch();
 
