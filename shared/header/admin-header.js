@@ -5,7 +5,7 @@
 (() => {
   "use strict";
 
-       /* ============================================================
+  /* ============================================================
      ADMIN PAGE GUARD
      Blocks access unless the password gate in shared/header.js
      was passed. Same sessionStorage key. Fully inline-styled
@@ -33,7 +33,6 @@
 
     if (isUnlocked() && isAdminRole()) return;
 
-    // Hide the page immediately to avoid a flash.
     document.documentElement.style.visibility = "hidden";
 
     function showGate() {
@@ -100,9 +99,6 @@
         error.textContent = "Incorrect password.";
         input.value = "";
         input.focus();
-        card.style.animation = "none";
-        void card.offsetWidth;
-        card.style.animation = "agShake .4s";
       }
 
       submit.addEventListener("click", attempt);
@@ -122,7 +118,7 @@
       showGate();
     }
   })();
-   
+
   const CONFIG = {
     htmlPath: "../../shared/header/admin-header.html",
     timeZone: "Asia/Manila",
@@ -219,6 +215,20 @@
 
     const title = document.body.dataset.adminTitle || "Decision Support System";
     setText("adminPageTitle", title);
+  }
+
+  /* ------------------------------------------------------------
+     HERO VISIBILITY — only show on the dashboard page.
+     Removes the hero element from the DOM on every other page.
+     ------------------------------------------------------------ */
+  function applyHeroVisibility() {
+    const key = getPageKey();
+    if (key === "dashboard") return;
+
+    const hero = document.getElementById("adminHero");
+    if (hero && hero.parentNode) {
+      hero.parentNode.removeChild(hero);
+    }
   }
 
   function updateClock() {
@@ -344,6 +354,8 @@
       }
 
       mount.innerHTML = await response.text();
+
+      applyHeroVisibility();
 
       applyUser();
       setActiveNavigation();
