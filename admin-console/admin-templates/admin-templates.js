@@ -134,12 +134,30 @@
 
   function extractRecommendations(nodes) {
     const out = [];
+    
     Object.entries(nodes).forEach(([key, node]) => {
-      if (!isFinalNode(node)) return;
-      const text = finalTextOf(node);
-      if (!text) return;
-      out.push({ key, label: text, normalized: normalizeRecommendation(text) });
+      // 1. Check if the node itself is a final node (like in the debtor guide)
+      if (isFinalNode(node)) {
+        const text = finalTextOf(node);
+        if (text) {
+          out.push({ key, label: text, normalized: normalizeRecommendation(text) });
+        }
+      }
+      
+      // 2. ALSO check if any of the choices inside this node have an action (like in the reference number guide)
+      const choices = Array.isArray(node?.choices) ? node.choices : [];
+      choices.forEach((choice, idx) => {
+        if (choice.action) {
+          const text = String(choice.action).trim();
+          if (text) {
+            // We append the choice label to the key so it's unique and readable
+            const choiceKey = `${key}__${choice.label || idx}`.replace(/[^a-z0-9_]+/gi, "_");
+            out.push({ key: choiceKey, label: text, normalized: normalizeRecommendation(text) });
+          }
+        }
+      });
     });
+    
     out.sort((a, b) => a.label.localeCompare(b.label));
     return out;
   }
