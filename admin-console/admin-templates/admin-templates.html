@@ -6,140 +6,136 @@
   <title>Templates Management | Decision Support System</title>
   <link rel="icon" href="data:,">
 
-  <link rel="stylesheet" href="../../shared/header/admin-header.css" />
+  <!-- Main App Styles -->
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
+  
+  <!-- Templates Page Styles -->
   <link rel="stylesheet" href="admin-templates.css" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
+<body>
 
-<body data-admin-page="templates" data-admin-title="Templates Management">
-
+  <!-- Hidden Shared Admin Header (for auth & guard) -->
   <div id="adminHeader"></div>
 
-  <main class="at-main">
+  <!-- Main Application Shell -->
+  <div class="app-shell">
+    
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="page-title">
+        <i class="fa-solid fa-file-lines"></i>
+        <h1>Templates Management</h1>
+      </div>
+      <a href="../admin-dashboard/admin-dashboard.html" class="btn btn-outline" style="text-decoration: none;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </header>
 
-    <section class="at-guide-picker">
-      <label for="atCategorySelect">Category</label>
-      <select id="atCategorySelect" aria-label="Select category">
-        <option value="">All categories</option>
-      </select>
+    <!-- Control Panel (Category & Guide) -->
+    <section class="control-panel">
+      <div class="form-group">
+        <label for="atCategorySelect">Category</label>
+        <select id="atCategorySelect" class="form-select">
+          <option value="">All categories</option>
+        </select>
+      </div>
 
-      <label for="atGuideSelect">Guide</label>
-      <select id="atGuideSelect" aria-label="Select guide" disabled>
-        <option value="">Select a category first…</option>
-      </select>
+      <div class="form-group">
+        <label for="atGuideSelect">Guide</label>
+        <select id="atGuideSelect" class="form-select" disabled>
+          <option value="">Select a category first…</option>
+        </select>
+      </div>
 
-      <span class="at-guide-meta" id="atGuideMeta"></span>
-
-      <div class="at-view-toggle" role="tablist" aria-label="View mode">
-        <button type="button" class="at-view-btn" data-view="list" role="tab" aria-selected="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-          List
+      <div class="view-toggle">
+        <button type="button" class="view-btn" data-view="list">
+          <i class="fa-solid fa-list"></i> List
         </button>
-        <button type="button" class="at-view-btn" data-view="chart" role="tab" aria-selected="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 7l-1 3M14 17l-1-3M17 12h-3"/></svg>
-          Chart
+        <button type="button" class="view-btn" data-view="chart">
+          <i class="fa-solid fa-project-diagram"></i> Chart
         </button>
       </div>
     </section>
 
-    <section class="at-workspace" id="atWorkspace">
-
-      <aside class="at-panel at-left-panel" aria-label="Recommendations">
-        <header class="at-panel-head">
-          <div>
-            <span id="atLeftEyebrow">FINAL RECOMMENDATIONS</span>
-            <h2 id="atLeftTitle">Select a recommendation</h2>
-          </div>
-          <span class="at-count" id="atRecommendationCount">—</span>
+    <!-- Two Column Workspace -->
+    <main class="workspace">
+      
+      <!-- Left: Recommendations / Flow Chart -->
+      <div class="template-panel">
+        <header class="panel-header">
+          <h2 id="atLeftTitle">Final Recommendations</h2>
+          <span id="atRecommendationCount">0 found</span>
         </header>
 
-        <div class="at-rec-list" id="atRecommendationList">
-          <p class="at-empty">Select a guide to load its recommendations.</p>
-        </div>
-
-        <div class="at-chart-host" id="atChartHost" hidden>
-          <div class="at-chart-toolbar">
-            <div class="at-chart-hint">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-              Drag to pan · scroll to zoom · click a node to expand
-            </div>
-            <div class="at-chart-controls">
-              <button type="button" class="at-chart-btn" id="atZoomOut" aria-label="Zoom out">−</button>
-              <button type="button" class="at-chart-btn" id="atZoomIn" aria-label="Zoom in">+</button>
-              <button type="button" class="at-chart-btn" id="atZoomReset" aria-label="Reset view">Reset</button>
-              <button type="button" class="at-chart-btn" id="atExpandAll" aria-label="Expand all">Expand all</button>
-              <button type="button" class="at-chart-btn" id="atCollapseAll" aria-label="Collapse all">Collapse all</button>
-              <button type="button" class="at-chart-btn" id="atFullscreen" aria-label="Enter fullscreen">Fullscreen ⤢</button>
-            </div>
-          </div>
-          <div class="at-chart-viewport" id="atChartViewport">
-            <svg class="at-chart-svg" id="atChartSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+        <!-- List View -->
+        <div class="list-container active" id="atRecommendationList">
+          <div class="empty-state">
+            <i class="fa-solid fa-list-ul"></i>
+            <p>Select a guide to load its recommendations.</p>
           </div>
         </div>
-      </aside>
 
-      <section class="at-panel at-editor" aria-label="Template editor">
-        <header class="at-panel-head">
-          <div>
-            <span>SUGGESTED TEMPLATES</span>
-            <h2 id="atEditorTitle">No recommendation selected</h2>
-            <p id="atEditorSubtitle" class="at-editor-subtitle">
-              Pick a recommendation on the left to edit its templates.
-            </p>
+        <!-- Chart View -->
+        <div class="chart-container" id="atChartHost">
+          <div class="chart-toolbar">
+            <button type="button" class="chart-btn" id="atZoomOut">−</button>
+            <button type="button" class="chart-btn" id="atZoomIn">+</button>
+            <button type="button" class="chart-btn" id="atZoomReset">Reset</button>
+            <button type="button" class="chart-btn" id="atExpandAll">Expand All</button>
+            <button type="button" class="chart-btn" id="atCollapseAll">Collapse All</button>
           </div>
+          <svg class="chart-svg" id="atChartSvg"></svg>
+        </div>
+      </div>
+
+      <!-- Right: Template Editor -->
+      <div class="template-panel">
+        <header class="panel-header">
+          <h2 id="atEditorTitle">No recommendation selected</h2>
         </header>
 
-        <div class="at-editor-body" id="atEditorBody" hidden>
-          <div class="at-edit-field">
-            <label for="atComment">
-              <span>Suggested Comment</span>
-              <small>Internal case notes shown to the agent.</small>
-            </label>
-            <textarea id="atComment" rows="5" placeholder="Comment text…"></textarea>
+        <div class="editor-body" id="atEditorBody" hidden>
+          <div class="field-group">
+            <label>Suggested Comment</label>
+            <textarea id="atComment" rows="4" placeholder="Internal case notes..."></textarea>
           </div>
 
-          <div class="at-edit-field">
-            <label for="atCorr">
-              <span>Suggested CORR Code</span>
-              <small>Corrective code guidance.</small>
-            </label>
-            <textarea id="atCorr" rows="4" placeholder="CORR code text…"></textarea>
+          <div class="field-group">
+            <label>Suggested CORR Code</label>
+            <textarea id="atCorr" rows="3" placeholder="Corrective code..."></textarea>
           </div>
 
-          <div class="at-edit-field">
-            <label for="atEmail">
-              <span>Suggested Email</span>
-              <small>Customer communication shown to the agent.</small>
-            </label>
-            <textarea id="atEmail" rows="6" placeholder="Email body…"></textarea>
+          <div class="field-group">
+            <label>Suggested Email</label>
+            <textarea id="atEmail" rows="5" placeholder="Customer email..."></textarea>
           </div>
 
-          <div class="at-editor-footer">
-            <span class="at-doc-ids" id="atDocIds"></span>
-            <div class="at-editor-actions">
-              <button type="button" class="at-btn ghost" id="atReset" disabled>Reset</button>
-              <button type="button" class="at-btn primary" id="atSave" disabled>
-                <svg viewBox="0 0 24 24" aria-hidden="true" class="at-btn-icon"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>
-                Save Templates
-              </button>
+          <div class="editor-footer">
+            <div class="doc-ids" id="atDocIds"></div>
+            <div class="editor-actions">
+              <button type="button" class="btn btn-outline" id="atReset" disabled>Reset</button>
+              <button type="button" class="btn btn-primary" id="atSave" disabled>Save Templates</button>
             </div>
           </div>
         </div>
 
-        <div class="at-node-preview" id="atNodePreview" hidden></div>
-
-        <div class="at-editor-placeholder" id="atEditorPlaceholder">
-          <div class="at-editor-placeholder-icon">✎</div>
-          <p>No recommendation selected.</p>
-          <small>Choose a final recommendation on the left to start editing.</small>
+        <!-- Placeholder -->
+        <div class="empty-state" id="atEditorPlaceholder">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <p>Choose a final recommendation on the left to start editing.</p>
         </div>
-      </section>
+      </div>
 
-    </section>
+    </main>
+  </div>
 
-  </main>
+  <!-- Toast Notification -->
+  <div class="toast" id="atToast"></div>
 
-  <div class="at-toast" id="atToast" role="status" aria-live="polite"></div>
-
+  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
