@@ -1,12 +1,11 @@
 /* ============================================================
    SHARED ADMIN HEADER
-   Location: shared/header/admin-header.js
    ============================================================ */
 (() => {
   "use strict";
 
   /* ============================================================
-     ADMIN PAGE GUARD
+     HARD REDIRECT GUARD
      ============================================================ */
   (function adminGuard() {
     const UNLOCK_KEY = "bd_admin_unlocked";
@@ -27,7 +26,7 @@
       catch (_) { return false; }
     }
 
-    // If not unlocked, redirect to home page where the modal lives
+    // Immediate lockout. If they aren't unlocked, kick them to the main page.
     if (!isUnlocked() || !isAdminRole()) {
       window.location.replace(HOME_URL);
       return;
@@ -37,11 +36,7 @@
   const CONFIG = {
     htmlPath: "../../shared/header/admin-header.html",
     timeZone: "Asia/Manila",
-    defaultUser: {
-      name: "Admin User",
-      role: "System Administrator",
-      email: "admin@example.com"
-    }
+    defaultUser: { name: "Admin User", role: "System Administrator", email: "admin@example.com" }
   };
 
   const pageMap = {
@@ -65,24 +60,19 @@
 
   function getCurrentUser() {
     const keys = ["currentUser", "adminUser", "user", "loggedInUser"];
-
     for (const key of keys) {
       try {
         const raw = localStorage.getItem(key);
         if (!raw) continue;
-
         const user = JSON.parse(raw);
         if (!user || typeof user !== "object") continue;
-
         return {
-          name: user.name || user.displayName || user.employeeName ||
-            user.fullName || CONFIG.defaultUser.name,
+          name: user.name || user.displayName || user.employeeName || user.fullName || CONFIG.defaultUser.name,
           role: user.role || user.userRole || CONFIG.defaultUser.role,
           email: user.email || user.userEmail || CONFIG.defaultUser.email
         };
       } catch (_) {}
     }
-
     return { ...CONFIG.defaultUser };
   }
 
@@ -106,28 +96,20 @@
   }
 
   function getPageKey() {
-    if (document.body.dataset.adminPage) {
-      return document.body.dataset.adminPage.toLowerCase();
-    }
-
+    if (document.body.dataset.adminPage) return document.body.dataset.adminPage.toLowerCase();
     const file = location.pathname.split("/").pop().toLowerCase();
-
     if (file === "admin-dashboard.html") return "dashboard";
-
     for (const [key, target] of Object.entries(pageMap)) {
       if (target.toLowerCase().endsWith(file)) return key;
     }
-
     return "dashboard";
   }
 
   function setActiveNavigation() {
     const key = getPageKey();
-
     document.querySelectorAll(".admin-nav-item").forEach(item => {
       item.classList.toggle("active", item.dataset.adminPage === key);
     });
-
     const title = document.body.dataset.adminTitle || "Decision Support System";
     setText("adminPageTitle", title);
   }
@@ -135,31 +117,18 @@
   function applyHeroVisibility() {
     const key = getPageKey();
     if (key === "dashboard") return;
-
     const hero = document.getElementById("adminHero");
-    if (hero && hero.parentNode) {
-      hero.parentNode.removeChild(hero);
-    }
+    if (hero && hero.parentNode) hero.parentNode.removeChild(hero);
   }
 
   function updateClock() {
     const now = new Date();
-
     const date = new Intl.DateTimeFormat("en-US", {
-      timeZone: CONFIG.timeZone,
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "numeric"
+      timeZone: CONFIG.timeZone, weekday: "short", month: "short", day: "numeric", year: "numeric"
     }).format(now);
-
     const time = new Intl.DateTimeFormat("en-US", {
-      timeZone: CONFIG.timeZone,
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true
+      timeZone: CONFIG.timeZone, hour: "numeric", minute: "2-digit", hour12: true
     }).format(now);
-
     setText("adminCurrentDate", date);
     setText("adminCurrentTime", `${time} (PHT)`);
   }
@@ -172,7 +141,6 @@
     document.querySelectorAll(".admin-nav-item").forEach(item => {
       item.addEventListener("click", () => navigate(item.dataset.adminPage));
     });
-
     document.querySelectorAll("[data-admin-shortcut]").forEach(button => {
       button.addEventListener("click", () => navigate(button.dataset.adminShortcut));
     });
@@ -205,7 +173,6 @@
         b.classList.toggle("active", b.dataset.themeChoice === theme);
       });
     };
-    
     let storedTheme = localStorage.getItem("bd_theme") || "light";
     apply(storedTheme);
 
@@ -225,7 +192,6 @@
       });
       localStorage.setItem("bd_role", role);
     };
-
     let storedRole = localStorage.getItem("bd_role") || "admin";
     apply(storedRole);
 
@@ -233,9 +199,7 @@
       btn.addEventListener("click", () => {
         const role = btn.dataset.role;
         apply(role);
-        if (role === "user") {
-          window.location.href = "/Decision-Support-SystemV2/index.html";
-        }
+        if (role === "user") window.location.href = "/Decision-Support-SystemV2/index.html";
       });
     });
   }
@@ -246,28 +210,15 @@
         const action = button.dataset.adminAction;
 
         if (action === "logout") {
-          if (typeof window.adminLogout === "function") {
-            window.adminLogout();
-          } else {
-            localStorage.removeItem("bd_admin_unlocked");
-            localStorage.removeItem("bd_role");
-            window.location.href = "/Decision-Support-SystemV2/index.html";
-          }
+          localStorage.removeItem("bd_admin_unlocked");
+          localStorage.removeItem("bd_role");
+          window.location.href = "/Decision-Support-SystemV2/index.html";
         }
 
         if (action === "settings") navigate("settings");
 
         if (action === "profile" && typeof window.openAdminProfile === "function") {
           window.openAdminProfile();
-        }
-
-        if (action === "notifications" &&
-            typeof window.openAdminNotifications === "function") {
-          window.openAdminNotifications();
-        }
-
-        if (action === "help" && typeof window.openAdminHelp === "function") {
-          window.openAdminHelp();
         }
       });
     });
@@ -276,34 +227,21 @@
   function setupSearch() {
     const input = document.getElementById("adminGlobalSearch");
     if (!input) return;
-
     input.addEventListener("keydown", event => {
       if (event.key !== "Enter") return;
-
       const query = input.value.trim();
       if (!query) return;
-
-      window.dispatchEvent(
-        new CustomEvent("adminGlobalSearch", { detail: { query } })
-      );
+      window.dispatchEvent(new CustomEvent("adminGlobalSearch", { detail: { query } }));
     });
   }
 
   async function load() {
     const mount = document.getElementById("adminHeader");
-
-    if (!mount) {
-      console.error("Shared Admin Header: #adminHeader was not found.");
-      return;
-    }
+    if (!mount) return;
 
     try {
       const response = await fetch(CONFIG.htmlPath, { cache: "no-cache" });
-
-      if (!response.ok) {
-        throw new Error(`${CONFIG.htmlPath} returned ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error("Header failed to load");
       mount.innerHTML = await response.text();
 
       applyHeroVisibility();
@@ -318,23 +256,13 @@
       setupSearch();
 
       setInterval(updateClock, 1000);
-
       window.dispatchEvent(new CustomEvent("adminHeaderReady"));
     } catch (error) {
       console.error("Shared Admin Header failed:", error);
-      mount.innerHTML = `
-        <div style="padding:20px;color:#9d1c32;background:#fff4f5;
-          border:1px solid #f0c5cc;border-radius:10px;font-family:Arial">
-          Admin header could not be loaded. Check the shared/header path.
-        </div>`;
     }
   }
 
-  window.AdminHeader = {
-    navigate,
-    refreshUser: applyUser,
-    refreshClock: updateClock
-  };
+  window.AdminHeader = { navigate, refreshUser: applyUser, refreshClock: updateClock };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", load);
