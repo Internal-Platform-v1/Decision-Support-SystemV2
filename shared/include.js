@@ -234,3 +234,92 @@
         document.write('<script src="assets/js/guide-store.js"><\/script>');
     }
 })();
+
+
+/* ------------------------------------------------------------
+   THEME PERSISTENCE ACROSS BACK/FORWARD NAVIGATION
+   ------------------------------------------------------------
+   When the user presses the browser Back or Forward button,
+   the browser often restores the page from its BFcache
+   (back-forward cache) — a snapshot of the DOM from the moment
+   they left. That snapshot still has the OLD data-theme value
+   painted on <html>, so the page flashes the wrong theme.
+
+   Fix: on `pageshow` (which fires for BFcache restores too),
+   re-read the saved theme from localStorage and force it back
+   onto <html>. The user's choice stays permanent until they
+   explicitly toggle the theme again.
+   ------------------------------------------------------------ */
+(function ensureThemePersistsAcrossHistory() {
+
+    var THEME_KEY = "bd_theme";
+
+    function applyStoredTheme() {
+        try {
+            var stored = localStorage.getItem(THEME_KEY);
+            if (stored !== "dark" && stored !== "light") {
+                /* No stored choice yet — do nothing, let the bootstrap
+                   resolve the OS preference normally. */
+                return;
+            }
+
+            var current = document.documentElement.getAttribute("data-theme");
+            if (current === stored) return; /* Already correct — no-op */
+
+            document.documentElement.setAttribute("data-theme", stored);
+
+            /* If we're switching to dark and the early-loader <style>
+               is missing (e.g. because the first load was light),
+               inject it now so the loader stays consistent. */
+            if (stored === "dark" &&
+                !document.getElementById("dss-early-dark-loader")) {
+                var style = document.createElement("style");
+                style.id = "dss-early-dark-loader";
+                style.textContent = [
+                    "html[data-theme=\"dark\"] .page-loader { background: #0b0b17 !important; }",
+                    "html[data-theme=\"dark\"] .page-loader-text { color: #b8b8d4 !important; }",
+                    "html[data-theme=\"dark\"] .page-loader-ring {",
+                    "  border-color: rgba(167,139,250,.18) !important;",
+                    "  border-top-color: #c4b5fd !important;",
+                    "}",
+                    "html[data-theme=\"dark\"] .page-loader-dot { background: #c4b5fd !important; }",
+                    "html[data-theme=\"dark\"] body { background: #0b0b17; color: #e7e7f2; }"
+                ].join("\n");
+                (document.head || document.documentElement).appendChild(style);
+            }
+
+            /* Notify any listeners (header.js updates its own UI,
+               other scripts may listen too) */
+            document.dispatchEvent(
+                new CustomEvent("bdthemechange", { detail: { theme: stored } })
+            );
+        } catch (e) {
+            /* localStorage inaccessible — ignore */
+        }
+    }
+
+    /* 1. On BFcache restore (Back/Forward) */
+    window.addEventListener("pageshow", function (event) {
+        /* event.persisted is true for BFcache restores,
+           but pageshow also fires on normal loads — running
+           it always is harmless and just verifies consistency. */
+        applyStoredTheme();
+    });
+
+    /* 2. When the tab becomes visible again (some browsers don't
+          fire pageshow on tab switch) */
+    document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") {
+            applyStoredTheme();
+        }
+    });
+
+    /* 3. Belt-and-suspenders: on load, verify the painted theme
+          matches localStorage. Runs once. */
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", applyStoredTheme, { once: true });
+    } else {
+        applyStoredTheme();
+    }
+
+})();
