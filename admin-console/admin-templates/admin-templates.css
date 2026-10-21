@@ -4,19 +4,35 @@
 
 #adminHeader, #adminHeader * { box-sizing: border-box; }
 
+/* Force the top header to stay exactly 70px and not affect layout */
+.admin-top-header {
+  position: fixed !important;
+  top: 0 !important;
+  height: 70px !important;
+}
+
+/* Push the content down exactly 70px, with 20px of padding for spacing */
 .at-main {
-  margin-left: var(--admin-sidebar-width);
-  padding: 80px 22px 40px;
-  min-height: 100vh;
+  margin-left: var(--admin-sidebar-width) !important;
+  padding: 90px 22px 40px !important; /* 70px header + 20px gap */
+  min-height: 0 !important;
   background: #f7f7fb;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   color: #17174b;
 }
 
-/* HIDE HERO & SPACE ONLY ON THIS PAGE */
-body[data-admin-page="templates"] .admin-hero { display: none !important; }
-body[data-admin-page="templates"] .admin-main { min-height: 0 !important; }
+/* Remove the hero block and its reserved space completely */
+.admin-hero {
+  display: none !important;
+}
 
+/* The shared header wrapper */
+.admin-main {
+  min-height: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Guide Picker */
 .at-guide-picker {
   display: flex;
   align-items: center;
@@ -568,17 +584,17 @@ body[data-admin-page="templates"] .admin-main { min-height: 0 !important; }
   .at-panel { min-height: 420px; }
 }
 @media (max-width: 900px) {
-  .at-main { margin-left: 225px; padding: 76px 18px 30px; }
+  .at-main { margin-left: 225px; padding: 86px 18px 30px; }
 }
 @media (max-width: 720px) {
-  .at-main { margin-left: 70px; padding: 68px 14px 24px; }
+  .at-main { margin-left: 70px; padding: 78px 14px 24px; }
   .at-guide-picker select,
   .at-guide-picker select#atGuideSelect { width: 100%; min-width: 0; }
   .at-guide-meta { width: 100%; }
   .at-view-toggle { margin-left: auto; }
 }
 @media (max-width: 520px) {
-  .at-main { padding: 64px 10px 20px; }
+  .at-main { padding: 74px 10px 20px; }
   .at-editor-footer { flex-direction: column; align-items: stretch; }
   .at-editor-actions { justify-content: flex-end; }
 }
