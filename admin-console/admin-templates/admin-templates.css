@@ -963,3 +963,24 @@
   font-family: "Consolas", "Monaco", monospace;
   font-size: 9px;
 }
+
+/* Hover tip inside fullscreen host */
+.at-hover-tip.is-in-host {
+  position: absolute;
+}
+
+/* Draggable fullscreen editor panel */
+.at-fs-editor-panel {
+  position: relative;
+  user-select: none;
+}
+.at-fs-editor-panel .at-fs-editor-body,
+.at-fs-editor-panel .at-fs-editor-foot {
+  user-select: auto;
+}
+.at-fs-editor-panel #fsDragHandle {
+  cursor: grab;
+}
+.at-fs-editor-panel #fsDragHandle:active {
+  cursor: grabbing;
+}
