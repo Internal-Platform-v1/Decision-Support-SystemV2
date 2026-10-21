@@ -984,3 +984,32 @@
 .at-fs-editor-panel #fsDragHandle:active {
   cursor: grabbing;
 }
+
+/* Category + guide picker layout */
+.at-guide-picker {
+  flex-wrap: wrap;
+}
+.at-guide-picker label[for="atCategorySelect"],
+.at-guide-picker label[for="atGuideSelect"] {
+  margin-left: 8px;
+}
+.at-guide-picker label[for="atCategorySelect"]:first-of-type {
+  margin-left: 0;
+}
+.at-guide-picker select {
+  min-width: 180px;
+}
+.at-guide-picker select#atGuideSelect {
+  min-width: 260px;
+}
+.at-guide-picker select:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+@media (max-width: 720px) {
+  .at-guide-picker select,
+  .at-guide-picker select#atGuideSelect {
+    width: 100%;
+    min-width: 0;
+  }
+}
