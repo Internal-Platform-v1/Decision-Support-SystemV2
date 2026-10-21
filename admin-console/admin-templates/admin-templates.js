@@ -1,12 +1,9 @@
 /* ============================================================
    ADMIN TEMPLATES MANAGEMENT
-   admin-console/admin-templates/admin-templates.js
    ============================================================ */
 
 (() => {
   "use strict";
-
-  console.log("[AT] script starting");
 
   const CONFIG = {
     manifest: () => Array.isArray(window.GUIDE_FLOW_MANIFEST) ? window.GUIDE_FLOW_MANIFEST : []
@@ -69,8 +66,8 @@
     const t = $("atToast");
     if (!t) return;
     t.textContent = message;
-    t.classList.toggle("error", !!isError);
     t.classList.add("show");
+    t.style.background = isError ? "#b3232f" : "#10134f";
     clearTimeout(showToast._t);
     showToast._t = setTimeout(() => t.classList.remove("show"), 2600);
   }
@@ -278,9 +275,6 @@
     return s.slice(0, max - 1).trim() + "…";
   }
 
-  /* ------------------------------------------------------------
-     DROPDOWNS — category + guide
-     ------------------------------------------------------------ */
   function populateCategorySelect() {
     const select = $("atCategorySelect");
     if (!select) return;
@@ -305,7 +299,6 @@
       categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("");
     select.disabled = false;
 
-    // Populate the guide dropdown immediately with ALL guides on load
     populateGuideSelect("");
   }
 
@@ -331,7 +324,6 @@
         .map(g => `<option value="${esc(g.id)}">${esc(g.title || g.id)}</option>`)
         .join("");
     
-    // Enable the select since there are options (All categories includes everything)
     select.disabled = false;
 
     const meta = $("atGuideMeta");
@@ -347,7 +339,6 @@
     const cat = catSelect ? catSelect.value : "";
     state.activeCategory = cat;
 
-    // Reset the guide selection when category changes.
     state.activeGuideId = "";
     state.activeRecommendationKey = "";
     state.recommendations = [];
@@ -358,7 +349,6 @@
 
     populateGuideSelect(cat);
 
-    // Clear the rest of the UI.
     renderRecommendationList();
     if (state.view === "chart") renderChart();
     showEditor(false);
@@ -368,9 +358,6 @@
     setDocIdsDisplay("");
   }
 
-  /* ------------------------------------------------------------
-     RECOMMENDATION LIST
-     ------------------------------------------------------------ */
   function renderRecommendationList() {
     const list = $("atRecommendationList");
     const count = $("atRecommendationCount");
@@ -398,11 +385,10 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     CHART
-     ------------------------------------------------------------ */
   function renderChart() {
-    if (state.renderInProgress) return;
+    // FIX: Do not render chart if container is hidden or currently rendering
+    if (state.renderInProgress || state.view !== "chart") return;
+    
     state.renderInProgress = true;
     try {
       const svg = $("atChartSvg");
@@ -520,15 +506,9 @@
           event.stopPropagation();
           handleChartNodeClick(g.dataset.nodeKey);
         });
-        g.addEventListener("mouseenter", (event) => {
-          showHoverTip(g.dataset.nodeKey, event);
-        });
-        g.addEventListener("mousemove", (event) => {
-          positionHoverTip(event);
-        });
-        g.addEventListener("mouseleave", () => {
-          hideHoverTip();
-        });
+        g.addEventListener("mouseenter", (event) => showHoverTip(g.dataset.nodeKey, event));
+        g.addEventListener("mousemove", (event) => positionHoverTip(event));
+        g.addEventListener("mouseleave", () => hideHoverTip());
       });
     } finally {
       state.renderInProgress = false;
@@ -832,9 +812,6 @@
     showToast("Editor reset to last saved values.");
   }
 
-  /* ------------------------------------------------------------
-     GUIDE CHANGE
-     ------------------------------------------------------------ */
   async function onGuideChange() {
     const select = $("atGuideSelect");
     const guideId = select ? select.value : "";
@@ -899,6 +876,7 @@
 
       renderRecommendationList();
 
+      // Load preferred view
       let preferredView = "list";
       try {
         const saved = localStorage.getItem("at_view");
@@ -948,28 +926,13 @@
     if (leftTitle) leftTitle.textContent = state.view === "chart" ? "Visual decision tree" : "Select a recommendation";
 
     if (state.view === "chart") {
-      if (state.graph) {
-        requestAnimationFrame(() => renderChart());
-      } else {
-        requestAnimationFrame(() => {
-          const svg = $("atChartSvg");
-          const host = $("atChartHost");
-          if (svg) svg.innerHTML = "";
-          if (host) {
-            host.querySelector(".at-chart-empty")?.remove();
-            const empty = document.createElement("div");
-            empty.className = "at-chart-empty";
-            empty.textContent = "Select a guide to load the flow chart.";
-            host.appendChild(empty);
-          }
-        });
-      }
+      // Use requestAnimationFrame to ensure the container is visible before calculating layout
+      requestAnimationFrame(() => {
+        if (state.graph) renderChart();
+      });
     }
   }
 
-  /* ------------------------------------------------------------
-     HOVER TOOLTIP
-     ------------------------------------------------------------ */
   function ensureHoverTip() {
     let tip = $("atHoverTip");
     if (tip) return tip;
@@ -1063,9 +1026,6 @@
     state.hoverNodeKey = null;
   }
 
-  /* ------------------------------------------------------------
-     FULLSCREEN
-     ------------------------------------------------------------ */
   function toggleFullscreen() {
     const host = $("atChartHost");
     if (!host) return;
@@ -1110,9 +1070,6 @@
     }, 60);
   }
 
-  /* ------------------------------------------------------------
-     FULLSCREEN EDITOR (draggable)
-     ------------------------------------------------------------ */
   function openFullscreenEditor(key) {
     const host = $("atChartHost");
     if (!host) return;
@@ -1277,9 +1234,6 @@
     if (el) el.remove();
   }
 
-  /* ------------------------------------------------------------
-     PAN / ZOOM
-     ------------------------------------------------------------ */
   function setupPanZoom() {
     const vp = $("atChartViewport");
     if (!vp) return;
