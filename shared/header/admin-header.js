@@ -5,6 +5,112 @@
 (() => {
   "use strict";
 
+     /* ============================================================
+     ADMIN PAGE GUARD
+     Blocks access unless the password gate in shared/header.js
+     was passed. Same sessionStorage key. Shows an inline password
+     prompt if not unlocked.
+     ============================================================ */
+  (function adminGuard() {
+    const UNLOCK_KEY = "bd_admin_unlocked";
+    const ROLE_KEY   = "bd_role";
+    const ADMIN_PASSWORD = "fedex-admin-2026";
+    const HOME_URL = "/Decision-Support-SystemV2/index.html";
+
+    function isUnlocked() {
+      try {
+        const raw = sessionStorage.getItem(UNLOCK_KEY);
+        if (!raw) return false;
+        const obj = JSON.parse(raw);
+        return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
+      } catch (_) { return false; }
+    }
+
+    function isAdminRole() {
+      try { return localStorage.getItem(ROLE_KEY) === "admin"; }
+      catch (_) { return false; }
+    }
+
+    if (isUnlocked() && isAdminRole()) return;
+
+    document.documentElement.style.visibility = "hidden";
+
+    function showGate() {
+      let gate = document.getElementById("adminGate");
+
+      if (!gate) {
+        gate = document.createElement("div");
+        gate.id = "adminGate";
+        gate.className = "admin-gate";
+        gate.innerHTML = `
+          <div class="admin-gate-backdrop"></div>
+          <div class="admin-gate-card" role="dialog" aria-modal="true">
+            <div class="admin-gate-icon" aria-hidden="true">🛡️</div>
+            <h2>Admin access</h2>
+            <p class="admin-gate-copy">Enter the admin password to open the dashboard.</p>
+            <input type="password" id="adminGateInput" class="admin-gate-input"
+                   placeholder="Admin password" autocomplete="off" spellcheck="false">
+            <div class="admin-gate-error" id="adminGateError" role="alert"></div>
+            <div class="admin-gate-actions">
+              <button type="button" class="admin-gate-btn ghost" id="adminGateCancel">Cancel</button>
+              <button type="button" class="admin-gate-btn primary" id="adminGateSubmit">Unlock</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(gate);
+      }
+
+      gate.hidden = false;
+      document.documentElement.style.visibility = "";
+
+      const input  = document.getElementById("adminGateInput");
+      const error  = document.getElementById("adminGateError");
+      const submit = document.getElementById("adminGateSubmit");
+      const cancel = document.getElementById("adminGateCancel");
+      const card   = gate.querySelector(".admin-gate-card");
+
+      setTimeout(() => input && input.focus(), 60);
+
+      function attempt() {
+        const val = input.value;
+        if (!val) { error.textContent = "Enter the admin password."; input.focus(); return; }
+
+        if (val === ADMIN_PASSWORD) {
+          try {
+            sessionStorage.setItem(UNLOCK_KEY,
+              JSON.stringify({ exp: Date.now() + 30 * 60 * 1000 }));
+            localStorage.setItem(ROLE_KEY, "admin");
+          } catch (_) {}
+          window.location.reload();
+          return;
+        }
+
+        error.textContent = "Incorrect password.";
+        input.value = "";
+        input.focus();
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+      }
+
+      submit.addEventListener("click", attempt);
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter")  { e.preventDefault(); attempt(); }
+        if (e.key === "Escape") { e.preventDefault(); window.location.replace(HOME_URL); }
+      });
+      cancel.addEventListener("click", function () { window.location.replace(HOME_URL); });
+      gate.querySelector(".admin-gate-backdrop")?.addEventListener("click", function () {
+        window.location.replace(HOME_URL);
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", showGate);
+    } else {
+      showGate();
+    }
+  })();
+
   const CONFIG = {
     htmlPath: "../../shared/header/admin-header.html",
     timeZone: "Asia/Manila",
