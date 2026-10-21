@@ -293,7 +293,6 @@
       return;
     }
 
-    // Preserve the order categories appear in the manifest.
     const seen = new Set();
     const categories = [];
     guides.forEach(g => {
@@ -305,6 +304,9 @@
       `<option value="">All categories</option>` +
       categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("");
     select.disabled = false;
+
+    // Populate the guide dropdown immediately with ALL guides on load
+    populateGuideSelect("");
   }
 
   function populateGuideSelect(category) {
@@ -328,6 +330,8 @@
         .sort((a, b) => String(a.title || a.id).localeCompare(String(b.title || b.id)))
         .map(g => `<option value="${esc(g.id)}">${esc(g.title || g.id)}</option>`)
         .join("");
+    
+    // Enable the select since there are options (All categories includes everything)
     select.disabled = false;
 
     const meta = $("atGuideMeta");
