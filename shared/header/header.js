@@ -8,8 +8,7 @@
     const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
     const ADMIN_PASSWORD = "fedex-admin-2026";
-    
-    // Use localStorage for the token so it persists
+
     const ADMIN_UNLOCK_KEY = "bd_admin_unlocked";
     const ADMIN_UNLOCK_TTL = 7 * 24 * 60 * 60 * 1000; /* 7 days */
 
@@ -29,7 +28,10 @@
         try {
             localStorage.setItem(ADMIN_UNLOCK_KEY, JSON.stringify({ exp: Date.now() + ADMIN_UNLOCK_TTL }));
             localStorage.setItem(ROLE_KEY, "admin");
-        } catch (e) {}
+            console.log("[header.js] Token successfully saved to localStorage.");
+        } catch (e) { 
+            console.error("[header.js] FAILED TO SAVE TOKEN:", e); 
+        }
     }
 
     function clearAdminUnlocked() {
@@ -40,6 +42,8 @@
        Role state
        ------------------------------------------------------------ */
     function getRole() {
+        // If the token exists, we are definitely admin. 
+        // Do not rely on the ROLE_KEY if the token is valid.
         if (isAdminUnlocked()) return "admin";
         try {
             return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user";
@@ -62,7 +66,7 @@
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
         
-        // Do NOT clear the token here. Only clear on explicit logout.
+        // Token is NEVER cleared here.
         
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
     }
@@ -107,17 +111,6 @@
                 setTheme(this.dataset.themeChoice);
             });
         });
-        if (window.matchMedia) {
-            const mq = window.matchMedia("(prefers-color-scheme: dark)");
-            const handler = function (event) {
-                let stored = null;
-                try { stored = localStorage.getItem(THEME_KEY); } catch (e) {}
-                if (stored === "dark" || stored === "light") return;
-                applyTheme(event.matches ? "dark" : "light");
-            };
-            if (mq.addEventListener) mq.addEventListener("change", handler);
-            else if (mq.addListener) mq.addListener(handler);
-        }
     }
 
     /* ------------------------------------------------------------
