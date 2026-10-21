@@ -9,9 +9,8 @@
     const ADMIN_URL = "/Decision-Support-SystemV2/admin-console/admin-dashboard/admin-dashboard.html";
 
     const ADMIN_PASSWORD = "fedex-admin-2026";
-
     const ADMIN_UNLOCK_KEY = "bd_admin_unlocked";
-    const ADMIN_UNLOCK_TTL = 7 * 24 * 60 * 60 * 1000; /* 7 days */
+    const ADMIN_UNLOCK_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
 
     /* ------------------------------------------------------------
        Admin Unlock Helpers
@@ -22,23 +21,14 @@
             if (!raw) return false;
             const obj = JSON.parse(raw);
             return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
-        } catch (e) {
-            return false;
-        }
+        } catch (e) { return false; }
     }
 
     function setAdminUnlocked() {
         try {
-            localStorage.setItem(
-                ADMIN_UNLOCK_KEY,
-                JSON.stringify({ exp: Date.now() + ADMIN_UNLOCK_TTL })
-            );
-            localStorage.setItem(ROLE_KEY, "admin");
-        } catch (e) { /* storage unavailable */ }
-    }
-
-    function clearAdminUnlocked() {
-        try { localStorage.removeItem(ADMIN_UNLOCK_KEY); } catch (e) {}
+            localStorage.setItem(ADMIN_UNLOCK_KEY, JSON.stringify({ exp: Date.now() + ADMIN_UNLOCK_TTL }));
+            localStorage.setItem(ROLE_KEY, "admin"); // Force admin role on unlock
+        } catch (e) {}
     }
 
     /* ------------------------------------------------------------
@@ -46,17 +36,16 @@
        ------------------------------------------------------------ */
     function getRole() {
         try {
-            return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user";
-        } catch (e) {
-            return "user";
-        }
+            const r = localStorage.getItem(ROLE_KEY);
+            // If the unlock token is valid, always report admin
+            if (isAdminUnlocked()) return "admin";
+            return r === "admin" ? "admin" : "user";
+        } catch (e) { return "user"; }
     }
 
     function setRole(role) {
         const safe = role === "admin" ? "admin" : "user";
-        try {
-            localStorage.setItem(ROLE_KEY, safe);
-        } catch (e) { /* storage unavailable */ }
+        try { localStorage.setItem(ROLE_KEY, safe); } catch (e) {}
         return safe;
     }
 
@@ -72,7 +61,8 @@
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
 
-        if (role !== "admin") clearAdminUnlocked();
+        // DO NOT clear the unlock token here anymore.
+        // The token is only cleared on logout.
 
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
     }
@@ -84,21 +74,16 @@
         try {
             const v = localStorage.getItem(THEME_KEY);
             if (v === "dark" || v === "light") return v;
-        } catch (e) { /* storage unavailable */ }
-
+        } catch (e) {}
         try {
-            if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                return "dark";
-            }
-        } catch (e) { /* no matchMedia */ }
-
+            if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+        } catch (e) {}
         return "light";
     }
 
     function applyTheme(theme) {
         const safe = theme === "dark" ? "dark" : "light";
         document.documentElement.setAttribute("data-theme", safe);
-
         document.querySelectorAll(".theme-option").forEach(function (opt) {
             const active = opt.dataset.themeChoice === safe;
             opt.classList.toggle("active", active);
@@ -116,25 +101,12 @@
 
     function setupTheme() {
         applyTheme(getStoredTheme());
-
         document.querySelectorAll(".theme-option").forEach(function (opt) {
             opt.addEventListener("click", function (event) {
                 event.stopPropagation();
                 setTheme(this.dataset.themeChoice);
             });
         });
-
-        if (window.matchMedia) {
-            const mq = window.matchMedia("(prefers-color-scheme: dark)");
-            const handler = function (event) {
-                let stored = null;
-                try { stored = localStorage.getItem(THEME_KEY); } catch (e) {}
-                if (stored === "dark" || stored === "light") return;
-                applyTheme(event.matches ? "dark" : "light");
-            };
-            if (mq.addEventListener) mq.addEventListener("change", handler);
-            else if (mq.addListener) mq.addListener(handler);
-        }
     }
 
     /* ------------------------------------------------------------
@@ -168,11 +140,7 @@
 
         function attemptUnlock() {
             const value = input.value;
-            if (!value) {
-                error.textContent = "Enter the admin password.";
-                input.focus();
-                return;
-            }
+            if (!value) { error.textContent = "Enter the admin password."; input.focus(); return; }
 
             if (value === ADMIN_PASSWORD) {
                 setAdminUnlocked();
@@ -184,25 +152,18 @@
             error.textContent = "Incorrect password.";
             input.value = "";
             input.focus();
-
             card.classList.remove("shake");
             void card.offsetWidth;
             card.classList.add("shake");
         }
 
         submit.addEventListener("click", attemptUnlock);
-
         input.addEventListener("keydown", function (event) {
             if (event.key === "Enter")  { event.preventDefault(); attemptUnlock(); }
             if (event.key === "Escape") { event.preventDefault(); close(); }
         });
-
         cancel.addEventListener("click", close);
         if (backdrop) backdrop.addEventListener("click", close);
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && !gate.hidden) close();
-        });
 
         window.BDAdminGate = { open: open, close: close };
     }
@@ -227,7 +188,6 @@
         button.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
-
             const open = menu.classList.toggle("open");
             button.setAttribute("aria-expanded", String(open));
         });
@@ -243,21 +203,14 @@
             adminBtn.addEventListener("click", function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-
                 if (getRole() !== "admin") return;
-
                 close();
-
-                // If the user is ALREADY unlocked, go straight in.
+                // If already unlocked, go straight in. No modal.
                 if (isAdminUnlocked()) {
                     window.location.replace(ADMIN_URL);
                     return;
                 }
-
-                // Otherwise, open the password modal.
-                if (window.BDAdminGate) {
-                    window.BDAdminGate.open();
-                }
+                if (window.BDAdminGate) window.BDAdminGate.open();
             });
         }
 
