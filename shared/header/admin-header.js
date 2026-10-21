@@ -19,9 +19,11 @@
 
     function isUnlocked() {
       try {
-        const raw = sessionStorage.getItem(UNLOCK_KEY);
+        // Changed to localStorage so it persists across tabs and browser restarts
+        const raw = localStorage.getItem(UNLOCK_KEY);
         if (!raw) return false;
         const obj = JSON.parse(raw);
+        // Check if the expiration time exists and is still in the future
         return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
       } catch (_) { return false; }
     }
@@ -31,6 +33,7 @@
       catch (_) { return false; }
     }
 
+    // If already unlocked and admin, let them through immediately
     if (isUnlocked() && isAdminRole()) return;
 
     document.documentElement.style.visibility = "hidden";
@@ -89,8 +92,9 @@
         if (!val) { error.textContent = "Enter the admin password."; input.focus(); return; }
         if (val === ADMIN_PASSWORD) {
           try {
-            sessionStorage.setItem(UNLOCK_KEY,
-              JSON.stringify({ exp: Date.now() + 30 * 60 * 1000 }));
+            // Save to localStorage for 7 days (7 * 24 * 60 * 60 * 1000)
+            const expiry = Date.now() + (7 * 24 * 60 * 60 * 1000);
+            localStorage.setItem(UNLOCK_KEY, JSON.stringify({ exp: expiry }));
             localStorage.setItem(ROLE_KEY, "admin");
           } catch (_) {}
           window.location.reload();
