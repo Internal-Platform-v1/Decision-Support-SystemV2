@@ -670,3 +670,25 @@
   .at-editor-footer { flex-direction: column; align-items: stretch; }
   .at-editor-actions { justify-content: flex-end; }
 }
+
+/* Fullscreen chart host */
+.at-chart-host:fullscreen,
+.at-chart-host:-webkit-full-screen {
+  background: #fcfcff;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.at-chart-host:fullscreen .at-chart-toolbar,
+.at-chart-host:-webkit-full-screen .at-chart-toolbar {
+  flex: 0 0 auto;
+  background: #fbfbfe;
+  border-bottom: 1px solid #ececf3;
+  padding: 10px 16px;
+}
+.at-chart-host:fullscreen .at-chart-viewport,
+.at-chart-host:-webkit-full-screen .at-chart-viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+}
