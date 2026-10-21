@@ -938,3 +938,9 @@
 }
 
 .at-hover-tip.is-in-host { position: absolute; }
+
+/* Remove the empty space left behind after the shared hero is
+   stripped on non-dashboard admin pages. */
+body:not([data-admin-page="dashboard"]) .admin-main {
+  min-height: 0;
+}
