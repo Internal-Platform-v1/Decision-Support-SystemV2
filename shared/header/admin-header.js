@@ -4,12 +4,8 @@
 (() => {
   "use strict";
 
-  /* ============================================================
-     HARD REDIRECT GUARD
-     ============================================================ */
   (function adminGuard() {
     const UNLOCK_KEY = "bd_admin_unlocked";
-    const ROLE_KEY   = "bd_role";
     const HOME_URL = "/Decision-Support-SystemV2/index.html";
 
     function isUnlocked() {
@@ -21,13 +17,7 @@
       } catch (_) { return false; }
     }
 
-    function isAdminRole() {
-      try { return localStorage.getItem(ROLE_KEY) === "admin"; }
-      catch (_) { return false; }
-    }
-
-    // Immediate lockout. If they aren't unlocked, kick them to the main page.
-    if (!isUnlocked() || !isAdminRole()) {
+    if (!isUnlocked()) {
       window.location.replace(HOME_URL);
       return;
     }
@@ -85,7 +75,6 @@
     const user = getCurrentUser();
     const initials = getInitials(user.name);
     const firstName = String(user.name || "Admin").trim().split(/\s+/)[0] || "Admin";
-
     setText("sidebarUserName", user.name);
     setText("sidebarUserRole", user.role);
     setText("sidebarAvatar", initials);
@@ -199,7 +188,11 @@
       btn.addEventListener("click", () => {
         const role = btn.dataset.role;
         apply(role);
-        if (role === "user") window.location.href = "/Decision-Support-SystemV2/index.html";
+        if (role === "user") {
+          // Wipe unlock token when switching back to user
+          localStorage.removeItem("bd_admin_unlocked");
+          window.location.href = "/Decision-Support-SystemV2/index.html";
+        }
       });
     });
   }
