@@ -692,3 +692,274 @@
   flex: 1 1 auto;
   min-height: 0;
 }
+
+/* ------------------------------------------------------------
+   HOVER TOOLTIP
+   ------------------------------------------------------------ */
+.at-hover-tip {
+  position: fixed;
+  z-index: 500;
+  max-width: 340px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: #17174b;
+  color: #e8e8f0;
+  font-size: 11px;
+  line-height: 1.5;
+  box-shadow: 0 14px 32px rgba(23,23,75,.28);
+  pointer-events: none;
+}
+.at-hover-tip .at-tip-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.at-hover-tip .at-tip-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.at-hover-tip .at-tip-badge.decision { background: #3b2e8a; color: #c9beff; }
+.at-hover-tip .at-tip-badge.leaf     { background: #2c5c3a; color: #b7f0c8; }
+.at-hover-tip .at-tip-key {
+  color: #9d9ac8;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 9.5px;
+}
+.at-hover-tip .at-tip-text {
+  font-weight: 700;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  white-space: pre-line;
+}
+.at-hover-tip .at-tip-help {
+  color: #c4c2dc;
+  font-size: 10.5px;
+  margin-bottom: 6px;
+  white-space: pre-line;
+}
+.at-hover-tip .at-tip-note {
+  color: #ffd9a8;
+  background: rgba(255,102,0,.1);
+  border-left: 3px solid #ff6600;
+  padding: 6px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  margin-bottom: 6px;
+  white-space: pre-line;
+}
+.at-hover-tip .at-tip-choices-title {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #2a2a5e;
+  color: #9d9ac8;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.at-hover-tip .at-tip-choice {
+  margin-top: 5px;
+}
+.at-hover-tip .at-tip-choice-label {
+  color: #fff;
+  font-weight: 700;
+  font-size: 10.5px;
+}
+.at-hover-tip .at-tip-choice-desc {
+  color: #b9b7d2;
+  font-size: 10px;
+  margin-top: 1px;
+}
+.at-hover-tip .at-tip-choice code {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #2a2a5e;
+  color: #a6a3ee;
+  font-size: 9px;
+  font-family: "Consolas", "Monaco", monospace;
+}
+
+/* ------------------------------------------------------------
+   FULLSCREEN OVERLAYS (editor + node preview)
+   ------------------------------------------------------------ */
+.at-fs-editor {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 24px;
+  background: rgba(23,23,75,.35);
+  backdrop-filter: blur(2px);
+}
+.at-fs-editor-panel {
+  width: min(520px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(23,23,75,.35);
+  overflow: hidden;
+}
+.at-fs-editor-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #ececf3;
+  background: #fbfbfe;
+}
+.at-fs-editor-eyebrow {
+  color: #6b4df5;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.at-fs-editor-title {
+  margin: 4px 0 3px;
+  color: #111526;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.at-fs-editor-key {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: #eeeaff;
+  color: #4a37c0;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 9.5px;
+}
+.at-fs-editor-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 0;
+  background: #f2f1f9;
+  color: #5b5b78;
+  font-size: 14px;
+  cursor: pointer;
+}
+.at-fs-editor-close:hover { background: #e6e3f5; }
+
+.at-fs-editor-body {
+  padding: 14px 18px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+.at-fs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.at-fs-field > span {
+  color: #232a3b;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+.at-fs-field textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #dfe2eb;
+  border-radius: 8px;
+  background: #fbfbfd;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.55;
+  resize: vertical;
+  outline: 0;
+}
+.at-fs-field textarea:focus {
+  border-color: #c9c2f4;
+  box-shadow: 0 0 0 3px rgba(107,77,245,.08);
+  background: #fff;
+}
+
+.at-fs-editor-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid #ececf3;
+  background: #fbfbfe;
+  flex-wrap: wrap;
+}
+.at-fs-editor-ids {
+  color: #8b95a7;
+  font-size: 9px;
+  font-family: "Consolas", "Monaco", monospace;
+  word-break: break-all;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.at-fs-editor-actions { display: flex; gap: 8px; }
+
+/* Node preview in fullscreen */
+.at-fs-np-help {
+  margin: 0 0 10px;
+  color: #5c6180;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.at-fs-np-note {
+  margin: 0 0 12px;
+  padding: 9px 11px;
+  border-left: 3px solid #ff6600;
+  border-radius: 5px;
+  background: #fff6ed;
+  color: #7a4f1a;
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+.at-fs-np-choices-title {
+  color: #8b95a7;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 12px 0 8px;
+}
+.at-fs-np-choice {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: 1px solid #ececf3;
+  border-radius: 8px;
+  background: #fbfbfe;
+}
+.at-fs-np-choice strong {
+  display: block;
+  color: #232a3b;
+  font-size: 11px;
+  font-weight: 700;
+}
+.at-fs-np-choice small {
+  display: block;
+  margin-top: 2px;
+  color: #8b95a7;
+  font-size: 10px;
+}
+.at-fs-np-choice code {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #eeeaff;
+  color: #4a37c0;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 9px;
+}
