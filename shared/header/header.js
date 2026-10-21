@@ -1,10 +1,6 @@
 /* ============================================================
-   shared/header.js — V6
+   shared/header.js — V7
    Header behavior + settings menu + admin password gate + theme
-   Runs once after header.html has been inserted.
-
-   ADMIN PASSWORD: "fedex-admin-2026"
-   Change it on the ADMIN_PASSWORD line below.
    ============================================================ */
 (function () {
     "use strict";
@@ -13,14 +9,13 @@
     const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
 
-    /* >>> EDIT THIS LINE TO CHANGE THE PASSWORD <<< */
     const ADMIN_PASSWORD = "fedex-admin-2026";
 
     const ADMIN_UNLOCK_KEY = "bd_admin_unlocked";
-    const ADMIN_UNLOCK_TTL = 30 * 60 * 1000; /* 30 minutes */
+    const ADMIN_UNLOCK_TTL = 7 * 24 * 60 * 60 * 1000; /* 7 days */
 
     /* ------------------------------------------------------------
-       Role state (localStorage only — no auth)
+       Role state
        ------------------------------------------------------------ */
     function getRole() {
         try {
@@ -50,14 +45,13 @@
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
 
-        /* Dropping back to User invalidates any active admin unlock. */
         if (role !== "admin") clearAdminUnlocked();
 
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
     }
 
     /* ------------------------------------------------------------
-       Theme (light / dark)
+       Theme
        ------------------------------------------------------------ */
     function getStoredTheme() {
         try {
@@ -97,7 +91,6 @@
     }
 
     function setupTheme() {
-        /* Paint the stored / system theme immediately. */
         applyTheme(getStoredTheme());
 
         document.querySelectorAll(".theme-option").forEach(function (opt) {
@@ -107,7 +100,6 @@
             });
         });
 
-        /* Follow OS theme changes ONLY while user hasn't picked one. */
         if (window.matchMedia) {
             const mq = window.matchMedia("(prefers-color-scheme: dark)");
             const handler = function (event) {
@@ -126,7 +118,7 @@
        ------------------------------------------------------------ */
     function isAdminUnlocked() {
         try {
-            const raw = sessionStorage.getItem(ADMIN_UNLOCK_KEY);
+            const raw = localStorage.getItem(ADMIN_UNLOCK_KEY); // CHANGED to localStorage
             if (!raw) return false;
             const obj = JSON.parse(raw);
             return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
@@ -137,7 +129,7 @@
 
     function setAdminUnlocked() {
         try {
-            sessionStorage.setItem(
+            localStorage.setItem( // CHANGED to localStorage
                 ADMIN_UNLOCK_KEY,
                 JSON.stringify({ exp: Date.now() + ADMIN_UNLOCK_TTL })
             );
@@ -145,7 +137,7 @@
     }
 
     function clearAdminUnlocked() {
-        try { sessionStorage.removeItem(ADMIN_UNLOCK_KEY); } catch (e) {}
+        try { localStorage.removeItem(ADMIN_UNLOCK_KEY); } catch (e) {} // CHANGED to localStorage
     }
 
     /* ------------------------------------------------------------
@@ -231,7 +223,6 @@
             return;
         }
 
-        /* Paint the stored role immediately. */
         applyRole(getRole());
 
         function close() {
@@ -247,7 +238,6 @@
             button.setAttribute("aria-expanded", String(open));
         });
 
-        /* User / Admin segmented control */
         menu.querySelectorAll(".role-option").forEach(function (opt) {
             opt.addEventListener("click", function (event) {
                 event.stopPropagation();
@@ -255,7 +245,6 @@
             });
         });
 
-        /* Admin dashboard navigation — password gated */
         if (adminBtn) {
             adminBtn.addEventListener("click", function (event) {
                 event.preventDefault();
@@ -266,16 +255,13 @@
                     return;
                 }
 
-                /* Collapse settings menu behind the modal. */
                 close();
 
-                /* Already unlocked this session? Go straight in. */
                 if (isAdminUnlocked()) {
                     window.location.href = ADMIN_URL;
                     return;
                 }
 
-                /* Otherwise ask for the password. */
                 if (window.BDAdminGate) {
                     window.BDAdminGate.open();
                 } else {
@@ -284,7 +270,6 @@
             });
         }
 
-        /* Click outside closes the menu */
         document.addEventListener("click", function (event) {
             if (!event.target.closest(".settings-wrapper")) close();
         });
@@ -395,11 +380,8 @@
     }
 
     /* ------------------------------------------------------------
-       Global Search — DSS V2
-       Static catalog mirrors all-guides.js CATALOG.
+       Global Search
        ------------------------------------------------------------ */
-
-    /* Change this if the repository name ever changes. */
     const DSS_GUIDE_BASE_PATH = "/Decision-Support-SystemV2/";
 
     const DSS_GUIDE_GROUPS = {
@@ -412,15 +394,12 @@
     };
 
     const DSS_GUIDE_CATALOG = [
-        /* Billing Dispute — 6 */
         ["Debtor Update per BOL", "guides/Billing%20Dispute%20Guides/debtor-update-per-bol/debtor-update-per-bol.html", "Follow BOL terms to determine the correct debtor and ensure accurate billing setup.", "billing"],
         ["Debtor Update per LOA", "guides/Billing%20Dispute%20Guides/debtor-update-per-loa/debtor-update-per-loa.html", "Use LOA to evaluate debtor update requests and determine the correct billing action.", "billing"],
         ["Debtor Update per Reversal/Refusal", "guides/Billing%20Dispute%20Guides/debtor-update-per-rvsl/debtor-update-per-rvsl.html", "Evaluate reversal or refusal cases and determine the correct debtor and billing action.", "billing"],
         ["Weight Update per BOL", "guides/Billing%20Dispute%20Guides/weight-update-per-bol/weight-update-per-bol.html", "Evaluate BOL-based weight and pallet discrepancies to determine the correct action or routing.", "billing"],
         ["Service Level/Type Update per BOL", "guides/Billing%20Dispute%20Guides/service-level-type/service-level-type.html", "Evaluate service level disputes to confirm correct rating based on BOL details.", "billing"],
         ["Reference Number Update - Add/Edit/Delete", "guides/Billing%20Dispute%20Guides/reference-number/reference-number.html", "Manage reference number updates and ensure correct correction processing and invoice handling.", "billing"],
-
-        /* Pricing General — 8 */
         ["Fuel Guide", "guides/Pricing%20Guides/fuel-guide/fuel-guide.html", "Review fuel-related pricing disputes using the correct guide and supporting validation steps.", "pricing"],
         ["Surcharge Guide", "guides/Pricing%20Guides/surcharge-guide/surcharge-guide.html", "Check surcharge disputes and verify the correct supporting logic before responding.", "pricing"],
         ["ePRT Guide", "guides/Pricing%20Guides/eprt-guide/eprt-guide.html", "Use ePRT guidance when pricing results need exception handling or escalation review.", "pricing"],
@@ -429,8 +408,6 @@
         ["Base Rater", "guides/Pricing%20Guides/base-rater/base-rater.html", "Open the base rating tool when pricing needs direct rate validation support.", "pricing"],
         ["Discount - AMC Guide", "guides/Pricing%20Guides/discount-amc-guide/discount-amc-guide.html", "Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.", "pricing"],
         ["Courtesy Discount Guide", "guides/Pricing%20Guides/courtesy-discount/courtesy-discount.html", "Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.", "pricing"],
-
-        /* Surcharges — 14 */
         ["High Cost Fee", "guides/Other%20Surcharge%20Guides/high-cost-fee/high-cost-fee.html", "Review high cost fee concerns and validate the appropriate surcharge handling.", "surcharge"],
         ["Peak Surcharge Fee", "guides/Other%20Surcharge%20Guides/peak-surcharge-fee/peak-surcharge-fee.html", "Review peak surcharge concerns and determine the correct handling for period-based charges.", "surcharge"],
         ["California Compliance", "guides/Other%20Surcharge%20Guides/california-compliance/california-compliance.html", "Review surcharge concerns tied to California compliance requirements and validation.", "surcharge"],
@@ -445,15 +422,11 @@
         ["Lumper Fee Guide", "guides/Other%20Surcharge%20Guides/lumper-fee-guide/lumper-fee-guide.html", "Handle Lumper fee disputes and validate the appropriate surcharge response and documentation.", "surcharge"],
         ["Storage Fee Guide", "guides/Other%20Surcharge%20Guides/storage-fee-guide/storage-fee-guide.html", "Validate storage fee disputes, calculations, supporting documents, and FedEx fault claims.", "surcharge"],
         ["Redelivery Handling Guide", "guides/Other%20Surcharge%20Guides/redelivery-handling-guide/redelivery-handling-guide.html", "Review second delivery attempts, receiving conditions, and customer refusal scenarios to validate the fee.", "surcharge"],
-
-        /* Account Handling — 5 */
         ["Handling Inactive Account", "guides/Account%20Handling%20Guides/handling-notactive-guide/handling-notactive-guide.html", "Validate inactive, archived, deleted, or do-not-use accounts and determine the correct next action.", "account"],
         ["Creating Customer's Account", "guides/Account%20Handling%20Guides/creating-customer-account/creating-customer-account.html", "Follow the correct setup process when creating a new customer account.", "account"],
         ["Steps on How to Create an Account", "guides/Account%20Handling%20Guides/account-creation-steps/account-creation-steps.html", "Follow the structured step-by-step process for complete customer account creation.", "account"],
         ["Searching for Account Guide", "guides/Account%20Handling%20Guides/searching-account-guide/searching-account-guide.html", "Locate and validate the correct customer account before proceeding with account handling.", "account"],
         ["Updating SCAC/BU Guide", "guides/Account%20Handling%20Guides/updating-pt-scacbu-guide/updating-pt-scacbu-guide.html", "Validate SCAC/BU update requests and determine the correct correction and update steps.", "account"],
-
-        /* PAUD Queue — 18 */
         ["Regions and EHOT Queue Guide", "guides/PAUD%20Guides/region-and-ehot-queue/region-and-ehot-queue.html", "Review and process region and EHOT queue requests including account, accessorial, service type, and related updates.", "paud"],
         ["TPLO Guide", "guides/PAUD%20Guides/tplo-guide/tplo-guide.html", "Handle TPLO requests including SPOC validation, account mapping, special account routing, and billing handling.", "paud"],
         ["TPHI Guide", "guides/PAUD%20Guides/tphi-guide/tphi-guide.html", "Follow the TEMP-SYS matching process to correctly map charge accounts and ensure proper debtor selection.", "paud"],
@@ -472,8 +445,6 @@
         ["PARS – Parker Hannifin Queue Guide", "guides/PAUD%20Guides/pars-guide/pars-guide.html", "Validate Parker Hannifin debtor handling, consignee updates, rate comparisons, and correction code selection.", "paud"],
         ["CORT – Reconsignment Guide", "guides/PAUD%20Guides/cort-guide/cort-guide.html", "Handle reconsignment requests by validating weight, piece count, customer center, NEWP, and AUTO RATE requirements.", "paud"],
         ["HOT – EHOT Queue Requests", "guides/PAUD%20Guides/hot-ehot-queue-guide/hot-ehot-queue-guide.html", "Handle HOT/EHOT requests including storage disputes, shipment detail updates, routing, redelivery, GAMD, and REDOT.", "paud"],
-
-        /* Other Operational — 24 */
         ["OVC — General Guideline", "guides/Other%20Guides/ovc-general-guide/ovc-general-guide.html", "Official OVC guideline for handling customer claims and disputes.", "other"],
         ["Reweigh — General Guide", "guides/Other%20Guides/reweigh-general-guide/reweigh-general-guide.html", "Decision guide for reweigh disputes and corrections.", "other"],
         ["Correction Code Guide", "guides/Other%20Guides/correction-code-guide/correction-code-guide.html", "Decision tree to determine the correct CORR CODE.", "other"],
@@ -500,7 +471,6 @@
         ["Write-off in CAPS — Step by Step Procedure", "guides/Other%20Guides/wo-process-caps-guide/wo-process-caps-guide.html", "Process write-offs in CAPS from Business Unit selection and PRO entry through comments, responses, and case closure.", "other"]
     ];
 
-    /* Bumped key so stale fetch-based caches are discarded. */
     const DSS_GUIDE_SEARCH_CACHE_KEY = "dssV2GlobalGuideSearchIndex_v3";
     const DSS_GUIDE_SEARCH_CACHE_TTL = 10 * 60 * 1000;
 
@@ -660,7 +630,6 @@
         }
     }
 
-    /* Build the index from the bundled catalog (mirrors all-guides.js). */
     function buildStaticCatalogIndex(seen) {
         const base = window.location.origin + DSS_GUIDE_BASE_PATH;
 
@@ -702,7 +671,6 @@
             const seen = new Set();
             globalGuideSearchIndex = [];
 
-            /* 1. Any cards already on the current page. */
             const currentPageUrl = window.location.href;
             const currentPageTitle =
                 document.querySelector(".group-hero h1")?.textContent
@@ -717,7 +685,6 @@
                 );
             });
 
-            /* 2. Full static catalog. */
             buildStaticCatalogIndex(seen);
 
             globalGuideSearchIndex.sort(function (a, b) {
@@ -887,7 +854,7 @@
         const results = searchGlobalGuides(query);
         renderSearchResults(query, results);
 
-               if (openFirstOnEnter && results[0]) {
+        if (openFirstOnEnter && results[0]) {
             if (window.GuideStore) {
                 window.GuideStore.trackOpen(results[0].title, results[0].url);
             }
@@ -959,9 +926,6 @@
         }
     }
 
-    /* ------------------------------------------------------------
-       One-time startup
-       ------------------------------------------------------------ */
     function start() {
         setupTheme();
         setupAdminGate();
