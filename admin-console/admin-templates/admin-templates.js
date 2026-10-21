@@ -1,5 +1,6 @@
 /* ============================================================
-   ADMIN TEMPLATES MANAGEMENT — DIAGNOSTIC BUILD
+   ADMIN TEMPLATES MANAGEMENT
+   admin-console/admin-templates/admin-templates.js
    ============================================================ */
 
 (() => {
@@ -145,7 +146,6 @@
       nodes: new Map(),
       edges: [],
       edgeSet: new Set(),
-      // Pre-build adjacency to avoid O(E) scans later
       adjOut: new Map()
     };
 
@@ -798,8 +798,29 @@
       const flow = await loadGuideFlow(guide);
       state.recommendations = extractRecommendations(flow.nodes);
       state.graph = buildGraph(flow.nodes, flow.config.startNode || "start");
+
+      // Expand root AND its immediate children so the initial chart shows
+      // the first decision level (Prepaid / Collect / Third Party / No Terms).
       state.expanded = new Set([state.graph.rootKey]);
+      (state.graph.adjOut.get(state.graph.rootKey) || []).forEach(k => {
+        const m = state.graph.nodes.get(k);
+        if (m && !m.isLeaf) state.expanded.add(k);
+      });
       state.activePathKeys = new Set();
+
+      // Restore pan/zoom from last session (safe — no render triggered here).
+      try {
+        const saved = JSON.parse(localStorage.getItem("at_pan") || "null");
+        if (saved && typeof saved === "object") {
+          state.zoom = Number(saved.zoom) || 1;
+          state.panX = Number(saved.panX) || 20;
+          state.panY = Number(saved.panY) || 20;
+        } else {
+          resetPanZoom();
+        }
+      } catch (_) {
+        resetPanZoom();
+      }
 
       if (meta) {
         meta.textContent =
@@ -807,8 +828,17 @@
       }
 
       renderRecommendationList();
-      if (state.view === "chart") {
-        resetPanZoom();
+
+      // Restore the user's last view only now that the graph exists.
+      let preferredView = "list";
+      try {
+        const saved = localStorage.getItem("at_view");
+        if (saved === "chart" || saved === "list") preferredView = saved;
+      } catch (_) {}
+      if (preferredView !== state.view) {
+        setView(preferredView);
+      } else if (state.view === "chart") {
+        // Same view but graph just changed — rerender.
         renderChart();
       }
 
@@ -851,14 +881,12 @@
     if (leftTitle) leftTitle.textContent = state.view === "chart" ? "Visual decision tree" : "Select a recommendation";
 
     if (state.view === "chart") {
-      // Only render if a graph is loaded — prevents infinite render on no-guide
       if (state.graph) {
         requestAnimationFrame(() => {
           console.log("[AT] rAF renderChart firing");
           renderChart();
         });
       } else {
-        // Show placeholder empty chart
         requestAnimationFrame(() => {
           const svg = $("atChartSvg");
           const host = $("atChartHost");
@@ -900,6 +928,11 @@
     window.addEventListener("mouseup", () => {
       dragging = false;
       vp.classList.remove("is-dragging");
+      try {
+        localStorage.setItem("at_pan", JSON.stringify({
+          zoom: state.zoom, panX: state.panX, panY: state.panY
+        }));
+      } catch (_) {}
     });
 
     vp.addEventListener("wheel", e => {
@@ -908,7 +941,15 @@
       const direction = e.deltaY > 0 ? 0.9 : 1.1;
       state.zoom = Math.max(0.35, Math.min(2.4, state.zoom * direction));
       if (rafId) return;
-      rafId = requestAnimationFrame(() => { rafId = 0; renderChart(); });
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        renderChart();
+        try {
+          localStorage.setItem("at_pan", JSON.stringify({
+            zoom: state.zoom, panX: state.panX, panY: state.panY
+          }));
+        } catch (_) {}
+      });
     }, { passive: false });
   }
 
@@ -940,10 +981,10 @@
   function init() {
     console.log("[AT] init starting");
 
-    // IMPORTANT: force list view on boot to prevent
-    // chart render before graph exists
+    // Force list view on boot — chart requires a graph to render.
+    // The user's last view preference is restored in onGuideChange(),
+    // after the graph has been built, so there's no render-before-graph race.
     state.view = "list";
-    try { localStorage.setItem("at_view", "list"); } catch (_) {}
 
     populateGuideSelect();
 
