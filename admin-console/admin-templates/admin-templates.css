@@ -4,6 +4,10 @@
 
 #adminHeader, #adminHeader * { box-sizing: border-box; }
 
+body[data-admin-page="templates"] .admin-hero { display: none !important; }
+body[data-admin-page="templates"] .admin-main { min-height: 0 !important; padding-top: 0 !important; }
+.at-main { padding-top: 90px !important; }
+
 .at-main {
   margin-left: var(--admin-sidebar-width);
   padding: 80px 22px 40px;
