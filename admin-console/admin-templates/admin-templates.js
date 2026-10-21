@@ -36,7 +36,8 @@
     panX: 20,
     panY: 20,
     renderInProgress: false,
-    isFullscreen: false
+    isFullscreen: false,
+    hoverNodeKey: null
   };
 
   const $ = id => document.getElementById(id);
@@ -139,9 +140,6 @@
   }
 
   function buildGraph(nodes, startKey) {
-    console.log("[AT] buildGraph starting, node count:", Object.keys(nodes).length);
-    const t0 = performance.now();
-
     const graph = {
       rootKey: startKey,
       nodes: new Map(),
@@ -180,10 +178,7 @@
     const seen = new Set([startKey]);
     let safety = 0;
     while (queue.length) {
-      if (++safety > 10000) {
-        console.warn("[AT] buildGraph safety break at 10000 iterations");
-        break;
-      }
+      if (++safety > 10000) break;
       const key = queue.shift();
       const node = nodes[key];
       if (!node) continue;
@@ -199,12 +194,6 @@
       });
     }
 
-    console.log(
-      "[AT] buildGraph done in",
-      (performance.now() - t0).toFixed(1) + "ms",
-      "| nodes:", graph.nodes.size,
-      "| edges:", graph.edges.length
-    );
     return graph;
   }
 
@@ -218,14 +207,10 @@
     if (!graph) return new Set();
     const visible = new Set();
     const adj = graph.adjOut;
-
     const queue = [graph.rootKey];
     let safety = 0;
     while (queue.length) {
-      if (++safety > MAX_VISIBLE * 4) {
-        console.warn("[AT] computeVisible safety break");
-        break;
-      }
+      if (++safety > MAX_VISIBLE * 4) break;
       const key = queue.shift();
       if (visible.has(key)) continue;
       visible.add(key);
@@ -240,7 +225,6 @@
   }
 
   function layoutGraph(graph) {
-    const t0 = performance.now();
     const positions = new Map();
     const visible = computeVisible(graph);
     if (!visible.size) return { positions, visible };
@@ -253,10 +237,7 @@
     const bfsSeen = new Set([graph.rootKey]);
     let safety = 0;
     while (bfs.length) {
-      if (++safety > MAX_VISIBLE * 4) {
-        console.warn("[AT] layoutGraph BFS safety break");
-        break;
-      }
+      if (++safety > MAX_VISIBLE * 4) break;
       const k = bfs.shift();
       const d = depth.get(k) || 0;
       (adj.get(k) || []).forEach(nk => {
@@ -287,11 +268,6 @@
       });
     });
 
-    console.log(
-      "[AT] layoutGraph done in",
-      (performance.now() - t0).toFixed(1) + "ms",
-      "| visible:", visible.size
-    );
     return { positions, visible };
   }
 
@@ -345,22 +321,13 @@
   }
 
   function renderChart() {
-    if (state.renderInProgress) {
-      console.warn("[AT] renderChart re-entry blocked");
-      return;
-    }
+    if (state.renderInProgress) return;
     state.renderInProgress = true;
     try {
-      const t0 = performance.now();
-      console.log("[AT] renderChart starting");
-
       const svg = $("atChartSvg");
       const host = $("atChartHost");
       const vp = $("atChartViewport");
-      if (!svg || !host || !vp) {
-        console.warn("[AT] renderChart: missing DOM elements");
-        return;
-      }
+      if (!svg || !host || !vp) return;
 
       if (!state.graph) {
         svg.innerHTML = "";
@@ -472,13 +439,16 @@
           event.stopPropagation();
           handleChartNodeClick(g.dataset.nodeKey);
         });
+        g.addEventListener("mouseenter", (event) => {
+          showHoverTip(g.dataset.nodeKey, event);
+        });
+        g.addEventListener("mousemove", (event) => {
+          positionHoverTip(event);
+        });
+        g.addEventListener("mouseleave", () => {
+          hideHoverTip();
+        });
       });
-
-      console.log(
-        "[AT] renderChart done in",
-        (performance.now() - t0).toFixed(1) + "ms",
-        "| drawn nodes:", nodes.length, "| edges:", edges.length
-      );
     } finally {
       state.renderInProgress = false;
     }
@@ -490,13 +460,23 @@
 
     if (meta.isLeaf) {
       selectRecommendation(key);
+      // If we're in fullscreen, the editor panel is hidden — show
+      // an inline editor overlay over the chart instead.
+      if (state.isFullscreen) {
+        openFullscreenEditor(key);
+      }
       return;
     }
 
     if (state.expanded.has(key)) state.expanded.delete(key);
     else state.expanded.add(key);
     renderChart();
-    showNodePreview(key);
+
+    if (state.isFullscreen) {
+      openFullscreenNodePreview(key);
+    } else {
+      showNodePreview(key);
+    }
   }
 
   function computeActivePathTo(key) {
@@ -640,6 +620,9 @@
     if ($e) { $e.value = "Loading…"; $e.disabled = true; }
     setButtonsDisabled(true);
 
+    // Also mirror into the fullscreen overlay if it's open.
+    syncFullscreenEditorLoading();
+
     try {
       const coll = db.collection(guide.templateCollection);
       const [c, k, e] = await Promise.all([
@@ -658,6 +641,9 @@
       const anySaved = !!(state.loadedTemplates.comment || state.loadedTemplates.corr || state.loadedTemplates.email);
       if (anySaved) state.savedLeaves.add(rec.key);
       else state.savedLeaves.delete(rec.key);
+
+      // Sync to fullscreen overlay if open
+      syncFullscreenEditorValues(state.loadedTemplates);
       if (state.view === "chart") renderChart();
     } catch (err) {
       console.error(err);
@@ -669,6 +655,7 @@
       );
       fillEditor({ comment: "", corr: "", email: "" });
       setButtonsDisabled(false);
+      syncFullscreenEditorValues({ comment: "", corr: "", email: "" });
     }
   }
 
@@ -689,7 +676,6 @@
   }
 
   async function precheckSavedTemplates() {
-    console.log("[AT] precheckSavedTemplates starting");
     const guide = state.guides.find(g => g.id === state.activeGuideId);
     const db = firestore();
     if (!guide || !db) return;
@@ -707,7 +693,6 @@
       state.recommendations.forEach(r => {
         if (present.has(r.normalized)) state.savedLeaves.add(r.key);
       });
-      console.log("[AT] precheckSavedTemplates done, savedLeaves:", state.savedLeaves.size);
       if (state.view === "chart") renderChart();
     } catch (err) {
       console.info("Precheck skipped:", err.code || err.message);
@@ -722,15 +707,25 @@
     const db = firestore();
     if (!db) { showToast("Firestore is not initialized.", true); return; }
 
-    const payload = {
-      comment: ($("atComment")?.value || "").trim(),
-      corr:    ($("atCorr")?.value || "").trim(),
-      email:   ($("atEmail")?.value || "").trim()
-    };
+    // Prefer fullscreen overlay values if it's open; else the side editor.
+    const fsOpen = !!$("atFsEditor");
+    const payload = fsOpen
+      ? {
+          comment: ($("fsComment")?.value || "").trim(),
+          corr:    ($("fsCorr")?.value || "").trim(),
+          email:   ($("fsEmail")?.value || "").trim()
+        }
+      : {
+          comment: ($("atComment")?.value || "").trim(),
+          corr:    ($("atCorr")?.value || "").trim(),
+          email:   ($("atEmail")?.value || "").trim()
+        };
 
     const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp();
-    const button = $("atSave");
-    if (button) button.disabled = true;
+    const btn1 = $("atSave");
+    const btn2 = $("fsSave");
+    if (btn1) btn1.disabled = true;
+    if (btn2) btn2.disabled = true;
 
     try {
       const coll = db.collection(guide.templateCollection);
@@ -745,6 +740,8 @@
       state.loadedTemplates = { ...payload };
       if (payload.comment || payload.corr || payload.email) state.savedLeaves.add(rec.key);
       else state.savedLeaves.delete(rec.key);
+      fillEditor(state.loadedTemplates);
+      syncFullscreenEditorValues(state.loadedTemplates);
       if (state.view === "chart") renderChart();
       showToast("Templates saved.");
     } catch (err) {
@@ -754,12 +751,14 @@
         true
       );
     } finally {
-      if (button) button.disabled = false;
+      if (btn1) btn1.disabled = false;
+      if (btn2) btn2.disabled = false;
     }
   }
 
   function resetEditor() {
     fillEditor(state.loadedTemplates);
+    syncFullscreenEditorValues(state.loadedTemplates);
     showToast("Editor reset to last saved values.");
   }
 
@@ -857,7 +856,6 @@
   }
 
   function setView(view) {
-    console.log("[AT] setView:", view);
     state.view = view === "chart" ? "chart" : "list";
     try { localStorage.setItem("at_view", state.view); } catch (_) {}
 
@@ -878,10 +876,7 @@
 
     if (state.view === "chart") {
       if (state.graph) {
-        requestAnimationFrame(() => {
-          console.log("[AT] rAF renderChart firing");
-          renderChart();
-        });
+        requestAnimationFrame(() => renderChart());
       } else {
         requestAnimationFrame(() => {
           const svg = $("atChartSvg");
@@ -897,6 +892,76 @@
         });
       }
     }
+  }
+
+  /* ------------------------------------------------------------
+     HOVER TOOLTIP
+     ------------------------------------------------------------ */
+  function ensureHoverTip() {
+    let tip = $("atHoverTip");
+    if (tip) return tip;
+    tip = document.createElement("div");
+    tip.id = "atHoverTip";
+    tip.className = "at-hover-tip";
+    tip.hidden = true;
+    document.body.appendChild(tip);
+    return tip;
+  }
+
+  function showHoverTip(key, event) {
+    const meta = state.graph?.nodes.get(key);
+    if (!meta) return;
+    const node = meta.node || {};
+    const choices = Array.isArray(node.choices) ? node.choices : [];
+
+    const choicesHtml = choices.length
+      ? `<div class="at-tip-choices-title">Choices (${choices.length})</div>` +
+        choices.map(c => `
+          <div class="at-tip-choice">
+            <div class="at-tip-choice-label">${esc(c.label || "")}</div>
+            ${c.desc ? `<div class="at-tip-choice-desc">${esc(c.desc)}</div>` : ""}
+            <code>→ ${esc(c.next || "(final)")}</code>
+          </div>
+        `).join("")
+      : `<div class="at-tip-choices-title">Terminal node</div>`;
+
+    const tip = ensureHoverTip();
+    tip.innerHTML = `
+      <div class="at-tip-head">
+        <span class="at-tip-badge ${meta.isLeaf ? "leaf" : "decision"}">${meta.isLeaf ? "FINAL" : "DECISION"}</span>
+        <code class="at-tip-key">${esc(key)}</code>
+      </div>
+      <div class="at-tip-text">${esc(node.text || node.question || "(no text)")}</div>
+      ${node.help ? `<div class="at-tip-help">${esc(node.help).replace(/\n/g, "<br>")}</div>` : ""}
+      ${node.note ? `<div class="at-tip-note">${esc(node.note).replace(/\n/g, "<br>")}</div>` : ""}
+      ${choicesHtml}
+    `;
+    tip.hidden = false;
+    state.hoverNodeKey = key;
+    positionHoverTip(event);
+  }
+
+  function positionHoverTip(event) {
+    const tip = $("atHoverTip");
+    if (!tip || tip.hidden) return;
+    const pad = 14;
+    const w = tip.offsetWidth;
+    const h = tip.offsetHeight;
+    let x = (event?.clientX || 0) + pad;
+    let y = (event?.clientY || 0) + pad;
+    const maxX = window.innerWidth - w - pad;
+    const maxY = window.innerHeight - h - pad;
+    if (x > maxX) x = Math.max(pad, (event?.clientX || 0) - w - pad);
+    if (y > maxY) y = Math.max(pad, (event?.clientY || 0) - h - pad);
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+
+  function hideHoverTip() {
+    const tip = $("atHoverTip");
+    if (!tip) return;
+    tip.hidden = true;
+    state.hoverNodeKey = null;
   }
 
   /* ------------------------------------------------------------
@@ -937,12 +1002,161 @@
 
   function onFullscreenChange() {
     updateFullscreenButton();
-    // The viewport dimensions changed — refit the chart.
+    if (!state.isFullscreen) {
+      // Left fullscreen — clean up any overlays living inside the host.
+      closeFullscreenEditor();
+      closeFullscreenNodePreview();
+    }
     setTimeout(() => {
       if (state.view === "chart" && state.graph) renderChart();
     }, 60);
   }
 
+  /* ------------------------------------------------------------
+     FULLSCREEN — INLINE EDITOR OVERLAY
+     Shown only while in fullscreen so the admin can edit without
+     leaving the chart.
+     ------------------------------------------------------------ */
+  function openFullscreenEditor(key) {
+    const host = $("atChartHost");
+    if (!host) return;
+    const rec = state.recommendations.find(r => r.key === key);
+    if (!rec) return;
+
+    closeFullscreenEditor(); // in case one is already open
+
+    const overlay = document.createElement("div");
+    overlay.className = "at-fs-editor";
+    overlay.id = "atFsEditor";
+    overlay.innerHTML = `
+      <div class="at-fs-editor-panel" role="dialog" aria-modal="true">
+        <div class="at-fs-editor-head">
+          <div>
+            <div class="at-fs-editor-eyebrow">EDIT TEMPLATES</div>
+            <h3 class="at-fs-editor-title">${esc(rec.label)}</h3>
+            <code class="at-fs-editor-key">${esc(rec.normalized)}</code>
+          </div>
+          <button type="button" class="at-fs-editor-close" id="fsClose" aria-label="Close editor">✕</button>
+        </div>
+        <div class="at-fs-editor-body">
+          <label class="at-fs-field">
+            <span>Suggested Comment</span>
+            <textarea id="fsComment" rows="4" placeholder="Comment text…"></textarea>
+          </label>
+          <label class="at-fs-field">
+            <span>Suggested CORR Code</span>
+            <textarea id="fsCorr" rows="3" placeholder="CORR code text…"></textarea>
+          </label>
+          <label class="at-fs-field">
+            <span>Suggested Email</span>
+            <textarea id="fsEmail" rows="5" placeholder="Email body…"></textarea>
+          </label>
+        </div>
+        <div class="at-fs-editor-foot">
+          <span class="at-fs-editor-ids">comment__${esc(rec.normalized)} · corr__${esc(rec.normalized)} · email__${esc(rec.normalized)}</span>
+          <div class="at-fs-editor-actions">
+            <button type="button" class="at-btn ghost" id="fsReset">Reset</button>
+            <button type="button" class="at-btn primary" id="fsSave">Save</button>
+          </div>
+        </div>
+      </div>
+    `;
+    host.appendChild(overlay);
+
+    $("fsClose")?.addEventListener("click", closeFullscreenEditor);
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) closeFullscreenEditor();
+    });
+    $("fsSave")?.addEventListener("click", saveTemplates);
+    $("fsReset")?.addEventListener("click", () => {
+      syncFullscreenEditorValues(state.loadedTemplates);
+      showToast("Editor reset to last saved values.");
+    });
+
+    // Mirror current values (they may still be loading).
+    syncFullscreenEditorValues(state.loadedTemplates);
+  }
+
+  function syncFullscreenEditorLoading() {
+    const c = $("fsComment"); const k = $("fsCorr"); const e = $("fsEmail");
+    if (c) { c.value = "Loading…"; c.disabled = true; }
+    if (k) { k.value = "Loading…"; k.disabled = true; }
+    if (e) { e.value = "Loading…"; e.disabled = true; }
+  }
+
+  function syncFullscreenEditorValues({ comment, corr, email }) {
+    const c = $("fsComment"); const k = $("fsCorr"); const e = $("fsEmail");
+    if (c) { c.value = comment || ""; c.disabled = false; }
+    if (k) { k.value = corr    || ""; k.disabled = false; }
+    if (e) { e.value = email   || ""; e.disabled = false; }
+  }
+
+  function closeFullscreenEditor() {
+    const el = $("atFsEditor");
+    if (el) el.remove();
+  }
+
+  /* ------------------------------------------------------------
+     FULLSCREEN — NODE PREVIEW OVERLAY
+     Shown when a middle node is clicked while in fullscreen.
+     ------------------------------------------------------------ */
+  function openFullscreenNodePreview(key) {
+    const host = $("atChartHost");
+    if (!host) return;
+    const meta = state.graph?.nodes.get(key);
+    if (!meta) return;
+
+    closeFullscreenNodePreview();
+
+    const node = meta.node || {};
+    const choices = Array.isArray(node.choices) ? node.choices : [];
+
+    const choicesHtml = choices.length
+      ? `<div class="at-fs-np-choices-title">Choices</div>` + choices.map(c => `
+          <div class="at-fs-np-choice">
+            <strong>${esc(c.label || "")}</strong>
+            ${c.desc ? `<small>${esc(c.desc)}</small>` : ""}
+            <code>→ ${esc(c.next || "(final)")}</code>
+          </div>
+        `).join("")
+      : `<div class="at-fs-np-choices-title">Terminal node</div>`;
+
+    const overlay = document.createElement("div");
+    overlay.className = "at-fs-editor";
+    overlay.id = "atFsNodePreview";
+    overlay.innerHTML = `
+      <div class="at-fs-editor-panel" role="dialog" aria-modal="true">
+        <div class="at-fs-editor-head">
+          <div>
+            <div class="at-fs-editor-eyebrow">NODE PREVIEW</div>
+            <h3 class="at-fs-editor-title">${esc(node.text || node.question || "(no text)")}</h3>
+            <code class="at-fs-editor-key">${esc(key)}</code>
+          </div>
+          <button type="button" class="at-fs-editor-close" id="fsNpClose" aria-label="Close preview">✕</button>
+        </div>
+        <div class="at-fs-editor-body">
+          ${node.help ? `<p class="at-fs-np-help">${esc(node.help).replace(/\n/g, "<br>")}</p>` : ""}
+          ${node.note ? `<div class="at-fs-np-note">${esc(node.note).replace(/\n/g, "<br>")}</div>` : ""}
+          ${choicesHtml}
+        </div>
+      </div>
+    `;
+    host.appendChild(overlay);
+
+    $("fsNpClose")?.addEventListener("click", closeFullscreenNodePreview);
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) closeFullscreenNodePreview();
+    });
+  }
+
+  function closeFullscreenNodePreview() {
+    const el = $("atFsNodePreview");
+    if (el) el.remove();
+  }
+
+  /* ------------------------------------------------------------
+     PAN / ZOOM
+     ------------------------------------------------------------ */
   function setupPanZoom() {
     const vp = $("atChartViewport");
     if (!vp) return;
@@ -953,6 +1167,7 @@
 
     vp.addEventListener("mousedown", e => {
       if (e.target.closest(".at-node")) return;
+      if (e.target.closest(".at-fs-editor")) return;
       dragging = true;
       startX = e.clientX; startY = e.clientY;
       startPanX = state.panX; startPanY = state.panY;
@@ -977,6 +1192,7 @@
 
     vp.addEventListener("wheel", e => {
       if (state.view !== "chart") return;
+      if (e.target.closest(".at-fs-editor")) return;
       e.preventDefault();
       const direction = e.deltaY > 0 ? 0.9 : 1.1;
       state.zoom = Math.max(0.35, Math.min(2.4, state.zoom * direction));
@@ -1023,10 +1239,7 @@
   }
 
   function init() {
-    console.log("[AT] init starting");
-
     state.view = "list";
-
     populateGuideSelect();
 
     document.querySelectorAll(".at-view-btn").forEach(btn => {
@@ -1054,7 +1267,14 @@
       }, 120);
     });
 
-    console.log("[AT] init done");
+    // Dismiss hover tip when Escape is pressed
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        hideHoverTip();
+        closeFullscreenEditor();
+        closeFullscreenNodePreview();
+      }
+    });
   }
 
   if (document.readyState === "loading") {
