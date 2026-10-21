@@ -79,51 +79,57 @@
     return null;
   }
 
-  const loadedScriptPaths = new Set();
-
-  function injectScriptOnce(src) {
-    if (loadedScriptPaths.has(src)) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      const el = document.createElement("script");
-      el.src = src;
-      el.async = false;
-      el.onload = () => { loadedScriptPaths.add(src); resolve(); };
-      el.onerror = () => reject(new Error(`Failed to load flow script: ${src}`));
-      document.head.appendChild(el);
-    });
-  }
-
+  // FIXED: Fetch the script as text, then evaluate it in a sandbox.
+  // This avoids global pollution and makes every guide reload perfectly.
   async function loadGuideFlow(guide) {
     if (!guide || !guide.flowPath) throw new Error("Guide flow path is missing.");
     if (state.flowCache[guide.id]) return state.flowCache[guide.id];
 
-    const prevConfig = window.GUIDE_CONFIG;
-    const prevNodes  = window.GUIDE_NODES;
-    window.GUIDE_CONFIG = undefined;
-    window.GUIDE_NODES  = undefined;
+    const url = resolveFlowPath(guide.flowPath);
 
     try {
-      await injectScriptOnce(resolveFlowPath(guide.flowPath));
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const scriptText = await res.text();
+
+      // Build a tiny isolated environment for the script to run in.
+      const sandbox = new Function(`
+        let window = {};
+        let var_GUIDE_CONFIG;
+        let var_GUIDE_NODES;
+
+        // Some guides use window.GUIDE_*, some use bare vars.
+        // We catch both by proxying window and checking locals after execution.
+        const windowProxy = new Proxy(window, {
+          set(target, prop, value) {
+            if (prop === "GUIDE_CONFIG") var_GUIDE_CONFIG = value;
+            if (prop === "GUIDE_NODES") var_GUIDE_NODES = value;
+            target[prop] = value;
+            return true;
+          }
+        });
+        window = windowProxy;
+
+        ${scriptText}
+
+        return {
+          config: var_GUIDE_CONFIG || window.GUIDE_CONFIG || {},
+          nodes: var_GUIDE_NODES || window.GUIDE_NODES || {}
+        };
+      `);
+
+      const snapshot = sandbox();
+
+      if (!snapshot || !snapshot.nodes || !Object.keys(snapshot.nodes).length) {
+        throw new Error("Guide flow loaded but no GUIDE_NODES were found.");
+      }
+
+      state.flowCache[guide.id] = snapshot;
+      return snapshot;
     } catch (err) {
-      window.GUIDE_CONFIG = prevConfig;
-      window.GUIDE_NODES  = prevNodes;
-      throw err;
+      console.error("Guide load failed:", err);
+      throw new Error(`Failed to load flow script: ${guide.flowPath}`);
     }
-
-    const snapshot = {
-      config: window.GUIDE_CONFIG || {},
-      nodes: window.GUIDE_NODES || {}
-    };
-
-    window.GUIDE_CONFIG = prevConfig;
-    window.GUIDE_NODES  = prevNodes;
-
-    if (!Object.keys(snapshot.nodes).length) {
-      throw new Error("Guide flow loaded but no GUIDE_NODES were found.");
-    }
-
-    state.flowCache[guide.id] = snapshot;
-    return snapshot;
   }
 
   function extractRecommendations(nodes) {
@@ -323,7 +329,7 @@
         .sort((a, b) => String(a.title || a.id).localeCompare(String(b.title || b.id)))
         .map(g => `<option value="${esc(g.id)}">${esc(g.title || g.id)}</option>`)
         .join("");
-    
+
     select.disabled = false;
 
     const meta = $("atGuideMeta");
@@ -386,9 +392,8 @@
   }
 
   function renderChart() {
-    // FIX: Do not render chart if container is hidden or currently rendering
     if (state.renderInProgress || state.view !== "chart") return;
-    
+
     state.renderInProgress = true;
     try {
       const svg = $("atChartSvg");
@@ -839,7 +844,6 @@
     state.recommendations = [];
     state.activeRecommendationKey = "";
     state.savedLeaves = new Set();
-    delete state.flowCache[guideId];
 
     const meta = $("atGuideMeta");
     if (meta) meta.textContent = "Loading flow…";
@@ -876,7 +880,6 @@
 
       renderRecommendationList();
 
-      // Load preferred view
       let preferredView = "list";
       try {
         const saved = localStorage.getItem("at_view");
@@ -926,7 +929,6 @@
     if (leftTitle) leftTitle.textContent = state.view === "chart" ? "Visual decision tree" : "Select a recommendation";
 
     if (state.view === "chart") {
-      // Use requestAnimationFrame to ensure the container is visible before calculating layout
       requestAnimationFrame(() => {
         if (state.graph) renderChart();
       });
