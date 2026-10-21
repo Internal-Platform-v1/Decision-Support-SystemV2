@@ -37,7 +37,8 @@
     panY: 20,
     renderInProgress: false,
     isFullscreen: false,
-    hoverNodeKey: null
+    hoverNodeKey: null,
+    fsEditorOffset: { x: 0, y: 0 }
   };
 
   const $ = id => document.getElementById(id);
@@ -230,7 +231,6 @@
     if (!visible.size) return { positions, visible };
 
     const adj = graph.adjOut;
-
     const depth = new Map();
     depth.set(graph.rootKey, 0);
     const bfs = [graph.rootKey];
@@ -460,8 +460,6 @@
 
     if (meta.isLeaf) {
       selectRecommendation(key);
-      // If we're in fullscreen, the editor panel is hidden — show
-      // an inline editor overlay over the chart instead.
       if (state.isFullscreen) {
         openFullscreenEditor(key);
       }
@@ -619,8 +617,6 @@
     if ($k) { $k.value = "Loading…"; $k.disabled = true; }
     if ($e) { $e.value = "Loading…"; $e.disabled = true; }
     setButtonsDisabled(true);
-
-    // Also mirror into the fullscreen overlay if it's open.
     syncFullscreenEditorLoading();
 
     try {
@@ -642,7 +638,6 @@
       if (anySaved) state.savedLeaves.add(rec.key);
       else state.savedLeaves.delete(rec.key);
 
-      // Sync to fullscreen overlay if open
       syncFullscreenEditorValues(state.loadedTemplates);
       if (state.view === "chart") renderChart();
     } catch (err) {
@@ -707,7 +702,6 @@
     const db = firestore();
     if (!db) { showToast("Firestore is not initialized.", true); return; }
 
-    // Prefer fullscreen overlay values if it's open; else the side editor.
     const fsOpen = !!$("atFsEditor");
     const payload = fsOpen
       ? {
@@ -896,6 +890,8 @@
 
   /* ------------------------------------------------------------
      HOVER TOOLTIP
+     Lives on document.body normally. When the chart host is in
+     fullscreen, we move it INSIDE the host so it renders on top.
      ------------------------------------------------------------ */
   function ensureHoverTip() {
     let tip = $("atHoverTip");
@@ -906,6 +902,16 @@
     tip.hidden = true;
     document.body.appendChild(tip);
     return tip;
+  }
+
+  function reparentHoverTip() {
+    const tip = ensureHoverTip();
+    const host = $("atChartHost");
+    const desiredParent = state.isFullscreen && host ? host : document.body;
+    if (tip.parentElement !== desiredParent) {
+      desiredParent.appendChild(tip);
+    }
+    tip.classList.toggle("is-in-host", state.isFullscreen);
   }
 
   function showHoverTip(key, event) {
@@ -926,6 +932,7 @@
       : `<div class="at-tip-choices-title">Terminal node</div>`;
 
     const tip = ensureHoverTip();
+    reparentHoverTip();
     tip.innerHTML = `
       <div class="at-tip-head">
         <span class="at-tip-badge ${meta.isLeaf ? "leaf" : "decision"}">${meta.isLeaf ? "FINAL" : "DECISION"}</span>
@@ -945,16 +952,34 @@
     const tip = $("atHoverTip");
     if (!tip || tip.hidden) return;
     const pad = 14;
-    const w = tip.offsetWidth;
-    const h = tip.offsetHeight;
-    let x = (event?.clientX || 0) + pad;
-    let y = (event?.clientY || 0) + pad;
-    const maxX = window.innerWidth - w - pad;
-    const maxY = window.innerHeight - h - pad;
-    if (x > maxX) x = Math.max(pad, (event?.clientX || 0) - w - pad);
-    if (y > maxY) y = Math.max(pad, (event?.clientY || 0) - h - pad);
-    tip.style.left = x + "px";
-    tip.style.top = y + "px";
+
+    if (state.isFullscreen) {
+      // Position relative to the chart host.
+      const host = $("atChartHost");
+      if (!host) return;
+      const hostRect = host.getBoundingClientRect();
+      const w = tip.offsetWidth;
+      const h = tip.offsetHeight;
+      let x = (event?.clientX || 0) - hostRect.left + pad;
+      let y = (event?.clientY || 0) - hostRect.top + pad;
+      const maxX = hostRect.width - w - pad;
+      const maxY = hostRect.height - h - pad;
+      if (x > maxX) x = Math.max(pad, (event?.clientX || 0) - hostRect.left - w - pad);
+      if (y > maxY) y = Math.max(pad, (event?.clientY || 0) - hostRect.top - h - pad);
+      tip.style.left = x + "px";
+      tip.style.top = y + "px";
+    } else {
+      const w = tip.offsetWidth;
+      const h = tip.offsetHeight;
+      let x = (event?.clientX || 0) + pad;
+      let y = (event?.clientY || 0) + pad;
+      const maxX = window.innerWidth - w - pad;
+      const maxY = window.innerHeight - h - pad;
+      if (x > maxX) x = Math.max(pad, (event?.clientX || 0) - w - pad);
+      if (y > maxY) y = Math.max(pad, (event?.clientY || 0) - h - pad);
+      tip.style.left = x + "px";
+      tip.style.top = y + "px";
+    }
   }
 
   function hideHoverTip() {
@@ -1002,8 +1027,9 @@
 
   function onFullscreenChange() {
     updateFullscreenButton();
+    reparentHoverTip();
+    hideHoverTip();
     if (!state.isFullscreen) {
-      // Left fullscreen — clean up any overlays living inside the host.
       closeFullscreenEditor();
       closeFullscreenNodePreview();
     }
@@ -1013,9 +1039,7 @@
   }
 
   /* ------------------------------------------------------------
-     FULLSCREEN — INLINE EDITOR OVERLAY
-     Shown only while in fullscreen so the admin can edit without
-     leaving the chart.
+     FULLSCREEN — INLINE EDITOR OVERLAY (draggable)
      ------------------------------------------------------------ */
   function openFullscreenEditor(key) {
     const host = $("atChartHost");
@@ -1023,16 +1047,16 @@
     const rec = state.recommendations.find(r => r.key === key);
     if (!rec) return;
 
-    closeFullscreenEditor(); // in case one is already open
+    closeFullscreenEditor();
 
     const overlay = document.createElement("div");
     overlay.className = "at-fs-editor";
     overlay.id = "atFsEditor";
     overlay.innerHTML = `
-      <div class="at-fs-editor-panel" role="dialog" aria-modal="true">
-        <div class="at-fs-editor-head">
+      <div class="at-fs-editor-panel" role="dialog" aria-modal="true" id="fsPanel" style="transform: translate(${state.fsEditorOffset.x}px, ${state.fsEditorOffset.y}px);">
+        <div class="at-fs-editor-head" id="fsDragHandle" style="cursor: grab;">
           <div>
-            <div class="at-fs-editor-eyebrow">EDIT TEMPLATES</div>
+            <div class="at-fs-editor-eyebrow">EDIT TEMPLATES · DRAG HEADER TO MOVE</div>
             <h3 class="at-fs-editor-title">${esc(rec.label)}</h3>
             <code class="at-fs-editor-key">${esc(rec.normalized)}</code>
           </div>
@@ -1073,8 +1097,42 @@
       showToast("Editor reset to last saved values.");
     });
 
-    // Mirror current values (they may still be loading).
+    setupDragForPanel($("fsPanel"), $("fsDragHandle"));
+
     syncFullscreenEditorValues(state.loadedTemplates);
+  }
+
+  function setupDragForPanel(panel, handle) {
+    if (!panel || !handle) return;
+    let dragging = false;
+    let startX = 0, startY = 0, startOffX = 0, startOffY = 0;
+
+    handle.addEventListener("mousedown", (e) => {
+      if (e.target.closest("button")) return;
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startOffX = state.fsEditorOffset.x;
+      startOffY = state.fsEditorOffset.y;
+      handle.style.cursor = "grabbing";
+      e.preventDefault();
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      state.fsEditorOffset.x = startOffX + dx;
+      state.fsEditorOffset.y = startOffY + dy;
+      panel.style.transform =
+        `translate(${state.fsEditorOffset.x}px, ${state.fsEditorOffset.y}px)`;
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.style.cursor = "grab";
+    });
   }
 
   function syncFullscreenEditorLoading() {
@@ -1098,7 +1156,6 @@
 
   /* ------------------------------------------------------------
      FULLSCREEN — NODE PREVIEW OVERLAY
-     Shown when a middle node is clicked while in fullscreen.
      ------------------------------------------------------------ */
   function openFullscreenNodePreview(key) {
     const host = $("atChartHost");
@@ -1267,7 +1324,6 @@
       }, 120);
     });
 
-    // Dismiss hover tip when Escape is pressed
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") {
         hideHoverTip();
