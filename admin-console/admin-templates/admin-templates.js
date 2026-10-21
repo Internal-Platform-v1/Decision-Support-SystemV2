@@ -1045,4 +1045,362 @@
       let y = (event?.clientY || 0) + pad;
       const maxX = window.innerWidth - w - pad;
       const maxY = window.innerHeight - h - pad;
-      if (x > maxX) x = Math.max(pad, (event?.clientX || 0)
+      if (x > maxX) x = Math.max(pad, (event?.clientX || 0) - w - pad);
+      if (y > maxY) y = Math.max(pad, (event?.clientY || 0) - h - pad);
+      tip.style.left = x + "px";
+      tip.style.top = y + "px";
+    }
+  }
+
+  function hideHoverTip() {
+    const tip = $("atHoverTip");
+    if (!tip) return;
+    tip.hidden = true;
+    state.hoverNodeKey = null;
+  }
+
+  /* ------------------------------------------------------------
+     FULLSCREEN
+     ------------------------------------------------------------ */
+  function toggleFullscreen() {
+    const host = $("atChartHost");
+    if (!host) return;
+    const isFull = document.fullscreenElement === host ||
+                   document.webkitFullscreenElement === host;
+    if (isFull) {
+      (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document);
+    } else {
+      const req = host.requestFullscreen || host.webkitRequestFullscreen;
+      if (req) {
+        req.call(host).catch(err => {
+          console.warn("[AT] fullscreen failed:", err);
+          showToast("Fullscreen not available in this browser.", true);
+        });
+      } else {
+        showToast("Fullscreen not available in this browser.", true);
+      }
+    }
+  }
+
+  function updateFullscreenButton() {
+    const btn = $("atFullscreen");
+    if (!btn) return;
+    const host = $("atChartHost");
+    const isFull = document.fullscreenElement === host ||
+                   document.webkitFullscreenElement === host;
+    state.isFullscreen = isFull;
+    btn.setAttribute("aria-label", isFull ? "Exit fullscreen" : "Enter fullscreen");
+    btn.innerHTML = isFull ? "Exit ⤢" : "Fullscreen ⤢";
+  }
+
+  function onFullscreenChange() {
+    updateFullscreenButton();
+    reparentHoverTip();
+    hideHoverTip();
+    if (!state.isFullscreen) {
+      closeFullscreenEditor();
+      closeFullscreenNodePreview();
+    }
+    setTimeout(() => {
+      if (state.view === "chart" && state.graph) renderChart();
+    }, 60);
+  }
+
+  /* ------------------------------------------------------------
+     FULLSCREEN EDITOR (draggable)
+     ------------------------------------------------------------ */
+  function openFullscreenEditor(key) {
+    const host = $("atChartHost");
+    if (!host) return;
+    const rec = state.recommendations.find(r => r.key === key);
+    if (!rec) return;
+
+    closeFullscreenEditor();
+
+    const overlay = document.createElement("div");
+    overlay.className = "at-fs-editor";
+    overlay.id = "atFsEditor";
+    overlay.innerHTML = `
+      <div class="at-fs-editor-panel" role="dialog" aria-modal="true" id="fsPanel" style="transform: translate(${state.fsEditorOffset.x}px, ${state.fsEditorOffset.y}px);">
+        <div class="at-fs-editor-head" id="fsDragHandle" style="cursor: grab;">
+          <div>
+            <div class="at-fs-editor-eyebrow">EDIT TEMPLATES · DRAG HEADER TO MOVE</div>
+            <h3 class="at-fs-editor-title">${esc(rec.label)}</h3>
+            <code class="at-fs-editor-key">${esc(rec.normalized)}</code>
+          </div>
+          <button type="button" class="at-fs-editor-close" id="fsClose" aria-label="Close editor">✕</button>
+        </div>
+        <div class="at-fs-editor-body">
+          <label class="at-fs-field">
+            <span>Suggested Comment</span>
+            <textarea id="fsComment" rows="4" placeholder="Comment text…"></textarea>
+          </label>
+          <label class="at-fs-field">
+            <span>Suggested CORR Code</span>
+            <textarea id="fsCorr" rows="3" placeholder="CORR code text…"></textarea>
+          </label>
+          <label class="at-fs-field">
+            <span>Suggested Email</span>
+            <textarea id="fsEmail" rows="5" placeholder="Email body…"></textarea>
+          </label>
+        </div>
+        <div class="at-fs-editor-foot">
+          <span class="at-fs-editor-ids">comment__${esc(rec.normalized)} · corr__${esc(rec.normalized)} · email__${esc(rec.normalized)}</span>
+          <div class="at-fs-editor-actions">
+            <button type="button" class="at-btn ghost" id="fsReset">Reset</button>
+            <button type="button" class="at-btn primary" id="fsSave">Save</button>
+          </div>
+        </div>
+      </div>
+    `;
+    host.appendChild(overlay);
+
+    $("fsClose")?.addEventListener("click", closeFullscreenEditor);
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) closeFullscreenEditor();
+    });
+    $("fsSave")?.addEventListener("click", saveTemplates);
+    $("fsReset")?.addEventListener("click", () => {
+      syncFullscreenEditorValues(state.loadedTemplates);
+      showToast("Editor reset to last saved values.");
+    });
+
+    setupDragForPanel($("fsPanel"), $("fsDragHandle"));
+    syncFullscreenEditorValues(state.loadedTemplates);
+  }
+
+  function setupDragForPanel(panel, handle) {
+    if (!panel || !handle) return;
+    let dragging = false;
+    let startX = 0, startY = 0, startOffX = 0, startOffY = 0;
+
+    handle.addEventListener("mousedown", (e) => {
+      if (e.target.closest("button")) return;
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startOffX = state.fsEditorOffset.x;
+      startOffY = state.fsEditorOffset.y;
+      handle.style.cursor = "grabbing";
+      e.preventDefault();
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      state.fsEditorOffset.x = startOffX + (e.clientX - startX);
+      state.fsEditorOffset.y = startOffY + (e.clientY - startY);
+      panel.style.transform =
+        `translate(${state.fsEditorOffset.x}px, ${state.fsEditorOffset.y}px)`;
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.style.cursor = "grab";
+    });
+  }
+
+  function syncFullscreenEditorLoading() {
+    const c = $("fsComment"); const k = $("fsCorr"); const e = $("fsEmail");
+    if (c) { c.value = "Loading…"; c.disabled = true; }
+    if (k) { k.value = "Loading…"; k.disabled = true; }
+    if (e) { e.value = "Loading…"; e.disabled = true; }
+  }
+
+  function syncFullscreenEditorValues({ comment, corr, email }) {
+    const c = $("fsComment"); const k = $("fsCorr"); const e = $("fsEmail");
+    if (c) { c.value = comment || ""; c.disabled = false; }
+    if (k) { k.value = corr    || ""; k.disabled = false; }
+    if (e) { e.value = email   || ""; e.disabled = false; }
+  }
+
+  function closeFullscreenEditor() {
+    const el = $("atFsEditor");
+    if (el) el.remove();
+  }
+
+  function openFullscreenNodePreview(key) {
+    const host = $("atChartHost");
+    if (!host) return;
+    const meta = state.graph?.nodes.get(key);
+    if (!meta) return;
+
+    closeFullscreenNodePreview();
+
+    const node = meta.node || {};
+    const choices = Array.isArray(node.choices) ? node.choices : [];
+
+    const choicesHtml = choices.length
+      ? `<div class="at-fs-np-choices-title">Choices</div>` + choices.map(c => `
+          <div class="at-fs-np-choice">
+            <strong>${esc(c.label || "")}</strong>
+            ${c.desc ? `<small>${esc(c.desc)}</small>` : ""}
+            <code>→ ${esc(c.next || "(final)")}</code>
+          </div>
+        `).join("")
+      : `<div class="at-fs-np-choices-title">Terminal node</div>`;
+
+    const overlay = document.createElement("div");
+    overlay.className = "at-fs-editor";
+    overlay.id = "atFsNodePreview";
+    overlay.innerHTML = `
+      <div class="at-fs-editor-panel" role="dialog" aria-modal="true">
+        <div class="at-fs-editor-head">
+          <div>
+            <div class="at-fs-editor-eyebrow">NODE PREVIEW</div>
+            <h3 class="at-fs-editor-title">${esc(node.text || node.question || "(no text)")}</h3>
+            <code class="at-fs-editor-key">${esc(key)}</code>
+          </div>
+          <button type="button" class="at-fs-editor-close" id="fsNpClose" aria-label="Close preview">✕</button>
+        </div>
+        <div class="at-fs-editor-body">
+          ${node.help ? `<p class="at-fs-np-help">${esc(node.help).replace(/\n/g, "<br>")}</p>` : ""}
+          ${node.note ? `<div class="at-fs-np-note">${esc(node.note).replace(/\n/g, "<br>")}</div>` : ""}
+          ${choicesHtml}
+        </div>
+      </div>
+    `;
+    host.appendChild(overlay);
+
+    $("fsNpClose")?.addEventListener("click", closeFullscreenNodePreview);
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) closeFullscreenNodePreview();
+    });
+  }
+
+  function closeFullscreenNodePreview() {
+    const el = $("atFsNodePreview");
+    if (el) el.remove();
+  }
+
+  /* ------------------------------------------------------------
+     PAN / ZOOM
+     ------------------------------------------------------------ */
+  function setupPanZoom() {
+    const vp = $("atChartViewport");
+    if (!vp) return;
+
+    let dragging = false;
+    let startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+    let rafId = 0;
+
+    vp.addEventListener("mousedown", e => {
+      if (e.target.closest(".at-node")) return;
+      if (e.target.closest(".at-fs-editor")) return;
+      dragging = true;
+      startX = e.clientX; startY = e.clientY;
+      startPanX = state.panX; startPanY = state.panY;
+      vp.classList.add("is-dragging");
+    });
+    window.addEventListener("mousemove", e => {
+      if (!dragging) return;
+      state.panX = startPanX + (e.clientX - startX);
+      state.panY = startPanY + (e.clientY - startY);
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => { rafId = 0; renderChart(); });
+    });
+    window.addEventListener("mouseup", () => {
+      dragging = false;
+      vp.classList.remove("is-dragging");
+      try {
+        localStorage.setItem("at_pan", JSON.stringify({
+          zoom: state.zoom, panX: state.panX, panY: state.panY
+        }));
+      } catch (_) {}
+    });
+
+    vp.addEventListener("wheel", e => {
+      if (state.view !== "chart") return;
+      if (e.target.closest(".at-fs-editor")) return;
+      e.preventDefault();
+      const direction = e.deltaY > 0 ? 0.9 : 1.1;
+      state.zoom = Math.max(0.35, Math.min(2.4, state.zoom * direction));
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        renderChart();
+        try {
+          localStorage.setItem("at_pan", JSON.stringify({
+            zoom: state.zoom, panX: state.panX, panY: state.panY
+          }));
+        } catch (_) {}
+      });
+    }, { passive: false });
+  }
+
+  function resetPanZoom() {
+    state.zoom = 1;
+    state.panX = 20;
+    state.panY = 20;
+  }
+
+  function setupChartControls() {
+    $("atZoomIn")?.addEventListener("click", () => { state.zoom = Math.min(2.4, state.zoom * 1.2); renderChart(); });
+    $("atZoomOut")?.addEventListener("click", () => { state.zoom = Math.max(0.35, state.zoom / 1.2); renderChart(); });
+    $("atZoomReset")?.addEventListener("click", () => { resetPanZoom(); renderChart(); });
+    $("atExpandAll")?.addEventListener("click", () => {
+      if (!state.graph) return;
+      state.graph.nodes.forEach((meta, key) => {
+        if (!meta.isLeaf) state.expanded.add(key);
+      });
+      renderChart();
+    });
+    $("atCollapseAll")?.addEventListener("click", () => {
+      if (!state.graph) return;
+      state.expanded = new Set([state.graph.rootKey]);
+      state.activePathKeys = new Set();
+      renderChart();
+    });
+    $("atFullscreen")?.addEventListener("click", toggleFullscreen);
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", onFullscreenChange);
+  }
+
+  function init() {
+    state.view = "list";
+    populateCategorySelect();
+
+    document.querySelectorAll(".at-view-btn").forEach(btn => {
+      btn.addEventListener("click", () => setView(btn.dataset.view));
+    });
+    setView("list");
+
+    const catSelect = $("atCategorySelect");
+    if (catSelect) catSelect.addEventListener("change", onCategoryChange);
+
+    const select = $("atGuideSelect");
+    if (select) select.addEventListener("change", onGuideChange);
+
+    const save = $("atSave");
+    if (save) save.addEventListener("click", saveTemplates);
+
+    const reset = $("atReset");
+    if (reset) reset.addEventListener("click", resetEditor);
+
+    setupPanZoom();
+    setupChartControls();
+
+    let resizeT;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        if (state.view === "chart" && state.graph) renderChart();
+      }, 120);
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        hideHoverTip();
+        closeFullscreenEditor();
+        closeFullscreenNodePreview();
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
