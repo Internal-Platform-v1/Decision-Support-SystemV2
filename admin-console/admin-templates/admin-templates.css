@@ -816,3 +816,18 @@ body[data-admin-page="templates"] .admin-hero { display: none !important; }
   font-family: "Consolas", "Monaco", monospace;
   font-size: 9px;
 }
+
+
+/* Force remove the reserved hero space */
+body[data-admin-page="templates"] .admin-main,
+body[data-admin-page="templates"] #adminHero,
+body[data-admin-page="templates"] .admin-hero,
+body[data-admin-page="templates"] .admin-top-header {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  min-height: 0 !important;
+}
+
+body[data-admin-page="templates"] .admin-main {
+  padding-top: 88px !important;
+}
