@@ -29,24 +29,30 @@
     </section>
 
     <!-- GUIDE PICKER + VIEW TOGGLE -->
-    <section class="at-guide-picker">
-      <label for="atGuideSelect">Guide</label>
-      <select id="atGuideSelect" aria-label="Select guide">
-        <option value="">Loading guides…</option>
-      </select>
-      <span class="at-guide-meta" id="atGuideMeta"></span>
+<section class="at-guide-picker">
+  <label for="atCategorySelect">Category</label>
+  <select id="atCategorySelect" aria-label="Select category">
+    <option value="">All categories</option>
+  </select>
 
-      <div class="at-view-toggle" role="tablist" aria-label="View mode">
-        <button type="button" class="at-view-btn" data-view="list" role="tab" aria-selected="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-          List
-        </button>
-        <button type="button" class="at-view-btn" data-view="chart" role="tab" aria-selected="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 7l-1 3M14 17l-1-3M17 12h-3"/></svg>
-          Chart
-        </button>
-      </div>
-    </section>
+  <label for="atGuideSelect">Guide</label>
+  <select id="atGuideSelect" aria-label="Select guide" disabled>
+    <option value="">Select a category first…</option>
+  </select>
+
+  <span class="at-guide-meta" id="atGuideMeta"></span>
+
+  <div class="at-view-toggle" role="tablist" aria-label="View mode">
+    <button type="button" class="at-view-btn" data-view="list" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      List
+    </button>
+    <button type="button" class="at-view-btn" data-view="chart" role="tab" aria-selected="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 7l-1 3M14 17l-1-3M17 12h-3"/></svg>
+      Chart
+    </button>
+  </div>
+</section>
 
     <!-- TWO PANEL WORKSPACE -->
     <section class="at-workspace" id="atWorkspace">
