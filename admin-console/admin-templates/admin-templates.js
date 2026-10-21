@@ -35,7 +35,8 @@
     zoom: 1,
     panX: 20,
     panY: 20,
-    renderInProgress: false
+    renderInProgress: false,
+    isFullscreen: false
   };
 
   const $ = id => document.getElementById(id);
@@ -799,8 +800,6 @@
       state.recommendations = extractRecommendations(flow.nodes);
       state.graph = buildGraph(flow.nodes, flow.config.startNode || "start");
 
-      // Expand root AND its immediate children so the initial chart shows
-      // the first decision level (Prepaid / Collect / Third Party / No Terms).
       state.expanded = new Set([state.graph.rootKey]);
       (state.graph.adjOut.get(state.graph.rootKey) || []).forEach(k => {
         const m = state.graph.nodes.get(k);
@@ -808,7 +807,6 @@
       });
       state.activePathKeys = new Set();
 
-      // Restore pan/zoom from last session (safe — no render triggered here).
       try {
         const saved = JSON.parse(localStorage.getItem("at_pan") || "null");
         if (saved && typeof saved === "object") {
@@ -829,7 +827,6 @@
 
       renderRecommendationList();
 
-      // Restore the user's last view only now that the graph exists.
       let preferredView = "list";
       try {
         const saved = localStorage.getItem("at_view");
@@ -838,7 +835,6 @@
       if (preferredView !== state.view) {
         setView(preferredView);
       } else if (state.view === "chart") {
-        // Same view but graph just changed — rerender.
         renderChart();
       }
 
@@ -901,6 +897,50 @@
         });
       }
     }
+  }
+
+  /* ------------------------------------------------------------
+     FULLSCREEN
+     ------------------------------------------------------------ */
+  function toggleFullscreen() {
+    const host = $("atChartHost");
+    if (!host) return;
+
+    const isFull = document.fullscreenElement === host ||
+                   document.webkitFullscreenElement === host;
+
+    if (isFull) {
+      (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document);
+    } else {
+      const req = host.requestFullscreen || host.webkitRequestFullscreen;
+      if (req) {
+        req.call(host).catch(err => {
+          console.warn("[AT] fullscreen failed:", err);
+          showToast("Fullscreen not available in this browser.", true);
+        });
+      } else {
+        showToast("Fullscreen not available in this browser.", true);
+      }
+    }
+  }
+
+  function updateFullscreenButton() {
+    const btn = $("atFullscreen");
+    if (!btn) return;
+    const host = $("atChartHost");
+    const isFull = document.fullscreenElement === host ||
+                   document.webkitFullscreenElement === host;
+    state.isFullscreen = isFull;
+    btn.setAttribute("aria-label", isFull ? "Exit fullscreen" : "Enter fullscreen");
+    btn.innerHTML = isFull ? "Exit ⤢" : "Fullscreen ⤢";
+  }
+
+  function onFullscreenChange() {
+    updateFullscreenButton();
+    // The viewport dimensions changed — refit the chart.
+    setTimeout(() => {
+      if (state.view === "chart" && state.graph) renderChart();
+    }, 60);
   }
 
   function setupPanZoom() {
@@ -976,14 +1016,15 @@
       state.activePathKeys = new Set();
       renderChart();
     });
+    $("atFullscreen")?.addEventListener("click", toggleFullscreen);
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", onFullscreenChange);
   }
 
   function init() {
     console.log("[AT] init starting");
 
-    // Force list view on boot — chart requires a graph to render.
-    // The user's last view preference is restored in onGuideChange(),
-    // after the graph has been built, so there's no render-before-graph race.
     state.view = "list";
 
     populateGuideSelect();
