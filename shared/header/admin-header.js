@@ -11,7 +11,6 @@
   (function adminGuard() {
     const UNLOCK_KEY = "bd_admin_unlocked";
     const ROLE_KEY   = "bd_role";
-    const ADMIN_PASSWORD = "fedex-admin-2026";
     const HOME_URL = "/Decision-Support-SystemV2/index.html";
 
     function isUnlocked() {
@@ -28,90 +27,10 @@
       catch (_) { return false; }
     }
 
-    if (isUnlocked() && isAdminRole()) return;
-
-    document.documentElement.style.visibility = "hidden";
-
-    function showGate() {
-      const existing = document.getElementById("adminGate");
-      if (existing) existing.remove();
-
-      const gate = document.createElement("div");
-      gate.id = "adminGate";
-      gate.style.cssText =
-        "position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:20px;" +
-        "font-family:Inter,Arial,sans-serif;background:rgba(20,15,45,.55);backdrop-filter:blur(4px)";
-      gate.innerHTML = `
-        <div id="agCard" style="width:min(380px,100%);padding:28px 26px 22px;background:#fff;border-radius:16px;
-                    box-shadow:0 24px 60px rgba(31,25,87,.24);text-align:center">
-          <div style="width:44px;height:44px;margin:0 auto 14px;display:grid;place-items:center;
-                      border-radius:50%;background:#f1eaff;color:#6b25df;font-size:22px">🛡️</div>
-          <h2 style="margin:0 0 6px;font-size:1.05rem;font-weight:800;color:#20235e">Admin access</h2>
-          <p style="margin:0 0 18px;font-size:.82rem;color:#6d6e91;line-height:1.45">
-            Enter the admin password to open the dashboard.
-          </p>
-          <input id="agInput" type="password" placeholder="Admin password" autocomplete="off"
-                 style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #dedfec;
-                        border-radius:9px;font-size:.9rem;color:#20235e;background:#fff;outline:none">
-          <div id="agError" style="min-height:1.15rem;margin-top:10px;color:#c81e3a;
-                                   font-size:.78rem;text-align:left"></div>
-          <div style="display:flex;gap:8px;margin-top:14px">
-            <button id="agCancel" type="button"
-                    style="flex:1;padding:10px 14px;border:0;border-radius:9px;
-                           font-size:.85rem;font-weight:700;background:#f3f2fa;color:#4b4d6b;cursor:pointer">
-              Cancel
-            </button>
-            <button id="agSubmit" type="button"
-                    style="flex:1;padding:10px 14px;border:0;border-radius:9px;
-                           font-size:.85rem;font-weight:700;background:linear-gradient(135deg,#6b25df,#4d14b8);
-                           color:#fff;cursor:pointer">
-              Unlock
-            </button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(gate);
-      document.documentElement.style.visibility = "";
-
-      const input  = gate.querySelector("#agInput");
-      const error  = gate.querySelector("#agError");
-      const submit = gate.querySelector("#agSubmit");
-      const cancel = gate.querySelector("#agCancel");
-
-      setTimeout(() => input.focus(), 60);
-
-      function attempt() {
-        const val = input.value;
-        if (!val) { error.textContent = "Enter the admin password."; input.focus(); return; }
-        if (val === ADMIN_PASSWORD) {
-          try {
-            const expiry = Date.now() + (7 * 24 * 60 * 60 * 1000);
-            localStorage.setItem(UNLOCK_KEY, JSON.stringify({ exp: expiry }));
-            localStorage.setItem(ROLE_KEY, "admin");
-          } catch (_) {}
-          window.location.reload();
-          return;
-        }
-        error.textContent = "Incorrect password.";
-        input.value = "";
-        input.focus();
-      }
-
-      submit.addEventListener("click", attempt);
-      input.addEventListener("keydown", function (e) {
-        if (e.key === "Enter")  { e.preventDefault(); attempt(); }
-        if (e.key === "Escape") { e.preventDefault(); window.location.replace(HOME_URL); }
-      });
-      cancel.addEventListener("click", function () { window.location.replace(HOME_URL); });
-      gate.addEventListener("click", function (e) {
-        if (e.target === gate) window.location.replace(HOME_URL);
-      });
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", showGate);
-    } else {
-      showGate();
+    // If not unlocked, redirect to home page where the modal lives
+    if (!isUnlocked() || !isAdminRole()) {
+      window.location.replace(HOME_URL);
+      return;
     }
   })();
 
@@ -259,7 +178,6 @@
     });
   }
 
-  // REPLACED: setupDropdown() -> setupSettingsDropdown()
   function setupSettingsDropdown() {
     const btn = document.getElementById("adminSettingsBtn");
     const dropdown = document.getElementById("adminSettingsDropdown");
@@ -393,12 +311,9 @@
       setActiveNavigation();
       updateClock();
       setupNavigation();
-      
-      // CHANGED: Using the new functions
       setupSettingsDropdown();
       setupTheme();
       setupRole();
-      
       setupActions();
       setupSearch();
 
