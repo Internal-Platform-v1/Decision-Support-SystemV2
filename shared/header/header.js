@@ -1,5 +1,5 @@
 /* ============================================================
-   shared/header.js
+   shared/header/header.js
    ============================================================ */
 (function () {
     "use strict";
@@ -28,9 +28,9 @@
         try {
             localStorage.setItem(ADMIN_UNLOCK_KEY, JSON.stringify({ exp: Date.now() + ADMIN_UNLOCK_TTL }));
             localStorage.setItem(ROLE_KEY, "admin");
-            console.log("[header.js] Token successfully saved to localStorage.");
-        } catch (e) { 
-            console.error("[header.js] FAILED TO SAVE TOKEN:", e); 
+            console.log("[header.js] Token saved:", localStorage.getItem(ADMIN_UNLOCK_KEY));
+        } catch (e) {
+            console.error("[header.js] FAILED TO SAVE TOKEN:", e);
         }
     }
 
@@ -42,8 +42,6 @@
        Role state
        ------------------------------------------------------------ */
     function getRole() {
-        // If the token exists, we are definitely admin. 
-        // Do not rely on the ROLE_KEY if the token is valid.
         if (isAdminUnlocked()) return "admin";
         try {
             return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user";
@@ -65,9 +63,6 @@
         });
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
-        
-        // Token is NEVER cleared here.
-        
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
     }
 
@@ -118,7 +113,7 @@
        ------------------------------------------------------------ */
     function setupAdminGate() {
         const gate = document.getElementById("adminGate");
-        if (!gate) return;
+        if (!gate) { console.warn("[header.js] #adminGate not found"); return; }
 
         const card     = gate.querySelector(".admin-gate-card");
         const input    = document.getElementById("adminGateInput");
@@ -144,15 +139,19 @@
 
         function attemptUnlock() {
             const value = input.value;
+            console.log("[header.js] Password entered:", JSON.stringify(value));
+
             if (!value) { error.textContent = "Enter the admin password."; input.focus(); return; }
 
             if (value === ADMIN_PASSWORD) {
+                console.log("[header.js] Password correct. Saving token...");
                 setAdminUnlocked();
                 close();
                 window.location.href = ADMIN_URL;
                 return;
             }
 
+            console.log("[header.js] Password incorrect.");
             error.textContent = "Incorrect password.";
             input.value = "";
             input.focus();
@@ -183,7 +182,7 @@
         const menu     = document.getElementById("settingsMenu");
         const adminBtn = document.getElementById("adminDashboardBtn");
 
-        if (!button || !menu) return;
+        if (!button || !menu) { console.warn("[header.js] settings elements not found"); return; }
 
         applyRole(getRole());
 
@@ -212,14 +211,14 @@
                 event.stopPropagation();
                 if (getRole() !== "admin") return;
                 close();
-                
-                // If already unlocked, go straight in
+
                 if (isAdminUnlocked()) {
+                    console.log("[header.js] Already unlocked. Going straight to admin.");
                     window.location.href = ADMIN_URL;
                     return;
                 }
-                
-                // Otherwise show password
+
+                console.log("[header.js] Not unlocked. Opening gate.");
                 if (window.BDAdminGate) window.BDAdminGate.open();
             });
         }
@@ -561,6 +560,7 @@
     }
 
     function start() {
+        console.log("[header.js] Starting. Token on load:", localStorage.getItem(ADMIN_UNLOCK_KEY));
         setupTheme();
         setupAdminGate();
         setupSettings();
