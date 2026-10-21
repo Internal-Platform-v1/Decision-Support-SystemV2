@@ -1,10 +1,11 @@
 /* ============================================================
-   ADMIN TEMPLATES MANAGEMENT
-   admin-console/admin-templates/admin-templates.js
+   ADMIN TEMPLATES MANAGEMENT — DIAGNOSTIC BUILD
    ============================================================ */
 
 (() => {
   "use strict";
+
+  console.log("[AT] script starting");
 
   const CONFIG = {
     manifest: () => Array.isArray(window.GUIDE_FLOW_MANIFEST) ? window.GUIDE_FLOW_MANIFEST : []
@@ -32,7 +33,8 @@
     savedLeaves: new Set(),
     zoom: 1,
     panX: 20,
-    panY: 20
+    panY: 20,
+    renderInProgress: false
   };
 
   const $ = id => document.getElementById(id);
@@ -135,11 +137,16 @@
   }
 
   function buildGraph(nodes, startKey) {
+    console.log("[AT] buildGraph starting, node count:", Object.keys(nodes).length);
+    const t0 = performance.now();
+
     const graph = {
       rootKey: startKey,
       nodes: new Map(),
       edges: [],
-      edgeSet: new Set()
+      edgeSet: new Set(),
+      // Pre-build adjacency to avoid O(E) scans later
+      adjOut: new Map()
     };
 
     function ensure(key, parentKey, choiceLabel) {
@@ -159,6 +166,8 @@
           graph.edgeSet.add(sig);
           graph.nodes.get(key).parentKeys.push(parentKey);
           graph.edges.push({ from: parentKey, to: key, choiceLabel: choiceLabel || "" });
+          if (!graph.adjOut.has(parentKey)) graph.adjOut.set(parentKey, []);
+          graph.adjOut.get(parentKey).push(key);
         }
       }
       return graph.nodes.get(key);
@@ -168,7 +177,12 @@
 
     const queue = [startKey];
     const seen = new Set([startKey]);
+    let safety = 0;
     while (queue.length) {
+      if (++safety > 10000) {
+        console.warn("[AT] buildGraph safety break at 10000 iterations");
+        break;
+      }
       const key = queue.shift();
       const node = nodes[key];
       if (!node) continue;
@@ -184,6 +198,12 @@
       });
     }
 
+    console.log(
+      "[AT] buildGraph done in",
+      (performance.now() - t0).toFixed(1) + "ms",
+      "| nodes:", graph.nodes.size,
+      "| edges:", graph.edges.length
+    );
     return graph;
   }
 
@@ -194,18 +214,17 @@
   const MAX_VISIBLE = 300;
 
   function computeVisible(graph) {
+    if (!graph) return new Set();
     const visible = new Set();
-    if (!graph) return visible;
-
-    const adj = new Map();
-    graph.edges.forEach(e => {
-      if (!adj.has(e.from)) adj.set(e.from, []);
-      const arr = adj.get(e.from);
-      if (!arr.includes(e.to)) arr.push(e.to);
-    });
+    const adj = graph.adjOut;
 
     const queue = [graph.rootKey];
+    let safety = 0;
     while (queue.length) {
+      if (++safety > MAX_VISIBLE * 4) {
+        console.warn("[AT] computeVisible safety break");
+        break;
+      }
       const key = queue.shift();
       if (visible.has(key)) continue;
       visible.add(key);
@@ -220,22 +239,23 @@
   }
 
   function layoutGraph(graph) {
+    const t0 = performance.now();
     const positions = new Map();
     const visible = computeVisible(graph);
     if (!visible.size) return { positions, visible };
 
-    const adj = new Map();
-    graph.edges.forEach(e => {
-      if (!adj.has(e.from)) adj.set(e.from, []);
-      const arr = adj.get(e.from);
-      if (!arr.includes(e.to)) arr.push(e.to);
-    });
+    const adj = graph.adjOut;
 
     const depth = new Map();
     depth.set(graph.rootKey, 0);
     const bfs = [graph.rootKey];
     const bfsSeen = new Set([graph.rootKey]);
+    let safety = 0;
     while (bfs.length) {
+      if (++safety > MAX_VISIBLE * 4) {
+        console.warn("[AT] layoutGraph BFS safety break");
+        break;
+      }
       const k = bfs.shift();
       const d = depth.get(k) || 0;
       (adj.get(k) || []).forEach(nk => {
@@ -266,6 +286,11 @@
       });
     });
 
+    console.log(
+      "[AT] layoutGraph done in",
+      (performance.now() - t0).toFixed(1) + "ms",
+      "| visible:", visible.size
+    );
     return { positions, visible };
   }
 
@@ -319,122 +344,143 @@
   }
 
   function renderChart() {
-    const svg = $("atChartSvg");
-    const host = $("atChartHost");
-    const vp = $("atChartViewport");
-    if (!svg || !host || !vp) return;
-
-    if (!state.graph) {
-      svg.innerHTML = "";
-      host.querySelector(".at-chart-empty")?.remove();
-      const empty = document.createElement("div");
-      empty.className = "at-chart-empty";
-      empty.textContent = "Select a guide to load the flow chart.";
-      host.appendChild(empty);
+    if (state.renderInProgress) {
+      console.warn("[AT] renderChart re-entry blocked");
       return;
     }
-    host.querySelector(".at-chart-empty")?.remove();
+    state.renderInProgress = true;
+    try {
+      const t0 = performance.now();
+      console.log("[AT] renderChart starting");
 
-    const { positions, visible } = layoutGraph(state.graph);
+      const svg = $("atChartSvg");
+      const host = $("atChartHost");
+      const vp = $("atChartViewport");
+      if (!svg || !host || !vp) {
+        console.warn("[AT] renderChart: missing DOM elements");
+        return;
+      }
 
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    positions.forEach(({ x, y }, key) => {
-      if (!visible.has(key)) return;
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + NODE_W);
-      maxY = Math.max(maxY, y + NODE_H);
-    });
-    if (!isFinite(minX)) { minX = 0; minY = 0; maxX = NODE_W; maxY = NODE_H; }
+      if (!state.graph) {
+        svg.innerHTML = "";
+        host.querySelector(".at-chart-empty")?.remove();
+        const empty = document.createElement("div");
+        empty.className = "at-chart-empty";
+        empty.textContent = "Select a guide to load the flow chart.";
+        host.appendChild(empty);
+        return;
+      }
+      host.querySelector(".at-chart-empty")?.remove();
 
-    const rect = vp.getBoundingClientRect();
-    const vw = Math.max(320, rect.width);
-    const vh = Math.max(240, rect.height);
-    const pad = 30;
-    const contentW = maxX - minX;
-    const contentH = maxY - minY;
-    const baseScale = Math.min(
-      (vw - pad * 2) / Math.max(1, contentW),
-      (vh - pad * 2) / Math.max(1, contentH),
-      1
-    );
-    const scale = baseScale * state.zoom;
-    const tx = state.panX + (vw - contentW * scale) / 2 - minX * scale;
-    const ty = state.panY + (vh - contentH * scale) / 2 - minY * scale;
+      const { positions, visible } = layoutGraph(state.graph);
 
-    const edges = [];
-    const nodes = [];
-    const drawnEdge = new Set();
-
-    state.graph.edges.forEach(e => {
-      if (!visible.has(e.from) || !visible.has(e.to)) return;
-      const sig = `${e.from}→${e.to}`;
-      if (drawnEdge.has(sig)) return;
-      drawnEdge.add(sig);
-      const p1 = positions.get(e.from);
-      const p2 = positions.get(e.to);
-      if (!p1 || !p2) return;
-      const x1 = p1.x + NODE_W;
-      const y1 = p1.y + NODE_H / 2;
-      const x2 = p2.x;
-      const y2 = p2.y + NODE_H / 2;
-      const midX = (x1 + x2) / 2;
-      const path = `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`;
-      const isActive = state.activePathKeys.has(e.from) && state.activePathKeys.has(e.to);
-      edges.push(`<path class="at-edge${isActive ? " is-active" : ""}" d="${path}" />`);
-    });
-
-    positions.forEach(({ x, y }, key) => {
-      if (!visible.has(key)) return;
-      const meta = state.graph.nodes.get(key);
-      if (!meta) return;
-      const isRoot = key === state.graph.rootKey;
-      const isLeaf = meta.isLeaf;
-      const isSaved = state.savedLeaves.has(key);
-      const isActive = state.activeRecommendationKey === key;
-      const isExpanded = (key === graph.rootKey) || state.expanded.has(key);
-      const hasKids = state.graph.edges.some(e => e.from === key);
-
-      const classes = [
-        "at-node",
-        isRoot ? "at-node-start" : "",
-        isLeaf ? "at-node-leaf" : "",
-        isLeaf && isSaved ? "is-saved" : "",
-        isLeaf && isActive ? "is-active" : "",
-        hasKids && !isExpanded ? "at-node-collapsed" : ""
-      ].filter(Boolean).join(" ");
-
-      const title = isRoot ? "Start" : truncate(meta.label, 24);
-      const metaText = isLeaf
-        ? (isSaved ? "Templates saved" : "Edit templates")
-        : (hasKids ? (isExpanded ? "Click to collapse" : "Click to expand") : "");
-
-      nodes.push(`
-        <g class="${classes}" data-node-key="${esc(key)}" transform="translate(${x},${y})">
-          <rect x="0" y="0" width="${NODE_W}" height="${NODE_H}" rx="9" ry="9"
-                stroke-width="${isRoot ? 0 : 1}" />
-          <text class="at-node-title" x="11" y="18">${esc(title)}</text>
-          <text class="at-node-meta" x="11" y="31">${esc(metaText)}</text>
-          ${hasKids
-            ? `<text class="at-node-toggle" x="${NODE_W - 14}" y="${NODE_H - 11}" text-anchor="middle">${isExpanded ? "−" : "+"}</text>`
-            : ""}
-        </g>
-      `);
-    });
-
-    svg.innerHTML = `
-      <g transform="translate(${tx},${ty}) scale(${scale})">
-        ${edges.join("")}
-        ${nodes.join("")}
-      </g>
-    `;
-
-    svg.querySelectorAll("[data-node-key]").forEach(g => {
-      g.addEventListener("click", (event) => {
-        event.stopPropagation();
-        handleChartNodeClick(g.dataset.nodeKey);
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      positions.forEach(({ x, y }, key) => {
+        if (!visible.has(key)) return;
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x + NODE_W);
+        maxY = Math.max(maxY, y + NODE_H);
       });
-    });
+      if (!isFinite(minX)) { minX = 0; minY = 0; maxX = NODE_W; maxY = NODE_H; }
+
+      const rect = vp.getBoundingClientRect();
+      const vw = Math.max(320, rect.width);
+      const vh = Math.max(240, rect.height);
+      const pad = 30;
+      const contentW = maxX - minX;
+      const contentH = maxY - minY;
+      const baseScale = Math.min(
+        (vw - pad * 2) / Math.max(1, contentW),
+        (vh - pad * 2) / Math.max(1, contentH),
+        1
+      );
+      const scale = baseScale * state.zoom;
+      const tx = state.panX + (vw - contentW * scale) / 2 - minX * scale;
+      const ty = state.panY + (vh - contentH * scale) / 2 - minY * scale;
+
+      const edges = [];
+      const nodes = [];
+      const drawnEdge = new Set();
+
+      state.graph.edges.forEach(e => {
+        if (!visible.has(e.from) || !visible.has(e.to)) return;
+        const sig = `${e.from}→${e.to}`;
+        if (drawnEdge.has(sig)) return;
+        drawnEdge.add(sig);
+        const p1 = positions.get(e.from);
+        const p2 = positions.get(e.to);
+        if (!p1 || !p2) return;
+        const x1 = p1.x + NODE_W;
+        const y1 = p1.y + NODE_H / 2;
+        const x2 = p2.x;
+        const y2 = p2.y + NODE_H / 2;
+        const midX = (x1 + x2) / 2;
+        const path = `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`;
+        const isActive = state.activePathKeys.has(e.from) && state.activePathKeys.has(e.to);
+        edges.push(`<path class="at-edge${isActive ? " is-active" : ""}" d="${path}" />`);
+      });
+
+      positions.forEach(({ x, y }, key) => {
+        if (!visible.has(key)) return;
+        const meta = state.graph.nodes.get(key);
+        if (!meta) return;
+        const isRoot = key === state.graph.rootKey;
+        const isLeaf = meta.isLeaf;
+        const isSaved = state.savedLeaves.has(key);
+        const isActive = state.activeRecommendationKey === key;
+        const isExpanded = (key === state.graph.rootKey) || state.expanded.has(key);
+        const hasKids = (state.graph.adjOut.get(key) || []).length > 0;
+
+        const classes = [
+          "at-node",
+          isRoot ? "at-node-start" : "",
+          isLeaf ? "at-node-leaf" : "",
+          isLeaf && isSaved ? "is-saved" : "",
+          isLeaf && isActive ? "is-active" : "",
+          hasKids && !isExpanded ? "at-node-collapsed" : ""
+        ].filter(Boolean).join(" ");
+
+        const title = isRoot ? "Start" : truncate(meta.label, 24);
+        const metaText = isLeaf
+          ? (isSaved ? "Templates saved" : "Edit templates")
+          : (hasKids ? (isExpanded ? "Click to collapse" : "Click to expand") : "");
+
+        nodes.push(`
+          <g class="${classes}" data-node-key="${esc(key)}" transform="translate(${x},${y})">
+            <rect x="0" y="0" width="${NODE_W}" height="${NODE_H}" rx="9" ry="9"
+                  stroke-width="${isRoot ? 0 : 1}" />
+            <text class="at-node-title" x="11" y="18">${esc(title)}</text>
+            <text class="at-node-meta" x="11" y="31">${esc(metaText)}</text>
+            ${hasKids
+              ? `<text class="at-node-toggle" x="${NODE_W - 14}" y="${NODE_H - 11}" text-anchor="middle">${isExpanded ? "−" : "+"}</text>`
+              : ""}
+          </g>
+        `);
+      });
+
+      svg.innerHTML = `
+        <g transform="translate(${tx},${ty}) scale(${scale})">
+          ${edges.join("")}
+          ${nodes.join("")}
+        </g>
+      `;
+
+      svg.querySelectorAll("[data-node-key]").forEach(g => {
+        g.addEventListener("click", (event) => {
+          event.stopPropagation();
+          handleChartNodeClick(g.dataset.nodeKey);
+        });
+      });
+
+      console.log(
+        "[AT] renderChart done in",
+        (performance.now() - t0).toFixed(1) + "ms",
+        "| drawn nodes:", nodes.length, "| edges:", edges.length
+      );
+    } finally {
+      state.renderInProgress = false;
+    }
   }
 
   function handleChartNodeClick(key) {
@@ -455,9 +501,12 @@
   function computeActivePathTo(key) {
     const path = new Set();
     if (!state.graph) return path;
+    const adj = state.graph.adjOut;
     const queue = [{ k: state.graph.rootKey, chain: [state.graph.rootKey] }];
     const visited = new Set();
+    let safety = 0;
     while (queue.length) {
+      if (++safety > 5000) break;
       const { k, chain } = queue.shift();
       if (k === key) {
         chain.forEach(n => path.add(n));
@@ -465,8 +514,8 @@
       }
       if (visited.has(k)) continue;
       visited.add(k);
-      state.graph.edges.filter(e => e.from === k).forEach(e => {
-        if (!visited.has(e.to)) queue.push({ k: e.to, chain: [...chain, e.to] });
+      (adj.get(k) || []).forEach(nk => {
+        if (!visited.has(nk)) queue.push({ k: nk, chain: [...chain, nk] });
       });
     }
     return path;
@@ -639,6 +688,7 @@
   }
 
   async function precheckSavedTemplates() {
+    console.log("[AT] precheckSavedTemplates starting");
     const guide = state.guides.find(g => g.id === state.activeGuideId);
     const db = firestore();
     if (!guide || !db) return;
@@ -656,6 +706,7 @@
       state.recommendations.forEach(r => {
         if (present.has(r.normalized)) state.savedLeaves.add(r.key);
       });
+      console.log("[AT] precheckSavedTemplates done, savedLeaves:", state.savedLeaves.size);
       if (state.view === "chart") renderChart();
     } catch (err) {
       console.info("Precheck skipped:", err.code || err.message);
@@ -780,6 +831,7 @@
   }
 
   function setView(view) {
+    console.log("[AT] setView:", view);
     state.view = view === "chart" ? "chart" : "list";
     try { localStorage.setItem("at_view", state.view); } catch (_) {}
 
@@ -799,7 +851,27 @@
     if (leftTitle) leftTitle.textContent = state.view === "chart" ? "Visual decision tree" : "Select a recommendation";
 
     if (state.view === "chart") {
-      requestAnimationFrame(() => renderChart());
+      // Only render if a graph is loaded — prevents infinite render on no-guide
+      if (state.graph) {
+        requestAnimationFrame(() => {
+          console.log("[AT] rAF renderChart firing");
+          renderChart();
+        });
+      } else {
+        // Show placeholder empty chart
+        requestAnimationFrame(() => {
+          const svg = $("atChartSvg");
+          const host = $("atChartHost");
+          if (svg) svg.innerHTML = "";
+          if (host) {
+            host.querySelector(".at-chart-empty")?.remove();
+            const empty = document.createElement("div");
+            empty.className = "at-chart-empty";
+            empty.textContent = "Select a guide to load the flow chart.";
+            host.appendChild(empty);
+          }
+        });
+      }
     }
   }
 
@@ -866,17 +938,19 @@
   }
 
   function init() {
-    populateGuideSelect();
+    console.log("[AT] init starting");
 
-    try {
-      const saved = localStorage.getItem("at_view");
-      state.view = saved === "chart" ? "chart" : "list";
-    } catch (_) { state.view = "list"; }
+    // IMPORTANT: force list view on boot to prevent
+    // chart render before graph exists
+    state.view = "list";
+    try { localStorage.setItem("at_view", "list"); } catch (_) {}
+
+    populateGuideSelect();
 
     document.querySelectorAll(".at-view-btn").forEach(btn => {
       btn.addEventListener("click", () => setView(btn.dataset.view));
     });
-    setView(state.view);
+    setView("list");
 
     const select = $("atGuideSelect");
     if (select) select.addEventListener("change", onGuideChange);
@@ -894,9 +968,11 @@
     window.addEventListener("resize", () => {
       clearTimeout(resizeT);
       resizeT = setTimeout(() => {
-        if (state.view === "chart") renderChart();
+        if (state.view === "chart" && state.graph) renderChart();
       }, 120);
     });
+
+    console.log("[AT] init done");
   }
 
   if (document.readyState === "loading") {
