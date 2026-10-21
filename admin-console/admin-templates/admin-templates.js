@@ -6,9 +6,6 @@
 (() => {
   "use strict";
 
-  /* ------------------------------------------------------------
-     CONFIG
-     ------------------------------------------------------------ */
   const CONFIG = {
     manifest: () => Array.isArray(window.GUIDE_FLOW_MANIFEST) ? window.GUIDE_FLOW_MANIFEST : []
   };
@@ -21,9 +18,6 @@
     return root.replace(/\/+$/, "/") + p.replace(/^\/+/, "");
   }
 
-  /* ------------------------------------------------------------
-     STATE
-     ------------------------------------------------------------ */
   const state = {
     guides: [],
     flowCache: {},
@@ -31,22 +25,16 @@
     activeRecommendationKey: "",
     recommendations: [],
     loadedTemplates: { comment: "", corr: "", email: "" },
-    firebaseReady: false,
-
     graph: null,
     expanded: new Set(),
     activePathKeys: new Set(),
     view: "list",
     savedLeaves: new Set(),
-
     zoom: 1,
     panX: 20,
     panY: 20
   };
 
-  /* ------------------------------------------------------------
-     HELPERS
-     ------------------------------------------------------------ */
   const $ = id => document.getElementById(id);
 
   function esc(v) {
@@ -87,9 +75,6 @@
     return null;
   }
 
-  /* ------------------------------------------------------------
-     FLOW LOADING
-     ------------------------------------------------------------ */
   const loadedScriptPaths = new Set();
 
   function injectScriptOnce(src) {
@@ -137,9 +122,6 @@
     return snapshot;
   }
 
-  /* ------------------------------------------------------------
-     EXTRACT FINAL RECOMMENDATIONS (LIST VIEW)
-     ------------------------------------------------------------ */
   function extractRecommendations(nodes) {
     const out = [];
     Object.entries(nodes).forEach(([key, node]) => {
@@ -152,15 +134,12 @@
     return out;
   }
 
-  /* ------------------------------------------------------------
-     BUILD GRAPH (deduped edges — DAG-safe)
-     ------------------------------------------------------------ */
   function buildGraph(nodes, startKey) {
     const graph = {
       rootKey: startKey,
       nodes: new Map(),
       edges: [],
-      edgeSet: new Set()   // "from→to" dedupe
+      edgeSet: new Set()
     };
 
     function ensure(key, parentKey, choiceLabel) {
@@ -170,7 +149,6 @@
           key,
           node,
           label: finalTextOf(node) || node?.text || node?.question || key,
-          meta: isFinalNode(node) ? "Final" : `${(node.choices || []).length} choice${(node.choices || []).length === 1 ? "" : "s"}`,
           isLeaf: isFinalNode(node),
           parentKeys: []
         });
@@ -209,111 +187,94 @@
     return graph;
   }
 
-  /* ------------------------------------------------------------
-     VISIBILITY + LAYOUT (cycle-safe, DAG-safe)
-     ------------------------------------------------------------ */
-  const NODE_W = 190;
-  const NODE_H = 46;
-  const H_GAP = 26;
-  const V_GAP = 14;
+  const NODE_W = 170;
+  const NODE_H = 42;
+  const COL_GAP = 60;
+  const ROW_GAP = 12;
+  const MAX_VISIBLE = 300;
 
-  function computeVisibleSubtree(graph) {
+  function computeVisible(graph) {
     const visible = new Set();
     if (!graph) return visible;
 
-    // Deduplicated adjacency for visibility walking.
     const adj = new Map();
     graph.edges.forEach(e => {
       if (!adj.has(e.from)) adj.set(e.from, []);
-      adj.get(e.from).push(e.to);
-    });
-    adj.forEach(arr => {
-      const seen = new Set();
-      for (let i = arr.length - 1; i >= 0; i--) {
-        if (seen.has(arr[i])) arr.splice(i, 1);
-        else seen.add(arr[i]);
-      }
+      const arr = adj.get(e.from);
+      if (!arr.includes(e.to)) arr.push(e.to);
     });
 
-    function walk(key, parentExpanded) {
-      if (visible.has(key)) return;
+    const queue = [graph.rootKey];
+    while (queue.length) {
+      const key = queue.shift();
+      if (visible.has(key)) continue;
       visible.add(key);
-      if (!parentExpanded) return;
-      const kids = adj.get(key) || [];
-      kids.forEach(k => walk(k, state.expanded.has(key)));
+      if (visible.size >= MAX_VISIBLE) break;
+      const isExpanded = (key === graph.rootKey) || state.expanded.has(key);
+      if (!isExpanded) continue;
+      (adj.get(key) || []).forEach(k => {
+        if (!visible.has(k)) queue.push(k);
+      });
     }
-    walk(graph.rootKey, true);
     return visible;
   }
 
   function layoutGraph(graph) {
     const positions = new Map();
-    const visible = computeVisibleSubtree(graph);
+    const visible = computeVisible(graph);
+    if (!visible.size) return { positions, visible };
 
-    // Deduplicated child resolution + cache.
-    const childCache = new Map();
-    const childrenOf = (key) => {
-      if (childCache.has(key)) return childCache.get(key);
-      const seen = new Set();
-      const out = [];
-      graph.edges.forEach(e => {
-        if (e.from !== key) return;
-        if (!visible.has(e.to)) return;
-        if (seen.has(e.to)) return;
-        seen.add(e.to);
-        out.push(e.to);
-      });
-      childCache.set(key, out);
-      return out;
-    };
+    const adj = new Map();
+    graph.edges.forEach(e => {
+      if (!adj.has(e.from)) adj.set(e.from, []);
+      const arr = adj.get(e.from);
+      if (!arr.includes(e.to)) arr.push(e.to);
+    });
 
-    // Cycle-safe, memoised subtree height.
-    const heights = new Map();
-    const inStack = new Set();
-    function heightOf(key) {
-      if (heights.has(key)) return heights.get(key);
-      if (inStack.has(key)) return NODE_H;
-      inStack.add(key);
-      const kids = childrenOf(key);
-      let h;
-      if (!kids.length) {
-        h = NODE_H;
-      } else {
-        const sum = kids.reduce((acc, k) => acc + heightOf(k), 0) + V_GAP * (kids.length - 1);
-        h = Math.max(NODE_H, sum);
-      }
-      inStack.delete(key);
-      heights.set(key, h);
-      return h;
-    }
-
-    // Place each node exactly once (DAG nodes appear once).
-    const placed = new Set();
-    function place(key, x, y) {
-      if (placed.has(key)) return;
-      placed.add(key);
-      positions.set(key, { x, y });
-      const kids = childrenOf(key);
-      if (!kids.length) return;
-      const totalH = kids.reduce((acc, k) => acc + heightOf(k), 0) + V_GAP * (kids.length - 1);
-      let cursorY = y + heightOf(key) / 2 - totalH / 2;
-      kids.forEach(k => {
-        const childH = heightOf(k);
-        const childY = cursorY + childH / 2;
-        place(k, x + NODE_W + H_GAP, childY);
-        cursorY += childH + V_GAP;
+    const depth = new Map();
+    depth.set(graph.rootKey, 0);
+    const bfs = [graph.rootKey];
+    const bfsSeen = new Set([graph.rootKey]);
+    while (bfs.length) {
+      const k = bfs.shift();
+      const d = depth.get(k) || 0;
+      (adj.get(k) || []).forEach(nk => {
+        if (!visible.has(nk)) return;
+        if (!depth.has(nk)) depth.set(nk, d + 1);
+        if (!bfsSeen.has(nk)) { bfsSeen.add(nk); bfs.push(nk); }
       });
     }
 
-    heightOf(graph.rootKey);
-    place(graph.rootKey, 0, 0);
+    const buckets = new Map();
+    visible.forEach(k => {
+      const d = depth.has(k) ? depth.get(k) : 0;
+      if (!buckets.has(d)) buckets.set(d, []);
+      buckets.get(d).push(k);
+    });
 
-    return { positions, heights, visible };
+    const depths = Array.from(buckets.keys()).sort((a, b) => a - b);
+    let maxRows = 0;
+    depths.forEach(d => { maxRows = Math.max(maxRows, buckets.get(d).length); });
+    const totalH = maxRows * (NODE_H + ROW_GAP);
+
+    depths.forEach(d => {
+      const keys = buckets.get(d);
+      const x = d * (NODE_W + COL_GAP);
+      const startY = (totalH - keys.length * (NODE_H + ROW_GAP)) / 2;
+      keys.forEach((k, i) => {
+        positions.set(k, { x, y: startY + i * (NODE_H + ROW_GAP) });
+      });
+    });
+
+    return { positions, visible };
   }
 
-  /* ------------------------------------------------------------
-     RENDER — GUIDE DROPDOWN
-     ------------------------------------------------------------ */
+  function truncate(str, max) {
+    const s = String(str || "");
+    if (s.length <= max) return s;
+    return s.slice(0, max - 1).trim() + "…";
+  }
+
   function populateGuideSelect() {
     const select = $("atGuideSelect");
     if (!select) return;
@@ -330,9 +291,6 @@
     select.disabled = false;
   }
 
-  /* ------------------------------------------------------------
-     RENDER — LIST VIEW
-     ------------------------------------------------------------ */
   function renderRecommendationList() {
     const list = $("atRecommendationList");
     const count = $("atRecommendationCount");
@@ -360,9 +318,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     RENDER — CHART VIEW
-     ------------------------------------------------------------ */
   function renderChart() {
     const svg = $("atChartSvg");
     const host = $("atChartHost");
@@ -395,7 +350,7 @@
     const rect = vp.getBoundingClientRect();
     const vw = Math.max(320, rect.width);
     const vh = Math.max(240, rect.height);
-    const pad = 40;
+    const pad = 30;
     const contentW = maxX - minX;
     const contentH = maxY - minY;
     const baseScale = Math.min(
@@ -409,9 +364,8 @@
 
     const edges = [];
     const nodes = [];
-
-    // Edges — dedupe at draw time too, in case cache holds a pre-dedupe graph.
     const drawnEdge = new Set();
+
     state.graph.edges.forEach(e => {
       if (!visible.has(e.from) || !visible.has(e.to)) return;
       const sig = `${e.from}→${e.to}`;
@@ -438,7 +392,7 @@
       const isLeaf = meta.isLeaf;
       const isSaved = state.savedLeaves.has(key);
       const isActive = state.activeRecommendationKey === key;
-      const isExpanded = state.expanded.has(key);
+      const isExpanded = (key === graph.rootKey) || state.expanded.has(key);
       const hasKids = state.graph.edges.some(e => e.from === key);
 
       const classes = [
@@ -450,19 +404,19 @@
         hasKids && !isExpanded ? "at-node-collapsed" : ""
       ].filter(Boolean).join(" ");
 
-      const title = isRoot ? "Start" : truncate(meta.label, 26);
+      const title = isRoot ? "Start" : truncate(meta.label, 24);
       const metaText = isLeaf
         ? (isSaved ? "Templates saved" : "Edit templates")
         : (hasKids ? (isExpanded ? "Click to collapse" : "Click to expand") : "");
 
       nodes.push(`
         <g class="${classes}" data-node-key="${esc(key)}" transform="translate(${x},${y})">
-          <rect x="0" y="0" width="${NODE_W}" height="${NODE_H}" rx="10" ry="10"
+          <rect x="0" y="0" width="${NODE_W}" height="${NODE_H}" rx="9" ry="9"
                 stroke-width="${isRoot ? 0 : 1}" />
-          <text class="at-node-title" x="12" y="19">${esc(title)}</text>
-          <text class="at-node-meta" x="12" y="33">${esc(metaText)}</text>
+          <text class="at-node-title" x="11" y="18">${esc(title)}</text>
+          <text class="at-node-meta" x="11" y="31">${esc(metaText)}</text>
           ${hasKids
-            ? `<text class="at-node-toggle" x="${NODE_W - 16}" y="${NODE_H - 12}" text-anchor="middle">${isExpanded ? "−" : "+"}</text>`
+            ? `<text class="at-node-toggle" x="${NODE_W - 14}" y="${NODE_H - 11}" text-anchor="middle">${isExpanded ? "−" : "+"}</text>`
             : ""}
         </g>
       `);
@@ -483,15 +437,6 @@
     });
   }
 
-  function truncate(str, max) {
-    const s = String(str || "");
-    if (s.length <= max) return s;
-    return s.slice(0, max - 1).trim() + "…";
-  }
-
-  /* ------------------------------------------------------------
-     CHART INTERACTION
-     ------------------------------------------------------------ */
   function handleChartNodeClick(key) {
     const meta = state.graph?.nodes.get(key);
     if (!meta) return;
@@ -536,9 +481,6 @@
     return path;
   }
 
-  /* ------------------------------------------------------------
-     SELECT RECOMMENDATION
-     ------------------------------------------------------------ */
   function selectRecommendation(key) {
     if (!key) return;
     state.activeRecommendationKey = key;
@@ -556,9 +498,6 @@
     loadRecommendationTemplates();
   }
 
-  /* ------------------------------------------------------------
-     NODE PREVIEW (middle nodes)
-     ------------------------------------------------------------ */
   function showNodePreview(key) {
     const meta = state.graph?.nodes.get(key);
     const preview = $("atNodePreview");
@@ -608,9 +547,6 @@
     if (preview) { preview.hidden = true; preview.innerHTML = ""; }
   }
 
-  /* ------------------------------------------------------------
-     EDITOR VISIBILITY
-     ------------------------------------------------------------ */
   function showEditor(show) {
     const body = $("atEditorBody");
     const ph = $("atEditorPlaceholder");
@@ -634,9 +570,6 @@
     el.textContent = `IDs: comment__${normalized} · corr__${normalized} · email__${normalized}`;
   }
 
-  /* ------------------------------------------------------------
-     LOAD TEMPLATES FOR RECOMMENDATION
-     ------------------------------------------------------------ */
   async function loadRecommendationTemplates() {
     const guide = state.guides.find(g => g.id === state.activeGuideId);
     const rec = state.recommendations.find(r => r.key === state.activeRecommendationKey);
@@ -705,9 +638,6 @@
     if (reset) reset.disabled = disabled;
   }
 
-  /* ------------------------------------------------------------
-     PRE-CHECK WHICH LEAVES ALREADY HAVE TEMPLATES
-     ------------------------------------------------------------ */
   async function precheckSavedTemplates() {
     const guide = state.guides.find(g => g.id === state.activeGuideId);
     const db = firestore();
@@ -732,9 +662,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     SAVE / RESET
-     ------------------------------------------------------------ */
   async function saveTemplates() {
     const guide = state.guides.find(g => g.id === state.activeGuideId);
     const rec = state.recommendations.find(r => r.key === state.activeRecommendationKey);
@@ -784,9 +711,6 @@
     showToast("Editor reset to last saved values.");
   }
 
-  /* ------------------------------------------------------------
-     GUIDE CHANGE
-     ------------------------------------------------------------ */
   async function onGuideChange() {
     const select = $("atGuideSelect");
     const guideId = select ? select.value : "";
@@ -814,7 +738,6 @@
     state.recommendations = [];
     state.activeRecommendationKey = "";
     state.savedLeaves = new Set();
-    // Force graph rebuild with dedupe even if cache holds an old graph.
     delete state.flowCache[guideId];
 
     const meta = $("atGuideMeta");
@@ -856,9 +779,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     VIEW TOGGLE
-     ------------------------------------------------------------ */
   function setView(view) {
     state.view = view === "chart" ? "chart" : "list";
     try { localStorage.setItem("at_view", state.view); } catch (_) {}
@@ -883,9 +803,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     PAN / ZOOM
-     ------------------------------------------------------------ */
   function setupPanZoom() {
     const vp = $("atChartViewport");
     if (!vp) return;
@@ -906,10 +823,7 @@
       state.panX = startPanX + (e.clientX - startX);
       state.panY = startPanY + (e.clientY - startY);
       if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        renderChart();
-      });
+      rafId = requestAnimationFrame(() => { rafId = 0; renderChart(); });
     });
     window.addEventListener("mouseup", () => {
       dragging = false;
@@ -922,10 +836,7 @@
       const direction = e.deltaY > 0 ? 0.9 : 1.1;
       state.zoom = Math.max(0.35, Math.min(2.4, state.zoom * direction));
       if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        renderChart();
-      });
+      rafId = requestAnimationFrame(() => { rafId = 0; renderChart(); });
     }, { passive: false });
   }
 
@@ -954,9 +865,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     BOOT
-     ------------------------------------------------------------ */
   function init() {
     populateGuideSelect();
 
@@ -989,8 +897,6 @@
         if (state.view === "chart") renderChart();
       }, 120);
     });
-
-    state.firebaseReady = !!firestore();
   }
 
   if (document.readyState === "loading") {
