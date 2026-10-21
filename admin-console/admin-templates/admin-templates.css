@@ -1,44 +1,18 @@
 /* ============================================================
    ADMIN TEMPLATES MANAGEMENT
-   admin-console/admin-templates/admin-templates.css
    ============================================================ */
 
 #adminHeader, #adminHeader * { box-sizing: border-box; }
 
 .at-main {
   margin-left: var(--admin-sidebar-width);
-  padding: 90px 22px 40px;
+  padding: 80px 22px 40px;
   min-height: 100vh;
   background: #f7f7fb;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   color: #17174b;
 }
 
-/* HEADING */
-.at-heading { margin-bottom: 14px; }
-.at-eyebrow {
-  display: block;
-  color: #6b4df5;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .12em;
-}
-.at-heading h1 {
-  margin: 4px 0 3px;
-  font-size: 22px;
-  line-height: 1.2;
-  font-weight: 800;
-  color: #111526;
-  letter-spacing: -.3px;
-}
-.at-heading p {
-  margin: 0;
-  color: #6c7488;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-/* GUIDE PICKER + VIEW TOGGLE */
 .at-guide-picker {
   display: flex;
   align-items: center;
@@ -49,6 +23,7 @@
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(33,25,85,.04);
+  flex-wrap: wrap;
 }
 .at-guide-picker label {
   font-size: 10px;
@@ -57,9 +32,16 @@
   text-transform: uppercase;
   letter-spacing: .06em;
 }
+.at-guide-picker label[for="atCategorySelect"],
+.at-guide-picker label[for="atGuideSelect"] {
+  margin-left: 8px;
+}
+.at-guide-picker label[for="atCategorySelect"]:first-of-type {
+  margin-left: 0;
+}
 .at-guide-picker select {
   height: 32px;
-  min-width: 220px;
+  min-width: 180px;
   padding: 0 10px;
   border: 1px solid #dfe2eb;
   border-radius: 7px;
@@ -67,6 +49,13 @@
   color: #232a3b;
   font-size: 11px;
   outline: 0;
+}
+.at-guide-picker select#atGuideSelect {
+  min-width: 260px;
+}
+.at-guide-picker select:disabled {
+  opacity: .6;
+  cursor: not-allowed;
 }
 .at-guide-picker select:focus {
   border-color: #c9c2f4;
@@ -122,7 +111,6 @@
   box-shadow: 0 1px 4px rgba(33,25,85,.1);
 }
 
-/* WORKSPACE GRID */
 .at-workspace {
   display: grid;
   grid-template-columns: minmax(300px, 1fr) minmax(0, 1fr);
@@ -175,7 +163,6 @@
   white-space: nowrap;
 }
 
-/* RECOMMENDATION LIST */
 .at-rec-list {
   flex: 1 1 auto;
   min-height: 0;
@@ -232,7 +219,6 @@
   font-size: 9px;
 }
 
-/* CHART HOST */
 .at-chart-host {
   display: flex;
   flex-direction: column;
@@ -306,10 +292,7 @@
   overflow: visible;
 }
 
-/* chart node styles */
-.at-node {
-  cursor: pointer;
-}
+.at-node { cursor: pointer; }
 .at-node rect {
   transition: stroke .15s ease, fill .15s ease, filter .15s ease;
 }
@@ -381,7 +364,6 @@
   font-size: 11px;
 }
 
-/* EDITOR */
 .at-editor-subtitle {
   margin: 3px 0 0;
   color: #7a8196;
@@ -452,7 +434,6 @@
   flex: 0 0 auto;
 }
 
-/* NODE PREVIEW (middle node) */
 .at-node-preview {
   flex: 1 1 auto;
   overflow-y: auto;
@@ -553,7 +534,6 @@
   font-size: 9px;
 }
 
-/* BUTTONS */
 .at-btn {
   display: inline-flex;
   align-items: center;
@@ -589,7 +569,6 @@
   stroke-linejoin: round;
 }
 
-/* PLACEHOLDER */
 .at-editor-placeholder {
   flex: 1 1 auto;
   padding: 60px 20px;
@@ -619,7 +598,6 @@
   color: #8b95a7;
 }
 
-/* EMPTY */
 .at-empty {
   padding: 20px 12px;
   color: #8b95a7;
@@ -627,7 +605,6 @@
   text-align: center;
 }
 
-/* TOAST */
 .at-toast {
   position: fixed;
   right: 22px;
@@ -650,28 +627,26 @@
 .at-toast.show { opacity: 1; transform: translateY(0); }
 .at-toast.error { background: #b3232f; }
 
-/* RESPONSIVE */
 @media (max-width: 980px) {
   .at-workspace { grid-template-columns: 1fr; }
   .at-panel { min-height: 420px; }
 }
 @media (max-width: 900px) {
-  .at-main { margin-left: 225px; padding: 84px 18px 30px; }
+  .at-main { margin-left: 225px; padding: 76px 18px 30px; }
 }
 @media (max-width: 720px) {
-  .at-main { margin-left: 70px; padding: 76px 14px 24px; }
-  .at-guide-picker { flex-wrap: wrap; }
-  .at-guide-picker select { min-width: 0; width: 100%; }
+  .at-main { margin-left: 70px; padding: 68px 14px 24px; }
+  .at-guide-picker select,
+  .at-guide-picker select#atGuideSelect { width: 100%; min-width: 0; }
   .at-guide-meta { width: 100%; }
   .at-view-toggle { margin-left: auto; }
 }
 @media (max-width: 520px) {
-  .at-main { padding: 72px 10px 20px; }
+  .at-main { padding: 64px 10px 20px; }
   .at-editor-footer { flex-direction: column; align-items: stretch; }
   .at-editor-actions { justify-content: flex-end; }
 }
 
-/* Fullscreen chart host */
 .at-chart-host:fullscreen,
 .at-chart-host:-webkit-full-screen {
   background: #fcfcff;
@@ -693,9 +668,6 @@
   min-height: 0;
 }
 
-/* ------------------------------------------------------------
-   HOVER TOOLTIP
-   ------------------------------------------------------------ */
 .at-hover-tip {
   position: fixed;
   z-index: 500;
@@ -764,9 +736,7 @@
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.at-hover-tip .at-tip-choice {
-  margin-top: 5px;
-}
+.at-hover-tip .at-tip-choice { margin-top: 5px; }
 .at-hover-tip .at-tip-choice-label {
   color: #fff;
   font-weight: 700;
@@ -788,9 +758,6 @@
   font-family: "Consolas", "Monaco", monospace;
 }
 
-/* ------------------------------------------------------------
-   FULLSCREEN OVERLAYS (editor + node preview)
-   ------------------------------------------------------------ */
 .at-fs-editor {
   position: absolute;
   inset: 0;
@@ -811,7 +778,14 @@
   border-radius: 12px;
   box-shadow: 0 24px 60px rgba(23,23,75,.35);
   overflow: hidden;
+  position: relative;
+  user-select: none;
 }
+.at-fs-editor-panel .at-fs-editor-body,
+.at-fs-editor-panel .at-fs-editor-foot { user-select: auto; }
+.at-fs-editor-panel #fsDragHandle { cursor: grab; }
+.at-fs-editor-panel #fsDragHandle:active { cursor: grabbing; }
+
 .at-fs-editor-head {
   display: flex;
   align-items: flex-start;
@@ -909,7 +883,6 @@
 }
 .at-fs-editor-actions { display: flex; gap: 8px; }
 
-/* Node preview in fullscreen */
 .at-fs-np-help {
   margin: 0 0 10px;
   color: #5c6180;
@@ -964,52 +937,4 @@
   font-size: 9px;
 }
 
-/* Hover tip inside fullscreen host */
-.at-hover-tip.is-in-host {
-  position: absolute;
-}
-
-/* Draggable fullscreen editor panel */
-.at-fs-editor-panel {
-  position: relative;
-  user-select: none;
-}
-.at-fs-editor-panel .at-fs-editor-body,
-.at-fs-editor-panel .at-fs-editor-foot {
-  user-select: auto;
-}
-.at-fs-editor-panel #fsDragHandle {
-  cursor: grab;
-}
-.at-fs-editor-panel #fsDragHandle:active {
-  cursor: grabbing;
-}
-
-/* Category + guide picker layout */
-.at-guide-picker {
-  flex-wrap: wrap;
-}
-.at-guide-picker label[for="atCategorySelect"],
-.at-guide-picker label[for="atGuideSelect"] {
-  margin-left: 8px;
-}
-.at-guide-picker label[for="atCategorySelect"]:first-of-type {
-  margin-left: 0;
-}
-.at-guide-picker select {
-  min-width: 180px;
-}
-.at-guide-picker select#atGuideSelect {
-  min-width: 260px;
-}
-.at-guide-picker select:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-@media (max-width: 720px) {
-  .at-guide-picker select,
-  .at-guide-picker select#atGuideSelect {
-    width: 100%;
-    min-width: 0;
-  }
-}
+.at-hover-tip.is-in-host { position: absolute; }
