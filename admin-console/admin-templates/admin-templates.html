@@ -16,48 +16,35 @@
 
   <main class="at-main">
 
-    <!-- PAGE HEADING -->
-    <section class="at-heading">
-      <div>
-        <span class="at-eyebrow">TEMPLATES MANAGEMENT</span>
-        <h1>Suggested Templates</h1>
-        <p>
-          Edit the Comment, CORR Code, and Email that appear when a guide
-          reaches a final recommendation.
-        </p>
+    <!-- GUIDE PICKER + VIEW TOGGLE -->
+    <section class="at-guide-picker">
+      <label for="atCategorySelect">Category</label>
+      <select id="atCategorySelect" aria-label="Select category">
+        <option value="">All categories</option>
+      </select>
+
+      <label for="atGuideSelect">Guide</label>
+      <select id="atGuideSelect" aria-label="Select guide" disabled>
+        <option value="">Select a category first…</option>
+      </select>
+
+      <span class="at-guide-meta" id="atGuideMeta"></span>
+
+      <div class="at-view-toggle" role="tablist" aria-label="View mode">
+        <button type="button" class="at-view-btn" data-view="list" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          List
+        </button>
+        <button type="button" class="at-view-btn" data-view="chart" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 7l-1 3M14 17l-1-3M17 12h-3"/></svg>
+          Chart
+        </button>
       </div>
     </section>
-
-    <!-- GUIDE PICKER + VIEW TOGGLE -->
-<section class="at-guide-picker">
-  <label for="atCategorySelect">Category</label>
-  <select id="atCategorySelect" aria-label="Select category">
-    <option value="">All categories</option>
-  </select>
-
-  <label for="atGuideSelect">Guide</label>
-  <select id="atGuideSelect" aria-label="Select guide" disabled>
-    <option value="">Select a category first…</option>
-  </select>
-
-  <span class="at-guide-meta" id="atGuideMeta"></span>
-
-  <div class="at-view-toggle" role="tablist" aria-label="View mode">
-    <button type="button" class="at-view-btn" data-view="list" role="tab" aria-selected="false">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      List
-    </button>
-    <button type="button" class="at-view-btn" data-view="chart" role="tab" aria-selected="false">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 7l-1 3M14 17l-1-3M17 12h-3"/></svg>
-      Chart
-    </button>
-  </div>
-</section>
 
     <!-- TWO PANEL WORKSPACE -->
     <section class="at-workspace" id="atWorkspace">
 
-      <!-- LEFT: LIST VIEW / CHART VIEW -->
       <aside class="at-panel at-left-panel" aria-label="Recommendations">
         <header class="at-panel-head">
           <div>
@@ -67,26 +54,24 @@
           <span class="at-count" id="atRecommendationCount">—</span>
         </header>
 
-        <!-- LIST VIEW -->
         <div class="at-rec-list" id="atRecommendationList">
           <p class="at-empty">Select a guide to load its recommendations.</p>
         </div>
 
-        <!-- CHART VIEW -->
         <div class="at-chart-host" id="atChartHost" hidden>
           <div class="at-chart-toolbar">
             <div class="at-chart-hint">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
               Drag to pan · scroll to zoom · click a node to expand
             </div>
-<div class="at-chart-controls">
-  <button type="button" class="at-chart-btn" id="atZoomOut" aria-label="Zoom out">−</button>
-  <button type="button" class="at-chart-btn" id="atZoomIn" aria-label="Zoom in">+</button>
-  <button type="button" class="at-chart-btn" id="atZoomReset" aria-label="Reset view">Reset</button>
-  <button type="button" class="at-chart-btn" id="atExpandAll" aria-label="Expand all">Expand all</button>
-  <button type="button" class="at-chart-btn" id="atCollapseAll" aria-label="Collapse all">Collapse all</button>
-  <button type="button" class="at-chart-btn" id="atFullscreen" aria-label="Enter fullscreen">Fullscreen ⤢</button>
-</div>
+            <div class="at-chart-controls">
+              <button type="button" class="at-chart-btn" id="atZoomOut" aria-label="Zoom out">−</button>
+              <button type="button" class="at-chart-btn" id="atZoomIn" aria-label="Zoom in">+</button>
+              <button type="button" class="at-chart-btn" id="atZoomReset" aria-label="Reset view">Reset</button>
+              <button type="button" class="at-chart-btn" id="atExpandAll" aria-label="Expand all">Expand all</button>
+              <button type="button" class="at-chart-btn" id="atCollapseAll" aria-label="Collapse all">Collapse all</button>
+              <button type="button" class="at-chart-btn" id="atFullscreen" aria-label="Enter fullscreen">Fullscreen ⤢</button>
+            </div>
           </div>
           <div class="at-chart-viewport" id="atChartViewport">
             <svg class="at-chart-svg" id="atChartSvg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -94,7 +79,6 @@
         </div>
       </aside>
 
-      <!-- RIGHT: EDITOR / PREVIEW -->
       <section class="at-panel at-editor" aria-label="Template editor">
         <header class="at-panel-head">
           <div>
@@ -106,7 +90,6 @@
           </div>
         </header>
 
-        <!-- TEMPLATE EDITOR (leaves) -->
         <div class="at-editor-body" id="atEditorBody" hidden>
           <div class="at-edit-field">
             <label for="atComment">
@@ -144,10 +127,8 @@
           </div>
         </div>
 
-        <!-- NODE PREVIEW (middle nodes) -->
         <div class="at-node-preview" id="atNodePreview" hidden></div>
 
-        <!-- PLACEHOLDER -->
         <div class="at-editor-placeholder" id="atEditorPlaceholder">
           <div class="at-editor-placeholder-icon">✎</div>
           <p>No recommendation selected.</p>
