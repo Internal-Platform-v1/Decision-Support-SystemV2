@@ -6,7 +6,7 @@
 
 .at-main {
   margin-left: var(--admin-sidebar-width);
-  padding: 80px 22px 40px;
+  padding: 88px 22px 40px; /* 88px clears the fixed 70px header + adds a tight 18px gap */
   min-height: 100vh;
   background: #f7f7fb;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
