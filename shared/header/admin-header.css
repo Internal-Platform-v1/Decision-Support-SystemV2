@@ -252,3 +252,107 @@ body[data-admin-page] .at-main {
   .admin-brand-text, .admin-brand-link small { display: none; }
   .admin-topbar-nav { display: none; }
 }
+
+/* ============================================================
+   SETTINGS DROPDOWN
+   ============================================================ */
+.admin-settings-wrapper {
+  position: relative;
+}
+
+.admin-settings-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 200px;
+  padding: 8px;
+  border: 1px solid #e3e2ed;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 15px 35px rgba(25, 20, 75, .15);
+  z-index: 200;
+}
+
+.admin-settings-heading {
+  font-size: 8px;
+  font-weight: 800;
+  color: #9ea0b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid #f0f0f5;
+  margin-bottom: 8px;
+}
+
+.admin-settings-group {
+  padding: 0 8px 8px;
+}
+
+.admin-settings-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: #343565;
+  margin-bottom: 6px;
+}
+
+.admin-theme-row,
+.admin-role-row {
+  display: flex;
+  gap: 3px;
+  background: #f3f2fa;
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.admin-theme-btn,
+.admin-role-btn {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: 6px 4px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #6d6e91;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-theme-btn.active,
+.admin-role-btn.active {
+  background: #fff;
+  color: #5620bd;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.admin-settings-divider {
+  height: 1px;
+  background: #f0f0f5;
+  margin: 4px 8px 8px;
+}
+
+.admin-settings-link {
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #343565;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-settings-link:hover {
+  background: #f5f1ff;
+  color: #5620bd;
+}
+
+.admin-settings-link.danger:hover {
+  background: #fff1f3;
+  color: #d92745;
+}
