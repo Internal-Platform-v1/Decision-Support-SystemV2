@@ -56,6 +56,10 @@
       results.forEach((snap, i) => {
         if (snap && snap.exists) {
           const data = snap.data() || {};
+
+          // Skip drafts — only published announcements appear in the banner
+          if (data.published !== true) return;
+
           slideContent[i] = {
             eyebrow: data.eyebrow || DEFAULTS[i].eyebrow,
             title:   data.title   || DEFAULTS[i].title,
@@ -66,7 +70,7 @@
           customized++;
         }
       });
-      console.log("[update-banner] Loaded", customized, "customized announcements.");
+      console.log("[update-banner] Loaded", customized, "published announcements.");
     } catch (err) {
       console.warn("[update-banner] fetch failed:", err.code || err.message);
     }
@@ -179,7 +183,6 @@
     if (date)    date.textContent    = data.date    || "";
     if (message) message.textContent  = data.message || "";
 
-    // Dots inside the modal
     const dotsWrap = modal.querySelector("#dssUpdateModalDots");
     if (dotsWrap) {
       dotsWrap.innerHTML = SLIDES.map((_, i) =>
@@ -193,7 +196,6 @@
       });
     }
 
-    // Prev / next disabled states
     const prev = modal.querySelector("#dssUpdateModalPrev");
     const next = modal.querySelector("#dssUpdateModalNext");
     if (prev) prev.disabled = index === 0;
@@ -223,12 +225,10 @@
   function bindModal() {
     if (!modal) return;
 
-    // Close on backdrop click or close button
     modal.querySelectorAll("[data-update-modal-close]").forEach(el => {
       el.addEventListener("click", closeModal);
     });
 
-    // Prev / next
     modal.querySelector("#dssUpdateModalPrev")?.addEventListener("click", () => {
       if (modalIndex > 0) renderModal(modalIndex - 1);
     });
@@ -236,7 +236,6 @@
       if (modalIndex < SLIDES.length - 1) renderModal(modalIndex + 1);
     });
 
-    // ESC to close
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal && !modal.hidden) closeModal();
     });
@@ -273,7 +272,6 @@
       if (firestore()) {
         await fetchAllAnnouncements();
         renderSlide(activeIndex);
-        // If modal is open, refresh it too
         if (modal && !modal.hidden) renderModal(modalIndex);
         return;
       }
