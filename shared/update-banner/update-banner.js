@@ -1,7 +1,5 @@
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER ROTATOR
-   The HTML is already inserted by shared/include.js.
-   This script only rotates the content and pulls Firestore data.
    ============================================================ */
 (function () {
   "use strict";
@@ -10,49 +8,19 @@
   const SLIDE_INTERVAL = 6000;
 
   const SLIDES = [
-    { key: "general",   icon: "fa-solid fa-bullhorn",                 eyebrow: "SYSTEM UPDATE" },
-    { key: "whats_new", icon: "fa-solid fa-wand-magic-sparkles",      eyebrow: "WHAT'S NEW" },
-    { key: "reminders", icon: "fa-solid fa-triangle-exclamation",     eyebrow: "IMPORTANT REMINDER" },
-    { key: "issues",    icon: "fa-solid fa-bug",                      eyebrow: "KNOWN ISSUE" },
-    { key: "guides",    icon: "fa-solid fa-book-open",                eyebrow: "NEW GUIDES" }
+    { key: "general",   icon: "fa-solid fa-bullhorn",              eyebrow: "SYSTEM UPDATE" },
+    { key: "whats_new", icon: "fa-solid fa-wand-magic-sparkles",   eyebrow: "WHAT'S NEW" },
+    { key: "reminders", icon: "fa-solid fa-triangle-exclamation",  eyebrow: "IMPORTANT REMINDER" },
+    { key: "issues",    icon: "fa-solid fa-bug",                   eyebrow: "KNOWN ISSUE" },
+    { key: "guides",    icon: "fa-solid fa-book-open",             eyebrow: "NEW GUIDES" }
   ];
 
   const DEFAULTS = [
-    {
-      eyebrow: "SYSTEM UPDATE",
-      title: "EBS System Maintenance",
-      date: "May 25, 2025 from 1:00 AM – 5:00 AM PST.",
-      message: "Some EBS features may be unavailable during this time.\nPlease plan your tasks accordingly.",
-      button: "View All Updates"
-    },
-    {
-      eyebrow: "WHAT'S NEW",
-      title: "New Feature Release",
-      date: "Available now",
-      message: "Explore the latest features added to the Decision Support System.",
-      button: "See What's New"
-    },
-    {
-      eyebrow: "IMPORTANT REMINDER",
-      title: "Action Required",
-      date: "Please review before the deadline.",
-      message: "Make sure you're aware of the latest policies and requirements.",
-      button: "View Reminder"
-    },
-    {
-      eyebrow: "KNOWN ISSUE",
-      title: "System Issue Being Investigated",
-      date: "Reported recently",
-      message: "We are aware of the issue and are working on a fix.",
-      button: "View Details"
-    },
-    {
-      eyebrow: "NEW GUIDES",
-      title: "New Guides Available",
-      date: "Recently added",
-      message: "Check out the newly published guides and resources.",
-      button: "Browse New Guides"
-    }
+    { eyebrow: "SYSTEM UPDATE", title: "EBS System Maintenance", date: "May 25, 2025 from 1:00 AM – 5:00 AM PST.", message: "Some EBS features may be unavailable during this time.\nPlease plan your tasks accordingly.", button: "View All Updates" },
+    { eyebrow: "WHAT'S NEW", title: "New Feature Release", date: "Available now", message: "Explore the latest features added to the Decision Support System.", button: "See What's New" },
+    { eyebrow: "IMPORTANT REMINDER", title: "Action Required", date: "Please review before the deadline.", message: "Make sure you're aware of the latest policies and requirements.", button: "View Reminder" },
+    { eyebrow: "KNOWN ISSUE", title: "System Issue Being Investigated", date: "Reported recently", message: "We are aware of the issue and are working on a fix.", button: "View Details" },
+    { eyebrow: "NEW GUIDES", title: "New Guides Available", date: "Recently added", message: "Check out the newly published guides and resources.", button: "Browse New Guides" }
   ];
 
   const slideContent = DEFAULTS.map(d => ({ ...d }));
@@ -60,6 +28,7 @@
   let activeIndex = 0;
   let timerId = null;
   let banner = null;
+  let initialized = false;
 
   function esc(v) {
     return String(v ?? "").replace(/[&<>"']/g, ch => ({
@@ -81,6 +50,7 @@
       const results = await Promise.all(
         SLIDES.map(s => db.collection(COLLECTION).doc(s.key).get().catch(() => null))
       );
+      let customized = 0;
       results.forEach((snap, i) => {
         if (snap && snap.exists) {
           const data = snap.data() || {};
@@ -91,8 +61,10 @@
             message: data.message || DEFAULTS[i].message,
             button:  data.button  || DEFAULTS[i].button
           };
+          customized++;
         }
       });
+      console.log("[update-banner] Loaded", customized, "customized announcements.");
     } catch (err) {
       console.warn("[update-banner] fetch failed:", err.code || err.message);
     }
@@ -102,7 +74,6 @@
     if (!banner) return;
     const data = slideContent[index];
     if (!data) return;
-
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
@@ -123,10 +94,7 @@
 
       const message = banner.querySelector(".dss-update-banner__message");
       if (message) {
-        message.innerHTML = String(data.message || "")
-          .split("\n")
-          .map(line => esc(line))
-          .join("<br>");
+        message.innerHTML = String(data.message || "").split("\n").map(esc).join("<br>");
       }
 
       const buttonText = banner.querySelector(".dss-update-banner__button-text");
@@ -179,36 +147,45 @@
     banner.addEventListener("mouseleave", startAutoAdvance);
   }
 
-  function init() {
+  function tryInit(attempt) {
+    attempt = attempt || 0;
+    if (initialized) return;
+
     banner = document.getElementById("dssUpdateBanner");
+
     if (!banner) {
-      // include.js may not have inserted it yet — wait for the event
-      window.addEventListener("bdtools:update-banner-ready", init);
+      if (attempt < 40) {
+        setTimeout(() => tryInit(attempt + 1), 100);
+      } else {
+        console.warn("[update-banner] banner element never appeared after 4s");
+      }
       return;
     }
 
+    initialized = true;
     bindDots();
     bindButton();
     bindHover();
-
     renderSlide(activeIndex);
     startAutoAdvance();
 
-    const waitForFirebase = async (attempt = 0) => {
+    const waitForFirebase = async (fbAttempt = 0) => {
       if (firestore()) {
         await fetchAllAnnouncements();
         renderSlide(activeIndex);
         return;
       }
-      if (attempt < 20) setTimeout(() => waitForFirebase(attempt + 1), 100);
+      if (fbAttempt < 20) setTimeout(() => waitForFirebase(fbAttempt + 1), 100);
     };
 
     waitForFirebase();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", () => tryInit(0));
   } else {
-    init();
+    tryInit(0);
   }
+
+  window.addEventListener("bdtools:update-banner-ready", () => tryInit(0));
 })();
