@@ -4,9 +4,18 @@
 
 #adminHeader, #adminHeader * { box-sizing: border-box; }
 
+body[data-admin-page="announcements"] .admin-hero {
+  display: none !important;
+}
+
+body[data-admin-page="announcements"] .admin-main {
+  min-height: 0 !important;
+  padding-top: 0 !important;
+}
+
 .at-main {
   margin-left: var(--admin-sidebar-width);
-  padding: 80px 22px 40px;
+  padding: 90px 22px 40px !important;
   min-height: 100vh;
   background: #f7f7fb;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
