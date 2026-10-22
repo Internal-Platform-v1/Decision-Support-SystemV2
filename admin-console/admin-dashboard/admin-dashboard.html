@@ -5,6 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Decision Support System</title>
 
+  <script>
+  (function() {
+    const origRemove = Storage.prototype.removeItem;
+    const origClear = Storage.prototype.clear;
+    Storage.prototype.removeItem = function(key) {
+      if (key === "bd_admin_unlocked") {
+        console.warn("[TRAP-ADMIN] removeItem('bd_admin_unlocked') from:");
+        console.trace();
+      }
+      return origRemove.apply(this, arguments);
+    };
+    Storage.prototype.clear = function() {
+      console.warn("[TRAP-ADMIN] localStorage.clear() from:");
+      console.trace();
+      return origClear.apply(this, arguments);
+    };
+  })();
+</script>
+
   <link rel="stylesheet" href="../../shared/header/admin-header.css">
   <link rel="stylesheet" href="admin-dashboard.css">
 </head>
