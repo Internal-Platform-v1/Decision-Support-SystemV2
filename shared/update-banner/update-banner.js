@@ -1,5 +1,6 @@
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER ROTATOR + MODAL
+   Only shows categories that have been explicitly published.
    ============================================================ */
 (function () {
   "use strict";
@@ -15,15 +16,9 @@
     { key: "guides",    icon: "fa-solid fa-book-open",             eyebrow: "NEW GUIDES",        label: "📚 New Guides Added" }
   ];
 
-  const DEFAULTS = [
-    { eyebrow: "SYSTEM UPDATE", title: "EBS System Maintenance", date: "May 25, 2025 from 1:00 AM – 5:00 AM PST.", message: "Some EBS features may be unavailable during this time.\nPlease plan your tasks accordingly.", button: "View All Updates" },
-    { eyebrow: "WHAT'S NEW", title: "New Feature Release", date: "Available now", message: "Explore the latest features added to the Decision Support System.", button: "See What's New" },
-    { eyebrow: "IMPORTANT REMINDER", title: "Action Required", date: "Please review before the deadline.", message: "Make sure you're aware of the latest policies and requirements.", button: "View Reminder" },
-    { eyebrow: "KNOWN ISSUE", title: "System Issue Being Investigated", date: "Reported recently", message: "We are aware of the issue and are working on a fix.", button: "View Details" },
-    { eyebrow: "NEW GUIDES", title: "New Guides Available", date: "Recently added", message: "Check out the newly published guides and resources.", button: "Browse New Guides" }
-  ];
-
-  const slideContent = DEFAULTS.map(d => ({ ...d }));
+  // Only categories that have been published. Starts empty —
+  // nothing shows in the banner until an admin publishes.
+  let publishedSlides = [];
 
   let activeIndex = 0;
   let timerId = null;
@@ -45,44 +40,62 @@
     return null;
   }
 
-  async function fetchAllAnnouncements() {
+  /* ------------------------------------------------------------
+     Fetch all 5 docs. Keep only the published ones.
+     ------------------------------------------------------------ */
+  async function fetchPublishedSlides() {
     const db = firestore();
-    if (!db) return;
+    if (!db) {
+      console.info("[update-banner] Firestore not ready.");
+      return;
+    }
+
     try {
       const results = await Promise.all(
         SLIDES.map(s => db.collection(COLLECTION).doc(s.key).get().catch(() => null))
       );
-      let customized = 0;
+
+      const next = [];
       results.forEach((snap, i) => {
-        if (snap && snap.exists) {
-          const data = snap.data() || {};
+        if (!snap || !snap.exists) return;
+        const data = snap.data() || {};
+        if (data.published !== true) return;
 
-          // Skip drafts — only published announcements appear in the banner
-          if (data.published !== true) return;
-
-          slideContent[i] = {
-            eyebrow: data.eyebrow || DEFAULTS[i].eyebrow,
-            title:   data.title   || DEFAULTS[i].title,
-            date:    data.date    || DEFAULTS[i].date,
-            message: data.message || DEFAULTS[i].message,
-            button:  data.button  || DEFAULTS[i].button
-          };
-          customized++;
-        }
+        next.push({
+          index: i,
+          meta: SLIDES[i],
+          content: {
+            eyebrow: data.eyebrow || SLIDES[i].eyebrow,
+            title:   data.title   || "",
+            date:    data.date    || "",
+            message: data.message || "",
+            button:  data.button  || "View Details"
+          }
+        });
       });
-      console.log("[update-banner] Loaded", customized, "published announcements.");
+
+      publishedSlides = next;
+      console.log("[update-banner] Published slides:", publishedSlides.length,
+        publishedSlides.map(s => s.meta.key));
     } catch (err) {
       console.warn("[update-banner] fetch failed:", err.code || err.message);
     }
   }
 
   /* ------------------------------------------------------------
-     BANNER RENDER
+     Banner rendering — uses publishedSlides[], not SLIDES[]
      ------------------------------------------------------------ */
   function renderSlide(index) {
     if (!banner) return;
-    const data = slideContent[index];
-    if (!data) return;
+    if (!publishedSlides.length) {
+      banner.style.display = "none";
+      return;
+    }
+    banner.style.display = "";
+
+    const slide = publishedSlides[index];
+    if (!slide) return;
+    const { meta, content } = slide;
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
@@ -90,28 +103,41 @@
 
     setTimeout(() => {
       const icon = banner.querySelector(".dss-update-banner__icon i");
-      if (icon) icon.className = SLIDES[index].icon;
+      if (icon) icon.className = meta.icon;
 
       const eyebrowText = banner.querySelector(".dss-update-banner__eyebrow-text");
-      if (eyebrowText) eyebrowText.textContent = data.eyebrow;
+      if (eyebrowText) eyebrowText.textContent = content.eyebrow;
 
       const title = banner.querySelector(".dss-update-banner__title");
-      if (title) title.textContent = data.title;
+      if (title) title.textContent = content.title;
 
       const dateText = banner.querySelector(".dss-update-banner__date-text");
-      if (dateText) dateText.textContent = data.date;
+      if (dateText) dateText.textContent = content.date;
 
       const message = banner.querySelector(".dss-update-banner__message");
       if (message) {
-        message.innerHTML = String(data.message || "").split("\n").map(esc).join("<br>");
+        message.innerHTML = String(content.message || "").split("\n").map(esc).join("<br>");
       }
 
       const buttonText = banner.querySelector(".dss-update-banner__button-text");
-      if (buttonText) buttonText.textContent = data.button;
+      if (buttonText) buttonText.textContent = content.button;
 
-      banner.querySelectorAll(".dss-update-banner__dot").forEach((dot, i) => {
-        dot.classList.toggle("is-active", i === index);
-      });
+      // Rebuild dots to only reflect the published slides
+      const dotsWrap = banner.querySelector(".dss-update-banner__dots");
+      if (dotsWrap) {
+        dotsWrap.innerHTML = publishedSlides.map((_, i) =>
+          `<button type="button" class="dss-update-banner__dot${i === index ? " is-active" : ""}" data-slide-to="${i}" aria-label="${esc(publishedSlides[i].meta.label)}"></button>`
+        ).join("");
+        dotsWrap.querySelectorAll("[data-slide-to]").forEach(dot => {
+          dot.addEventListener("click", () => {
+            const i = Number(dot.dataset.slideTo);
+            if (!Number.isFinite(i)) return;
+            activeIndex = i;
+            renderSlide(activeIndex);
+            startAutoAdvance();
+          });
+        });
+      }
 
       copy.classList.remove("is-swapping");
     }, 250);
@@ -119,8 +145,9 @@
 
   function startAutoAdvance() {
     stopAutoAdvance();
+    if (publishedSlides.length < 2) return; // no need to rotate a single slide
     timerId = setInterval(() => {
-      activeIndex = (activeIndex + 1) % SLIDES.length;
+      activeIndex = (activeIndex + 1) % publishedSlides.length;
       renderSlide(activeIndex);
     }, SLIDE_INTERVAL);
   }
@@ -130,24 +157,13 @@
   }
 
   /* ------------------------------------------------------------
-     BANNER BINDINGS
+     Button opens the modal on the current slide
      ------------------------------------------------------------ */
-  function bindDots() {
-    banner.querySelectorAll(".dss-update-banner__dot").forEach(dot => {
-      dot.addEventListener("click", () => {
-        const index = Number(dot.dataset.slideTo);
-        if (!Number.isFinite(index)) return;
-        activeIndex = index;
-        renderSlide(activeIndex);
-        startAutoAdvance();
-      });
-    });
-  }
-
   function bindButton() {
     const btn = banner.querySelector('[data-update-action="view-all"]');
     if (!btn) return;
     btn.addEventListener("click", () => {
+      if (!publishedSlides.length) return;
       openModal(activeIndex);
     });
   }
@@ -158,18 +174,16 @@
   }
 
   /* ------------------------------------------------------------
-     MODAL
+     Modal — uses publishedSlides[]
      ------------------------------------------------------------ */
-  function ensureModalRefs() {
-    modal = document.getElementById("dssUpdateModal");
-  }
-
   function renderModal(index) {
     if (!modal) return;
+    if (!publishedSlides.length) return;
+
     modalIndex = index;
-    const data = slideContent[index];
-    const meta = SLIDES[index];
-    if (!data || !meta) return;
+    const slide = publishedSlides[index];
+    if (!slide) return;
+    const { meta, content } = slide;
 
     const eyebrow = modal.querySelector("#dssUpdateModalEyebrow");
     const title   = modal.querySelector("#dssUpdateModalTitle");
@@ -177,16 +191,16 @@
     const date    = modal.querySelector("#dssUpdateModalDate");
     const message = modal.querySelector("#dssUpdateModalMessage");
 
-    if (eyebrow) eyebrow.textContent = data.eyebrow || meta.eyebrow;
-    if (title)   title.textContent   = data.title   || "";
+    if (eyebrow) eyebrow.textContent = content.eyebrow;
+    if (title)   title.textContent   = content.title;
     if (badge)   badge.textContent   = meta.label;
-    if (date)    date.textContent    = data.date    || "";
-    if (message) message.textContent  = data.message || "";
+    if (date)    date.textContent    = content.date;
+    if (message) message.textContent  = content.message;
 
     const dotsWrap = modal.querySelector("#dssUpdateModalDots");
     if (dotsWrap) {
-      dotsWrap.innerHTML = SLIDES.map((_, i) =>
-        `<button type="button" class="dss-update-modal__dot${i === index ? " is-active" : ""}" data-modal-slide="${i}" aria-label="${esc(SLIDES[i].label)}"></button>`
+      dotsWrap.innerHTML = publishedSlides.map((_, i) =>
+        `<button type="button" class="dss-update-modal__dot${i === index ? " is-active" : ""}" data-modal-slide="${i}" aria-label="${esc(publishedSlides[i].meta.label)}"></button>`
       ).join("");
       dotsWrap.querySelectorAll("[data-modal-slide]").forEach(dot => {
         dot.addEventListener("click", () => {
@@ -199,11 +213,11 @@
     const prev = modal.querySelector("#dssUpdateModalPrev");
     const next = modal.querySelector("#dssUpdateModalNext");
     if (prev) prev.disabled = index === 0;
-    if (next) next.disabled = index === SLIDES.length - 1;
+    if (next) next.disabled = index === publishedSlides.length - 1;
   }
 
   function openModal(index) {
-    if (!modal) return;
+    if (!modal || !publishedSlides.length) return;
     renderModal(index);
     modal.hidden = false;
     modal.classList.remove("is-open");
@@ -224,18 +238,15 @@
 
   function bindModal() {
     if (!modal) return;
-
     modal.querySelectorAll("[data-update-modal-close]").forEach(el => {
       el.addEventListener("click", closeModal);
     });
-
     modal.querySelector("#dssUpdateModalPrev")?.addEventListener("click", () => {
       if (modalIndex > 0) renderModal(modalIndex - 1);
     });
     modal.querySelector("#dssUpdateModalNext")?.addEventListener("click", () => {
-      if (modalIndex < SLIDES.length - 1) renderModal(modalIndex + 1);
+      if (modalIndex < publishedSlides.length - 1) renderModal(modalIndex + 1);
     });
-
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal && !modal.hidden) closeModal();
     });
@@ -249,7 +260,7 @@
     if (initialized) return;
 
     banner = document.getElementById("dssUpdateBanner");
-    ensureModalRefs();
+    modal = document.getElementById("dssUpdateModal");
 
     if (!banner) {
       if (attempt < 40) {
@@ -261,21 +272,27 @@
     }
 
     initialized = true;
-    bindDots();
     bindButton();
     bindHover();
     bindModal();
-    renderSlide(activeIndex);
-    startAutoAdvance();
 
     const waitForFirebase = async (fbAttempt = 0) => {
       if (firestore()) {
-        await fetchAllAnnouncements();
+        await fetchPublishedSlides();
+
+        if (!publishedSlides.length) {
+          // Nothing published — hide the banner entirely
+          banner.style.display = "none";
+          return;
+        }
+
+        activeIndex = 0;
         renderSlide(activeIndex);
-        if (modal && !modal.hidden) renderModal(modalIndex);
+        startAutoAdvance();
         return;
       }
       if (fbAttempt < 20) setTimeout(() => waitForFirebase(fbAttempt + 1), 100);
+      else banner.style.display = "none";
     };
 
     waitForFirebase();
