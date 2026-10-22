@@ -9,63 +9,49 @@
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
     const ADMIN_PASSWORD = "fedex-admin-2026";
 
-    // Use cookies instead of localStorage for the token
-    const COOKIE_NAME = "bd_admin_token";
-    const COOKIE_DAYS = 7;
+    const TOKEN_KEY = "bd_admin_state";
 
     /* ------------------------------------------------------------
-       Cookie helpers
+       Token stored in window.name — survives navigation,
+       invisible to other scripts.
        ------------------------------------------------------------ */
-    function setCookie(name, value, days) {
-        const d = new Date();
-        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-        const expires = "expires=" + d.toUTCString();
-        document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/;SameSite=Lax";
+    function getState() {
+        try {
+            if (!window.name) return {};
+            return JSON.parse(window.name) || {};
+        } catch (e) { return {}; }
     }
 
-    function getCookie(name) {
-        const nameEQ = name + "=";
-        const ca = document.cookie.split(";");
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === " ") c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) === 0) {
-                return decodeURIComponent(c.substring(nameEQ.length, c.length));
-            }
+    function setState(obj) {
+        try {
+            window.name = JSON.stringify(obj);
+        } catch (e) {
+            console.error("[header.js] could not save to window.name", e);
         }
-        return null;
-    }
-
-    function deleteCookie(name) {
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
     }
 
     function isAdminUnlocked() {
-        const raw = getCookie(COOKIE_NAME);
-        if (!raw) return false;
-        try {
-            const obj = JSON.parse(raw);
-            return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
-        } catch (e) { return false; }
+        const s = getState();
+        return Boolean(s.token && typeof s.exp === "number" && s.exp > Date.now());
     }
 
     function setAdminUnlocked() {
-        try {
-            const payload = JSON.stringify({ exp: Date.now() + COOKIE_DAYS * 24 * 60 * 60 * 1000 });
-            setCookie(COOKIE_NAME, payload, COOKIE_DAYS);
-            localStorage.setItem(ROLE_KEY, "admin");
-            console.log("[header.js] Cookie token saved:", document.cookie);
-        } catch (e) {
-            console.error("[header.js] Failed to save cookie:", e);
-        }
+        const s = getState();
+        s.token = "ok";
+        s.exp = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        setState(s);
+        console.log("[header.js] Token saved to window.name:", window.name);
     }
 
     function clearAdminUnlocked() {
-        deleteCookie(COOKIE_NAME);
+        const s = getState();
+        delete s.token;
+        delete s.exp;
+        setState(s);
     }
 
     /* ------------------------------------------------------------
-       Role state
+       Role
        ------------------------------------------------------------ */
     function getRole() {
         if (isAdminUnlocked()) return "admin";
@@ -248,9 +234,6 @@
         });
     }
 
-    /* ------------------------------------------------------------
-       Case Directory dropdown
-       ------------------------------------------------------------ */
     function setupCaseDirectory() {
         const button  = document.getElementById("caseDirectoryBtn");
         const menu    = document.getElementById("caseDropdown");
@@ -286,9 +269,6 @@
         });
     }
 
-    /* ------------------------------------------------------------
-       Main navigation
-       ------------------------------------------------------------ */
     function setupNavigation() {
         const navItems = document.querySelectorAll(".brand-nav .nav-item");
         const currentPage = window.location.pathname.split("/").pop().toLowerCase();
