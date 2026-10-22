@@ -323,13 +323,21 @@
     }
 
     /* ------------------------------------------------------------
-       Notifications — count published announcements from Firestore
+       Notifications — live count of published announcements
        ------------------------------------------------------------ */
+    let announcementsUnsubscribe = null;
+
     function firestore() {
         if (window.firebase && firebase.apps && firebase.apps.length) {
             return window.db || firebase.firestore();
         }
         return null;
+    }
+
+    function isPublishedDoc(data) {
+        if (!data) return false;
+        const p = data.published;
+        return p === true || p === "true" || p === 1;
     }
 
     function setSharedBadge(count) {
@@ -347,31 +355,30 @@
     function setSharedButtonTitle(count) {
         const btn = document.getElementById("sharedNotificationBtn");
         if (!btn) return;
-        btn.setAttribute(
-            "aria-label",
-            count > 0 ? `${count} published announcement${count === 1 ? "" : "s"}` : "Notifications"
-        );
+        const label = count === 1
+            ? "1 published announcement"
+            : `${count} published announcements`;
+        btn.setAttribute("aria-label", count > 0 ? label : "Notifications");
         btn.title = count > 0
-            ? `${count} published announcement${count === 1 ? "" : "s"} — click to view`
+            ? `${label} — click to view`
             : "No announcements available";
     }
 
-    async function refreshSharedNotificationBadge() {
+    function subscribeToAnnouncements() {
         const db = firestore();
-        if (!db) return;
+        if (!db || announcementsUnsubscribe) return;
 
-        try {
-            const snap = await db.collection(ANNOUNCEMENTS_COLLECTION).get();
-            let published = 0;
-            snap.forEach(doc => {
-                const data = doc.data() || {};
-                if (data.published === true) published++;
+        announcementsUnsubscribe = db.collection(ANNOUNCEMENTS_COLLECTION)
+            .onSnapshot(function (snap) {
+                let published = 0;
+                snap.forEach(function (doc) {
+                    if (isPublishedDoc(doc.data())) published++;
+                });
+                setSharedBadge(published);
+                setSharedButtonTitle(published);
+            }, function (err) {
+                console.warn("[header.js] announcements listener failed:", err.code || err.message);
             });
-            setSharedBadge(published);
-            setSharedButtonTitle(published);
-        } catch (err) {
-            console.warn("[header.js] Could not load notifications:", err.code || err.message);
-        }
     }
 
     function setupSharedNotifications() {
@@ -386,29 +393,33 @@
             const viewAll = document.querySelector('[data-update-action="view-all"]');
             if (viewAll) { viewAll.click(); return; }
 
-            // If no banner, scroll to it if present
+            // If the banner is present but the button hasn't bound yet, scroll to it
             const banner = document.getElementById("dssUpdateBanner");
             if (banner) {
                 banner.scrollIntoView({ behavior: "smooth", block: "center" });
                 return;
             }
 
-            // Nothing to show on this page
-            console.info("[header.js] No update banner on this page.");
+            // No banner on this page — send the user to the home page
+            const file = window.location.pathname.split("/").pop().toLowerCase();
+            if (file !== "" && file !== "index.html") {
+                window.location.href = "index.html";
+            }
         });
 
-        const waitForFirebase = function (attempt) {
-            attempt = attempt || 0;
+        // Keep waiting until Firebase is actually ready — no 2s cutoff.
+        (function waitForFirebase() {
             if (firestore()) {
-                refreshSharedNotificationBadge();
-                setInterval(refreshSharedNotificationBadge, 30000);
+                subscribeToAnnouncements();
                 return;
             }
-            if (attempt < 20) {
-                setTimeout(function () { waitForFirebase(attempt + 1); }, 100);
-            }
-        };
-        waitForFirebase(0);
+            setTimeout(waitForFirebase, 250);
+        })();
+
+        // Optional: your Firebase bootstrap can dispatch this to skip polling.
+        window.addEventListener("bdtools:firebase-ready", function () {
+            if (!announcementsUnsubscribe) subscribeToAnnouncements();
+        });
     }
 
     /* ------------------------------------------------------------
