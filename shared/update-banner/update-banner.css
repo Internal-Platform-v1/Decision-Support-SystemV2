@@ -1,10 +1,6 @@
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER
-   shared/update-banner/update-banner.css
-
-   The banner is a single full-width visual.
-   The uploaded artwork is used as the background layer and
-   the text is layered above it.
+   Slideshow with auto-advance and dot navigation
    ============================================================ */
 
 .dss-update-banner {
@@ -27,23 +23,37 @@
   box-shadow: 0 3px 14px rgba(48,38,111,.06);
 }
 
+/* ------------------------------------------------------------
+   SLIDE
+   ------------------------------------------------------------ */
 
-/* ============================================================
-   IMAGE — FULL BANNER
-   ============================================================ */
+.dss-update-banner__slide {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+}
+
+.dss-update-banner__slide.is-active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* ------------------------------------------------------------
+   VISUAL LAYER
+   ------------------------------------------------------------ */
 
 .dss-update-banner__visual {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
 
   width: 100%;
   height: 100%;
-
-  margin: 0;
-  padding: 0;
 
   overflow: hidden;
   z-index: 1;
@@ -51,7 +61,6 @@
 
 .dss-update-banner__visual img {
   position: absolute;
-
   top: 50%;
   left: 50%;
 
@@ -60,9 +69,6 @@
 
   min-width: 100%;
   min-height: 100%;
-
-  margin: 0;
-  padding: 0;
 
   display: block;
 
@@ -74,17 +80,10 @@
   max-width: none;
 }
 
-
-/* ============================================================
-   READABILITY OVERLAY
-   ============================================================ */
-
 .dss-update-banner__visual::before {
   content: "";
-
   position: absolute;
   inset: 0;
-
   z-index: 2;
 
   background: linear-gradient(
@@ -99,14 +98,12 @@
   pointer-events: none;
 }
 
-
-/* ============================================================
+/* ------------------------------------------------------------
    COPY
-   ============================================================ */
+   ------------------------------------------------------------ */
 
 .dss-update-banner__copy {
   position: relative;
-
   z-index: 3;
 
   width: 43%;
@@ -136,7 +133,6 @@
 .dss-update-banner__icon {
   width: 30px;
   height: 30px;
-
   flex: 0 0 30px;
 
   display: grid;
@@ -150,7 +146,7 @@
   font-size: 14px;
 }
 
-.dss-update-banner__eyebrow > span:last-child {
+.dss-update-banner__eyebrow-text {
   margin-left: 9px;
 }
 
@@ -194,7 +190,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   gap: 5px;
 
   margin-left: 39px;
@@ -220,7 +215,7 @@
     transform .16s ease;
 }
 
-.dss-update-banner__button span {
+.dss-update-banner__button span[aria-hidden] {
   font-size: 10px;
   line-height: 1;
 }
@@ -234,17 +229,14 @@
   transform: translateY(1px);
 }
 
-
-/* ============================================================
-   SLIDER DOTS
-   ============================================================ */
+/* ------------------------------------------------------------
+   DOTS
+   ------------------------------------------------------------ */
 
 .dss-update-banner__dots {
   position: absolute;
-
   top: 16px;
   right: 16px;
-
   z-index: 4;
 
   display: flex;
@@ -252,63 +244,47 @@
   gap: 7px;
 }
 
-.dss-update-banner__dots span {
-  width: 7px;
-  height: 7px;
+.dss-update-banner__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
 
+  border: 0;
   border-radius: 50%;
 
-  background: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.7);
+  box-shadow: 0 0 0 1px rgba(77,20,140,.08);
 
-  box-shadow:
-    0 0 0 1px rgba(77,20,140,.05);
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
 }
 
-.dss-update-banner__dots span.is-active {
+.dss-update-banner__dot:hover {
+  background: rgba(255,255,255,.95);
+}
+
+.dss-update-banner__dot.is-active {
   background: #4d148c;
+  transform: scale(1.15);
 }
 
-
-/* ============================================================
+/* ------------------------------------------------------------
    RESPONSIVE
-   ============================================================ */
+   ------------------------------------------------------------ */
 
-@media (max-width:900px) {
-  .dss-update-banner {
-    height: 136px;
-    min-height: 136px;
-  }
-
-  .dss-update-banner__copy {
-    width: 48%;
-    min-width: 300px;
-    padding-left: 18px;
-  }
-
-  .dss-update-banner__visual img {
-    transform: translate(-50%, -50%) scale(1.04);
-    object-position: center center;
-  }
+@media (max-width: 900px) {
+  .dss-update-banner { height: 136px; min-height: 136px; }
+  .dss-update-banner__copy { width: 48%; min-width: 300px; padding-left: 18px; }
 }
 
-@media (max-width:700px) {
-  .dss-update-banner {
-    height: 190px;
-    min-height: 190px;
-  }
-
+@media (max-width: 700px) {
+  .dss-update-banner { height: 190px; min-height: 190px; }
   .dss-update-banner__copy {
     width: 100%;
     min-width: 0;
     height: auto;
     padding: 13px 16px 14px;
   }
-
-  .dss-update-banner__visual img {
-    transform: translate(-50%, -50%) scale(1.04);
-    object-position: center center;
-  }
-
   .dss-update-banner__visual::before {
     background: linear-gradient(
       90deg,
