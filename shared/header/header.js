@@ -323,9 +323,12 @@
     }
 
     /* ------------------------------------------------------------
-       Notifications — live count of published announcements
+       Notifications — live count of UNSEEN published announcements
        ------------------------------------------------------------ */
+    const VIEWED_KEY = "bd_viewed_announcements_v1";
+
     let announcementsUnsubscribe = null;
+    let currentPublished = [];     // [{ id, key }] from the latest snapshot
 
     function firestore() {
         if (window.firebase && firebase.apps && firebase.apps.length) {
@@ -338,6 +341,40 @@
         if (!data) return false;
         const p = data.published;
         return p === true || p === "true" || p === 1;
+    }
+
+    /**
+     * A stable "version" fingerprint of an announcement.
+     * Changes whenever the admin updates the content, so the badge
+     * re-appears for announcements that have been edited.
+     *
+     * Precedence: updatedAt → date → hash of title+message.
+     */
+    function announcementStamp(doc) {
+        const data = doc.data() || {};
+        const u = data.updatedAt;
+        let s = "";
+        if (u) {
+            if (typeof u.toMillis === "function") s = String(u.toMillis());
+            else if (typeof u.seconds === "number") {
+                s = String(u.seconds * 1000 + Math.floor((u.nanoseconds || 0) / 1e6));
+            } else s = String(u);
+        }
+        if (!s) s = String(data.date || "");
+        if (!s) s = (data.title || "") + "|" + (data.message || "");
+        return s;
+    }
+
+    function getSeen() {
+        try {
+            const raw = localStorage.getItem(VIEWED_KEY);
+            const obj = raw ? JSON.parse(raw) : null;
+            return obj && typeof obj === "object" ? obj : {};
+        } catch (e) { return {}; }
+    }
+
+    function setSeen(map) {
+        try { localStorage.setItem(VIEWED_KEY, JSON.stringify(map)); } catch (e) {}
     }
 
     function setSharedBadge(count) {
@@ -364,18 +401,47 @@
             : "No announcements available";
     }
 
+    function computeUnseenFromSnapshot(snap) {
+        const seen = getSeen();
+        currentPublished = [];
+        let unseen = 0;
+        snap.forEach(function (doc) {
+            const data = doc.data() || {};
+            if (!isPublishedDoc(data)) return;
+            const key = doc.id + "::" + announcementStamp(doc);
+            currentPublished.push({ id: doc.id, key: key });
+            if (!seen[key]) unseen++;
+        });
+        return unseen;
+    }
+
+    function markAllPublishedSeen() {
+        if (!currentPublished.length) return;
+        const seen = getSeen();
+        const now = Date.now();
+        currentPublished.forEach(function (item) { seen[item.key] = now; });
+        setSeen(seen);
+    }
+
+    function recountFromCache() {
+        const seen = getSeen();
+        let unseen = 0;
+        currentPublished.forEach(function (item) {
+            if (!seen[item.key]) unseen++;
+        });
+        setSharedBadge(unseen);
+        setSharedButtonTitle(unseen);
+    }
+
     function subscribeToAnnouncements() {
         const db = firestore();
         if (!db || announcementsUnsubscribe) return;
 
         announcementsUnsubscribe = db.collection(ANNOUNCEMENTS_COLLECTION)
             .onSnapshot(function (snap) {
-                let published = 0;
-                snap.forEach(function (doc) {
-                    if (isPublishedDoc(doc.data())) published++;
-                });
-                setSharedBadge(published);
-                setSharedButtonTitle(published);
+                const unseen = computeUnseenFromSnapshot(snap);
+                setSharedBadge(unseen);
+                setSharedButtonTitle(unseen);
             }, function (err) {
                 console.warn("[header.js] announcements listener failed:", err.code || err.message);
             });
@@ -389,34 +455,40 @@
             event.preventDefault();
             event.stopPropagation();
 
-            // If the update banner is on this page, open its modal
+            // The user is about to see the announcements → clear the badge now.
+            markAllPublishedSeen();
+            setSharedBadge(0);
+            setSharedButtonTitle(0);
+
+            // Open the modal if the banner is on this page…
             const viewAll = document.querySelector('[data-update-action="view-all"]');
             if (viewAll) { viewAll.click(); return; }
 
-            // If the banner is present but the button hasn't bound yet, scroll to it
+            // …otherwise scroll to the banner…
             const banner = document.getElementById("dssUpdateBanner");
             if (banner) {
                 banner.scrollIntoView({ behavior: "smooth", block: "center" });
                 return;
             }
 
-            // No banner on this page — send the user to the home page
+            // …otherwise send them to the home page where the banner lives.
             const file = window.location.pathname.split("/").pop().toLowerCase();
             if (file !== "" && file !== "index.html") {
                 window.location.href = "index.html";
             }
         });
 
-        // Keep waiting until Firebase is actually ready — no 2s cutoff.
+        // Cross-tab sync: if another tab marks announcements as viewed,
+        // refresh this tab's badge too.
+        window.addEventListener("storage", function (e) {
+            if (e.key === VIEWED_KEY) recountFromCache();
+        });
+
         (function waitForFirebase() {
-            if (firestore()) {
-                subscribeToAnnouncements();
-                return;
-            }
+            if (firestore()) { subscribeToAnnouncements(); return; }
             setTimeout(waitForFirebase, 250);
         })();
 
-        // Optional: your Firebase bootstrap can dispatch this to skip polling.
         window.addEventListener("bdtools:firebase-ready", function () {
             if (!announcementsUnsubscribe) subscribeToAnnouncements();
         });
