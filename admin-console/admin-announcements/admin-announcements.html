@@ -16,9 +16,10 @@
 
   <main class="at-main">
 
+    <!-- TOOLBAR -->
     <section class="at-toolbar">
       <div class="at-toolbar-group">
-        <label for="atCategoryFilter">Filter</label>
+        <label for="atCategoryFilter">Category</label>
         <select id="atCategoryFilter" aria-label="Filter by category">
           <option value="">All Categories</option>
           <option value="general">📢 Announcements</option>
@@ -26,6 +27,15 @@
           <option value="reminders">⚠ Important Reminders</option>
           <option value="issues">🐞 Known Issues</option>
           <option value="guides">📚 New Guides Added</option>
+        </select>
+      </div>
+
+      <div class="at-toolbar-group">
+        <label for="atStatusFilter">Status</label>
+        <select id="atStatusFilter" aria-label="Filter by status">
+          <option value="all">All</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
         </select>
       </div>
 
@@ -37,8 +47,10 @@
       </div>
     </section>
 
+    <!-- WORKSPACE -->
     <section class="at-workspace">
 
+      <!-- LEFT LIST -->
       <aside class="at-panel at-left-panel" aria-label="Announcements">
         <header class="at-panel-head">
           <div>
@@ -53,6 +65,7 @@
         </div>
       </aside>
 
+      <!-- RIGHT EDITOR -->
       <section class="at-panel at-editor" aria-label="Editor">
         <header class="at-panel-head">
           <div>
@@ -68,6 +81,26 @@
         </header>
 
         <div class="at-editor-body" id="atEditorBody" hidden>
+
+          <!-- LIVE PREVIEW -->
+          <div class="at-preview-wrap">
+            <div class="at-preview-label">
+              <i class="fa-solid fa-eye"></i> Live Preview
+            </div>
+            <div class="at-preview" id="atPreview">
+              <div class="at-preview__icon">
+                <i class="fa-solid fa-bullhorn" id="atPreviewIcon"></i>
+              </div>
+              <div class="at-preview__copy">
+                <div class="at-preview__eyebrow" id="atPreviewEyebrow">SYSTEM UPDATE</div>
+                <div class="at-preview__title" id="atPreviewTitle">EBS System Maintenance</div>
+                <div class="at-preview__date" id="atPreviewDate">May 25, 2025 from 1:00 AM – 5:00 AM PST.</div>
+                <div class="at-preview__message" id="atPreviewMessage">Some EBS features may be unavailable during this time.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CATEGORY -->
           <div class="at-edit-field">
             <label for="atCategory">
               <span>Category</span>
@@ -82,22 +115,27 @@
             </select>
           </div>
 
+          <!-- EYEBROW -->
           <div class="at-edit-field">
             <label for="atEyebrow">
               <span>Eyebrow Text</span>
-              <small>Small text above the title.</small>
+              <small>Small text above the title. Max 24 characters.</small>
             </label>
-            <input id="atEyebrow" type="text" placeholder="SYSTEM UPDATE">
+            <input id="atEyebrow" type="text" maxlength="24" placeholder="SYSTEM UPDATE">
+            <span class="at-char-count" id="atEyebrowCount">0 / 24</span>
           </div>
 
+          <!-- TITLE -->
           <div class="at-edit-field">
             <label for="atTitle">
               <span>Title</span>
-              <small>Main heading of the announcement.</small>
+              <small>Main heading. Max 60 characters.</small>
             </label>
-            <input id="atTitle" type="text" placeholder="EBS System Maintenance">
+            <input id="atTitle" type="text" maxlength="60" placeholder="EBS System Maintenance">
+            <span class="at-char-count" id="atTitleCount">0 / 60</span>
           </div>
 
+          <!-- DATE -->
           <div class="at-edit-field">
             <label for="atDate">
               <span>Date / Time</span>
@@ -106,32 +144,40 @@
             <input id="atDate" type="text" placeholder="May 25, 2025 from 1:00 AM – 5:00 AM PST.">
           </div>
 
+          <!-- MESSAGE -->
           <div class="at-edit-field">
             <label for="atMessage">
               <span>Message Body</span>
-              <small>Supporting text. Use line breaks for multiple lines.</small>
+              <small>Supporting text. Max 180 characters. Use line breaks for multiple lines.</small>
             </label>
-            <textarea id="atMessage" rows="4" placeholder="Some features may be unavailable."></textarea>
+            <textarea id="atMessage" rows="4" maxlength="180" placeholder="Some features may be unavailable."></textarea>
+            <span class="at-char-count" id="atMessageCount">0 / 180</span>
           </div>
 
+          <!-- BUTTON -->
           <div class="at-edit-field">
             <label for="atButton">
               <span>Button Text</span>
-              <small>Label for the button in the banner.</small>
+              <small>Label for the button in the banner. Max 24 characters.</small>
             </label>
-            <input id="atButton" type="text" placeholder="View All Updates">
+            <input id="atButton" type="text" maxlength="24" placeholder="View All Updates">
+            <span class="at-char-count" id="atButtonCount">0 / 24</span>
           </div>
 
+          <!-- FOOTER ACTIONS -->
           <div class="at-editor-footer">
             <span class="at-doc-ids" id="atDocIds"></span>
             <div class="at-editor-actions">
               <button type="button" class="at-btn ghost" id="atReset">Reset</button>
-              <button type="button" class="at-btn primary" id="atSave">
-                <svg viewBox="0 0 24 24" aria-hidden="true" class="at-btn-icon"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>
-                Save
+              <button type="button" class="at-btn ghost" id="atSaveDraft">
+                <i class="fa-regular fa-file"></i> Save Draft
+              </button>
+              <button type="button" class="at-btn primary" id="atPublish">
+                <i class="fa-solid fa-upload"></i> Publish
               </button>
             </div>
           </div>
+
         </div>
 
         <div class="at-editor-placeholder" id="atEditorPlaceholder">
