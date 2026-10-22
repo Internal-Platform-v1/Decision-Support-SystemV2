@@ -1,6 +1,6 @@
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER
-   Slideshow with auto-advance and dot navigation
+   Fixed background, rotating text content
    ============================================================ */
 
 .dss-update-banner {
@@ -24,28 +24,7 @@
 }
 
 /* ------------------------------------------------------------
-   SLIDE
-   ------------------------------------------------------------ */
-
-.dss-update-banner__slide {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-
-  opacity: 0;
-  transform: translateX(30px);
-  transition: opacity .5s ease, transform .5s ease;
-  pointer-events: none;
-}
-
-.dss-update-banner__slide.is-active {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-
-/* ------------------------------------------------------------
-   VISUAL LAYER
+   VISUAL — stays fixed, never changes
    ------------------------------------------------------------ */
 
 .dss-update-banner__visual {
@@ -99,7 +78,7 @@
 }
 
 /* ------------------------------------------------------------
-   COPY
+   COPY — text content, gets replaced by JS
    ------------------------------------------------------------ */
 
 .dss-update-banner__copy {
@@ -111,6 +90,13 @@
   height: 100%;
 
   padding: 13px 12px 11px 24px;
+
+  transition: opacity .25s ease;
+}
+
+/* Small fade during text swap */
+.dss-update-banner__copy.is-swapping {
+  opacity: 0;
 }
 
 .dss-update-banner__eyebrow {
@@ -150,7 +136,7 @@
   margin-left: 9px;
 }
 
-.dss-update-banner h2 {
+.dss-update-banner__title {
   margin: 0 0 3px 39px;
 
   color: #17194f;
@@ -159,6 +145,10 @@
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -.2px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dss-update-banner__date {
@@ -169,6 +159,10 @@
   font-size: 8px !important;
   line-height: 1.25 !important;
   font-weight: 700 !important;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dss-update-banner__date i {
@@ -184,6 +178,9 @@
   font-size: 8px;
   line-height: 1.35;
   font-weight: 500;
+
+  max-height: 2.7em;
+  overflow: hidden;
 }
 
 .dss-update-banner__button {
