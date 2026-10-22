@@ -1,19 +1,16 @@
-<!-- ============================================================
-     shared/header.html
-     ============================================================ -->
 <header class="topbar">
     <div class="brand-area">
-        <img class="fedex-logo-image" src="assets/images/fedex-logo.png" alt="FedEx Freight">
+        <a href="index.html" class="fedex-logo-link" aria-label="Go to home page">
+            <img class="fedex-logo-image" src="assets/images/fedex-logo.png" alt="FedEx Freight">
+        </a>
         <div class="brand-divider"></div>
 
-        <!-- inline navigation -->
         <nav class="brand-nav" aria-label="Main navigation">
             <button class="nav-item active" data-nav="home">
                 <span class="nav-label">Home</span>
                 <span class="nav-underline"></span>
             </button>
 
-            <!-- Case Directory with dropdown wrapper -->
             <div class="nav-dropdown-wrapper">
                 <button class="nav-item has-dropdown" id="caseDirectoryBtn">
                     <span class="nav-label">Case Directory</span>
@@ -49,19 +46,17 @@
         </nav>
     </div>
 
-    <!-- right-hand actions -->
     <div class="header-actions">
         <div class="global-search">
             <span class="search-icon"></span>
             <input id="globalSearch" type="text" placeholder="Search guides, tools, topics..." autocomplete="off">
         </div>
 
-        <button class="icon-btn notification-btn" aria-label="Notifications">
+        <button class="icon-btn notification-btn" id="sharedNotificationBtn" aria-label="Notifications" type="button">
             <span class="bell-icon"></span>
-            <b class="notification-dot">3</b>
+            <b class="notification-dot" id="sharedNotificationBadge" hidden>0</b>
         </button>
 
-        <!-- Settings dropdown -->
         <div class="settings-wrapper">
             <button
                 class="icon-btn settings-btn"
@@ -77,68 +72,29 @@
             <div class="settings-menu" id="settingsMenu" role="menu">
                 <div class="settings-heading">Settings</div>
 
-                <!-- Theme group -->
                 <div class="settings-group">
                     <div class="settings-label" id="themeLabel">Theme</div>
-
                     <div class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
-                        <button
-                            type="button"
-                            class="theme-option"
-                            data-theme-choice="light"
-                            role="radio"
-                            aria-checked="true"
-                        >
+                        <button type="button" class="theme-option" data-theme-choice="light" role="radio" aria-checked="true">
                             <span class="theme-option-icon" aria-hidden="true">☀</span>
                             <span>Light</span>
                         </button>
-
-                        <button
-                            type="button"
-                            class="theme-option"
-                            data-theme-choice="dark"
-                            role="radio"
-                            aria-checked="false"
-                        >
+                        <button type="button" class="theme-option" data-theme-choice="dark" role="radio" aria-checked="false">
                             <span class="theme-option-icon" aria-hidden="true">☾</span>
                             <span>Dark</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- View mode group -->
                 <div class="settings-group">
                     <div class="settings-label" id="roleLabel">View mode</div>
-
                     <div class="role-options" role="radiogroup" aria-labelledby="roleLabel">
-                        <button
-                            type="button"
-                            class="role-option"
-                            data-role="user"
-                            role="radio"
-                            aria-checked="true"
-                        >
-                            User
-                        </button>
-
-                        <button
-                            type="button"
-                            class="role-option"
-                            data-role="admin"
-                            role="radio"
-                            aria-checked="false"
-                        >
-                            Admin
-                        </button>
+                        <button type="button" class="role-option" data-role="user" role="radio" aria-checked="true">User</button>
+                        <button type="button" class="role-option" data-role="admin" role="radio" aria-checked="false">Admin</button>
                     </div>
                 </div>
 
-                <button
-                    id="adminDashboardBtn"
-                    type="button"
-                    role="menuitem"
-                    hidden
-                >
+                <button id="adminDashboardBtn" type="button" role="menuitem" hidden>
                     <span aria-hidden="true">🛡️</span> Admin Dashboard
                 </button>
             </div>
@@ -146,52 +102,18 @@
     </div>
 </header>
 
-<!-- ============================================================
-     Admin gate — password prompt before entering the dashboard
-     ============================================================ -->
 <div class="admin-gate" id="adminGate" hidden>
     <div class="admin-gate-backdrop" data-admin-gate-close></div>
 
-    <div
-        class="admin-gate-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="adminGateTitle"
-    >
+    <div class="admin-gate-card" role="dialog" aria-modal="true" aria-labelledby="adminGateTitle">
         <div class="admin-gate-icon" aria-hidden="true">🛡️</div>
-
         <h2 id="adminGateTitle">Admin access</h2>
-        <p class="admin-gate-copy">
-            Enter the admin password to open the dashboard.
-        </p>
-
-        <input
-            type="password"
-            id="adminGateInput"
-            class="admin-gate-input"
-            placeholder="Admin password"
-            autocomplete="off"
-            spellcheck="false"
-        >
-
+        <p class="admin-gate-copy">Enter the admin password to open the dashboard.</p>
+        <input type="password" id="adminGateInput" class="admin-gate-input" placeholder="Admin password" autocomplete="off" spellcheck="false">
         <div class="admin-gate-error" id="adminGateError" role="alert"></div>
-
         <div class="admin-gate-actions">
-            <button
-                type="button"
-                class="admin-gate-btn ghost"
-                id="adminGateCancel"
-            >
-                Cancel
-            </button>
-
-            <button
-                type="button"
-                class="admin-gate-btn primary"
-                id="adminGateSubmit"
-            >
-                Unlock
-            </button>
+            <button type="button" class="admin-gate-btn ghost" id="adminGateCancel">Cancel</button>
+            <button type="button" class="admin-gate-btn primary" id="adminGateSubmit">Unlock</button>
         </div>
     </div>
 </div>
