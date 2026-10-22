@@ -1,8 +1,5 @@
 /* ============================================================
    shared/header/header.js
-   Full working version — tabs, search, theme, admin gate.
-   Token stored in window.name so it survives navigation
-   without being touched by localStorage or cookie clearers.
    ============================================================ */
 (function () {
     "use strict";
@@ -11,6 +8,8 @@
     const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
     const ADMIN_PASSWORD = "fedex-admin-2026";
+
+    const ANNOUNCEMENTS_COLLECTION = "announcements";
 
     /* ------------------------------------------------------------
        Admin token — stored in window.name
@@ -324,6 +323,95 @@
     }
 
     /* ------------------------------------------------------------
+       Notifications — count published announcements from Firestore
+       ------------------------------------------------------------ */
+    function firestore() {
+        if (window.firebase && firebase.apps && firebase.apps.length) {
+            return window.db || firebase.firestore();
+        }
+        return null;
+    }
+
+    function setSharedBadge(count) {
+        const badge = document.getElementById("sharedNotificationBadge");
+        if (!badge) return;
+        if (count > 0) {
+            badge.textContent = count > 9 ? "9+" : String(count);
+            badge.hidden = false;
+        } else {
+            badge.textContent = "0";
+            badge.hidden = true;
+        }
+    }
+
+    function setSharedButtonTitle(count) {
+        const btn = document.getElementById("sharedNotificationBtn");
+        if (!btn) return;
+        btn.setAttribute(
+            "aria-label",
+            count > 0 ? `${count} published announcement${count === 1 ? "" : "s"}` : "Notifications"
+        );
+        btn.title = count > 0
+            ? `${count} published announcement${count === 1 ? "" : "s"} — click to view`
+            : "No announcements available";
+    }
+
+    async function refreshSharedNotificationBadge() {
+        const db = firestore();
+        if (!db) return;
+
+        try {
+            const snap = await db.collection(ANNOUNCEMENTS_COLLECTION).get();
+            let published = 0;
+            snap.forEach(doc => {
+                const data = doc.data() || {};
+                if (data.published === true) published++;
+            });
+            setSharedBadge(published);
+            setSharedButtonTitle(published);
+        } catch (err) {
+            console.warn("[header.js] Could not load notifications:", err.code || err.message);
+        }
+    }
+
+    function setupSharedNotifications() {
+        const btn = document.getElementById("sharedNotificationBtn");
+        if (!btn) return;
+
+        btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // If the update banner is on this page, open its modal
+            const viewAll = document.querySelector('[data-update-action="view-all"]');
+            if (viewAll) { viewAll.click(); return; }
+
+            // If no banner, scroll to it if present
+            const banner = document.getElementById("dssUpdateBanner");
+            if (banner) {
+                banner.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+
+            // Nothing to show on this page
+            console.info("[header.js] No update banner on this page.");
+        });
+
+        const waitForFirebase = function (attempt) {
+            attempt = attempt || 0;
+            if (firestore()) {
+                refreshSharedNotificationBadge();
+                setInterval(refreshSharedNotificationBadge, 30000);
+                return;
+            }
+            if (attempt < 20) {
+                setTimeout(function () { waitForFirebase(attempt + 1); }, 100);
+            }
+        };
+        waitForFirebase(0);
+    }
+
+    /* ------------------------------------------------------------
        Global Search
        ------------------------------------------------------------ */
     const DSS_GUIDE_BASE_PATH = "/Decision-Support-SystemV2/";
@@ -579,6 +667,7 @@
         setupCaseDirectory();
         setupNavigation();
         setupSearch();
+        setupSharedNotifications();
     }
 
     start();
