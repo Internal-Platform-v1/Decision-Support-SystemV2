@@ -9,20 +9,31 @@
       (function() {
         const origRemove = Storage.prototype.removeItem;
         const origClear = Storage.prototype.clear;
+        const origSet = Storage.prototype.setItem;
 
         Storage.prototype.removeItem = function(key) {
           if (key === "bd_admin_unlocked") {
-            console.warn("[TRAP] removeItem('bd_admin_unlocked') called from:");
+            console.warn("[TRAP-REMOVE] removeItem('bd_admin_unlocked') from:");
             console.trace();
           }
           return origRemove.apply(this, arguments);
         };
 
         Storage.prototype.clear = function() {
-          console.warn("[TRAP] localStorage.clear() called from:");
+          console.warn("[TRAP-CLEAR] localStorage.clear() from:");
           console.trace();
           return origClear.apply(this, arguments);
         };
+
+        Storage.prototype.setItem = function(key, value) {
+          if (key === "bd_admin_unlocked") {
+            console.warn("[TRAP-SET] setItem('bd_admin_unlocked', " + JSON.stringify(value) + ") from:");
+            console.trace();
+          }
+          return origSet.apply(this, arguments);
+        };
+
+        console.log("[TRAP] installed. Current token:", origSet === Storage.prototype.setItem ? "trapped" : "already trapped");
       })();
     </script>
 
