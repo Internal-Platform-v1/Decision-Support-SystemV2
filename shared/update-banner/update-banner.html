@@ -47,3 +47,50 @@
   </div>
 
 </section>
+
+<!-- Update detail modal -->
+<div class="dss-update-modal" id="dssUpdateModal" hidden>
+  <div class="dss-update-modal__backdrop" data-update-modal-close></div>
+
+  <div class="dss-update-modal__panel" role="dialog" aria-modal="true" aria-labelledby="dssUpdateModalTitle">
+    <header class="dss-update-modal__header">
+      <div class="dss-update-modal__header-copy">
+        <span class="dss-update-modal__eyebrow" id="dssUpdateModalEyebrow">SYSTEM UPDATE</span>
+        <h2 class="dss-update-modal__title" id="dssUpdateModalTitle">EBS System Maintenance</h2>
+      </div>
+      <button
+        type="button"
+        class="dss-update-modal__close"
+        data-update-modal-close
+        aria-label="Close"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </header>
+
+    <div class="dss-update-modal__body">
+      <div class="dss-update-modal__meta">
+        <span class="dss-update-modal__badge" id="dssUpdateModalBadge">📢 Announcements</span>
+        <span class="dss-update-modal__date" id="dssUpdateModalDate">May 25, 2025</span>
+      </div>
+
+      <p class="dss-update-modal__message" id="dssUpdateModalMessage">
+        Some EBS features may be unavailable during this time.
+      </p>
+    </div>
+
+    <footer class="dss-update-modal__footer">
+      <button type="button" class="dss-update-modal__nav" id="dssUpdateModalPrev">
+        <i class="fa-solid fa-chevron-left"></i>
+        Previous
+      </button>
+
+      <div class="dss-update-modal__dots" id="dssUpdateModalDots"></div>
+
+      <button type="button" class="dss-update-modal__nav" id="dssUpdateModalNext">
+        Next
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </footer>
+  </div>
+</div>
