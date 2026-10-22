@@ -16,6 +16,7 @@
 body[data-admin-page="announcements"] .admin-main { min-height: 0; }
 body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 
+/* Toolbar */
 .at-toolbar {
   display: flex;
   align-items: center;
@@ -38,7 +39,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 }
 .at-toolbar select {
   height: 34px;
-  min-width: 200px;
+  min-width: 160px;
   padding: 0 10px;
   border: 1px solid #dfe2eb;
   border-radius: 7px;
@@ -54,6 +55,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 }
 .at-toolbar-actions { margin-left: auto; }
 
+/* Workspace */
 .at-workspace {
   display: grid;
   grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
@@ -109,6 +111,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 
 .at-editor-head-actions { display: flex; gap: 6px; }
 
+/* List */
 .at-rec-list {
   flex: 1 1 auto;
   min-height: 0;
@@ -152,6 +155,28 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
   font-size: 10px;
   line-height: 1.4;
 }
+.at-post-item .at-post-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: #eeeaff;
+  color: #5b48c8;
+  font-size: 9px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.at-post-item.is-active .at-post-tag { background: #d9ccff; }
+.at-post-item .at-post-status {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 700;
+}
+.at-post-item .at-post-status.published { background: #e5f7ec; color: #0f7a3f; }
+.at-post-item .at-post-status.draft     { background: #fff6e0; color: #a76a00; }
+.at-post-item .at-post-status.empty     { background: #f1f1f7; color: #6c6c8c; }
 .at-post-item .at-post-meta {
   display: flex;
   gap: 8px;
@@ -164,17 +189,6 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
   align-items: center;
   gap: 3px;
 }
-.at-post-item .at-post-tag {
-  display: inline-block;
-  padding: 2px 7px;
-  border-radius: 20px;
-  background: #eeeaff;
-  color: #5b48c8;
-  font-size: 9px;
-  font-weight: 700;
-  margin-top: 6px;
-}
-.at-post-item.is-active .at-post-tag { background: #d9ccff; }
 
 .at-empty {
   padding: 24px 12px;
@@ -183,6 +197,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
   text-align: center;
 }
 
+/* Editor */
 .at-editor-subtitle {
   margin: 3px 0 0;
   color: #7a8196;
@@ -192,7 +207,76 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 
 .at-editor-body { padding: 16px; flex: 1 1 auto; overflow-y: auto; }
 
-.at-edit-field { margin-bottom: 16px; }
+/* Live preview */
+.at-preview-wrap {
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 1px dashed #ddd7f2;
+  border-radius: 10px;
+  background: #faf8ff;
+}
+.at-preview-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: #6b25df;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.at-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #ececf3;
+  border-radius: 8px;
+}
+.at-preview__icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #f0e8ff;
+  color: #4d148c;
+  font-size: 13px;
+}
+.at-preview__copy { min-width: 0; flex: 1 1 auto; }
+.at-preview__eyebrow {
+  color: #4d148c;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  margin-bottom: 3px;
+}
+.at-preview__title {
+  color: #17194f;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  word-break: break-word;
+}
+.at-preview__date {
+  color: #4d148c;
+  font-size: 9.5px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.at-preview__message {
+  color: #3f4168;
+  font-size: 9.5px;
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+/* Fields */
+.at-edit-field { margin-bottom: 16px; position: relative; }
 .at-edit-field label {
   display: flex;
   flex-direction: column;
@@ -232,7 +316,17 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
   box-shadow: 0 0 0 3px rgba(107,77,245,.08);
   background: #fff;
 }
+.at-char-count {
+  display: block;
+  margin-top: 4px;
+  font-size: 9.5px;
+  color: #a6adbd;
+  text-align: right;
+}
+.at-char-count.is-warn { color: #d97706; }
+.at-char-count.is-max  { color: #dc2626; font-weight: 700; }
 
+/* Footer */
 .at-editor-footer {
   display: flex;
   align-items: center;
@@ -253,6 +347,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 }
 .at-editor-actions { display: flex; gap: 8px; flex: 0 0 auto; }
 
+/* Placeholder */
 .at-editor-placeholder {
   flex: 1 1 auto;
   padding: 60px 20px;
@@ -274,6 +369,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 .at-editor-placeholder p { margin: 0 0 4px; color: #4a4f6a; font-size: 12px; font-weight: 700; }
 .at-editor-placeholder small { font-size: 10px; color: #8b95a7; }
 
+/* Buttons */
 .at-btn {
   display: inline-flex;
   align-items: center;
@@ -305,6 +401,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 }
 .at-btn.danger:hover { background: #ffe0e4; border-color: #ed9aa5; }
 .at-btn:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+.at-btn i { font-size: 11px; }
 .at-btn-icon {
   width: 13px;
   height: 13px;
@@ -315,6 +412,7 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
   stroke-linejoin: round;
 }
 
+/* Toast */
 .at-toast {
   position: fixed;
   right: 22px;
@@ -348,9 +446,10 @@ body[data-admin-page="announcements"] .admin-hero { display: none !important; }
   .at-main { margin-left: 70px; padding: 68px 14px 24px; }
   .at-toolbar { flex-direction: column; align-items: stretch; }
   .at-toolbar-actions { margin-left: 0; }
+  .at-toolbar select { width: 100%; }
 }
 @media (max-width: 520px) {
   .at-main { padding: 64px 10px 20px; }
   .at-editor-footer { flex-direction: column; align-items: stretch; }
-  .at-editor-actions { justify-content: flex-end; }
+  .at-editor-actions { justify-content: flex-end; flex-wrap: wrap; }
 }
