@@ -8,11 +8,11 @@
   const COLLECTION = "announcements";
 
   const CATEGORIES = [
-    { key: "general",   label: "📢 Announcements" },
-    { key: "whats_new", label: "✨ What's New?" },
-    { key: "reminders", label: "⚠ Important Reminders" },
-    { key: "issues",    label: "🐞 Known Issues" },
-    { key: "guides",    label: "📚 New Guides Added" }
+    { key: "general",   label: "📢 Announcements",       icon: "fa-solid fa-bullhorn" },
+    { key: "whats_new", label: "✨ What's New?",         icon: "fa-solid fa-wand-magic-sparkles" },
+    { key: "reminders", label: "⚠ Important Reminders",  icon: "fa-solid fa-triangle-exclamation" },
+    { key: "issues",    label: "🐞 Known Issues",        icon: "fa-solid fa-bug" },
+    { key: "guides",    label: "📚 New Guides Added",    icon: "fa-solid fa-book-open" }
   ];
 
   const DEFAULTS = {
@@ -28,7 +28,8 @@
     activeCat: null,
     isNew: false,
     saving: false,
-    filter: ""
+    filterCategory: "",
+    filterStatus: "all"
   };
 
   const $ = id => document.getElementById(id);
@@ -61,6 +62,28 @@
     return c ? c.label : key;
   }
 
+  function categoryIcon(key) {
+    const c = CATEGORIES.find(c => c.key === key);
+    return c ? c.icon : "fa-solid fa-bullhorn";
+  }
+
+  function relativeTime(ts) {
+    if (!ts) return "";
+    const date = ts.toDate ? ts.toDate() : new Date(ts);
+    const diff = Date.now() - date.getTime();
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return "just now";
+    if (min < 60) return `${min}m ago`;
+    const h = Math.floor(min / 60);
+    if (h < 24) return `${h}h ago`;
+    const d = Math.floor(h / 24);
+    if (d < 7) return `${d}d ago`;
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  /* ------------------------------------------------------------
+     Load posts
+     ------------------------------------------------------------ */
   async function loadAllPosts() {
     const db = firestore();
     if (!db) {
@@ -85,10 +108,17 @@
             date:    data.date    || DEFAULTS[catKey].date,
             message: data.message || DEFAULTS[catKey].message,
             button:  data.button  || DEFAULTS[catKey].button,
+            published: data.published === true,
+            updatedAt: data.updatedAt || null,
             exists:  true
           };
         } else {
-          state.posts[catKey] = { ...DEFAULTS[catKey], exists: false };
+          state.posts[catKey] = {
+            ...DEFAULTS[catKey],
+            published: false,
+            updatedAt: null,
+            exists: false
+          };
         }
       });
 
@@ -99,35 +129,59 @@
     }
   }
 
+  /* ------------------------------------------------------------
+     Render list
+     ------------------------------------------------------------ */
   function renderPostList() {
     const list = $("atPostList");
     const count = $("atPostCount");
     const title = $("atLeftTitle");
     if (!list) return;
 
-    const filter = state.filter;
-    const entries = CATEGORIES
-      .filter(c => !filter || c.key === filter)
-      .map(c => ({ cat: c, data: state.posts[c.key] }));
+    const fCat = state.filterCategory;
+    const fStatus = state.filterStatus;
 
-    if (title) title.textContent = filter ? categoryLabel(filter) : "All Announcements";
+    const entries = CATEGORIES
+      .filter(c => !fCat || c.key === fCat)
+      .map(c => ({ cat: c, data: state.posts[c.key] }))
+      .filter(({ data }) => {
+        if (fStatus === "published") return data.published === true;
+        if (fStatus === "draft") return data.published !== true;
+        return true;
+      });
+
+    if (title) {
+      if (fCat) title.textContent = categoryLabel(fCat);
+      else if (fStatus === "published") title.textContent = "Published";
+      else if (fStatus === "draft") title.textContent = "Drafts";
+      else title.textContent = "All Announcements";
+    }
     if (count) count.textContent = `${entries.length} post${entries.length === 1 ? "" : "s"}`;
 
     if (!entries.length) {
-      list.innerHTML = `<p class="at-empty">No announcements posted yet. Click "New Announcement" to create one.</p>`;
+      list.innerHTML = `<p class="at-empty">No announcements match this filter. Click "New Announcement" to create one.</p>`;
       return;
     }
 
     list.innerHTML = entries.map(({ cat, data }) => {
       const isActive = state.activeCat === cat.key && !state.isNew;
+      let statusClass = "empty";
+      let statusText = "Not saved";
+      if (data.exists && data.published) { statusClass = "published"; statusText = "Published"; }
+      else if (data.exists && !data.published) { statusClass = "draft"; statusText = "Draft"; }
+
+      const updated = data.updatedAt ? relativeTime(data.updatedAt) : "";
       return `
         <button type="button" class="at-post-item${isActive ? " is-active" : ""}" data-cat="${esc(cat.key)}">
           <strong>${esc(data.title || "(Untitled)")}</strong>
           <small>${esc((data.message || "").slice(0, 80))}${(data.message || "").length > 80 ? "…" : ""}</small>
-          <span class="at-post-tag">${esc(cat.label)}</span>
+          <div>
+            <span class="at-post-tag">${esc(cat.label)}</span>
+            <span class="at-post-status ${statusClass}">${statusText}</span>
+          </div>
           <div class="at-post-meta">
             <span><i class="fa-regular fa-calendar"></i> ${esc(data.date || "—")}</span>
-            ${data.exists ? `<span><i class="fa-solid fa-circle" style="color:#18a558;font-size:7px;"></i> Published</span>` : `<span><i class="fa-regular fa-circle" style="color:#8b95a7;font-size:7px;"></i> Not saved</span>`}
+            ${updated ? `<span><i class="fa-regular fa-clock"></i> ${updated}</span>` : ""}
           </div>
         </button>
       `;
@@ -138,6 +192,9 @@
     });
   }
 
+  /* ------------------------------------------------------------
+     Select post
+     ------------------------------------------------------------ */
   function selectPost(catKey) {
     state.activeCat = catKey;
     state.isNew = false;
@@ -153,14 +210,22 @@
     const deleteBtn = $("atDelete");
 
     if (editorTitle) editorTitle.textContent = data.title || "(Untitled)";
-    if (editorSubtitle) editorSubtitle.textContent = categoryLabel(catKey);
+    if (editorSubtitle) {
+      const status = data.exists ? (data.published ? "Published" : "Draft") : "Not saved";
+      editorSubtitle.textContent = `${categoryLabel(catKey)} · ${status}`;
+    }
     if (editorEyebrow) editorEyebrow.textContent = "EDIT ANNOUNCEMENT";
     if (deleteBtn) deleteBtn.hidden = !data.exists;
 
     showEditor(true);
+    updatePreview();
+    updateCharCounts();
     renderPostList();
   }
 
+  /* ------------------------------------------------------------
+     New announcement
+     ------------------------------------------------------------ */
   function startNew() {
     state.isNew = true;
     state.activeCat = null;
@@ -181,15 +246,20 @@
     const docIds = $("atDocIds");
 
     if (editorTitle) editorTitle.textContent = "New Announcement";
-    if (editorSubtitle) editorSubtitle.textContent = "Fill in the fields below and click Save.";
+    if (editorSubtitle) editorSubtitle.textContent = "Fill in the fields below and click Publish or Save Draft.";
     if (editorEyebrow) editorEyebrow.textContent = "CREATE ANNOUNCEMENT";
     if (deleteBtn) deleteBtn.hidden = true;
     if (docIds) docIds.textContent = "";
 
     showEditor(true);
+    updatePreview();
+    updateCharCounts();
     renderPostList();
   }
 
+  /* ------------------------------------------------------------
+     Fill / read editor
+     ------------------------------------------------------------ */
   function fillEditor(data) {
     if ($("atCategory")) $("atCategory").value = data.category || "general";
     if ($("atEyebrow"))  $("atEyebrow").value  = data.eyebrow || "";
@@ -217,7 +287,45 @@
     if (ph) ph.hidden = show;
   }
 
-  async function savePost() {
+  /* ------------------------------------------------------------
+     Live preview
+     ------------------------------------------------------------ */
+  function updatePreview() {
+    const data = readEditor();
+
+    const icon = $("atPreviewIcon");
+    if (icon) icon.className = categoryIcon(data.category);
+
+    if ($("atPreviewEyebrow")) $("atPreviewEyebrow").textContent = data.eyebrow || "SYSTEM UPDATE";
+    if ($("atPreviewTitle"))   $("atPreviewTitle").textContent   = data.title   || "(Title required)";
+    if ($("atPreviewDate"))    $("atPreviewDate").textContent    = data.date    || "—";
+    if ($("atPreviewMessage")) $("atPreviewMessage").textContent = data.message || "Message will appear here.";
+  }
+
+  /* ------------------------------------------------------------
+     Character counts
+     ------------------------------------------------------------ */
+  function updateCharCounts() {
+    setCount("atEyebrow", "atEyebrowCount", 24);
+    setCount("atTitle", "atTitleCount", 60);
+    setCount("atMessage", "atMessageCount", 180);
+    setCount("atButton", "atButtonCount", 24);
+  }
+
+  function setCount(inputId, countId, max) {
+    const input = $(inputId);
+    const el = $(countId);
+    if (!input || !el) return;
+    const len = input.value.length;
+    el.textContent = `${len} / ${max}`;
+    el.classList.toggle("is-warn", len >= max * 0.85 && len < max);
+    el.classList.toggle("is-max", len >= max);
+  }
+
+  /* ------------------------------------------------------------
+     Save / Publish
+     ------------------------------------------------------------ */
+  async function savePost(publish) {
     if (state.saving) return;
 
     const db = firestore();
@@ -228,8 +336,10 @@
     if (!data.category) { showToast("Category is required.", true); return; }
 
     state.saving = true;
-    const btn = $("atSave");
-    if (btn) btn.disabled = true;
+    const draftBtn = $("atSaveDraft");
+    const publishBtn = $("atPublish");
+    if (draftBtn) draftBtn.disabled = true;
+    if (publishBtn) publishBtn.disabled = true;
 
     try {
       const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -240,6 +350,7 @@
         date: data.date,
         message: data.message,
         button: data.button,
+        published: publish === true,
         updatedAt: serverTimestamp
       }, { merge: true });
 
@@ -249,6 +360,8 @@
         date: data.date,
         message: data.message,
         button: data.button,
+        published: publish === true,
+        updatedAt: new Date(),
         exists: true
       };
 
@@ -257,7 +370,7 @@
 
       renderPostList();
       selectPost(data.category);
-      showToast("Announcement saved.");
+      showToast(publish ? "Announcement published." : "Draft saved.");
     } catch (err) {
       console.error(err);
       showToast(
@@ -268,7 +381,8 @@
       );
     } finally {
       state.saving = false;
-      if (btn) btn.disabled = false;
+      if (draftBtn) draftBtn.disabled = false;
+      if (publishBtn) publishBtn.disabled = false;
     }
   }
 
@@ -284,7 +398,7 @@
     try {
       await db.collection(COLLECTION).doc(catKey).delete();
 
-      state.posts[catKey] = { ...DEFAULTS[catKey], exists: false };
+      state.posts[catKey] = { ...DEFAULTS[catKey], published: false, updatedAt: null, exists: false };
 
       state.activeCat = null;
       state.isNew = false;
@@ -313,35 +427,55 @@
   function resetEditor() {
     if (state.isNew) { startNew(); return; }
     if (!state.activeCat) return;
-
     const data = state.posts[state.activeCat];
     if (!data) return;
-
     fillEditor({ ...data, category: state.activeCat });
+    updatePreview();
+    updateCharCounts();
     showToast("Editor reset to last saved values.");
   }
 
+  /* ------------------------------------------------------------
+     Bind
+     ------------------------------------------------------------ */
+  function bindLiveUpdates() {
+    ["atEyebrow", "atTitle", "atDate", "atMessage", "atButton", "atCategory"].forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener("input", () => {
+        updatePreview();
+        updateCharCounts();
+      });
+      el.addEventListener("change", () => {
+        updatePreview();
+      });
+    });
+  }
+
   function init() {
-    const filterSelect = $("atCategoryFilter");
-    if (filterSelect) {
-      filterSelect.addEventListener("change", () => {
-        state.filter = filterSelect.value;
+    const catFilter = $("atCategoryFilter");
+    if (catFilter) {
+      catFilter.addEventListener("change", () => {
+        state.filterCategory = catFilter.value;
         renderPostList();
       });
     }
 
-    const addBtn = $("atAddNew");
-    if (addBtn) addBtn.addEventListener("click", startNew);
+    const statusFilter = $("atStatusFilter");
+    if (statusFilter) {
+      statusFilter.addEventListener("change", () => {
+        state.filterStatus = statusFilter.value;
+        renderPostList();
+      });
+    }
 
-    const saveBtn = $("atSave");
-    if (saveBtn) saveBtn.addEventListener("click", savePost);
+    $("atAddNew")?.addEventListener("click", startNew);
+    $("atSaveDraft")?.addEventListener("click", () => savePost(false));
+    $("atPublish")?.addEventListener("click", () => savePost(true));
+    $("atReset")?.addEventListener("click", resetEditor);
+    $("atDelete")?.addEventListener("click", deletePost);
 
-    const resetBtn = $("atReset");
-    if (resetBtn) resetBtn.addEventListener("click", resetEditor);
-
-    const deleteBtn = $("atDelete");
-    if (deleteBtn) deleteBtn.addEventListener("click", deletePost);
-
+    bindLiveUpdates();
     loadAllPosts();
   }
 
