@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Announcements | Decision Support System</title>
+  <link rel="icon" href="data:,">
+
+  <link rel="stylesheet" href="../../shared/header/admin-header.css" />
+  <link rel="stylesheet" href="admin-announcements.css" />
+</head>
+
+<body data-admin-page="announcements" data-admin-title="Announcements">
+
+  <div id="adminHeader"></div>
+
+  <main class="at-main">
+
+    <section class="at-guide-picker">
+      <label for="atCategorySelect">Category</label>
+      <select id="atCategorySelect" aria-label="Select category">
+        <option value="general">📢 Announcements</option>
+        <option value="whats_new">✨ What's New?</option>
+        <option value="reminders">⚠ Important Reminders</option>
+        <option value="issues">🐞 Known Issues</option>
+        <option value="guides">📚 New Guides Added</option>
+      </select>
+
+      <span class="at-guide-meta" id="atGuideMeta">Customize the banner shown on the main site.</span>
+    </section>
+
+    <section class="at-workspace">
+
+      <aside class="at-panel at-left-panel" aria-label="Categories">
+        <header class="at-panel-head">
+          <div>
+            <span>ANNOUNCEMENT TYPE</span>
+            <h2 id="atLeftTitle">Select a category</h2>
+          </div>
+        </header>
+
+        <div class="at-rec-list" id="atCategoryList">
+          <button type="button" class="at-rec-item is-active" data-cat="general">
+            <strong>📢 Announcements</strong>
+            <small>General system announcements</small>
+          </button>
+          <button type="button" class="at-rec-item" data-cat="whats_new">
+            <strong>✨ What's New?</strong>
+            <small>New features and updates</small>
+          </button>
+          <button type="button" class="at-rec-item" data-cat="reminders">
+            <strong>⚠ Important Reminders</strong>
+            <small>Deadlines and important dates</small>
+          </button>
+          <button type="button" class="at-rec-item" data-cat="issues">
+            <strong>🐞 Known Issues</strong>
+            <small>Bugs and active issues</small>
+          </button>
+          <button type="button" class="at-rec-item" data-cat="guides">
+            <strong>📚 New Guides Added</strong>
+            <small>Recently added guides</small>
+          </button>
+        </div>
+      </aside>
+
+      <section class="at-panel at-editor" aria-label="Editor">
+        <header class="at-panel-head">
+          <div>
+            <span>UPDATE BANNER CONTENT</span>
+            <h2 id="atEditorTitle">📢 Announcements</h2>
+            <p id="atEditorSubtitle" class="at-editor-subtitle">
+              Edit the content shown on the main site.
+            </p>
+          </div>
+        </header>
+
+        <div class="at-editor-body" id="atEditorBody">
+          <div class="at-edit-field">
+            <label for="atEyebrow">
+              <span>Eyebrow Text</span>
+              <small>The small text above the title.</small>
+            </label>
+            <input id="atEyebrow" type="text" placeholder="SYSTEM UPDATE">
+          </div>
+
+          <div class="at-edit-field">
+            <label for="atTitle">
+              <span>Title</span>
+              <small>The main heading of the announcement.</small>
+            </label>
+            <input id="atTitle" type="text" placeholder="EBS System Maintenance">
+          </div>
+
+          <div class="at-edit-field">
+            <label for="atDate">
+              <span>Date / Time</span>
+              <small>When the update or event happens.</small>
+            </label>
+            <input id="atDate" type="text" placeholder="May 25, 2025 from 1:00 AM – 5:00 AM PST.">
+          </div>
+
+          <div class="at-edit-field">
+            <label for="atMessage">
+              <span>Message Body</span>
+              <small>The supporting text. Use line breaks for multiple lines.</small>
+            </label>
+            <textarea id="atMessage" rows="4" placeholder="Some EBS features may be unavailable during this time."></textarea>
+          </div>
+
+          <div class="at-edit-field">
+            <label for="atButton">
+              <span>Button Text</span>
+              <small>Label for the button in the banner.</small>
+            </label>
+            <input id="atButton" type="text" placeholder="View All Updates">
+          </div>
+
+          <div class="at-editor-footer">
+            <span class="at-doc-ids" id="atDocIds"></span>
+            <div class="at-editor-actions">
+              <button type="button" class="at-btn ghost" id="atReset">Reset</button>
+              <button type="button" class="at-btn primary" id="atSave">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="at-btn-icon"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+  </main>
+
+  <div class="at-toast" id="atToast" role="status" aria-live="polite"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    window.auth = firebase.auth();
+  </script>
+
+  <script src="../../shared/header/admin-header.js"></script>
+  <script src="admin-announcements.js"></script>
+</body>
+</html>
