@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BD Tools — Main Menu</title>
 
+    <script>
+      (function() {
+        const origRemove = Storage.prototype.removeItem;
+        const origClear = Storage.prototype.clear;
+
+        Storage.prototype.removeItem = function(key) {
+          if (key === "bd_admin_unlocked") {
+            console.warn("[TRAP] removeItem('bd_admin_unlocked') called from:");
+            console.trace();
+          }
+          return origRemove.apply(this, arguments);
+        };
+
+        Storage.prototype.clear = function() {
+          console.warn("[TRAP] localStorage.clear() called from:");
+          console.trace();
+          return origClear.apply(this, arguments);
+        };
+      })();
+    </script>
+
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="assets/css/page-loader.css" />
@@ -25,6 +46,9 @@
         }
     </style>
 </head>
+
+
+    
 <body data-waits-for-user="true">
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
         <div class="page-loader-inner">
