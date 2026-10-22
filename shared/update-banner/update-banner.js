@@ -8,7 +8,7 @@
   const BANNER_FILE = "shared/update-banner.html";
   const BANNER_IMAGE = "assets/images/update-banner-truck.png";
   const COLLECTION = "announcements";
-  const SLIDE_INTERVAL = 6000; // 6 seconds per slide
+  const SLIDE_INTERVAL = 6000;
 
   const SLIDES = [
     {
@@ -68,7 +68,6 @@
     }
   ];
 
-  // Loaded content, initialized with defaults so slides always have data
   const slideContent = SLIDES.map(s => ({
     eyebrow: s.eyebrow,
     title: s.defaults.title,
@@ -81,11 +80,9 @@
   let timerId = null;
   let banner = null;
 
-  function getBasePrefix() {
-    const path = window.location.pathname;
-    const marker = "/guides/";
-    const index = path.indexOf(marker);
-    return index === -1 ? "" : "../../";
+  /* Absolute base from site root — immune to <base href> */
+  function base() {
+    return "/Decision-Support-SystemV2/";
   }
 
   function esc(v) {
@@ -101,9 +98,6 @@
     return null;
   }
 
-  /* ------------------------------------------------------------
-     Fetch all 5 announcements in parallel
-     ------------------------------------------------------------ */
   async function fetchAllAnnouncements() {
     const db = firestore();
     if (!db) return;
@@ -134,9 +128,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Render slide at index (fade text, then swap content)
-     ------------------------------------------------------------ */
   function renderSlide(index) {
     if (!banner) return;
     const data = slideContent[index];
@@ -145,27 +136,21 @@
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
-    // Fade out, swap, fade in
     copy.classList.add("is-swapping");
 
     setTimeout(() => {
-      // Icon
       const icon = banner.querySelector(".dss-update-banner__icon i");
       if (icon) icon.className = SLIDES[index].icon;
 
-      // Eyebrow text
       const eyebrowText = banner.querySelector(".dss-update-banner__eyebrow-text");
       if (eyebrowText) eyebrowText.textContent = data.eyebrow;
 
-      // Title
       const title = banner.querySelector(".dss-update-banner__title");
       if (title) title.textContent = data.title;
 
-      // Date
       const dateText = banner.querySelector(".dss-update-banner__date-text");
       if (dateText) dateText.textContent = data.date;
 
-      // Message (preserve line breaks)
       const message = banner.querySelector(".dss-update-banner__message");
       if (message) {
         message.innerHTML = String(data.message || "")
@@ -174,22 +159,17 @@
           .join("<br>");
       }
 
-      // Button
       const buttonText = banner.querySelector(".dss-update-banner__button-text");
       if (buttonText) buttonText.textContent = data.button;
 
-      // Dots
       banner.querySelectorAll(".dss-update-banner__dot").forEach((dot, i) => {
         dot.classList.toggle("is-active", i === index);
       });
 
       copy.classList.remove("is-swapping");
-    }, 250); // matches the fade-out transition
+    }, 250);
   }
 
-  /* ------------------------------------------------------------
-     Auto-advance
-     ------------------------------------------------------------ */
   function startAutoAdvance() {
     stopAutoAdvance();
     timerId = setInterval(() => {
@@ -205,9 +185,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Bind dots
-     ------------------------------------------------------------ */
   function bindDots() {
     if (!banner) return;
     banner.querySelectorAll(".dss-update-banner__dot").forEach(dot => {
@@ -221,9 +198,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     Bind View All Updates button
-     ------------------------------------------------------------ */
   function bindButton() {
     if (!banner) return;
     const btn = banner.querySelector('[data-update-action="view-all"]');
@@ -238,34 +212,45 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     Pause on hover
-     ------------------------------------------------------------ */
   function bindHover() {
     if (!banner) return;
     banner.addEventListener("mouseenter", stopAutoAdvance);
     banner.addEventListener("mouseleave", startAutoAdvance);
   }
 
-  /* ------------------------------------------------------------
-     Main loader
-     ------------------------------------------------------------ */
+  /* Force the image to load, regardless of what the placeholder said */
+  function fixBannerImage() {
+    if (!banner) return;
+    const img = banner.querySelector("img");
+    if (!img) return;
+
+    const absolute = base() + BANNER_IMAGE;
+    img.setAttribute("src", absolute);
+    img.removeAttribute("srcset");
+    img.onerror = function () {
+      console.warn("[update-banner] image failed:", absolute);
+    };
+    img.onload = function () {
+      console.log("[update-banner] image loaded:", absolute);
+    };
+  }
+
   async function loadUpdateBanner() {
     if (document.getElementById("dssUpdateBanner")) return;
 
     const header = document.getElementById("header-placeholder");
     if (!header) return;
 
-    const prefix = getBasePrefix();
-    const htmlUrl = prefix + BANNER_FILE;
-    const imageUrl = prefix + BANNER_IMAGE;
+    const htmlUrl = base() + BANNER_FILE;
 
     try {
       const response = await fetch(htmlUrl, { cache: "no-cache" });
-      if (!response.ok) throw new Error("Unable to load update banner.");
+      if (!response.ok) throw new Error("Unable to load update banner: " + response.status);
 
       let markup = await response.text();
-      markup = markup.replace("__UPDATE_BANNER_TRUCK__", imageUrl);
+
+      // Replace placeholder if present
+      markup = markup.replace(/__UPDATE_BANNER_TRUCK__/g, base() + BANNER_IMAGE);
 
       const placeholder = document.getElementById("update-banner-placeholder");
       if (placeholder) {
@@ -277,15 +262,16 @@
       banner = document.getElementById("dssUpdateBanner");
       if (!banner) return;
 
+      // Belt-and-suspenders: force the img src directly
+      fixBannerImage();
+
       bindDots();
       bindButton();
       bindHover();
 
-      // Show the first slide immediately from defaults (no blank banner)
       renderSlide(activeIndex);
       startAutoAdvance();
 
-      // Then fetch Firestore content and re-render current slide
       const waitForFirebase = async (attempt = 0) => {
         if (firestore()) {
           await fetchAllAnnouncements();
