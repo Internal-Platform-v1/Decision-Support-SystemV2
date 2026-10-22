@@ -4,16 +4,38 @@
 (() => {
   "use strict";
 
-  // IMMEDIATE HARD REDIRECT IF NOT UNLOCKED
-  (function checkAuth() {
-    try {
-      const raw = localStorage.getItem("bd_admin_unlocked");
-      const obj = raw ? JSON.parse(raw) : null;
-      if (!obj || typeof obj.exp !== "number" || obj.exp <= Date.now()) {
-        window.location.replace("/Decision-Support-SystemV2/index.html");
+  /* ============================================================
+     ADMIN PAGE GUARD — reads from COOKIE
+     ============================================================ */
+  (function adminGuard() {
+    const COOKIE_NAME = "bd_admin_token";
+    const HOME_URL = "/Decision-Support-SystemV2/index.html";
+
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === " ") c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+          return decodeURIComponent(c.substring(nameEQ.length, c.length));
+        }
       }
-    } catch (e) {
-      window.location.replace("/Decision-Support-SystemV2/index.html");
+      return null;
+    }
+
+    function isUnlocked() {
+      const raw = getCookie(COOKIE_NAME);
+      if (!raw) return false;
+      try {
+        const obj = JSON.parse(raw);
+        return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
+      } catch (e) { return false; }
+    }
+
+    if (!isUnlocked()) {
+      window.location.replace(HOME_URL);
+      return;
     }
   })();
 
@@ -183,7 +205,8 @@
         const role = btn.dataset.role;
         apply(role);
         if (role === "user") {
-          localStorage.removeItem("bd_admin_unlocked");
+          // Clear the cookie
+          document.cookie = "bd_admin_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
           window.location.href = "/Decision-Support-SystemV2/index.html";
         }
       });
@@ -196,7 +219,7 @@
         const action = button.dataset.adminAction;
 
         if (action === "logout") {
-          localStorage.removeItem("bd_admin_unlocked");
+          document.cookie = "bd_admin_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
           localStorage.removeItem("bd_role");
           window.location.href = "/Decision-Support-SystemV2/index.html";
         }
