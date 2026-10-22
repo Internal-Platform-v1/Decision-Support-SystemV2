@@ -1,7 +1,5 @@
 /* ============================================================
    ADMIN ANNOUNCEMENTS MANAGEMENT
-   Firestore: collection "announcements"
-   Each category has its own doc id: general, whats_new, reminders, issues, guides
    ============================================================ */
 
 (() => {
@@ -10,24 +8,24 @@
   const COLLECTION = "announcements";
 
   const CATEGORIES = [
-    { key: "general",   label: "📢 Announcements",       defaultEyebrow: "SYSTEM UPDATE" },
-    { key: "whats_new", label: "✨ What's New?",         defaultEyebrow: "WHAT'S NEW" },
-    { key: "reminders", label: "⚠ Important Reminders",  defaultEyebrow: "IMPORTANT REMINDER" },
-    { key: "issues",    label: "🐞 Known Issues",        defaultEyebrow: "KNOWN ISSUE" },
-    { key: "guides",    label: "📚 New Guides Added",    defaultEyebrow: "NEW GUIDES" }
+    { key: "general",   label: "📢 Announcements" },
+    { key: "whats_new", label: "✨ What's New?" },
+    { key: "reminders", label: "⚠ Important Reminders" },
+    { key: "issues",    label: "🐞 Known Issues" },
+    { key: "guides",    label: "📚 New Guides Added" }
   ];
 
   const DEFAULTS = {
-    general:   { eyebrow: "SYSTEM UPDATE",      title: "EBS System Maintenance",           date: "May 25, 2025 from 1:00 AM – 5:00 AM PST.", message: "Some EBS features may be unavailable during this time.\nPlease plan your tasks accordingly.", button: "View All Updates" },
-    whats_new: { eyebrow: "WHAT'S NEW",         title: "New Feature Release",              date: "Available now",                            message: "Explore the latest features added to the Decision Support System.",                          button: "See What's New" },
-    reminders: { eyebrow: "IMPORTANT REMINDER", title: "Action Required",                  date: "Please review before the deadline.",       message: "Make sure you're aware of the latest policies and requirements.",                            button: "View Reminder" },
-    issues:    { eyebrow: "KNOWN ISSUE",        title: "System Issue Being Investigated",  date: "Reported recently",                        message: "We are aware of the issue and are working on a fix.",                                         button: "View Details" },
-    guides:    { eyebrow: "NEW GUIDES",         title: "New Guides Available",             date: "Recently added",                           message: "Check out the newly published guides and resources.",                                        button: "Browse New Guides" }
+    general:   { eyebrow: "SYSTEM UPDATE",      title: "EBS System Maintenance",          date: "May 25, 2025 from 1:00 AM – 5:00 AM PST.", message: "Some EBS features may be unavailable during this time.\nPlease plan your tasks accordingly.", button: "View All Updates" },
+    whats_new: { eyebrow: "WHAT'S NEW",         title: "New Feature Release",             date: "Available now",                            message: "Explore the latest features added to the Decision Support System.",                          button: "See What's New" },
+    reminders: { eyebrow: "IMPORTANT REMINDER", title: "Action Required",                 date: "Please review before the deadline.",       message: "Make sure you're aware of the latest policies and requirements.",                            button: "View Reminder" },
+    issues:    { eyebrow: "KNOWN ISSUE",        title: "System Issue Being Investigated", date: "Reported recently",                        message: "We are aware of the issue and are working on a fix.",                                         button: "View Details" },
+    guides:    { eyebrow: "NEW GUIDES",         title: "New Guides Available",            date: "Recently added",                           message: "Check out the newly published guides and resources.",                                        button: "Browse New Guides" }
   };
 
   const state = {
-    posts: {},             // { [catKey]: data }
-    activeCat: null,       // currently selected category key
+    posts: {},
+    activeCat: null,
     isNew: false,
     saving: false,
     filter: ""
@@ -63,9 +61,6 @@
     return c ? c.label : key;
   }
 
-  /* ------------------------------------------------------------
-     Load all docs
-     ------------------------------------------------------------ */
   async function loadAllPosts() {
     const db = firestore();
     if (!db) {
@@ -90,14 +85,10 @@
             date:    data.date    || DEFAULTS[catKey].date,
             message: data.message || DEFAULTS[catKey].message,
             button:  data.button  || DEFAULTS[catKey].button,
-            exists:  true,
-            updatedAt: data.updatedAt || null
+            exists:  true
           };
         } else {
-          state.posts[catKey] = {
-            ...DEFAULTS[catKey],
-            exists: false
-          };
+          state.posts[catKey] = { ...DEFAULTS[catKey], exists: false };
         }
       });
 
@@ -108,9 +99,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Render list
-     ------------------------------------------------------------ */
   function renderPostList() {
     const list = $("atPostList");
     const count = $("atPostCount");
@@ -135,7 +123,7 @@
       return `
         <button type="button" class="at-post-item${isActive ? " is-active" : ""}" data-cat="${esc(cat.key)}">
           <strong>${esc(data.title || "(Untitled)")}</strong>
-          <small>${esc(data.message || "").slice(0, 80)}${(data.message || "").length > 80 ? "…" : ""}</small>
+          <small>${esc((data.message || "").slice(0, 80))}${(data.message || "").length > 80 ? "…" : ""}</small>
           <span class="at-post-tag">${esc(cat.label)}</span>
           <div class="at-post-meta">
             <span><i class="fa-regular fa-calendar"></i> ${esc(data.date || "—")}</span>
@@ -150,9 +138,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     Select a post for editing
-     ------------------------------------------------------------ */
   function selectPost(catKey) {
     state.activeCat = catKey;
     state.isNew = false;
@@ -160,10 +145,7 @@
     const data = state.posts[catKey];
     if (!data) return;
 
-    fillEditor({
-      ...data,
-      category: catKey
-    });
+    fillEditor({ ...data, category: catKey });
 
     const editorTitle = $("atEditorTitle");
     const editorSubtitle = $("atEditorSubtitle");
@@ -179,9 +161,6 @@
     renderPostList();
   }
 
-  /* ------------------------------------------------------------
-     New announcement
-     ------------------------------------------------------------ */
   function startNew() {
     state.isNew = true;
     state.activeCat = null;
@@ -211,9 +190,6 @@
     renderPostList();
   }
 
-  /* ------------------------------------------------------------
-     Editor fill / read
-     ------------------------------------------------------------ */
   function fillEditor(data) {
     if ($("atCategory")) $("atCategory").value = data.category || "general";
     if ($("atEyebrow"))  $("atEyebrow").value  = data.eyebrow || "";
@@ -241,9 +217,6 @@
     if (ph) ph.hidden = show;
   }
 
-  /* ------------------------------------------------------------
-     Save
-     ------------------------------------------------------------ */
   async function savePost() {
     if (state.saving) return;
 
@@ -270,15 +243,13 @@
         updatedAt: serverTimestamp
       }, { merge: true });
 
-      // Update local state
       state.posts[data.category] = {
         eyebrow: data.eyebrow,
         title: data.title,
         date: data.date,
         message: data.message,
         button: data.button,
-        exists: true,
-        updatedAt: new Date()
+        exists: true
       };
 
       state.activeCat = data.category;
@@ -301,9 +272,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Delete
-     ------------------------------------------------------------ */
   async function deletePost() {
     if (!state.activeCat || state.isNew) return;
     if (!confirm("Delete this announcement? The banner will revert to the default content for this category.")) return;
@@ -316,11 +284,7 @@
     try {
       await db.collection(COLLECTION).doc(catKey).delete();
 
-      // Revert to default in local state
-      state.posts[catKey] = {
-        ...DEFAULTS[catKey],
-        exists: false
-      };
+      state.posts[catKey] = { ...DEFAULTS[catKey], exists: false };
 
       state.activeCat = null;
       state.isNew = false;
@@ -346,31 +310,18 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Reset editor to last saved values
-     ------------------------------------------------------------ */
   function resetEditor() {
-    if (state.isNew) {
-      startNew();
-      return;
-    }
+    if (state.isNew) { startNew(); return; }
     if (!state.activeCat) return;
 
     const data = state.posts[state.activeCat];
     if (!data) return;
 
-    fillEditor({
-      ...data,
-      category: state.activeCat
-    });
+    fillEditor({ ...data, category: state.activeCat });
     showToast("Editor reset to last saved values.");
   }
 
-  /* ------------------------------------------------------------
-     Bind UI
-     ------------------------------------------------------------ */
   function init() {
-    // Filter select
     const filterSelect = $("atCategoryFilter");
     if (filterSelect) {
       filterSelect.addEventListener("change", () => {
@@ -379,11 +330,9 @@
       });
     }
 
-    // New announcement button
     const addBtn = $("atAddNew");
     if (addBtn) addBtn.addEventListener("click", startNew);
 
-    // Save / Reset / Delete
     const saveBtn = $("atSave");
     if (saveBtn) saveBtn.addEventListener("click", savePost);
 
@@ -393,7 +342,6 @@
     const deleteBtn = $("atDelete");
     if (deleteBtn) deleteBtn.addEventListener("click", deletePost);
 
-    // Load data
     loadAllPosts();
   }
 
