@@ -4,32 +4,15 @@
 (() => {
   "use strict";
 
-  /* ============================================================
-     ADMIN PAGE GUARD — reads from COOKIE
-     ============================================================ */
+  /* Guard reads from window.name */
   (function adminGuard() {
-    const COOKIE_NAME = "bd_admin_token";
     const HOME_URL = "/Decision-Support-SystemV2/index.html";
 
-    function getCookie(name) {
-      const nameEQ = name + "=";
-      const ca = document.cookie.split(";");
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === " ") c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) {
-          return decodeURIComponent(c.substring(nameEQ.length, c.length));
-        }
-      }
-      return null;
-    }
-
     function isUnlocked() {
-      const raw = getCookie(COOKIE_NAME);
-      if (!raw) return false;
       try {
-        const obj = JSON.parse(raw);
-        return Boolean(obj && typeof obj.exp === "number" && obj.exp > Date.now());
+        if (!window.name) return false;
+        const s = JSON.parse(window.name);
+        return Boolean(s.token && typeof s.exp === "number" && s.exp > Date.now());
       } catch (e) { return false; }
     }
 
@@ -205,8 +188,7 @@
         const role = btn.dataset.role;
         apply(role);
         if (role === "user") {
-          // Clear the cookie
-          document.cookie = "bd_admin_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+          try { window.name = ""; } catch (e) {}
           window.location.href = "/Decision-Support-SystemV2/index.html";
         }
       });
@@ -219,7 +201,7 @@
         const action = button.dataset.adminAction;
 
         if (action === "logout") {
-          document.cookie = "bd_admin_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+          try { window.name = ""; } catch (e) {}
           localStorage.removeItem("bd_role");
           window.location.href = "/Decision-Support-SystemV2/index.html";
         }
