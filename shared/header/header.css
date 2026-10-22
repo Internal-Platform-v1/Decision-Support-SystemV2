@@ -1101,3 +1101,10 @@
         animation: none !important;
     }
 }
+
+.fedex-logo-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex: 0 0 auto;
+}
