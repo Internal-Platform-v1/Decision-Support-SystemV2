@@ -1,5 +1,5 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER ROTATOR
+   DSS V2 — SHARED UPDATE BANNER ROTATOR + MODAL
    ============================================================ */
 (function () {
   "use strict";
@@ -8,11 +8,11 @@
   const SLIDE_INTERVAL = 6000;
 
   const SLIDES = [
-    { key: "general",   icon: "fa-solid fa-bullhorn",              eyebrow: "SYSTEM UPDATE" },
-    { key: "whats_new", icon: "fa-solid fa-wand-magic-sparkles",   eyebrow: "WHAT'S NEW" },
-    { key: "reminders", icon: "fa-solid fa-triangle-exclamation",  eyebrow: "IMPORTANT REMINDER" },
-    { key: "issues",    icon: "fa-solid fa-bug",                   eyebrow: "KNOWN ISSUE" },
-    { key: "guides",    icon: "fa-solid fa-book-open",             eyebrow: "NEW GUIDES" }
+    { key: "general",   icon: "fa-solid fa-bullhorn",              eyebrow: "SYSTEM UPDATE",     label: "📢 Announcements" },
+    { key: "whats_new", icon: "fa-solid fa-wand-magic-sparkles",   eyebrow: "WHAT'S NEW",        label: "✨ What's New?" },
+    { key: "reminders", icon: "fa-solid fa-triangle-exclamation",  eyebrow: "IMPORTANT REMINDER", label: "⚠ Important Reminders" },
+    { key: "issues",    icon: "fa-solid fa-bug",                   eyebrow: "KNOWN ISSUE",       label: "🐞 Known Issues" },
+    { key: "guides",    icon: "fa-solid fa-book-open",             eyebrow: "NEW GUIDES",        label: "📚 New Guides Added" }
   ];
 
   const DEFAULTS = [
@@ -28,6 +28,8 @@
   let activeIndex = 0;
   let timerId = null;
   let banner = null;
+  let modal = null;
+  let modalIndex = 0;
   let initialized = false;
 
   function esc(v) {
@@ -70,6 +72,9 @@
     }
   }
 
+  /* ------------------------------------------------------------
+     BANNER RENDER
+     ------------------------------------------------------------ */
   function renderSlide(index) {
     if (!banner) return;
     const data = slideContent[index];
@@ -120,6 +125,9 @@
     if (timerId) { clearInterval(timerId); timerId = null; }
   }
 
+  /* ------------------------------------------------------------
+     BANNER BINDINGS
+     ------------------------------------------------------------ */
   function bindDots() {
     banner.querySelectorAll(".dss-update-banner__dot").forEach(dot => {
       dot.addEventListener("click", () => {
@@ -136,9 +144,7 @@
     const btn = banner.querySelector('[data-update-action="view-all"]');
     if (!btn) return;
     btn.addEventListener("click", () => {
-      const target = document.querySelector("[data-updates], #updates, .updates-page");
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-      else window.dispatchEvent(new CustomEvent("dss:view-updates"));
+      openModal(activeIndex);
     });
   }
 
@@ -147,11 +153,104 @@
     banner.addEventListener("mouseleave", startAutoAdvance);
   }
 
+  /* ------------------------------------------------------------
+     MODAL
+     ------------------------------------------------------------ */
+  function ensureModalRefs() {
+    modal = document.getElementById("dssUpdateModal");
+  }
+
+  function renderModal(index) {
+    if (!modal) return;
+    modalIndex = index;
+    const data = slideContent[index];
+    const meta = SLIDES[index];
+    if (!data || !meta) return;
+
+    const eyebrow = modal.querySelector("#dssUpdateModalEyebrow");
+    const title   = modal.querySelector("#dssUpdateModalTitle");
+    const badge   = modal.querySelector("#dssUpdateModalBadge");
+    const date    = modal.querySelector("#dssUpdateModalDate");
+    const message = modal.querySelector("#dssUpdateModalMessage");
+
+    if (eyebrow) eyebrow.textContent = data.eyebrow || meta.eyebrow;
+    if (title)   title.textContent   = data.title   || "";
+    if (badge)   badge.textContent   = meta.label;
+    if (date)    date.textContent    = data.date    || "";
+    if (message) message.textContent  = data.message || "";
+
+    // Dots inside the modal
+    const dotsWrap = modal.querySelector("#dssUpdateModalDots");
+    if (dotsWrap) {
+      dotsWrap.innerHTML = SLIDES.map((_, i) =>
+        `<button type="button" class="dss-update-modal__dot${i === index ? " is-active" : ""}" data-modal-slide="${i}" aria-label="${esc(SLIDES[i].label)}"></button>`
+      ).join("");
+      dotsWrap.querySelectorAll("[data-modal-slide]").forEach(dot => {
+        dot.addEventListener("click", () => {
+          const i = Number(dot.dataset.modalSlide);
+          if (Number.isFinite(i)) renderModal(i);
+        });
+      });
+    }
+
+    // Prev / next disabled states
+    const prev = modal.querySelector("#dssUpdateModalPrev");
+    const next = modal.querySelector("#dssUpdateModalNext");
+    if (prev) prev.disabled = index === 0;
+    if (next) next.disabled = index === SLIDES.length - 1;
+  }
+
+  function openModal(index) {
+    if (!modal) return;
+    renderModal(index);
+    modal.hidden = false;
+    modal.classList.remove("is-open");
+    requestAnimationFrame(() => {
+      modal.classList.add("is-open");
+    });
+    document.body.classList.add("dss-modal-open");
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    document.body.classList.remove("dss-modal-open");
+    setTimeout(() => {
+      modal.hidden = true;
+    }, 220);
+  }
+
+  function bindModal() {
+    if (!modal) return;
+
+    // Close on backdrop click or close button
+    modal.querySelectorAll("[data-update-modal-close]").forEach(el => {
+      el.addEventListener("click", closeModal);
+    });
+
+    // Prev / next
+    modal.querySelector("#dssUpdateModalPrev")?.addEventListener("click", () => {
+      if (modalIndex > 0) renderModal(modalIndex - 1);
+    });
+    modal.querySelector("#dssUpdateModalNext")?.addEventListener("click", () => {
+      if (modalIndex < SLIDES.length - 1) renderModal(modalIndex + 1);
+    });
+
+    // ESC to close
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal && !modal.hidden) closeModal();
+    });
+  }
+
+  /* ------------------------------------------------------------
+     INIT
+     ------------------------------------------------------------ */
   function tryInit(attempt) {
     attempt = attempt || 0;
     if (initialized) return;
 
     banner = document.getElementById("dssUpdateBanner");
+    ensureModalRefs();
 
     if (!banner) {
       if (attempt < 40) {
@@ -166,6 +265,7 @@
     bindDots();
     bindButton();
     bindHover();
+    bindModal();
     renderSlide(activeIndex);
     startAutoAdvance();
 
@@ -173,6 +273,8 @@
       if (firestore()) {
         await fetchAllAnnouncements();
         renderSlide(activeIndex);
+        // If modal is open, refresh it too
+        if (modal && !modal.hidden) renderModal(modalIndex);
         return;
       }
       if (fbAttempt < 20) setTimeout(() => waitForFirebase(fbAttempt + 1), 100);
