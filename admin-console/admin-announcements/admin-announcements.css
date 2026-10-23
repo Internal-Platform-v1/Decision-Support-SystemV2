@@ -426,3 +426,85 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   .at-main { margin-left: 70px; padding: 68px 14px 24px; }
   .at-filters { flex-direction: column; align-items: stretch; }
 }
+
+/* --- RICH TEXT EDITOR & TOOLBAR --- */
+.at-rich-editor {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.at-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.at-toolbar button {
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.at-toolbar button:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.at-toolbar button b, .at-toolbar button i, .at-toolbar button u {
+  pointer-events: none;
+}
+
+.at-rich-editor textarea {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  resize: vertical;
+}
+
+/* --- PROFESSIONAL DATE PICKER --- */
+.at-datepicker-wrapper {
+  position: relative;
+}
+
+.at-datepicker {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.at-datepicker:focus {
+  border-color: #5e17eb;
+  box-shadow: 0 0 0 3px rgba(94, 23, 235, 0.1);
+}
+
+/* Fix the native calendar icon alignment */
+.at-datepicker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: 0.2s;
+}
+.at-datepicker::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
