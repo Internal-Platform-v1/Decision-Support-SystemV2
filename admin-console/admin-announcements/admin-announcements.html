@@ -1,183 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Announcements</title>
-    <link rel="stylesheet" href="admin-announcements.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Announcements | Decision Support System</title>
+  <link rel="icon" href="data:,">
+
+  <link rel="stylesheet" href="../../shared/header/admin-header.css" />
+  <link rel="stylesheet" href="admin-announcements.css" />
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
 
-<div class="admin-wrapper">
-    
-    <!-- LEFT PANEL -->
-    <div class="admin-left-panel">
-        <div class="panel-header">
-            <h1><i class="fa-solid fa-bullhorn"></i> Announcements</h1>
-            <p>Create and manage announcements to keep everyone informed and up to date.</p>
-        </div>
+<body data-admin-page="announcements" data-admin-title="Announcements">
 
-        <!-- Tabs (Visually matches screenshot, powered by JS) -->
-        <div class="tabs">
-            <button type="button" class="tab active" data-status="all">All</button>
-            <button type="button" class="tab" data-status="published">Published</button>
-            <button type="button" class="tab" data-status="draft">Drafts</button>
-            <!-- Hidden native select to trigger your JS -->
-            <select id="atStatusFilter" style="display:none;">
-                <option value="all">All</option>
-                <option value="published">Published</option>
-                <option value="draft">Drafts</option>
-            </select>
-        </div>
+  <!-- KEEPING YOUR ADMIN HEADER -->
+  <div id="adminHeader"></div>
 
-        <!-- Filters -->
-        <div class="filter-bar">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search by title or content...">
-            </div>
-            
-            <!-- Category Filter (atCategoryFilter) -->
-            <select id="atCategoryFilter" class="filter-select">
-                <option value="">All Categories</option>
-                <option value="general">📢 Announcements</option>
-                <option value="whats_new">✨ What's New?</option>
-                <option value="reminders">⚠ Important Reminders</option>
-                <option value="issues">🐞 Known Issues</option>
-                <option value="guides">📚 New Guides Added</option>
-            </select>
+  <!-- MAIN CONTENT WRAPPER -->
+  <main class="at-main">
 
-            <button id="atAddNew" class="btn-primary">
-                <i class="fa-solid fa-plus"></i> New Announcement
-            </button>
-        </div>
-
-        <div class="list-meta">
-            <span id="atLeftTitle" class="list-title">All Announcements</span>
-            <span id="atPostCount" class="list-count">0 posts</span>
-        </div>
-
-        <!-- List Container -->
-        <div id="atPostList" class="post-list-container"></div>
-    </div>
-
-    <!-- RIGHT PANEL (EDITOR) -->
-    <div class="admin-right-panel">
+    <div class="at-layout">
+      
+      <!-- LEFT PANEL: LIST -->
+      <aside class="at-left-panel">
         
-        <!-- Placeholder -->
-        <div id="atEditorPlaceholder" class="editor-placeholder">
-            <i class="fa-regular fa-rectangle-list"></i>
-            <h3>No announcement selected</h3>
-            <p>Select an announcement on the left, or create a new one.</p>
+        <div class="at-header-area">
+          <h1><i class="fa-solid fa-bullhorn"></i> Announcements</h1>
+          <p>Create and manage announcements to keep everyone informed and up to date.</p>
         </div>
 
-        <!-- Editor Body -->
-        <div id="atEditorBody" class="editor-body" hidden>
-            <div class="editor-header">
-                <div>
-                    <span id="atEditorEyebrow" class="editor-eyebrow">EDIT ANNOUNCEMENT</span>
-                    <h2 id="atEditorTitle">Title</h2>
-                    <p id="atEditorSubtitle">Subtitle</p>
-                    <span id="atDocIds" style="display:none;"></span>
-                </div>
-                <button type="button" id="atDelete" class="btn-icon-danger" hidden title="Delete">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+        <!-- TABS (Visual wrapper that triggers your hidden atStatusFilter) -->
+        <div class="at-tabs">
+          <button type="button" class="at-tab active" data-status="all">All</button>
+          <button type="button" class="at-tab" data-status="published">Published</button>
+          <button type="button" class="at-tab" data-status="draft">Drafts</button>
+          <!-- Hidden select that your JS actually reads -->
+          <select id="atStatusFilter" style="display:none;">
+            <option value="all">All</option>
+            <option value="published">Published</option>
+            <option value="draft">Drafts</option>
+          </select>
+        </div>
+
+        <!-- FILTERS & SEARCH -->
+        <div class="at-filters">
+          <div class="at-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search by title or content..." disabled title="Search coming soon">
+          </div>
+          
+          <!-- Category Filter (Read by your JS) -->
+          <select id="atCategoryFilter" class="at-select">
+            <option value="">All Categories</option>
+            <option value="general">📢 Announcements</option>
+            <option value="whats_new">✨ What's New?</option>
+            <option value="reminders">⚠ Important Reminders</option>
+            <option value="issues">🐞 Known Issues</option>
+            <option value="guides">📚 New Guides Added</option>
+          </select>
+
+          <!-- New Button (Read by your JS) -->
+          <button type="button" class="at-btn primary" id="atAddNew">
+            <i class="fa-solid fa-plus"></i> New Announcement
+          </button>
+        </div>
+
+        <!-- LIST META -->
+        <div class="at-list-meta">
+          <span id="atLeftTitle" class="at-list-title">All Announcements</span>
+          <span id="atPostCount" class="at-list-count">0 posts</span>
+        </div>
+
+        <!-- LIST CONTAINER (Your JS renders cards here) -->
+        <div class="at-rec-list" id="atPostList">
+          <p class="at-empty">Loading announcements…</p>
+        </div>
+
+      </aside>
+
+      <!-- RIGHT PANEL: EDITOR -->
+      <section class="at-right-panel">
+        
+        <!-- Editor Form (hidden by default) -->
+        <div class="at-editor-body" id="atEditorBody" hidden>
+          
+          <div class="at-editor-header">
+            <h2 id="atEditorTitle">Create / Edit Announcement</h2>
+            <p id="atEditorSubtitle" class="at-editor-subtitle">Fill in the fields below.</p>
+            <span id="atEditorEyebrow" style="display:none;">EDIT</span>
+            <span id="atDocIds" style="display:none;"></span>
+          </div>
+
+          <!-- CATEGORY -->
+          <div class="at-edit-field">
+            <label>Category *</label>
+            <select id="atCategory">
+              <option value="general">📢 Announcements</option>
+              <option value="whats_new">✨ What's New?</option>
+              <option value="reminders">⚠ Important Reminders</option>
+              <option value="issues">🐞 Known Issues</option>
+              <option value="guides">📚 New Guides Added</option>
+            </select>
+          </div>
+
+          <!-- EYEBROW / PRIORITY -->
+          <div class="at-edit-field">
+            <label>Priority / Tag *</label>
+            <input id="atEyebrow" type="text" maxlength="24" placeholder="e.g. SYSTEM UPDATE">
+            <span class="at-char-count" id="atEyebrowCount">0 / 24</span>
+          </div>
+
+          <!-- TITLE -->
+          <div class="at-edit-field">
+            <label>Title *</label>
+            <input id="atTitle" type="text" maxlength="60" placeholder="Enter announcement title">
+            <span class="at-char-count" id="atTitleCount">0 / 60</span>
+          </div>
+
+          <!-- DATE -->
+          <div class="at-edit-field">
+            <label>Date & Time *</label>
+            <input id="atDate" type="text" placeholder="e.g. Oct 25, 2026 10:00 PM">
+          </div>
+
+          <!-- MESSAGE / CONTENT -->
+          <div class="at-edit-field">
+            <label>Content *</label>
+            <textarea id="atMessage" rows="4" maxlength="180" placeholder="Type your announcement message here..."></textarea>
+            <span class="at-char-count" id="atMessageCount">0 / 180</span>
+          </div>
+
+          <!-- BUTTON TEXT -->
+          <div class="at-edit-field">
+            <label>Button Text *</label>
+            <input id="atButton" type="text" maxlength="24" placeholder="e.g. View Details">
+            <span class="at-char-count" id="atButtonCount">0 / 24</span>
+          </div>
+
+          <!-- LIVE PREVIEW -->
+          <div class="at-preview-wrap">
+            <div class="at-preview-label">Live Preview</div>
+            <div class="at-preview">
+              <div class="at-preview__icon">
+                <i class="fa-solid fa-bullhorn" id="atPreviewIcon"></i>
+              </div>
+              <div class="at-preview__copy">
+                <div class="at-preview__eyebrow" id="atPreviewEyebrow">SYSTEM UPDATE</div>
+                <div class="at-preview__title" id="atPreviewTitle">EBS System Maintenance</div>
+                <div class="at-preview__date" id="atPreviewDate">May 25, 2025 from 1:00 AM – 5:00 AM PST.</div>
+                <div class="at-preview__message" id="atPreviewMessage">Some EBS features may be unavailable during this time.</div>
+              </div>
             </div>
+          </div>
 
-            <form onsubmit="return false;">
-                <!-- Title -->
-                <div class="form-group">
-                    <label>Title *</label>
-                    <input type="text" id="atTitle" placeholder="Enter announcement title">
-                    <span class="char-count" id="atTitleCount">0 / 60</span>
-                </div>
+          <!-- FOOTER ACTIONS -->
+          <div class="at-editor-footer">
+            <button type="button" class="at-btn danger" id="atDelete" hidden><i class="fa-solid fa-trash"></i> Delete</button>
+            <div class="spacer"></div>
+            <button type="button" class="at-btn ghost" id="atReset">Reset</button>
+            <button type="button" class="at-btn ghost" id="atSaveDraft">Save Draft</button>
+            <button type="button" class="at-btn primary" id="atPublish">Publish</button>
+          </div>
 
-                <!-- Category -->
-                <div class="form-group">
-                    <label>Category *</label>
-                    <select id="atCategory">
-                        <option value="general">📢 Announcements</option>
-                        <option value="whats_new">✨ What's New?</option>
-                        <option value="reminders">⚠ Important Reminders</option>
-                        <option value="issues">🐞 Known Issues</option>
-                        <option value="guides">📚 New Guides Added</option>
-                    </select>
-                </div>
-
-                <!-- Priority / Eyebrow (Mapped to atEyebrow) -->
-                <div class="form-group">
-                    <label>Priority / Tag *</label>
-                    <input type="text" id="atEyebrow" placeholder="e.g. SYSTEM UPDATE, URGENT">
-                    <span class="char-count" id="atEyebrowCount">0 / 24</span>
-                </div>
-
-                <!-- Dates (Mapped to atDate) -->
-                <div class="form-group">
-                    <label>Date & Time *</label>
-                    <input type="text" id="atDate" placeholder="e.g. Oct 25, 2026 10:00 PM">
-                </div>
-
-                <!-- Content -->
-                <div class="form-group">
-                    <label>Content *</label>
-                    <textarea id="atMessage" rows="5" placeholder="Type your announcement message here..."></textarea>
-                    <span class="char-count" id="atMessageCount">0 / 180</span>
-                </div>
-
-                <!-- Button Text -->
-                <div class="form-group">
-                    <label>Button Text *</label>
-                    <input type="text" id="atButton" placeholder="e.g. View Details">
-                    <span class="char-count" id="atButtonCount">0 / 24</span>
-                </div>
-
-                <!-- Live Preview -->
-                <div class="form-group">
-                    <label>Live Preview</label>
-                    <div class="preview-card">
-                        <div class="preview-top">
-                            <div class="preview-icon-wrap">
-                                <i id="atPreviewIcon" class="fa-solid fa-bullhorn"></i>
-                            </div>
-                            <span id="atPreviewEyebrow" class="preview-eyebrow">SYSTEM UPDATE</span>
-                        </div>
-                        <h4 id="atPreviewTitle">Title here</h4>
-                        <p id="atPreviewMessage">Message will appear here.</p>
-                        <div class="preview-date">
-                            <i class="fa-regular fa-calendar"></i> <span id="atPreviewDate">—</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="form-actions">
-                    <button type="button" id="atReset" class="btn-secondary">Reset</button>
-                    <div class="spacer"></div>
-                    <button type="button" id="atSaveDraft" class="btn-secondary">Save Draft</button>
-                    <button type="button" id="atPublish" class="btn-primary">Publish</button>
-                </div>
-            </form>
         </div>
+
+        <!-- PLACEHOLDER (Visible when nothing is selected) -->
+        <div class="at-editor-placeholder" id="atEditorPlaceholder">
+          <i class="fa-regular fa-rectangle-list"></i>
+          <h3>No announcement selected</h3>
+          <p>Select an announcement on the left, or create a new one.</p>
+        </div>
+
+      </section>
+
     </div>
-</div>
+  </main>
 
-<div id="atToast" class="toast"></div>
+  <div class="at-toast" id="atToast" role="status" aria-live="polite"></div>
 
-<!-- Tiny script to sync the visual Tabs with your JS -->
-<script>
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-            const select = document.getElementById('atStatusFilter');
-            select.value = e.target.dataset.status;
-            select.dispatchEvent(new Event('change')); // Triggers your JS
-        });
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+    window.auth = firebase.auth();
+  </script>
+
+  <script src="../../shared/header/admin-header.js"></script>
+  <script src="admin-announcements.js"></script>
+
+  <!-- Tiny script to sync the visual tabs with your hidden select -->
+  <script>
+    document.querySelectorAll('.at-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        const select = document.getElementById('atStatusFilter');
+        select.value = e.target.dataset.status;
+        select.dispatchEvent(new Event('change'));
+      });
     });
-</script>
-
-<script src="admin-announcements.js"></script>
+  </script>
 </body>
 </html>
