@@ -262,11 +262,27 @@
      ------------------------------------------------------------ */
   function fillEditor(data) {
     if ($("atCategory")) $("atCategory").value = data.category || "general";
-    if ($("atEyebrow"))  $("atEyebrow").value  = data.eyebrow || "";
     if ($("atTitle"))    $("atTitle").value    = data.title   || "";
     if ($("atDate"))     $("atDate").value     = data.date    || "";
     if ($("atMessage"))  $("atMessage").value  = data.message || "";
     if ($("atButton"))   $("atButton").value   = data.button  || "";
+
+    // Handle the new Priority Pills
+    let currentPriority = data.eyebrow || "Normal";
+    // Fallback: If old data had "SYSTEM UPDATE", default to Normal
+    if (!["Normal", "Important", "Urgent"].includes(currentPriority)) {
+        currentPriority = "Normal";
+    }
+    
+    if ($("atEyebrow")) $("atEyebrow").value = currentPriority;
+    
+    // Update the visual radio buttons
+    document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('active'));
+    const radio = document.querySelector(`input[name="priority"][value="${currentPriority}"]`);
+    if (radio) {
+        radio.checked = true;
+        radio.closest('.priority-pill').classList.add('active');
+    }
   }
 
   function readEditor() {
