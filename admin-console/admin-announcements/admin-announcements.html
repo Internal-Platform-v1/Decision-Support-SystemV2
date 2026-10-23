@@ -14,7 +14,7 @@
 
 <body data-admin-page="announcements" data-admin-title="Announcements">
 
-  <!-- KEEPING YOUR ADMIN HEADER -->
+  <!-- ADMIN HEADER (KEPT INTACT) -->
   <div id="adminHeader"></div>
 
   <!-- MAIN CONTENT WRAPPER -->
@@ -30,16 +30,15 @@
           <p>Create and manage announcements to keep everyone informed and up to date.</p>
         </div>
 
-        <!-- TABS (Visual wrapper that triggers your hidden atStatusFilter) -->
+        <!-- TABS -->
         <div class="at-tabs">
           <button type="button" class="at-tab active" data-status="all">All</button>
           <button type="button" class="at-tab" data-status="published">Published</button>
           <button type="button" class="at-tab" data-status="draft">Drafts</button>
-          <!-- Hidden select that your JS actually reads -->
           <select id="atStatusFilter" style="display:none;">
             <option value="all">All</option>
             <option value="published">Published</option>
-            <option value="draft">Drafts</option>
+            <option value="draft">Draft</option>
           </select>
         </div>
 
@@ -50,7 +49,6 @@
             <input type="text" placeholder="Search by title or content..." disabled title="Search coming soon">
           </div>
           
-          <!-- Category Filter (Read by your JS) -->
           <select id="atCategoryFilter" class="at-select">
             <option value="">All Categories</option>
             <option value="general">📢 Announcements</option>
@@ -60,7 +58,6 @@
             <option value="guides">📚 New Guides Added</option>
           </select>
 
-          <!-- New Button (Read by your JS) -->
           <button type="button" class="at-btn primary" id="atAddNew">
             <i class="fa-solid fa-plus"></i> New Announcement
           </button>
@@ -72,7 +69,7 @@
           <span id="atPostCount" class="at-list-count">0 posts</span>
         </div>
 
-        <!-- LIST CONTAINER (Your JS renders cards here) -->
+        <!-- LIST CONTAINER -->
         <div class="at-rec-list" id="atPostList">
           <p class="at-empty">Loading announcements…</p>
         </div>
@@ -82,7 +79,6 @@
       <!-- RIGHT PANEL: EDITOR -->
       <section class="at-right-panel">
         
-        <!-- Editor Form (hidden by default) -->
         <div class="at-editor-body" id="atEditorBody" hidden>
           
           <div class="at-editor-header">
@@ -118,17 +114,35 @@
             <span class="at-char-count" id="atTitleCount">0 / 60</span>
           </div>
 
-          <!-- DATE -->
+          <!-- PROFESSIONAL DATE & TIME PICKER -->
           <div class="at-edit-field">
             <label>Date & Time *</label>
-            <input id="atDate" type="text" placeholder="e.g. Oct 25, 2026 10:00 PM">
+            <div class="at-datepicker-wrapper">
+              <!-- Native datetime-local gives the calendar + time picker -->
+              <input id="atDate" type="datetime-local" class="at-datepicker">
+            </div>
           </div>
 
-          <!-- MESSAGE / CONTENT -->
+          <!-- RICH TEXT CONTENT -->
           <div class="at-edit-field">
             <label>Content *</label>
-            <textarea id="atMessage" rows="4" maxlength="180" placeholder="Type your announcement message here..."></textarea>
-            <span class="at-char-count" id="atMessageCount">0 / 180</span>
+            <div class="at-rich-editor">
+              <!-- Visual Toolbar -->
+              <div class="at-toolbar">
+                <button type="button" title="Bold"><b>B</b></button>
+                <button type="button" title="Italic"><i>I</i></button>
+                <button type="button" title="Underline"><u>U</u></button>
+                <button type="button" title="Text Color"><i class="fa-solid fa-palette"></i></button>
+                <button type="button" title="Bulleted List"><i class="fa-solid fa-list-ul"></i></button>
+                <button type="button" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+                <button type="button" title="Link"><i class="fa-solid fa-link"></i></button>
+                <button type="button" title="Image"><i class="fa-regular fa-image"></i></button>
+                <button type="button" title="Code"><i class="fa-solid fa-code"></i></button>
+              </div>
+              <!-- The textarea your JS reads -->
+              <textarea id="atMessage" rows="5" maxlength="500" placeholder="Type your announcement message here...">The leave management system will be temporarily unavailable due to scheduled maintenance on October 25, 2026, from 10:00 PM to 2:00 AM. We apologize for the inconvenience and appreciate your understanding.</textarea>
+            </div>
+            <span class="at-char-count" id="atMessageCount">0 / 500</span>
           </div>
 
           <!-- BUTTON TEXT -->
@@ -148,7 +162,7 @@
               <div class="at-preview__copy">
                 <div class="at-preview__eyebrow" id="atPreviewEyebrow">SYSTEM UPDATE</div>
                 <div class="at-preview__title" id="atPreviewTitle">EBS System Maintenance</div>
-                <div class="at-preview__date" id="atPreviewDate">May 25, 2025 from 1:00 AM – 5:00 AM PST.</div>
+                <div class="at-preview__date" id="atPreviewDate">May 25, 2025</div>
                 <div class="at-preview__message" id="atPreviewMessage">Some EBS features may be unavailable during this time.</div>
               </div>
             </div>
@@ -165,7 +179,7 @@
 
         </div>
 
-        <!-- PLACEHOLDER (Visible when nothing is selected) -->
+        <!-- PLACEHOLDER -->
         <div class="at-editor-placeholder" id="atEditorPlaceholder">
           <i class="fa-regular fa-rectangle-list"></i>
           <h3>No announcement selected</h3>
@@ -199,8 +213,8 @@
   <script src="../../shared/header/admin-header.js"></script>
   <script src="admin-announcements.js"></script>
 
-  <!-- Tiny script to sync the visual tabs with your hidden select -->
   <script>
+    // Sync visual tabs with hidden select
     document.querySelectorAll('.at-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('active'));
