@@ -298,7 +298,17 @@
 
     if ($("atPreviewEyebrow")) $("atPreviewEyebrow").textContent = data.eyebrow || "SYSTEM UPDATE";
     if ($("atPreviewTitle"))   $("atPreviewTitle").textContent   = data.title   || "(Title required)";
-    if ($("atPreviewDate"))    $("atPreviewDate").textContent    = data.date    || "—";
+    
+    // Format date nicely
+    let displayDate = data.date || "—";
+    if (data.date && data.date.includes("T")) {
+      const dateObj = new Date(data.date);
+      displayDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + 
+                    " at " + 
+                    dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
+    if ($("atPreviewDate")) $("atPreviewDate").textContent = displayDate;
+    
     if ($("atPreviewMessage")) $("atPreviewMessage").textContent = data.message || "Message will appear here.";
   }
 
@@ -308,7 +318,7 @@
   function updateCharCounts() {
     setCount("atEyebrow", "atEyebrowCount", 24);
     setCount("atTitle", "atTitleCount", 60);
-    setCount("atMessage", "atMessageCount", 180);
+    setCount("atMessage", "atMessageCount", 500); // Changed from 180 to 500
     setCount("atButton", "atButtonCount", 24);
   }
 
