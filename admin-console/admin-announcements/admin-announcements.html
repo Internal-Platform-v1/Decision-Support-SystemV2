@@ -1,216 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Announcements | Decision Support System</title>
-  <link rel="icon" href="data:,">
-
-  <link rel="stylesheet" href="../../shared/header/admin-header.css" />
-  <link rel="stylesheet" href="admin-announcements.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Announcements</title>
+    <link rel="stylesheet" href="admin-announcements.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+<body>
 
-<body data-admin-page="announcements" data-admin-title="Announcements">
-
-  <div id="adminHeader"></div>
-
-  <main class="at-main">
-
-    <!-- TOOLBAR -->
-    <section class="at-toolbar">
-      <div class="at-toolbar-group">
-        <label for="atCategoryFilter">Category</label>
-        <select id="atCategoryFilter" aria-label="Filter by category">
-          <option value="">All Categories</option>
-          <option value="general">📢 Announcements</option>
-          <option value="whats_new">✨ What's New?</option>
-          <option value="reminders">⚠ Important Reminders</option>
-          <option value="issues">🐞 Known Issues</option>
-          <option value="guides">📚 New Guides Added</option>
-        </select>
-      </div>
-
-      <div class="at-toolbar-group">
-        <label for="atStatusFilter">Status</label>
-        <select id="atStatusFilter" aria-label="Filter by status">
-          <option value="all">All</option>
-          <option value="published">Published</option>
-          <option value="draft">Drafts</option>
-        </select>
-      </div>
-
-      <div class="at-toolbar-actions">
-        <button type="button" class="at-btn primary" id="atAddNew">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="at-btn-icon"><path d="M12 5v14M5 12h14"/></svg>
-          New Announcement
-        </button>
-      </div>
-    </section>
-
-    <!-- WORKSPACE -->
-    <section class="at-workspace">
-
-      <!-- LEFT LIST -->
-      <aside class="at-panel at-left-panel" aria-label="Announcements">
-        <header class="at-panel-head">
-          <div>
-            <span>POSTED ANNOUNCEMENTS</span>
-            <h2 id="atLeftTitle">Loading…</h2>
-          </div>
-          <span class="at-count" id="atPostCount">—</span>
-        </header>
-
-        <div class="at-rec-list" id="atPostList">
-          <p class="at-empty">Loading announcements…</p>
-        </div>
-      </aside>
-
-      <!-- RIGHT EDITOR -->
-      <section class="at-panel at-editor" aria-label="Editor">
-        <header class="at-panel-head">
-          <div>
-            <span id="atEditorEyebrow">ANNOUNCEMENT DETAILS</span>
-            <h2 id="atEditorTitle">No announcement selected</h2>
-            <p id="atEditorSubtitle" class="at-editor-subtitle">
-              Select an announcement on the left, or create a new one.
-            </p>
-          </div>
-          <div class="at-editor-head-actions">
-            <button type="button" class="at-btn danger" id="atDelete" hidden>Delete</button>
-          </div>
-        </header>
-
-        <div class="at-editor-body" id="atEditorBody" hidden>
-
-          <!-- LIVE PREVIEW -->
-          <div class="at-preview-wrap">
-            <div class="at-preview-label">
-              <i class="fa-solid fa-eye"></i> Live Preview
-            </div>
-            <div class="at-preview" id="atPreview">
-              <div class="at-preview__icon">
-                <i class="fa-solid fa-bullhorn" id="atPreviewIcon"></i>
-              </div>
-              <div class="at-preview__copy">
-                <div class="at-preview__eyebrow" id="atPreviewEyebrow">SYSTEM UPDATE</div>
-                <div class="at-preview__title" id="atPreviewTitle">EBS System Maintenance</div>
-                <div class="at-preview__date" id="atPreviewDate">May 25, 2025 from 1:00 AM – 5:00 AM PST.</div>
-                <div class="at-preview__message" id="atPreviewMessage">Some EBS features may be unavailable during this time.</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CATEGORY -->
-          <div class="at-edit-field">
-            <label for="atCategory">
-              <span>Category</span>
-              <small>Where this announcement appears in the banner.</small>
-            </label>
-            <select id="atCategory">
-              <option value="general">📢 Announcements</option>
-              <option value="whats_new">✨ What's New?</option>
-              <option value="reminders">⚠ Important Reminders</option>
-              <option value="issues">🐞 Known Issues</option>
-              <option value="guides">📚 New Guides Added</option>
-            </select>
-          </div>
-
-          <!-- EYEBROW -->
-          <div class="at-edit-field">
-            <label for="atEyebrow">
-              <span>Eyebrow Text</span>
-              <small>Small text above the title. Max 24 characters.</small>
-            </label>
-            <input id="atEyebrow" type="text" maxlength="24" placeholder="SYSTEM UPDATE">
-            <span class="at-char-count" id="atEyebrowCount">0 / 24</span>
-          </div>
-
-          <!-- TITLE -->
-          <div class="at-edit-field">
-            <label for="atTitle">
-              <span>Title</span>
-              <small>Main heading. Max 60 characters.</small>
-            </label>
-            <input id="atTitle" type="text" maxlength="60" placeholder="EBS System Maintenance">
-            <span class="at-char-count" id="atTitleCount">0 / 60</span>
-          </div>
-
-          <!-- DATE -->
-          <div class="at-edit-field">
-            <label for="atDate">
-              <span>Date / Time</span>
-              <small>When the update or event happens.</small>
-            </label>
-            <input id="atDate" type="text" placeholder="May 25, 2025 from 1:00 AM – 5:00 AM PST.">
-          </div>
-
-          <!-- MESSAGE -->
-          <div class="at-edit-field">
-            <label for="atMessage">
-              <span>Message Body</span>
-              <small>Supporting text. Max 180 characters. Use line breaks for multiple lines.</small>
-            </label>
-            <textarea id="atMessage" rows="4" maxlength="180" placeholder="Some features may be unavailable."></textarea>
-            <span class="at-char-count" id="atMessageCount">0 / 180</span>
-          </div>
-
-          <!-- BUTTON -->
-          <div class="at-edit-field">
-            <label for="atButton">
-              <span>Button Text</span>
-              <small>Label for the button in the banner. Max 24 characters.</small>
-            </label>
-            <input id="atButton" type="text" maxlength="24" placeholder="View All Updates">
-            <span class="at-char-count" id="atButtonCount">0 / 24</span>
-          </div>
-
-          <!-- FOOTER ACTIONS -->
-          <div class="at-editor-footer">
-            <span class="at-doc-ids" id="atDocIds"></span>
-            <div class="at-editor-actions">
-              <button type="button" class="at-btn ghost" id="atReset">Reset</button>
-              <button type="button" class="at-btn ghost" id="atSaveDraft">
-                <i class="fa-regular fa-file"></i> Save Draft
-              </button>
-              <button type="button" class="at-btn primary" id="atPublish">
-                <i class="fa-solid fa-upload"></i> Publish
-              </button>
-            </div>
-          </div>
-
+<div class="admin-container">
+    
+    <!-- LEFT PANEL: LIST (Visual only, based on your 5 docs) -->
+    <div class="left-panel">
+        <div class="header-area">
+            <h1><i class="fa-solid fa-bullhorn"></i> Announcements</h1>
+            <p>Create and manage announcements to keep everyone informed and up to date.</p>
         </div>
 
-        <div class="at-editor-placeholder" id="atEditorPlaceholder">
-          <div class="at-editor-placeholder-icon">✎</div>
-          <p>No announcement selected.</p>
-          <small>Choose one from the left, or click "New Announcement".</small>
+        <div class="tabs">
+            <button class="tab active">All</button>
+            <button class="tab">Published</button>
+            <button class="tab">Drafts</button>
+            <button class="tab">Scheduled</button>
+            <button class="tab">Expired</button>
         </div>
-      </section>
 
-    </section>
+        <div class="filters">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search by title or content...">
+            </div>
+            <select><option>All Categories</option></select>
+            <select><option>All Priority</option></select>
+            <button class="btn-primary" id="newAnnouncementBtn"><i class="fa-solid fa-plus"></i> New Announcement</button>
+        </div>
 
-  </main>
+        <div class="announcement-list">
+            <!-- We will populate this dynamically with the 5 categories via JS -->
+            <div id="announcementListContainer"></div>
+        </div>
+    </div>
 
-  <div class="at-toast" id="atToast" role="status" aria-live="polite"></div>
+    <!-- RIGHT PANEL: CREATE/EDIT FORM -->
+    <div class="right-panel">
+        <div class="form-header">
+            <h2><i class="fa-solid fa-pen-nib"></i> Create / Edit Announcement</h2>
+        </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    window.db = firebase.firestore();
-    window.auth = firebase.auth();
-  </script>
+        <form id="announcementForm">
+            <!-- Title -->
+            <div class="form-group">
+                <label>Title *</label>
+                <input type="text" id="annTitle" placeholder="Enter announcement title" required>
+            </div>
 
-  <script src="../../shared/header/admin-header.js"></script>
-  <script src="admin-announcements.js"></script>
+            <!-- Category (Mapped to your 5 Firestore docs) -->
+            <div class="form-group">
+                <label>Category *</label>
+                <select id="annCategory" required>
+                    <option value="general">📢 General Announcements</option>
+                    <option value="whats_new">✨ What's New?</option>
+                    <option value="reminders">⚠ Important Reminders</option>
+                    <option value="issues">🐞 Known Issues</option>
+                    <option value="guides">📚 New Guides Added</option>
+                </select>
+            </div>
+
+            <!-- Priority -->
+            <div class="form-group">
+                <label>Priority *</label>
+                <div class="radio-group">
+                    <label class="priority-radio normal active">
+                        <input type="radio" name="priority" value="Normal" checked> Normal
+                    </label>
+                    <label class="priority-radio important">
+                        <input type="radio" name="priority" value="Important"> Important
+                    </label>
+                    <label class="priority-radio urgent">
+                        <input type="radio" name="priority" value="Urgent"> Urgent
+                    </label>
+                </div>
+            </div>
+
+            <!-- Visibility -->
+            <div class="form-group">
+                <label>Visibility *</label>
+                <select id="annVisibility"><option>All Users</option></select>
+            </div>
+
+            <!-- Dates -->
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>Start Date & Time *</label>
+                    <input type="datetime-local" id="annStartDate">
+                </div>
+                <div class="form-group half">
+                    <label>End Date & Time (Optional)</label>
+                    <input type="datetime-local" id="annEndDate">
+                </div>
+            </div>
+
+            <!-- Pin & Status -->
+            <div class="form-group toggle-group">
+                <div class="toggle-item">
+                    <label>Pin to Top</label>
+                    <label class="switch">
+                        <input type="checkbox" id="annPinned">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="help-text">Keep this announcement at the top.</span>
+                </div>
+                <div class="toggle-item">
+                    <label>Status</label>
+                    <label class="switch">
+                        <input type="checkbox" id="annPublished" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span class="help-text" id="publishStatusText">Publish immediately</span>
+                </div>
+            </div>
+
+            <!-- Content / Message -->
+            <div class="form-group">
+                <label>Content *</label>
+                <div class="rich-text-editor">
+                    <div class="toolbar">
+                        <button type="button"><b>B</b></button>
+                        <button type="button"><i>I</i></button>
+                        <button type="button"><u>U</u></button>
+                        <button type="button"><i class="fa-solid fa-link"></i></button>
+                    </div>
+                    <textarea id="annMessage" rows="5" placeholder="Type your announcement message here..." required></textarea>
+                </div>
+                <small class="help-text">You can use images, links, and basic formatting.</small>
+            </div>
+
+            <!-- Live Preview (Based on your banner design) -->
+            <div class="form-group">
+                <label>Live Preview</label>
+                <div class="preview-card" id="previewCard">
+                    <div class="preview-badge" id="previewBadge">Urgent</div>
+                    <div class="preview-category" id="previewCategory">System Update</div>
+                    <h4 id="previewTitle">System Maintenance Notice</h4>
+                    <p id="previewMessage">The leave management system will be temporarily unavailable...</p>
+                    <div class="preview-date"><i class="fa-regular fa-calendar"></i> <span id="previewDate">Oct 25, 2026</span></div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="saveDraftBtn">Save Draft</button>
+                <button type="submit" class="btn-primary" id="publishBtn">Publish</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Firebase Scripts (Adjust paths as needed) -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+<script src="admin-announcements.js"></script>
 </body>
 </html>
