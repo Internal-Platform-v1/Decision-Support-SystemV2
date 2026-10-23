@@ -508,3 +508,57 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 .at-datepicker::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
+
+/* --- PRIORITY PILLS --- */
+.priority-pills {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.priority-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.priority-pill input {
+  display: none; /* hide the actual radio button */
+}
+
+.priority-pill i {
+  font-size: 14px;
+}
+
+/* Normal State */
+.priority-pill.normal i { color: #3b82f6; }
+.priority-pill.normal.active {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+/* Important State */
+.priority-pill.important i { color: #f59e0b; }
+.priority-pill.important.active {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* Urgent State */
+.priority-pill.urgent i { color: #ef4444; }
+.priority-pill.urgent.active {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #991b1b;
+}
