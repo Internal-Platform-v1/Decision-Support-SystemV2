@@ -247,5 +247,23 @@
       });
     });
   </script>
+
+    <script>
+    // Sync visual priority pills with the hidden atEyebrow input
+    document.querySelectorAll('input[name="priority"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        // Update active visual state
+        document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('active'));
+        e.target.closest('.priority-pill').classList.add('active');
+        
+        // Update hidden input for your JS
+        const hiddenInput = document.getElementById('atEyebrow');
+        hiddenInput.value = e.target.value;
+        
+        // Trigger input event so your Live Preview updates immediately
+        hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    });
+  </script>
 </body>
 </html>
