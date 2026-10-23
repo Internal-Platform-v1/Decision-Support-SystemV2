@@ -103,9 +103,31 @@
           <!-- EYEBROW / PRIORITY -->
           <div class="at-edit-field">
             <label>Priority / Tag *</label>
-            <input id="atEyebrow" type="text" maxlength="24" placeholder="e.g. SYSTEM UPDATE">
-            <span class="at-char-count" id="atEyebrowCount">0 / 24</span>
+            
+            <!-- Hidden input that your JS reads -->
+            <input id="atEyebrow" type="hidden" value="Normal">
+            
+            <div class="priority-pills">
+              <label class="priority-pill normal active">
+                <input type="radio" name="priority" value="Normal" checked>
+                <i class="fa-solid fa-circle-check"></i> Normal
+              </label>
+              
+              <label class="priority-pill important">
+                <input type="radio" name="priority" value="Important">
+                <i class="fa-solid fa-circle-check"></i> Important
+              </label>
+              
+              <label class="priority-pill urgent">
+                <input type="radio" name="priority" value="Urgent">
+                <i class="fa-solid fa-circle-xmark"></i> Urgent
+              </label>
+            </div>
+            
+            <!-- Keep this hidden so the JS doesn't break -->
+            <span class="at-char-count" id="atEyebrowCount" style="display:none;">0 / 24</span>
           </div>
+
 
           <!-- TITLE -->
           <div class="at-edit-field">
