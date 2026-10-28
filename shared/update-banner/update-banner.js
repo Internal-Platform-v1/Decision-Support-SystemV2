@@ -40,8 +40,8 @@
     return null;
   }
 
-  /* ------------------------------------------------------------
-     Fetch all 5 docs. Keep only the published ones.
+   /* ------------------------------------------------------------
+     Fetch and pick the LATEST published announcement per category
      ------------------------------------------------------------ */
   async function fetchPublishedSlides() {
     const db = firestore();
@@ -51,27 +51,46 @@
     }
 
     try {
-      const results = await Promise.all(
-        SLIDES.map(s => db.collection(COLLECTION).doc(s.key).get().catch(() => null))
-      );
+      // Fetch all published announcements
+      const snap = await db.collection(COLLECTION).where("published", "==", true).get();
+      
+      const allPublished = [];
+      snap.forEach(doc => {
+        allPublished.push({ id: doc.id, ...doc.data() });
+      });
 
+      // Sort them newest first
+      allPublished.sort((a, b) => {
+        const timeA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+        const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+        return timeB - timeA;
+      });
+
+      // Pick only the first (newest) one found for each category
+      const latestByCategory = {};
+      allPublished.forEach(post => {
+        if (!latestByCategory[post.category]) {
+          latestByCategory[post.category] = post;
+        }
+      });
+
+      // Map them to the banner slides
       const next = [];
-      results.forEach((snap, i) => {
-        if (!snap || !snap.exists) return;
-        const data = snap.data() || {};
-        if (data.published !== true) return;
-
-        next.push({
-          index: i,
-          meta: SLIDES[i],
-          content: {
-            eyebrow: data.eyebrow || SLIDES[i].eyebrow,
-            title:   data.title   || "",
-            date:    data.date    || "",
-            message: data.message || "",
-            button:  data.button  || "View Details"
-          }
-        });
+      SLIDES.forEach((slide, index) => {
+        const data = latestByCategory[slide.key];
+        if (data) {
+          next.push({
+            index: index,
+            meta: slide,
+            content: {
+              eyebrow: data.eyebrow || slide.eyebrow,
+              title:   data.title   || "",
+              date:    data.date    || "",
+              message: data.message || "",
+              button:  data.button  || "View Details"
+            }
+          });
+        }
       });
 
       publishedSlides = next;
