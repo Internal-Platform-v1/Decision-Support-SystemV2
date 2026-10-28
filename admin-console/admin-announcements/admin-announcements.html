@@ -8,29 +8,23 @@
 
   <link rel="stylesheet" href="../../shared/header/admin-header.css" />
   <link rel="stylesheet" href="admin-announcements.css" />
-  <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body data-admin-page="announcements" data-admin-title="Announcements">
 
-  <!-- ADMIN HEADER (KEPT INTACT) -->
   <div id="adminHeader"></div>
 
-  <!-- MAIN CONTENT WRAPPER -->
   <main class="at-main">
-
     <div class="at-layout">
       
-      <!-- LEFT PANEL: LIST -->
+      <!-- LEFT PANEL -->
       <aside class="at-left-panel">
-        
         <div class="at-header-area">
           <h1><i class="fa-solid fa-bullhorn"></i> Announcements</h1>
           <p>Create and manage announcements to keep everyone informed and up to date.</p>
         </div>
 
-        <!-- TABS -->
         <div class="at-tabs">
           <button type="button" class="at-tab active" data-status="all">All</button>
           <button type="button" class="at-tab" data-status="published">Published</button>
@@ -42,7 +36,6 @@
           </select>
         </div>
 
-        <!-- FILTERS & SEARCH -->
         <div class="at-filters">
           <div class="at-search">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -63,20 +56,17 @@
           </button>
         </div>
 
-        <!-- LIST META -->
         <div class="at-list-meta">
           <span id="atLeftTitle" class="at-list-title">All Announcements</span>
           <span id="atPostCount" class="at-list-count">0 posts</span>
         </div>
 
-        <!-- LIST CONTAINER -->
         <div class="at-rec-list" id="atPostList">
           <p class="at-empty">Loading announcements…</p>
         </div>
-
       </aside>
 
-      <!-- RIGHT PANEL: EDITOR -->
+      <!-- RIGHT PANEL -->
       <section class="at-right-panel">
         
         <div class="at-editor-body" id="atEditorBody" hidden>
@@ -86,6 +76,19 @@
             <p id="atEditorSubtitle" class="at-editor-subtitle">Fill in the fields below.</p>
             <span id="atEditorEyebrow" style="display:none;">EDIT</span>
             <span id="atDocIds" style="display:none;"></span>
+          </div>
+
+          <!-- TEMPLATE SELECTOR -->
+          <div class="at-edit-field">
+            <label>Start from Template (Optional)</label>
+            <select id="atTemplate">
+              <option value="none">-- Blank / Custom --</option>
+              <option value="general">📢 System Maintenance Notice</option>
+              <option value="whats_new">✨ New Feature Release</option>
+              <option value="reminders">⚠ Action Required</option>
+              <option value="issues">🐞 System Issue Being Investigated</option>
+              <option value="guides">📚 New Guides Available</option>
+            </select>
           </div>
 
           <!-- CATEGORY -->
@@ -100,34 +103,26 @@
             </select>
           </div>
 
-          <!-- EYEBROW / PRIORITY -->
+          <!-- PRIORITY -->
           <div class="at-edit-field">
-            <label>Priority / Tag *</label>
-            
-            <!-- Hidden input that your JS reads -->
+            <label>Priority *</label>
             <input id="atEyebrow" type="hidden" value="Normal">
-            
             <div class="priority-pills">
               <label class="priority-pill normal active">
                 <input type="radio" name="priority" value="Normal" checked>
                 <i class="fa-solid fa-circle-check"></i> Normal
               </label>
-              
               <label class="priority-pill important">
                 <input type="radio" name="priority" value="Important">
                 <i class="fa-solid fa-circle-check"></i> Important
               </label>
-              
               <label class="priority-pill urgent">
                 <input type="radio" name="priority" value="Urgent">
                 <i class="fa-solid fa-circle-xmark"></i> Urgent
               </label>
             </div>
-            
-            <!-- Keep this hidden so the JS doesn't break -->
             <span class="at-char-count" id="atEyebrowCount" style="display:none;">0 / 24</span>
           </div>
-
 
           <!-- TITLE -->
           <div class="at-edit-field">
@@ -136,20 +131,18 @@
             <span class="at-char-count" id="atTitleCount">0 / 60</span>
           </div>
 
-          <!-- PROFESSIONAL DATE & TIME PICKER -->
+          <!-- DATE & TIME -->
           <div class="at-edit-field">
             <label>Date & Time *</label>
             <div class="at-datepicker-wrapper">
-              <!-- Native datetime-local gives the calendar + time picker -->
               <input id="atDate" type="datetime-local" class="at-datepicker">
             </div>
           </div>
 
-          <!-- RICH TEXT CONTENT -->
+          <!-- CONTENT -->
           <div class="at-edit-field">
             <label>Content *</label>
             <div class="at-rich-editor">
-              <!-- Visual Toolbar -->
               <div class="at-toolbar">
                 <button type="button" title="Bold"><b>B</b></button>
                 <button type="button" title="Italic"><i>I</i></button>
@@ -161,8 +154,7 @@
                 <button type="button" title="Image"><i class="fa-regular fa-image"></i></button>
                 <button type="button" title="Code"><i class="fa-solid fa-code"></i></button>
               </div>
-              <!-- The textarea your JS reads -->
-              <textarea id="atMessage" rows="5" maxlength="500" placeholder="Type your announcement message here...">The leave management system will be temporarily unavailable due to scheduled maintenance on October 25, 2026, from 10:00 PM to 2:00 AM. We apologize for the inconvenience and appreciate your understanding.</textarea>
+              <textarea id="atMessage" rows="5" maxlength="500" placeholder="Type your announcement message here..."></textarea>
             </div>
             <span class="at-char-count" id="atMessageCount">0 / 500</span>
           </div>
@@ -190,7 +182,7 @@
             </div>
           </div>
 
-          <!-- FOOTER ACTIONS -->
+          <!-- ACTIONS -->
           <div class="at-editor-footer">
             <button type="button" class="at-btn danger" id="atDelete" hidden><i class="fa-solid fa-trash"></i> Delete</button>
             <div class="spacer"></div>
@@ -201,7 +193,6 @@
 
         </div>
 
-        <!-- PLACEHOLDER -->
         <div class="at-editor-placeholder" id="atEditorPlaceholder">
           <i class="fa-regular fa-rectangle-list"></i>
           <h3>No announcement selected</h3>
@@ -209,7 +200,6 @@
         </div>
 
       </section>
-
     </div>
   </main>
 
@@ -236,7 +226,6 @@
   <script src="admin-announcements.js"></script>
 
   <script>
-    // Sync visual tabs with hidden select
     document.querySelectorAll('.at-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('active'));
@@ -246,21 +235,13 @@
         select.dispatchEvent(new Event('change'));
       });
     });
-  </script>
 
-    <script>
-    // Sync visual priority pills with the hidden atEyebrow input
     document.querySelectorAll('input[name="priority"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
-        // Update active visual state
         document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('active'));
         e.target.closest('.priority-pill').classList.add('active');
-        
-        // Update hidden input for your JS
         const hiddenInput = document.getElementById('atEyebrow');
         hiddenInput.value = e.target.value;
-        
-        // Trigger input event so your Live Preview updates immediately
         hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
       });
     });
