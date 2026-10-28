@@ -1,8 +1,6 @@
-```css
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER
    Premium Feature Release Layout
-   HTML + JavaScript remain unchanged
    ============================================================ */
 
 .dss-update-banner {
@@ -15,102 +13,68 @@
   margin: 0 0 16px;
   padding: 0;
   overflow: hidden;
-
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 15px;
-
   background: #100c29;
-  box-shadow:
-    0 8px 24px rgba(26, 13, 65, 0.13),
-    0 2px 6px rgba(26, 13, 65, 0.06);
-
-  transition:
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
+  box-shadow: 0 8px 24px rgba(26, 13, 65, 0.13), 0 2px 6px rgba(26, 13, 65, 0.06);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .dss-update-banner:hover {
   border-color: rgba(139, 92, 246, 0.28);
-
-  box-shadow:
-    0 12px 30px rgba(26, 13, 65, 0.17),
-    0 0 0 1px rgba(139, 92, 246, 0.05);
+  box-shadow: 0 12px 30px rgba(26, 13, 65, 0.17), 0 0 0 1px rgba(139, 92, 246, 0.05);
 }
 
 /* ============================================================
-   BACKGROUND IMAGE
+   BACKGROUND IMAGE & OVERLAY
    ============================================================ */
 
 .dss-update-banner__visual {
   position: absolute;
   inset: 0;
   z-index: 0;
-
   width: 100%;
   height: 100%;
   overflow: hidden;
-
   background: #100c29;
 }
 
 .dss-update-banner__visual img {
   position: absolute;
   inset: 0;
-
   display: block;
   width: 100%;
   height: 100%;
-
   object-fit: cover;
   object-position: center center;
-
   transform: none;
-
   transition: filter 0.35s ease;
 }
-
-/* ============================================================
-   PREMIUM INDIGO OVERLAY
-   Darker on the left, transparent toward the truck
-   ============================================================ */
 
 .dss-update-banner__overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(13, 9, 39, 0.97) 0%,
-      rgba(19, 12, 52, 0.94) 23%,
-      rgba(26, 15, 65, 0.84) 39%,
-      rgba(35, 19, 75, 0.50) 53%,
-      rgba(35, 19, 75, 0.12) 69%,
-      rgba(20, 10, 40, 0.02) 100%
-    );
-
+  background: linear-gradient(
+    90deg,
+    rgba(13, 9, 39, 0.97) 0%,
+    rgba(19, 12, 52, 0.94) 23%,
+    rgba(26, 15, 65, 0.84) 39%,
+    rgba(35, 19, 75, 0.50) 53%,
+    rgba(35, 19, 75, 0.12) 69%,
+    rgba(20, 10, 40, 0.02) 100%
+  );
   pointer-events: none;
 }
 
 /* Subtle purple lighting along the bottom */
-
 .dss-update-banner::after {
   content: "";
   position: absolute;
   inset: auto 0 0;
   z-index: 2;
-
   height: 3px;
-
-  background: linear-gradient(
-    90deg,
-    #6d28d9 0%,
-    #8b5cf6 28%,
-    rgba(139, 92, 246, 0.18) 58%,
-    transparent 78%
-  );
-
+  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 28%, rgba(139, 92, 246, 0.18) 58%, transparent 78%);
   pointer-events: none;
 }
 
@@ -121,20 +85,15 @@
 .dss-update-banner__copy {
   position: relative;
   z-index: 3;
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-
   width: 57%;
   min-width: 0;
   height: 100%;
-
   padding: 19px 30px;
-
   color: #ffffff;
-
   transform: translateX(0);
   will-change: transform;
 }
@@ -147,188 +106,118 @@
   display: flex;
   align-items: center;
   gap: 12px;
-
   margin: 0 0 10px;
 }
 
 .dss-update-banner__icon {
   position: relative;
-
   display: inline-flex;
   flex: 0 0 44px;
   align-items: center;
   justify-content: center;
-
   width: 44px;
   height: 44px;
-
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 12px;
-
-  background: linear-gradient(
-    145deg,
-    #ffffff 0%,
-    #f5efff 100%
-  );
-
+  background: linear-gradient(145deg, #ffffff 0%, #f5efff 100%);
   color: #7029e8;
-
   font-size: 19px;
-
-  box-shadow:
-    0 3px 12px rgba(0, 0, 0, 0.16),
-    0 0 18px rgba(139, 92, 246, 0.14);
-
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16), 0 0 18px rgba(139, 92, 246, 0.14);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
 .dss-update-banner:hover .dss-update-banner__icon {
   transform: translateY(-1px);
-
-  box-shadow:
-    0 5px 16px rgba(0, 0, 0, 0.20),
-    0 0 22px rgba(139, 92, 246, 0.22);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.20), 0 0 22px rgba(139, 92, 246, 0.22);
 }
 
 /* Priority badge */
-
 .dss-update-banner__eyebrow-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-
   min-height: 27px;
   padding: 5px 12px;
-
   border: 1px solid rgba(196, 181, 253, 0.38);
   border-radius: 999px;
-
   background: rgba(18, 13, 48, 0.48);
   color: #f5f3ff;
-
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.075em;
   text-transform: uppercase;
-
   white-space: nowrap;
-
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .dss-update-banner__eyebrow-text::before {
   content: "";
-
   display: inline-block;
   flex: 0 0 8px;
-
   width: 8px;
   height: 8px;
-
   border-radius: 50%;
   background: #22c55e;
-
   box-shadow: 0 0 9px rgba(34, 197, 94, 0.48);
 }
 
 /* Priority colors */
-
-.dss-update-banner[data-priority="normal"]
-.dss-update-banner__eyebrow-text::before {
+.dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before {
   background: #22c55e;
   box-shadow: 0 0 9px rgba(34, 197, 94, 0.48);
 }
-
-.dss-update-banner[data-priority="important"]
-.dss-update-banner__eyebrow-text::before {
+.dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before {
   background: #f59e0b;
   box-shadow: 0 0 9px rgba(245, 158, 11, 0.48);
 }
-
-.dss-update-banner[data-priority="urgent"]
-.dss-update-banner__eyebrow-text::before {
+.dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before {
   background: #ef4444;
   box-shadow: 0 0 9px rgba(239, 68, 68, 0.48);
 }
 
 /* ============================================================
-   TITLE
+   TITLE & DESCRIPTION
    ============================================================ */
 
 .dss-update-banner__title {
   max-width: 100%;
-
   margin: 0 0 7px;
   padding: 0;
-
   color: #ffffff;
-
-  font-family: Inter, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: clamp(25px, 2.2vw, 32px);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.85px;
-
   overflow-wrap: anywhere;
-
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.16);
 }
 
-/*
-  Optional gradient title support.
-
-  Your current JavaScript uses textContent to update the title,
-  so it will remain white unless the HTML/JS is changed separately.
-*/
-
 .dss-update-banner__title span {
-  background: linear-gradient(
-    90deg,
-    #f0abfc 0%,
-    #c084fc 50%,
-    #a855f7 100%
-  );
-
+  background: linear-gradient(90deg, #f0abfc 0%, #c084fc 50%, #a855f7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Date remains available for existing JavaScript */
-
 .dss-update-banner__date {
   display: none;
-
   margin: 0;
 }
 
-/* ============================================================
-   DESCRIPTION
-   ============================================================ */
-
 .dss-update-banner__message {
   max-width: 470px;
-
   margin: 0 0 13px;
   padding: 0;
-
   color: rgba(248, 247, 255, 0.88);
-
-  font-family: Inter, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.55;
   letter-spacing: 0.005em;
-
   overflow-wrap: anywhere;
 }
 
@@ -338,66 +227,35 @@
 
 .dss-update-banner__button {
   position: relative;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 13px;
-
   min-height: 40px;
   max-width: 100%;
-
   padding: 10px 17px;
-
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 10px;
-
-  background: linear-gradient(
-    110deg,
-    #7027e8 0%,
-    #5b21d6 100%
-  );
-
+  background: linear-gradient(110deg, #7027e8 0%, #5b21d6 100%);
   color: #ffffff;
-
-  font-family: Inter, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 12px;
   font-weight: 750;
   line-height: 1.2;
-
   white-space: nowrap;
-
   cursor: pointer;
-
-  box-shadow:
-    0 4px 12px rgba(54, 20, 139, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(54, 20, 139, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .dss-update-banner__button i {
   font-size: 12px;
-
   transition: transform 0.2s ease;
 }
 
 .dss-update-banner__button:hover {
-  background: linear-gradient(
-    110deg,
-    #8138f3 0%,
-    #6828e8 100%
-  );
-
-  box-shadow:
-    0 6px 18px rgba(91, 33, 214, 0.38),
-    0 0 0 3px rgba(139, 92, 246, 0.12);
-
+  background: linear-gradient(110deg, #8138f3 0%, #6828e8 100%);
+  box-shadow: 0 6px 18px rgba(91, 33, 214, 0.38), 0 0 0 3px rgba(139, 92, 246, 0.12);
   transform: translateY(-1px);
 }
 
@@ -423,19 +281,14 @@
   top: 19px;
   right: 22px;
   z-index: 4;
-
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-
   padding: 7px 9px;
-
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 999px;
-
   background: rgba(19, 13, 43, 0.20);
-
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
 }
@@ -443,22 +296,14 @@
 .dss-update-banner__dot {
   display: block;
   flex: 0 0 8px;
-
   width: 8px;
   height: 8px;
   padding: 0;
-
   border: 0;
   border-radius: 50%;
-
   background: rgba(255, 255, 255, 0.58);
-
   cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dss-update-banner__dot:hover {
@@ -468,169 +313,49 @@
 
 .dss-update-banner__dot.is-active {
   background: #8b5cf6;
-
-  box-shadow:
-    0 0 0 3px rgba(139, 92, 246, 0.18),
-    0 0 10px rgba(139, 92, 246, 0.50);
-
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18), 0 0 10px rgba(139, 92, 246, 0.50);
   transform: scale(1.15);
 }
 
 /* ============================================================
-   RESPONSIVE — TABLETS
+   RESPONSIVE — TABLETS & MOBILE
    ============================================================ */
 
 @media (max-width: 900px) {
-  .dss-update-banner {
-    height: 220px;
-    min-height: 220px;
-  }
-
-  .dss-update-banner__copy {
-    width: 64%;
-    padding: 18px 24px;
-  }
-
-  .dss-update-banner__title {
-    font-size: 27px;
-  }
-
-  .dss-update-banner__message {
-    max-width: 400px;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .dss-update-banner__dots {
-    top: 15px;
-    right: 16px;
-    gap: 8px;
-  }
+  .dss-update-banner { height: 220px; min-height: 220px; }
+  .dss-update-banner__copy { width: 64%; padding: 18px 24px; }
+  .dss-update-banner__title { font-size: 27px; }
+  .dss-update-banner__message { max-width: 400px; font-size: 12px; line-height: 1.5; }
+  .dss-update-banner__dots { top: 15px; right: 16px; gap: 8px; }
 }
-
-/* ============================================================
-   RESPONSIVE — MOBILE
-   ============================================================ */
 
 @media (max-width: 600px) {
-  .dss-update-banner {
-    height: auto;
-    min-height: 275px;
-    border-radius: 13px;
-  }
-
-  .dss-update-banner__visual img {
-    object-position: 64% center;
-  }
-
-  .dss-update-banner__overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(13, 9, 39, 0.82) 0%,
-      rgba(19, 12, 52, 0.92) 43%,
-      rgba(19, 12, 52, 0.97) 100%
-    );
-  }
-
-  .dss-update-banner__copy {
-    width: 100%;
-    min-height: 275px;
-    height: auto;
-
-    padding: 48px 20px 22px;
-  }
-
-  .dss-update-banner__top {
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .dss-update-banner__icon {
-    flex-basis: 39px;
-    width: 39px;
-    height: 39px;
-
-    border-radius: 10px;
-    font-size: 17px;
-  }
-
-  .dss-update-banner__eyebrow-text {
-    min-height: 25px;
-    padding: 5px 10px;
-    font-size: 9px;
-  }
-
-  .dss-update-banner__title {
-    margin-bottom: 8px;
-    font-size: 25px;
-    line-height: 1.15;
-    letter-spacing: -0.55px;
-  }
-
-  .dss-update-banner__message {
-    max-width: 100%;
-    margin-bottom: 15px;
-
-    font-size: 12px;
-    line-height: 1.55;
-  }
-
-  .dss-update-banner__button {
-    min-height: 39px;
-    padding: 10px 15px;
-    border-radius: 9px;
-    font-size: 12px;
-  }
-
-  .dss-update-banner__dots {
-    top: 13px;
-    right: 13px;
-    gap: 8px;
-
-    padding: 6px 8px;
-  }
-
-  .dss-update-banner__dot {
-    flex-basis: 7px;
-    width: 7px;
-    height: 7px;
-  }
+  .dss-update-banner { height: auto; min-height: 275px; border-radius: 13px; }
+  .dss-update-banner__visual img { object-position: 64% center; }
+  .dss-update-banner__overlay { background: linear-gradient(180deg, rgba(13, 9, 39, 0.82) 0%, rgba(19, 12, 52, 0.92) 43%, rgba(19, 12, 52, 0.97) 100%); }
+  .dss-update-banner__copy { width: 100%; min-height: 275px; height: auto; padding: 48px 20px 22px; }
+  .dss-update-banner__top { gap: 10px; margin-bottom: 12px; }
+  .dss-update-banner__icon { flex-basis: 39px; width: 39px; height: 39px; border-radius: 10px; font-size: 17px; }
+  .dss-update-banner__eyebrow-text { min-height: 25px; padding: 5px 10px; font-size: 9px; }
+  .dss-update-banner__title { margin-bottom: 8px; font-size: 25px; line-height: 1.15; letter-spacing: -0.55px; }
+  .dss-update-banner__message { max-width: 100%; margin-bottom: 15px; font-size: 12px; line-height: 1.55; }
+  .dss-update-banner__button { min-height: 39px; padding: 10px 15px; border-radius: 9px; font-size: 12px; }
+  .dss-update-banner__dots { top: 13px; right: 13px; gap: 8px; padding: 6px 8px; }
+  .dss-update-banner__dot { flex-basis: 7px; width: 7px; height: 7px; }
 }
-
-/* ============================================================
-   RESPONSIVE — VERY SMALL SCREENS
-   ============================================================ */
 
 @media (max-width: 360px) {
-  .dss-update-banner__copy {
-    padding-right: 15px;
-    padding-left: 15px;
-  }
-
-  .dss-update-banner__title {
-    font-size: 22px;
-  }
-
-  .dss-update-banner__message {
-    font-size: 11px;
-  }
+  .dss-update-banner__copy { padding-right: 15px; padding-left: 15px; }
+  .dss-update-banner__title { font-size: 22px; }
+  .dss-update-banner__message { font-size: 11px; }
 }
-
-/* ============================================================
-   ACCESSIBILITY — REDUCED MOTION
-   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .dss-update-banner,
-  .dss-update-banner *,
-  .dss-update-banner::after {
-    transition-duration: 0.01ms !important;
-  }
+  .dss-update-banner, .dss-update-banner *, .dss-update-banner::after { transition-duration: 0.01ms !important; }
 }
-```
 
 /* ============================================================
-   UPDATE DETAIL MODAL (Matching Dark Theme)
+   UPDATE DETAIL MODAL
    ============================================================ */
 
 .dss-update-modal {
@@ -669,9 +394,7 @@
   transition: transform .22s ease;
 }
 
-.dss-update-modal.is-open .dss-update-modal__panel {
-  transform: translateY(0) scale(1);
-}
+.dss-update-modal.is-open .dss-update-modal__panel { transform: translateY(0) scale(1); }
 
 .dss-update-modal__header {
   display: flex;
