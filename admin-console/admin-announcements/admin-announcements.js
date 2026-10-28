@@ -82,18 +82,6 @@
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
-  function resetFilters() {
-    state.filterCategory = "";
-    state.filterStatus = "all";
-    if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
-    if ($("atStatusFilter")) $("atStatusFilter").value = "all";
-    
-    document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('active'));
-    const allTab = document.querySelector('.at-tab[data-status="all"]');
-    if (allTab) allTab.classList.add('active');
-  }
-
-  // REAL-TIME LISTENER (Updates instantly, no refresh needed)
   function loadAllPosts() {
     const db = firestore();
     if (!db) {
@@ -104,20 +92,24 @@
     if (unsubscribePosts) unsubscribePosts();
 
     unsubscribePosts = db.collection(COLLECTION).onSnapshot(snap => {
-      console.log(`[Admin] Real-time update received. Total documents: ${snap.size}`);
+      console.log(`[ADMIN] Live Database Sync. Total documents found: ${snap.size}`);
       
       state.posts = [];
       snap.forEach(doc => {
         const data = doc.data();
+        
+        // Robust type checking for published field
+        const isPub = data.published === true || data.published === "true" || data.published === 1;
+
         state.posts.push({
           id: doc.id,
           category: data.category || "general",
           eyebrow: data.eyebrow || "Normal",
           title: data.title || "(Untitled)",
-          date: data.date || "",
+          date: typeof data.date === "string" ? data.date : "", // Prevent crashes if date is a timestamp
           message: data.message || "",
           button: data.button || "",
-          published: data.published === true,
+          published: isPub,
           updatedAt: data.updatedAt || null,
           exists: true
         });
@@ -151,6 +143,8 @@
       if (fStatus === "draft" && post.published === true) return false;
       return true;
     });
+
+    console.log(`[ADMIN] Rendering ${entries.length} posts based on filters (Cat: '${fCat}', Status: '${fStatus}').`);
 
     if (title) {
       if (fCat) title.textContent = categoryLabel(fCat);
@@ -219,7 +213,14 @@
   function startNew() {
     state.isNew = true;
     state.activeId = null;
-    resetFilters(); // Show all so they see their new post
+    
+    // Reset filters so user isn't confused when they save
+    state.filterCategory = "";
+    state.filterStatus = "all";
+    if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
+    if ($("atStatusFilter")) $("atStatusFilter").value = "all";
+    document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.at-tab[data-status="all"]')?.classList.add('active');
 
     fillEditor({
       category: "general",
@@ -248,7 +249,10 @@
     
     if ($("atDate")) {
       let safeDate = data.date || "";
-      if (safeDate && !safeDate.includes("T")) safeDate = ""; 
+      // Prevent DOMException if old data has a weird date format
+      if (typeof safeDate !== "string" || (safeDate && !safeDate.includes("T"))) {
+        safeDate = ""; 
+      }
       $("atDate").value = safeDate;
     }
 
@@ -356,22 +360,20 @@
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      // IF NEW: create a new document (uses .add() for a unique ID)
+      // IF NEW: create a new document
       if (state.isNew || !state.activeId) {
+        console.log("[ADMIN] Attempting to ADD new document...");
         const docRef = await db.collection(COLLECTION).add(payload);
         savedId = docRef.id;
-        console.log("Created new doc with ID:", savedId);
+        console.log("[ADMIN] Successfully created new doc:", savedId);
       } else {
         // IF EDITING: update the existing document
+        console.log("[ADMIN] Attempting to UPDATE document:", state.activeId);
         await db.collection(COLLECTION).doc(state.activeId).set(payload, { merge: true });
-        console.log("Updated existing doc:", state.activeId);
       }
 
       state.activeId = savedId;
       state.isNew = false;
-      
-      // Reset filters so the new item is guaranteed to be visible
-      resetFilters();
       
       showToast(publish ? "Announcement published." : "Draft saved.");
 
