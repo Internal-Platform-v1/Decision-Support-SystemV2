@@ -38,7 +38,7 @@
   }
 
   /* ------------------------------------------------------------
-     Fetch ALL published announcements in real-time
+     Fetch ALL announcements and filter manually
      ------------------------------------------------------------ */
   function fetchPublishedSlides() {
     const db = firestore();
@@ -46,10 +46,18 @@
 
     if (unsubscribeBanner) unsubscribeBanner();
 
-    unsubscribeBanner = db.collection(COLLECTION).where("published", "==", true).onSnapshot(snap => {
+    // Fetch ALL docs to avoid Query errors with legacy data
+    unsubscribeBanner = db.collection(COLLECTION).onSnapshot(snap => {
       const allPublished = [];
+      
       snap.forEach(doc => {
-        allPublished.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        // Robust check for published status
+        const isPub = data.published === true || data.published === "true" || data.published === 1;
+        
+        if (isPub) {
+          allPublished.push({ id: doc.id, ...data });
+        }
       });
 
       // Sort newest first
@@ -66,7 +74,7 @@
         next.push({
           index: index,
           meta: {
-            key: post.category,
+            key: post.category || "general",
             icon: catMeta.icon,
             label: catMeta.label
           },
@@ -81,7 +89,7 @@
       });
 
       publishedSlides = next;
-      console.log("[update-banner] Live slides updated:", publishedSlides.length);
+      console.log("[BANNER] Live slides updated:", publishedSlides.length);
       
       if (!publishedSlides.length) {
         if (banner) banner.style.display = "none";
@@ -90,7 +98,6 @@
 
       if (banner) banner.style.display = "";
       
-      // Only reset index if it's out of bounds
       if (activeIndex >= publishedSlides.length) activeIndex = 0;
       
       renderSlide(activeIndex);
