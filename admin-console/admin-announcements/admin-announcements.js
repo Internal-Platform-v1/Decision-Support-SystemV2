@@ -92,7 +92,7 @@
     if (unsubscribePosts) unsubscribePosts();
 
     unsubscribePosts = db.collection(COLLECTION).onSnapshot(snap => {
-      console.log(`🔥 [DATABASE] Live Sync. Total documents found in Firestore: ${snap.size}`);
+      console.log(`🔥 [DATABASE] Live Sync. Total documents found: ${snap.size}`);
       
       state.posts = [];
       snap.forEach(doc => {
@@ -334,6 +334,13 @@
     if (!data.title) { showToast("Title is required.", true); return; }
     if (!data.category) { showToast("Category is required.", true); return; }
 
+    // SAFEGUARD: If editing an existing post, warn the user they are about to overwrite it
+    if (!state.isNew && state.activeId) {
+      if (!confirm("You are editing an existing announcement. Are you sure you want to overwrite it?\n\n(Click 'New Announcement' on the top left to create a new one instead.)")) {
+        return;
+      }
+    }
+
     state.saving = true;
     const draftBtn = $("atSaveDraft");
     const publishBtn = $("atPublish");
@@ -354,13 +361,14 @@
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      // THE MAGIC HAPPENS HERE
+      // IF NEW: create a new document
       if (state.isNew || !state.activeId) {
         console.log("🟢 [ACTION] CREATING BRAND NEW DOCUMENT");
         const docRef = await db.collection(COLLECTION).add(payload);
         savedId = docRef.id;
         console.log("✅ [SUCCESS] Created new document with ID:", savedId);
       } else {
+        // IF EDITING: update the existing document
         console.log("🟡 [ACTION] OVERWRITING EXISTING DOCUMENT:", state.activeId);
         await db.collection(COLLECTION).doc(state.activeId).set(payload, { merge: true });
         console.log("✅ [SUCCESS] Updated document:", state.activeId);
@@ -368,6 +376,12 @@
 
       state.activeId = savedId;
       state.isNew = false;
+      
+      // Force UI to show All posts to ensure the new one is visible
+      state.filterCategory = "";
+      state.filterStatus = "all";
+      if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
+      if ($("atStatusFilter")) $("atStatusFilter").value = "all";
       
       showToast(publish ? "Announcement published." : "Draft saved.");
 
