@@ -1,5 +1,6 @@
-<section class="dss-update-banner" id="dssUpdateBanner" aria-label="System updates">
+<section class="dss-update-banner" id="dssUpdateBanner" aria-label="System updates" data-priority="normal">
 
+  <!-- BACKGROUND IMAGE -->
   <div class="dss-update-banner__visual" aria-hidden="true">
     <img
       src="/Decision-Support-SystemV2/assets/images/update-banner-truck.png"
@@ -8,43 +9,41 @@
     >
   </div>
 
+  <!-- GRADIENT OVERLAY -->
+  <div class="dss-update-banner__overlay" aria-hidden="true"></div>
+
+  <!-- CONTENT -->
   <div class="dss-update-banner__copy">
-    <div class="dss-update-banner__eyebrow">
+    
+    <div class="dss-update-banner__top">
+      <!-- Large White Icon -->
       <span class="dss-update-banner__icon" aria-hidden="true">
-        <i class="fa-solid fa-bullhorn"></i>
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
       </span>
-      <span class="dss-update-banner__eyebrow-text">SYSTEM UPDATE</span>
+      
+      <!-- Priority Pill -->
+      <span class="dss-update-banner__eyebrow-text">NORMAL</span>
     </div>
 
-    <h2 class="dss-update-banner__title">EBS System Maintenance</h2>
+    <h2 class="dss-update-banner__title">New Feature Release</h2>
 
     <p class="dss-update-banner__date">
-      <i class="fa-regular fa-calendar"></i>
-      <span class="dss-update-banner__date-text">May 25, 2025 from 1:00 AM – 5:00 AM PST.</span>
+      <span class="dss-update-banner__date-text"></span>
     </p>
 
     <p class="dss-update-banner__message">
-      Some EBS features may be unavailable during this time.<br>
-      Please plan your tasks accordingly.
+      Explore the latest features and improvements designed to make your experience even better.
     </p>
 
-    <button
-      class="dss-update-banner__button"
-      type="button"
-      data-update-action="view-all"
-    >
-      <span class="dss-update-banner__button-text">View All Updates</span>
-      <span aria-hidden="true">→</span>
+    <button class="dss-update-banner__button" type="button" data-update-action="view-all">
+      <span class="dss-update-banner__button-text">See What's New</span>
+      <i class="fa-solid fa-arrow-right"></i>
     </button>
+
   </div>
 
-  <div class="dss-update-banner__dots" role="tablist" aria-label="Announcement categories">
-    <button type="button" class="dss-update-banner__dot is-active" data-slide-to="0" aria-label="Announcements"></button>
-    <button type="button" class="dss-update-banner__dot" data-slide-to="1" aria-label="What's New"></button>
-    <button type="button" class="dss-update-banner__dot" data-slide-to="2" aria-label="Important Reminders"></button>
-    <button type="button" class="dss-update-banner__dot" data-slide-to="3" aria-label="Known Issues"></button>
-    <button type="button" class="dss-update-banner__dot" data-slide-to="4" aria-label="New Guides Added"></button>
-  </div>
+  <!-- DOTS -->
+  <div class="dss-update-banner__dots" role="tablist" aria-label="Announcement categories"></div>
 
 </section>
 
