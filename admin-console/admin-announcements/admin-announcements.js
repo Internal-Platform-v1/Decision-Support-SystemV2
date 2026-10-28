@@ -15,17 +15,9 @@
     { key: "guides",    label: "📚 New Guides Added",    icon: "fa-solid fa-book-open" }
   ];
 
-  const DEFAULTS = {
-    general:   { eyebrow: "Normal", title: "", date: "", message: "", button: "View All Updates" },
-    whats_new: { eyebrow: "Normal", title: "", date: "", message: "", button: "See What's New" },
-    reminders: { eyebrow: "Important", title: "", date: "", message: "", button: "View Reminder" },
-    issues:    { eyebrow: "Urgent", title: "", date: "", message: "", button: "View Details" },
-    guides:    { eyebrow: "Normal", title: "", date: "", message: "", button: "Browse New Guides" }
-  };
-
   const state = {
-    posts: [],           // Now an array of objects instead of a single object
-    activeId: null,      // Tracks the unique Firestore ID
+    posts: [],
+    activeId: null,
     isNew: false,
     saving: false,
     filterCategory: "",
@@ -82,7 +74,7 @@
   }
 
   /* ------------------------------------------------------------
-     Load posts (Fetches ALL documents in the collection)
+     Load posts
      ------------------------------------------------------------ */
   async function loadAllPosts() {
     const db = firestore();
@@ -137,7 +129,6 @@
     const fCat = state.filterCategory;
     const fStatus = state.filterStatus;
 
-    // Filter the flat array of posts
     const entries = state.posts.filter(post => {
       if (fCat && post.category !== fCat) return false;
       if (fStatus === "published" && post.published !== true) return false;
@@ -197,18 +188,13 @@
 
     fillEditor(post);
 
-    const editorTitle = $("atEditorTitle");
-    const editorSubtitle = $("atEditorSubtitle");
-    const editorEyebrow = $("atEditorEyebrow");
-    const deleteBtn = $("atDelete");
-
-    if (editorTitle) editorTitle.textContent = post.title || "(Untitled)";
-    if (editorSubtitle) {
+    if ($("atEditorTitle")) $("atEditorTitle").textContent = post.title || "(Untitled)";
+    if ($("atEditorSubtitle")) {
       const status = post.published ? "Published" : "Draft";
-      editorSubtitle.textContent = `${categoryLabel(post.category)} · ${status}`;
+      $("atEditorSubtitle").textContent = `${categoryLabel(post.category)} · ${status}`;
     }
-    if (editorEyebrow) editorEyebrow.textContent = "EDIT ANNOUNCEMENT";
-    if (deleteBtn) deleteBtn.hidden = false;
+    if ($("atEditorEyebrow")) $("atEditorEyebrow").textContent = "EDIT ANNOUNCEMENT";
+    if ($("atDelete")) $("atDelete").hidden = false;
 
     showEditor(true);
     updatePreview();
@@ -232,15 +218,10 @@
       button: ""
     });
 
-    const editorTitle = $("atEditorTitle");
-    const editorSubtitle = $("atEditorSubtitle");
-    const editorEyebrow = $("atEditorEyebrow");
-    const deleteBtn = $("atDelete");
-
-    if (editorTitle) editorTitle.textContent = "New Announcement";
-    if (editorSubtitle) editorSubtitle.textContent = "Fill in the fields below and click Publish or Save Draft.";
-    if (editorEyebrow) editorEyebrow.textContent = "CREATE ANNOUNCEMENT";
-    if (deleteBtn) deleteBtn.hidden = true;
+    if ($("atEditorTitle")) $("atEditorTitle").textContent = "New Announcement";
+    if ($("atEditorSubtitle")) $("atEditorSubtitle").textContent = "Fill in the fields below and click Publish or Save Draft.";
+    if ($("atEditorEyebrow")) $("atEditorEyebrow").textContent = "CREATE ANNOUNCEMENT";
+    if ($("atDelete")) $("atDelete").hidden = true;
 
     showEditor(true);
     updatePreview();
@@ -254,7 +235,16 @@
   function fillEditor(data) {
     if ($("atCategory")) $("atCategory").value = data.category || "general";
     if ($("atTitle"))    $("atTitle").value    = data.title   || "";
-    if ($("atDate"))     $("atDate").value     = data.date    || "";
+    
+    if ($("atDate")) {
+      let safeDate = data.date || "";
+      // Prevent DOMException if old text dates are loaded into datetime-local
+      if (safeDate && !safeDate.includes("T")) {
+        safeDate = ""; 
+      }
+      $("atDate").value = safeDate;
+    }
+
     if ($("atMessage"))  $("atMessage").value  = data.message || "";
     if ($("atButton"))   $("atButton").value   = data.button  || "";
 
@@ -354,6 +344,8 @@
     if (draftBtn) draftBtn.disabled = true;
     if (publishBtn) publishBtn.disabled = true;
 
+    let savedId = state.activeId;
+
     try {
       const payload = {
         category: data.category,
@@ -366,21 +358,33 @@
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      if (state.isNew) {
-        // Generate a new unique document ID
-        await db.collection(COLLECTION).add(payload);
+      if (state.isNew || !state.activeId) {
+        const docRef = await db.collection(COLLECTION).add(payload);
+        savedId = docRef.id;
       } else {
-        // Update the existing document by its unique ID
         await db.collection(COLLECTION).doc(state.activeId).set(payload, { merge: true });
       }
 
+      state.activeId = savedId;
       state.isNew = false;
-      await loadAllPosts(); // Reload the list from database
+      
       showToast(publish ? "Announcement published." : "Draft saved.");
 
     } catch (err) {
-      console.error(err);
+      console.error("Save Error:", err);
       showToast("Unable to save announcement.", true);
+      state.saving = false;
+      if (draftBtn) draftBtn.disabled = false;
+      if (publishBtn) publishBtn.disabled = false;
+      return; // Stop execution if the database save failed
+    }
+
+    // Separate UI update so a UI bug doesn't falsely show "Save Failed"
+    try {
+      await loadAllPosts(); 
+      selectPost(savedId);
+    } catch (uiErr) {
+      console.warn("UI Update Error (saved successfully):", uiErr);
     } finally {
       state.saving = false;
       if (draftBtn) draftBtn.disabled = false;
@@ -402,18 +406,14 @@
       state.isNew = false;
 
       showEditor(false);
-      const editorTitle = $("atEditorTitle");
-      const editorSubtitle = $("atEditorSubtitle");
-      if (editorTitle) editorTitle.textContent = "No announcement selected";
-      if (editorSubtitle) editorSubtitle.textContent = "Select an announcement on the left, or create a new one.";
-      
-      const deleteBtn = $("atDelete");
-      if (deleteBtn) deleteBtn.hidden = true;
+      if ($("atEditorTitle")) $("atEditorTitle").textContent = "No announcement selected";
+      if ($("atEditorSubtitle")) $("atEditorSubtitle").textContent = "Select an announcement on the left, or create a new one.";
+      if ($("atDelete")) $("atDelete").hidden = true;
 
       await loadAllPosts();
       showToast("Announcement deleted.");
     } catch (err) {
-      console.error(err);
+      console.error("Delete Error:", err);
       showToast("Unable to delete announcement.", true);
     }
   }
