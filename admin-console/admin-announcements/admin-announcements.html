@@ -78,7 +78,6 @@
             <span id="atDocIds" style="display:none;"></span>
           </div>
 
-          <!-- TEMPLATE SELECTOR -->
           <div class="at-edit-field">
             <label>Start from Template (Optional)</label>
             <select id="atTemplate">
@@ -91,7 +90,6 @@
             </select>
           </div>
 
-          <!-- CATEGORY -->
           <div class="at-edit-field">
             <label>Category *</label>
             <select id="atCategory">
@@ -103,7 +101,6 @@
             </select>
           </div>
 
-          <!-- PRIORITY -->
           <div class="at-edit-field">
             <label>Priority *</label>
             <input id="atEyebrow" type="hidden" value="Normal">
@@ -124,14 +121,12 @@
             <span class="at-char-count" id="atEyebrowCount" style="display:none;">0 / 24</span>
           </div>
 
-          <!-- TITLE -->
           <div class="at-edit-field">
             <label>Title *</label>
             <input id="atTitle" type="text" maxlength="60" placeholder="Enter announcement title">
             <span class="at-char-count" id="atTitleCount">0 / 60</span>
           </div>
 
-          <!-- DATE & TIME -->
           <div class="at-edit-field">
             <label>Date & Time *</label>
             <div class="at-datepicker-wrapper">
@@ -139,7 +134,6 @@
             </div>
           </div>
 
-          <!-- CONTENT -->
           <div class="at-edit-field">
             <label>Content *</label>
             <div class="at-rich-editor">
@@ -159,14 +153,12 @@
             <span class="at-char-count" id="atMessageCount">0 / 500</span>
           </div>
 
-          <!-- BUTTON TEXT -->
           <div class="at-edit-field">
             <label>Button Text *</label>
             <input id="atButton" type="text" maxlength="24" placeholder="e.g. View Details">
             <span class="at-char-count" id="atButtonCount">0 / 24</span>
           </div>
 
-          <!-- LIVE PREVIEW -->
           <div class="at-preview-wrap">
             <div class="at-preview-label">Live Preview</div>
             <div class="at-preview">
@@ -182,7 +174,6 @@
             </div>
           </div>
 
-          <!-- ACTIONS -->
           <div class="at-editor-footer">
             <button type="button" class="at-btn danger" id="atDelete" hidden><i class="fa-solid fa-trash"></i> Delete</button>
             <div class="spacer"></div>
@@ -223,7 +214,9 @@
   </script>
 
   <script src="../../shared/header/admin-header.js"></script>
-  <script src="admin-announcements.js"></script>
+  
+  <!-- NOTICE THE ?v=999 CACHE BUSTER HERE -->
+  <script src="admin-announcements.js?v=999"></script>
 
   <script>
     document.querySelectorAll('.at-tab').forEach(tab => {
