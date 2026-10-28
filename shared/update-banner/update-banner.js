@@ -37,22 +37,17 @@
     return null;
   }
 
-  /* ------------------------------------------------------------
-     Fetch ALL announcements and filter manually
-     ------------------------------------------------------------ */
   function fetchPublishedSlides() {
     const db = firestore();
     if (!db) return;
 
     if (unsubscribeBanner) unsubscribeBanner();
 
-    // Fetch ALL docs to avoid Query errors with legacy data
     unsubscribeBanner = db.collection(COLLECTION).onSnapshot(snap => {
       const allPublished = [];
       
       snap.forEach(doc => {
         const data = doc.data();
-        // Robust check for published status
         const isPub = data.published === true || data.published === "true" || data.published === 1;
         
         if (isPub) {
@@ -60,7 +55,6 @@
         }
       });
 
-      // Sort newest first
       allPublished.sort((a, b) => {
         const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
         const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
@@ -89,7 +83,7 @@
       });
 
       publishedSlides = next;
-      console.log("[BANNER] Live slides updated:", publishedSlides.length);
+      console.log("[BANNER] Total published updates in carousel:", publishedSlides.length);
       
       if (!publishedSlides.length) {
         if (banner) banner.style.display = "none";
@@ -108,9 +102,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     Banner rendering — pure right-to-left slide
-     ------------------------------------------------------------ */
   function renderSlide(index) {
     if (!banner) return;
     if (!publishedSlides.length) {
@@ -127,12 +118,10 @@
 
     copy.style.opacity = '1';
 
-    // 1. Slide current content out to the LEFT
     copy.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
     copy.style.transform = 'translateX(-100%)';
 
     setTimeout(() => {
-      // 2. Update the text while it's off-screen
       const icon = banner.querySelector(".dss-update-banner__icon i");
       if (icon) icon.className = meta.icon;
 
@@ -153,7 +142,6 @@
       const buttonText = banner.querySelector(".dss-update-banner__button-text");
       if (buttonText) buttonText.textContent = content.button;
 
-      // Rebuild dots
       const dotsWrap = banner.querySelector(".dss-update-banner__dots");
       if (dotsWrap) {
         dotsWrap.innerHTML = publishedSlides.map((_, i) =>
@@ -170,14 +158,11 @@
         });
       }
 
-      // 3. Instantly snap to the RIGHT (off-screen)
       copy.style.transition = 'none';
       copy.style.transform = 'translateX(100%)';
       
-      // 4. Force browser reflow to apply the snap
       void copy.offsetWidth;
 
-      // 5. Slide IN to the center
       copy.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
       copy.style.transform = 'translateX(0)';
 
