@@ -1,6 +1,5 @@
 /* ============================================================
    DSS V2 — SHARED UPDATE BANNER ROTATOR + MODAL
-   Only shows categories that have been explicitly published.
    ============================================================ */
 (function () {
   "use strict";
@@ -16,10 +15,7 @@
     { key: "guides",    icon: "fa-solid fa-book-open",             eyebrow: "NEW GUIDES",        label: "📚 New Guides Added" }
   ];
 
-  // Only categories that have been published. Starts empty —
-  // nothing shows in the banner until an admin publishes.
   let publishedSlides = [];
-
   let activeIndex = 0;
   let timerId = null;
   let banner = null;
@@ -41,14 +37,11 @@
   }
 
   /* ------------------------------------------------------------
-     Fetch and pick the LATEST published announcement per category
+     Fetch ALL published announcements (No longer hiding older ones)
      ------------------------------------------------------------ */
   async function fetchPublishedSlides() {
     const db = firestore();
-    if (!db) {
-      console.info("[update-banner] Firestore not ready.");
-      return;
-    }
+    if (!db) return;
 
     try {
       const snap = await db.collection(COLLECTION).where("published", "==", true).get();
@@ -58,46 +51,42 @@
         allPublished.push({ id: doc.id, ...doc.data() });
       });
 
+      // Sort newest first
       allPublished.sort((a, b) => {
-        const timeA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
-        const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
-        return timeB - timeA;
-      });
-
-      const latestByCategory = {};
-      allPublished.forEach(post => {
-        if (!latestByCategory[post.category]) {
-          latestByCategory[post.category] = post;
-        }
+        const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+        const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+        return tB - tA;
       });
 
       const next = [];
-      SLIDES.forEach((slide, index) => {
-        const data = latestByCategory[slide.key];
-        if (data) {
-          next.push({
-            index: index,
-            meta: slide,
-            content: {
-              eyebrow: data.eyebrow || slide.eyebrow,
-              title:   data.title   || "",
-              date:    data.date    || "",
-              message: data.message || "",
-              button:  data.button  || "View Details"
-            }
-          });
-        }
+      allPublished.forEach((post, index) => {
+        const catMeta = SLIDES.find(s => s.key === post.category) || SLIDES[0];
+        
+        next.push({
+          index: index,
+          meta: {
+            key: post.category,
+            icon: catMeta.icon,
+            label: catMeta.label
+          },
+          content: {
+            eyebrow: post.eyebrow || catMeta.eyebrow,
+            title:   post.title   || "",
+            date:    post.date    || "",
+            message: post.message || "",
+            button:  post.button  || "View Details"
+          }
+        });
       });
 
       publishedSlides = next;
-      console.log("[update-banner] Published slides:", publishedSlides.length,
-        publishedSlides.map(s => s.meta.key));
+      console.log("[update-banner] Published slides:", publishedSlides.length);
     } catch (err) {
       console.warn("[update-banner] fetch failed:", err.code || err.message);
     }
   }
 
-    /* ------------------------------------------------------------
+  /* ------------------------------------------------------------
      Banner rendering — pure right-to-left slide
      ------------------------------------------------------------ */
   function renderSlide(index) {
@@ -114,11 +103,10 @@
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
-    // Ensure opacity is fully visible (removes any leftover fade from CSS)
+    // Ensure opacity is fully visible (removes any leftover fade)
     copy.style.opacity = '1';
 
     // 1. Slide current content out to the LEFT
-    // Using a 100% translate ensures it fully clears the container
     copy.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
     copy.style.transform = 'translateX(-100%)';
 
@@ -172,9 +160,9 @@
       copy.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
       copy.style.transform = 'translateX(0)';
 
-    }, 350); // Wait 350ms for the slide-out to finish
+    }, 350);
   }
-   
+
   function startAutoAdvance() {
     stopAutoAdvance();
     if (publishedSlides.length < 2) return;
@@ -188,9 +176,6 @@
     if (timerId) { clearInterval(timerId); timerId = null; }
   }
 
-  /* ------------------------------------------------------------
-     Button opens the modal on the current slide
-     ------------------------------------------------------------ */
   function bindButton() {
     const btn = banner.querySelector('[data-update-action="view-all"]');
     if (!btn) return;
@@ -205,9 +190,6 @@
     banner.addEventListener("mouseleave", startAutoAdvance);
   }
 
-  /* ------------------------------------------------------------
-     Modal — uses publishedSlides[]
-     ------------------------------------------------------------ */
   function renderModal(index) {
     if (!modal) return;
     if (!publishedSlides.length) return;
@@ -284,9 +266,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     INIT
-     ------------------------------------------------------------ */
   function tryInit(attempt) {
     attempt = attempt || 0;
     if (initialized) return;
@@ -297,8 +276,6 @@
     if (!banner) {
       if (attempt < 40) {
         setTimeout(() => tryInit(attempt + 1), 100);
-      } else {
-        console.warn("[update-banner] banner element never appeared after 4s");
       }
       return;
     }
@@ -313,7 +290,6 @@
         await fetchPublishedSlides();
 
         if (!publishedSlides.length) {
-          // Nothing published — hide the banner entirely
           banner.style.display = "none";
           return;
         }
