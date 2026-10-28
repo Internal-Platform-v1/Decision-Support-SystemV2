@@ -99,9 +99,13 @@
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
-    copy.classList.add("is-swapping");
+    // 1. Slide old content to the LEFT and fade out
+    copy.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+    copy.style.transform = 'translateX(-30px)';
+    copy.style.opacity = '0';
 
     setTimeout(() => {
+      // 2. Update the text while it's invisible
       const icon = banner.querySelector(".dss-update-banner__icon i");
       if (icon) icon.className = meta.icon;
 
@@ -122,7 +126,7 @@
       const buttonText = banner.querySelector(".dss-update-banner__button-text");
       if (buttonText) buttonText.textContent = content.button;
 
-      // Rebuild dots to only reflect the published slides
+      // Rebuild dots
       const dotsWrap = banner.querySelector(".dss-update-banner__dots");
       if (dotsWrap) {
         dotsWrap.innerHTML = publishedSlides.map((_, i) =>
@@ -139,13 +143,24 @@
         });
       }
 
-      copy.classList.remove("is-swapping");
+      // 3. Instantly snap to the RIGHT (off-screen)
+      copy.style.transition = 'none';
+      copy.style.transform = 'translateX(30px)';
+      
+      // 4. Force browser reflow to apply the snap
+      void copy.offsetWidth;
+
+      // 5. Slide IN to the center
+      copy.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+      copy.style.transform = 'translateX(0)';
+      copy.style.opacity = '1';
+
     }, 250);
   }
 
   function startAutoAdvance() {
     stopAutoAdvance();
-    if (publishedSlides.length < 2) return; // no need to rotate a single slide
+    if (publishedSlides.length < 2) return;
     timerId = setInterval(() => {
       activeIndex = (activeIndex + 1) % publishedSlides.length;
       renderSlide(activeIndex);
