@@ -92,13 +92,11 @@
     if (unsubscribePosts) unsubscribePosts();
 
     unsubscribePosts = db.collection(COLLECTION).onSnapshot(snap => {
-      console.log(`[ADMIN] Live Database Sync. Total documents found: ${snap.size}`);
+      console.log(`🔥 [DATABASE] Live Sync. Total documents found in Firestore: ${snap.size}`);
       
       state.posts = [];
       snap.forEach(doc => {
         const data = doc.data();
-        
-        // Robust type checking for published field
         const isPub = data.published === true || data.published === "true" || data.published === 1;
 
         state.posts.push({
@@ -106,7 +104,7 @@
           category: data.category || "general",
           eyebrow: data.eyebrow || "Normal",
           title: data.title || "(Untitled)",
-          date: typeof data.date === "string" ? data.date : "", // Prevent crashes if date is a timestamp
+          date: typeof data.date === "string" ? data.date : "",
           message: data.message || "",
           button: data.button || "",
           published: isPub,
@@ -143,8 +141,6 @@
       if (fStatus === "draft" && post.published === true) return false;
       return true;
     });
-
-    console.log(`[ADMIN] Rendering ${entries.length} posts based on filters (Cat: '${fCat}', Status: '${fStatus}').`);
 
     if (title) {
       if (fCat) title.textContent = categoryLabel(fCat);
@@ -214,7 +210,6 @@
     state.isNew = true;
     state.activeId = null;
     
-    // Reset filters so user isn't confused when they save
     state.filterCategory = "";
     state.filterStatus = "all";
     if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
@@ -249,7 +244,6 @@
     
     if ($("atDate")) {
       let safeDate = data.date || "";
-      // Prevent DOMException if old data has a weird date format
       if (typeof safeDate !== "string" || (safeDate && !safeDate.includes("T"))) {
         safeDate = ""; 
       }
@@ -360,16 +354,16 @@
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      // IF NEW: create a new document
+      // THE MAGIC HAPPENS HERE
       if (state.isNew || !state.activeId) {
-        console.log("[ADMIN] Attempting to ADD new document...");
+        console.log("🟢 [ACTION] CREATING BRAND NEW DOCUMENT");
         const docRef = await db.collection(COLLECTION).add(payload);
         savedId = docRef.id;
-        console.log("[ADMIN] Successfully created new doc:", savedId);
+        console.log("✅ [SUCCESS] Created new document with ID:", savedId);
       } else {
-        // IF EDITING: update the existing document
-        console.log("[ADMIN] Attempting to UPDATE document:", state.activeId);
+        console.log("🟡 [ACTION] OVERWRITING EXISTING DOCUMENT:", state.activeId);
         await db.collection(COLLECTION).doc(state.activeId).set(payload, { merge: true });
+        console.log("✅ [SUCCESS] Updated document:", state.activeId);
       }
 
       state.activeId = savedId;
@@ -378,7 +372,7 @@
       showToast(publish ? "Announcement published." : "Draft saved.");
 
     } catch (err) {
-      console.error("Save Error:", err);
+      console.error("🔴 [ERROR] Save Error:", err);
       showToast("Unable to save announcement.", true);
     } finally {
       state.saving = false;
