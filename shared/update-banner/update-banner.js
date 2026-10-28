@@ -82,8 +82,8 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Banner rendering — uses publishedSlides[], not SLIDES[]
+    /* ------------------------------------------------------------
+     Banner rendering — pure right-to-left slide
      ------------------------------------------------------------ */
   function renderSlide(index) {
     if (!banner) return;
@@ -99,13 +99,16 @@
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
-    // 1. Slide old content to the LEFT and fade out
-    copy.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
-    copy.style.transform = 'translateX(-30px)';
-    copy.style.opacity = '0';
+    // Ensure opacity is fully visible (removes any leftover fade from CSS)
+    copy.style.opacity = '1';
+
+    // 1. Slide current content out to the LEFT
+    // Using a 100% translate ensures it fully clears the container
+    copy.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+    copy.style.transform = 'translateX(-100%)';
 
     setTimeout(() => {
-      // 2. Update the text while it's invisible
+      // 2. Update the text while it's off-screen
       const icon = banner.querySelector(".dss-update-banner__icon i");
       if (icon) icon.className = meta.icon;
 
@@ -145,19 +148,18 @@
 
       // 3. Instantly snap to the RIGHT (off-screen)
       copy.style.transition = 'none';
-      copy.style.transform = 'translateX(30px)';
+      copy.style.transform = 'translateX(100%)';
       
       // 4. Force browser reflow to apply the snap
       void copy.offsetWidth;
 
       // 5. Slide IN to the center
-      copy.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
+      copy.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
       copy.style.transform = 'translateX(0)';
-      copy.style.opacity = '1';
 
-    }, 250);
+    }, 350); // Wait 350ms for the slide-out to finish
   }
-
+   
   function startAutoAdvance() {
     stopAutoAdvance();
     if (publishedSlides.length < 2) return;
