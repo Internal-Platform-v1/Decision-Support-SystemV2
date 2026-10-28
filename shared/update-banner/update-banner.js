@@ -73,7 +73,7 @@
             label: catMeta.label
           },
           content: {
-            eyebrow: post.eyebrow || catMeta.eyebrow,
+            eyebrow: post.eyebrow || "Normal", // This is the Priority
             title:   post.title   || "",
             date:    post.date    || "",
             message: post.message || "",
@@ -83,7 +83,6 @@
       });
 
       publishedSlides = next;
-      console.log("[BANNER] Total published updates in carousel:", publishedSlides.length);
       
       if (!publishedSlides.length) {
         if (banner) banner.style.display = "none";
@@ -115,6 +114,14 @@
     const { meta, content } = slide;
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
+
+    // SET PRIORITY COLOR DATA ATTRIBUTE
+    const priorityVal = (content.eyebrow || "Normal").toLowerCase();
+    if (["normal", "important", "urgent"].includes(priorityVal)) {
+      banner.setAttribute("data-priority", priorityVal);
+    } else {
+      banner.removeAttribute("data-priority");
+    }
 
     copy.style.opacity = '1';
 
@@ -204,6 +211,14 @@
     const slide = publishedSlides[index];
     if (!slide) return;
     const { meta, content } = slide;
+
+    // SET PRIORITY COLOR DATA ATTRIBUTE FOR MODAL
+    const priorityVal = (content.eyebrow || "Normal").toLowerCase();
+    if (["normal", "important", "urgent"].includes(priorityVal)) {
+      modal.setAttribute("data-priority", priorityVal);
+    } else {
+      modal.removeAttribute("data-priority");
+    }
 
     const eyebrow = modal.querySelector("#dssUpdateModalEyebrow");
     const title   = modal.querySelector("#dssUpdateModalTitle");
