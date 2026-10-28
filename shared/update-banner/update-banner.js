@@ -22,6 +22,7 @@
   let modal = null;
   let modalIndex = 0;
   let initialized = false;
+  let unsubscribeBanner = null;
 
   function esc(v) {
     return String(v ?? "").replace(/[&<>"']/g, ch => ({
@@ -37,15 +38,15 @@
   }
 
   /* ------------------------------------------------------------
-     Fetch ALL published announcements (No longer hiding older ones)
+     Fetch ALL published announcements in real-time
      ------------------------------------------------------------ */
-  async function fetchPublishedSlides() {
+  function fetchPublishedSlides() {
     const db = firestore();
     if (!db) return;
 
-    try {
-      const snap = await db.collection(COLLECTION).where("published", "==", true).get();
-      
+    if (unsubscribeBanner) unsubscribeBanner();
+
+    unsubscribeBanner = db.collection(COLLECTION).where("published", "==", true).onSnapshot(snap => {
       const allPublished = [];
       snap.forEach(doc => {
         allPublished.push({ id: doc.id, ...doc.data() });
@@ -80,10 +81,24 @@
       });
 
       publishedSlides = next;
-      console.log("[update-banner] Published slides:", publishedSlides.length);
-    } catch (err) {
-      console.warn("[update-banner] fetch failed:", err.code || err.message);
-    }
+      console.log("[update-banner] Live slides updated:", publishedSlides.length);
+      
+      if (!publishedSlides.length) {
+        if (banner) banner.style.display = "none";
+        return;
+      }
+
+      if (banner) banner.style.display = "";
+      
+      // Only reset index if it's out of bounds
+      if (activeIndex >= publishedSlides.length) activeIndex = 0;
+      
+      renderSlide(activeIndex);
+      startAutoAdvance();
+
+    }, err => {
+      console.warn("[update-banner] listener failed:", err.code || err.message);
+    });
   }
 
   /* ------------------------------------------------------------
@@ -103,7 +118,6 @@
     const copy = banner.querySelector(".dss-update-banner__copy");
     if (!copy) return;
 
-    // Ensure opacity is fully visible (removes any leftover fade)
     copy.style.opacity = '1';
 
     // 1. Slide current content out to the LEFT
@@ -287,16 +301,7 @@
 
     const waitForFirebase = async (fbAttempt = 0) => {
       if (firestore()) {
-        await fetchPublishedSlides();
-
-        if (!publishedSlides.length) {
-          banner.style.display = "none";
-          return;
-        }
-
-        activeIndex = 0;
-        renderSlide(activeIndex);
-        startAutoAdvance();
+        fetchPublishedSlides();
         return;
       }
       if (fbAttempt < 20) setTimeout(() => waitForFirebase(fbAttempt + 1), 100);
