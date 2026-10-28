@@ -40,7 +40,7 @@
     return null;
   }
 
-   /* ------------------------------------------------------------
+  /* ------------------------------------------------------------
      Fetch and pick the LATEST published announcement per category
      ------------------------------------------------------------ */
   async function fetchPublishedSlides() {
@@ -51,7 +51,6 @@
     }
 
     try {
-      // Fetch all published announcements
       const snap = await db.collection(COLLECTION).where("published", "==", true).get();
       
       const allPublished = [];
@@ -59,14 +58,12 @@
         allPublished.push({ id: doc.id, ...doc.data() });
       });
 
-      // Sort them newest first
       allPublished.sort((a, b) => {
         const timeA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
         const timeB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
         return timeB - timeA;
       });
 
-      // Pick only the first (newest) one found for each category
       const latestByCategory = {};
       allPublished.forEach(post => {
         if (!latestByCategory[post.category]) {
@@ -74,7 +71,6 @@
         }
       });
 
-      // Map them to the banner slides
       const next = [];
       SLIDES.forEach((slide, index) => {
         const data = latestByCategory[slide.key];
