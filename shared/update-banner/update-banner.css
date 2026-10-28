@@ -64,11 +64,7 @@
   min-width: 330px;
   height: 100%;
   padding: 13px 12px 11px 24px;
-  transition: opacity .25s ease;
-}
-
-.dss-update-banner__copy.is-swapping {
-  opacity: 0;
+  /* No transitions here, JS handles it inline */
 }
 
 .dss-update-banner__eyebrow {
