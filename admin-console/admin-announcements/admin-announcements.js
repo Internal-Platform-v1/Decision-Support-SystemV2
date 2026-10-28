@@ -33,6 +33,7 @@
   };
 
   const $ = id => document.getElementById(id);
+  let unsubscribePosts = null;
 
   function esc(v) {
     return String(v ?? "").replace(/[&<>"']/g, ch => ({
@@ -81,15 +82,29 @@
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
-  async function loadAllPosts() {
+  function resetFilters() {
+    state.filterCategory = "";
+    state.filterStatus = "all";
+    if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
+    if ($("atStatusFilter")) $("atStatusFilter").value = "all";
+    
+    document.querySelectorAll('.at-tab').forEach(t => t.classList.remove('active'));
+    const allTab = document.querySelector('.at-tab[data-status="all"]');
+    if (allTab) allTab.classList.add('active');
+  }
+
+  // REAL-TIME LISTENER (Updates instantly, no refresh needed)
+  function loadAllPosts() {
     const db = firestore();
     if (!db) {
       showToast("Firestore is not initialized.", true);
       return;
     }
 
-    try {
-      const snap = await db.collection(COLLECTION).get();
+    if (unsubscribePosts) unsubscribePosts();
+
+    unsubscribePosts = db.collection(COLLECTION).onSnapshot(snap => {
+      console.log(`[Admin] Real-time update received. Total documents: ${snap.size}`);
       
       state.posts = [];
       snap.forEach(doc => {
@@ -115,10 +130,10 @@
       });
 
       renderPostList();
-    } catch (err) {
-      console.error(err);
+    }, err => {
+      console.error("Snapshot error:", err);
       showToast("Unable to load announcements.", true);
-    }
+    });
   }
 
   function renderPostList() {
@@ -204,6 +219,7 @@
   function startNew() {
     state.isNew = true;
     state.activeId = null;
+    resetFilters(); // Show all so they see their new post
 
     fillEditor({
       category: "general",
@@ -340,32 +356,28 @@
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
+      // IF NEW: create a new document (uses .add() for a unique ID)
       if (state.isNew || !state.activeId) {
         const docRef = await db.collection(COLLECTION).add(payload);
         savedId = docRef.id;
+        console.log("Created new doc with ID:", savedId);
       } else {
+        // IF EDITING: update the existing document
         await db.collection(COLLECTION).doc(state.activeId).set(payload, { merge: true });
+        console.log("Updated existing doc:", state.activeId);
       }
 
       state.activeId = savedId;
       state.isNew = false;
+      
+      // Reset filters so the new item is guaranteed to be visible
+      resetFilters();
       
       showToast(publish ? "Announcement published." : "Draft saved.");
 
     } catch (err) {
       console.error("Save Error:", err);
       showToast("Unable to save announcement.", true);
-      state.saving = false;
-      if (draftBtn) draftBtn.disabled = false;
-      if (publishBtn) publishBtn.disabled = false;
-      return; 
-    }
-
-    try {
-      await loadAllPosts(); 
-      selectPost(savedId);
-    } catch (uiErr) {
-      console.warn("UI Update Error (saved successfully):", uiErr);
     } finally {
       state.saving = false;
       if (draftBtn) draftBtn.disabled = false;
@@ -391,7 +403,6 @@
       if ($("atEditorSubtitle")) $("atEditorSubtitle").textContent = "Select an announcement on the left, or create a new one.";
       if ($("atDelete")) $("atDelete").hidden = true;
 
-      await loadAllPosts();
       showToast("Announcement deleted.");
     } catch (err) {
       console.error("Delete Error:", err);
