@@ -6,15 +6,14 @@
   position: relative;
   display: block;
   width: 100%;
-  height: 136px;
-  min-height: 136px;
-  margin: 0 0 10px;
+  height: 220px;
+  min-height: 220px;
+  margin: 0 0 16px;
   padding: 0;
   overflow: hidden;
-  border: 0;
-  border-radius: 0;
-  background: #f6f0ff;
-  box-shadow: 0 3px 14px rgba(48,38,111,.06);
+  border-radius: 16px;
+  background: #1a1528; /* Dark fallback */
+  box-shadow: 0 10px 30px rgba(20, 10, 40, 0.15);
 }
 
 .dss-update-banner__visual {
@@ -29,30 +28,24 @@
 .dss-update-banner__visual img {
   position: absolute;
   top: 50%;
-  left: 50%;
+  right: 0;
   width: 100%;
   height: 100%;
-  min-width: 100%;
-  min-height: 100%;
-  display: block;
-  transform: translate(-50%, -50%) scale(1.04);
   object-fit: cover;
-  object-position: center center;
-  max-width: none;
+  object-position: right center;
+  transform: translateY(-50%);
 }
 
-.dss-update-banner__visual::before {
-  content: "";
+.dss-update-banner__overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
   background: linear-gradient(
     90deg,
-    rgba(246,240,255,.42) 0%,
-    rgba(246,240,255,.27) 18%,
-    rgba(246,240,255,.12) 34%,
-    rgba(246,240,255,.03) 50%,
-    rgba(246,240,255,0) 65%
+    rgba(20, 15, 45, 0.95) 0%,
+    rgba(20, 15, 45, 0.85) 40%,
+    rgba(20, 15, 45, 0.4) 65%,
+    rgba(20, 15, 45, 0) 100%
   );
   pointer-events: none;
 }
@@ -60,170 +53,177 @@
 .dss-update-banner__copy {
   position: relative;
   z-index: 3;
-  width: 43%;
-  min-width: 330px;
+  width: 55%;
+  min-width: 400px;
   height: 100%;
-  padding: 13px 12px 11px 24px;
-  /* No transitions here, JS handles it inline */
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.dss-update-banner__eyebrow {
+.dss-update-banner__top {
   display: flex;
   align-items: center;
-  width: 100%;
-  height: 30px;
-  margin: 0 0 4px;
-  color: #4d148c;
-  font-size: 7px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: .045em;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .dss-update-banner__icon {
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: #f0e8ff;
-  color: #4d148c;
-  font-size: 14px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #6b25df;
+  border-radius: 12px;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Base Priority Pill Style */
 .dss-update-banner__eyebrow-text {
-  margin-left: 9px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+}
+
+/* The Dot inside the Pill */
+.dss-update-banner__eyebrow-text::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: #ffffff;
+}
+
+/* Dynamic Priority Dots */
+.dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before {
+  background-color: #22c55e; /* Green */
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+.dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before {
+  background-color: #f59e0b; /* Yellow/Orange */
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+.dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before {
+  background-color: #ef4444; /* Red */
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 
 .dss-update-banner__title {
-  margin: 0 0 3px 39px;
-  color: #17194f;
-  font-size: 15px;
-  line-height: 1.15;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+  font-size: 32px;
+  line-height: 1.1;
   font-weight: 800;
-  letter-spacing: -.2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  letter-spacing: -0.5px;
+}
+
+/* Optional: Pink/Purple Gradient text for the title (matches screenshot) */
+.dss-update-banner__title span {
+  background: linear-gradient(90deg, #e879f9, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .dss-update-banner__date {
-  margin: 0 0 2px 39px !important;
-  color: #17194f !important;
-  font-size: 8px !important;
-  line-height: 1.25 !important;
-  font-weight: 700 !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dss-update-banner__date i {
-  margin-right: 3px;
-  color: #4d148c;
+  display: none; /* Hidden in screenshot layout, but kept for JS */
 }
 
 .dss-update-banner__message {
-  margin: 0 0 6px 39px;
-  color: #3f4168;
-  font-size: 8px;
-  line-height: 1.35;
-  font-weight: 500;
-  max-height: 2.7em;
-  overflow: hidden;
+  margin: 0 0 20px 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 480px;
 }
 
 .dss-update-banner__button {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  margin-left: 39px;
-  min-height: 23px;
-  padding: 0 9px;
-  border: 1px solid #6a24c7;
-  border-radius: 4px;
-  background: rgba(255,255,255,.94);
-  color: #4d148c;
-  font-size: 7px;
-  line-height: 1;
-  font-weight: 800;
+  gap: 10px;
+  width: max-content;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 24px;
+  background: #6b25df;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background .16s ease, border-color .16s ease, transform .16s ease;
-}
-
-.dss-update-banner__button span[aria-hidden] {
-  font-size: 10px;
-  line-height: 1;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .dss-update-banner__button:hover {
-  background: #fff;
-  border-color: #4d148c;
-}
-
-.dss-update-banner__button:active {
-  transform: translateY(1px);
+  background: #5b1fc2;
+  transform: translateY(-2px);
 }
 
 .dss-update-banner__dots {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 24px;
+  right: 24px;
   z-index: 4;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 
 .dss-update-banner__dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(255,255,255,.7);
-  box-shadow: 0 0 0 1px rgba(77,20,140,.08);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  transition: background .2s ease, transform .2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .dss-update-banner__dot:hover {
-  background: rgba(255,255,255,.95);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .dss-update-banner__dot.is-active {
-  background: #4d148c;
-  transform: scale(1.15);
+  background: #6b25df;
+  transform: scale(1.2);
 }
 
+/* Responsive */
 @media (max-width: 900px) {
-  .dss-update-banner { height: 136px; min-height: 136px; }
-  .dss-update-banner__copy { width: 48%; min-width: 300px; padding-left: 18px; }
+  .dss-update-banner__copy {
+    width: 70%;
+    min-width: 0;
+  }
+  .dss-update-banner__title { font-size: 26px; }
 }
 
-@media (max-width: 700px) {
-  .dss-update-banner { height: 190px; min-height: 190px; }
+@media (max-width: 600px) {
+  .dss-update-banner { height: auto; min-height: 280px; }
   .dss-update-banner__copy {
     width: 100%;
-    min-width: 0;
-    height: auto;
-    padding: 13px 16px 14px;
+    padding: 24px;
   }
-  .dss-update-banner__visual::before {
-    background: linear-gradient(
-      90deg,
-      rgba(246,240,255,.58) 0%,
-      rgba(246,240,255,.34) 40%,
-      rgba(246,240,255,.10) 72%,
-      rgba(246,240,255,0) 100%
-    );
+  .dss-update-banner__overlay {
+    background: linear-gradient(180deg, rgba(20, 15, 45, 0.95) 0%, rgba(20, 15, 45, 0.85) 60%, rgba(20, 15, 45, 0.4) 100%);
   }
 }
 
 /* ============================================================
-   UPDATE DETAIL MODAL
+   UPDATE DETAIL MODAL (Matching Dark Theme)
    ============================================================ */
 
 .dss-update-modal {
@@ -238,19 +238,14 @@
   transition: opacity .22s ease;
 }
 
-.dss-update-modal.is-open {
-  opacity: 1;
-}
-
-.dss-update-modal[hidden] {
-  display: none !important;
-}
+.dss-update-modal.is-open { opacity: 1; }
+.dss-update-modal[hidden] { display: none !important; }
 
 .dss-update-modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(20, 15, 45, .55);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 5, 20, 0.7);
+  backdrop-filter: blur(6px);
 }
 
 .dss-update-modal__panel {
@@ -260,9 +255,9 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(23,23,75,.28);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
   transform: translateY(12px) scale(.98);
   transition: transform .22s ease;
 }
@@ -276,73 +271,71 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  padding: 20px 22px 16px;
-  background: linear-gradient(135deg, #f5f0ff 0%, #eee8ff 100%);
+  padding: 24px;
+  background: #f8f6fc;
   border-bottom: 1px solid #e8e2f5;
 }
 
 .dss-update-modal__header-copy { min-width: 0; }
 
 .dss-update-modal__eyebrow {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #eee8ff;
   color: #6b25df;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .08em;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
+
+/* Modal Priority Colors */
+.dss-update-modal[data-priority="normal"] .dss-update-modal__eyebrow { background: #dcfce7; color: #166534; }
+.dss-update-modal[data-priority="important"] .dss-update-modal__eyebrow { background: #fef3c7; color: #92400e; }
+.dss-update-modal[data-priority="urgent"] .dss-update-modal__eyebrow { background: #fee2e2; color: #991b1b; }
 
 .dss-update-modal__title {
   margin: 0;
   color: #17194f;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1.25;
   font-weight: 800;
-  letter-spacing: -.3px;
 }
 
 .dss-update-modal__close {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
   display: grid;
   place-items: center;
   border: 0;
   border-radius: 8px;
-  background: rgba(255,255,255,.7);
+  background: #ffffff;
   color: #4d148c;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background .15s ease;
-}
-
-.dss-update-modal__close:hover {
-  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .dss-update-modal__body {
-  padding: 20px 22px;
+  padding: 24px;
   overflow-y: auto;
-  flex: 1 1 auto;
 }
 
 .dss-update-modal__meta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .dss-update-modal__badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: #eee8ff;
-  color: #5b17c5;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
+  color: #6b25df;
 }
 
 .dss-update-modal__date {
@@ -354,8 +347,8 @@
 .dss-update-modal__message {
   margin: 0;
   color: #3a3d5f;
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.6;
   white-space: pre-line;
 }
 
@@ -364,7 +357,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 22px;
+  padding: 16px 24px;
   border-top: 1px solid #ececf3;
   background: #fafaff;
 }
@@ -372,131 +365,27 @@
 .dss-update-modal__nav {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 12px;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
   border: 1px solid #dfe2eb;
   border-radius: 8px;
-  background: #fff;
+  background: #ffffff;
   color: #4a4f6a;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: background .15s ease, border-color .15s ease;
 }
 
-.dss-update-modal__nav:hover {
+.dss-update-modal__nav:hover:not(:disabled) {
   background: #f5f0ff;
   border-color: #cbb8ff;
   color: #4d148c;
 }
 
-.dss-update-modal__nav:disabled {
-  opacity: .35;
-  cursor: not-allowed;
-}
-
-.dss-update-modal__nav i {
-  font-size: 9px;
-}
-
-.dss-update-modal__dots {
-  display: flex;
-  gap: 6px;
-}
-
+.dss-update-modal__nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.dss-update-modal__dots { display: flex; gap: 8px; }
 .dss-update-modal__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #d9d5e6;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  transition: background .15s ease, transform .15s ease;
+  width: 8px; height: 8px; border-radius: 50%; background: #d9d5e6; border: 0; padding: 0; cursor: pointer;
 }
-
-.dss-update-modal__dot.is-active {
-  background: #6b25df;
-  transform: scale(1.2);
-}
-
-/* ============================================================
-   PRIORITY COLOR CODING (Normal, Important, Urgent)
-   ============================================================ */
-
-/* Base styling for the eyebrow text so it looks like a pill */
-.dss-update-banner__eyebrow-text {
-  margin-left: 10px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 9px !important; /* Slightly larger for readability */
-  font-weight: 800;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.dss-update-banner__icon {
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* --- NORMAL (Blue) --- */
-.dss-update-banner[data-priority="normal"] .dss-update-banner__icon {
-  background: #eff6ff;
-  color: #3b82f6;
-}
-.dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text {
-  background: #dbeafe;
-  color: #1e3a8a;
-}
-
-/* --- IMPORTANT (Yellow/Orange) --- */
-.dss-update-banner[data-priority="important"] .dss-update-banner__icon {
-  background: #fffbeb;
-  color: #f59e0b;
-}
-.dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-/* --- URGENT (Red) --- */
-.dss-update-banner[data-priority="urgent"] .dss-update-banner__icon {
-  background: #fef2f2;
-  color: #ef4444;
-}
-.dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-/* ============================================================
-   MODAL PRIORITY COLOR CODING
-   ============================================================ */
-
-.dss-update-modal__eyebrow {
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.dss-update-modal[data-priority="normal"] .dss-update-modal__eyebrow {
-  color: #1e3a8a;
-  background: #dbeafe;
-  padding: 4px 10px;
-  border-radius: 6px;
-  display: inline-block;
-}
-.dss-update-modal[data-priority="important"] .dss-update-modal__eyebrow {
-  color: #92400e;
-  background: #fef3c7;
-  padding: 4px 10px;
-  border-radius: 6px;
-  display: inline-block;
-}
-.dss-update-modal[data-priority="urgent"] .dss-update-modal__eyebrow {
-  color: #991b1b;
-  background: #fee2e2;
-  padding: 4px 10px;
-  border-radius: 6px;
-  display: inline-block;
-}
+.dss-update-modal__dot.is-active { background: #6b25df; transform: scale(1.2); }
