@@ -2,38 +2,37 @@
    DSS V2 — SHARED UPDATE BANNER
    ============================================================ */
 
-.dss-update-banner {
+body .dss-update-banner {
   position: relative !important;
   isolation: isolate !important;
   display: block !important;
   width: 100% !important;
-  height: 170px !important;
-  min-height: 170px !important;
-  max-height: 170px !important;
+  height: 160px !important;
+  min-height: 160px !important;
+  max-height: 160px !important;
   margin: 0 0 16px !important;
   padding: 0 !important;
   overflow: hidden !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 15px !important;
   background: #100c29 !important;
-  box-shadow: 0 8px 24px rgba(26, 13, 65, 0.13), 0 2px 6px rgba(26, 13, 65, 0.06) !important;
+  box-shadow: 0 8px 24px rgba(26, 13, 65, 0.13) !important;
 }
 
 /* ============================================================
    BACKGROUND IMAGE & OVERLAY
    ============================================================ */
 
-.dss-update-banner__visual {
+body .dss-update-banner__visual {
   position: absolute !important;
   inset: 0 !important;
   z-index: 0 !important;
   width: 100% !important;
   height: 100% !important;
   overflow: hidden !important;
-  background: #100c29 !important;
 }
 
-.dss-update-banner__visual img {
+body .dss-update-banner__visual img {
   position: absolute !important;
   inset: 0 !important;
   display: block !important;
@@ -41,10 +40,9 @@
   height: 100% !important;
   object-fit: cover !important;
   object-position: right center !important;
-  transform: none !important; /* Keep !important so image doesn't slide */
 }
 
-.dss-update-banner__overlay {
+body .dss-update-banner__overlay {
   position: absolute !important;
   inset: 0 !important;
   z-index: 1 !important;
@@ -60,7 +58,7 @@
   pointer-events: none !important;
 }
 
-.dss-update-banner::after {
+body .dss-update-banner::after {
   content: "" !important;
   position: absolute !important;
   inset: auto 0 0 !important;
@@ -71,10 +69,10 @@
 }
 
 /* ============================================================
-   CONTENT LAYOUT (Animation safe - no !important on transform)
+   CONTENT LAYOUT (No transform here so animation works)
    ============================================================ */
 
-.dss-update-banner__copy {
+body .dss-update-banner__copy {
   position: relative !important;
   z-index: 3 !important;
   display: flex !important;
@@ -84,58 +82,52 @@
   width: 65% !important;
   min-width: 0 !important;
   height: 100% !important;
-  padding: 12px 20px !important;
+  padding: 12px 24px !important;
   color: #ffffff !important;
   box-sizing: border-box !important;
-  /* transform: translateX(0) !important;  <-- REMOVED THIS so JS can animate */
 }
 
 /* ============================================================
-   ICON + PRIORITY BADGE (Shrunk)
+   ICON + PRIORITY BADGE
    ============================================================ */
 
-.dss-update-banner__top {
+body .dss-update-banner__top {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
   margin: 0 0 6px 0 !important;
 }
 
-.dss-update-banner__icon {
+body .dss-update-banner__icon {
   display: inline-flex !important;
-  flex: 0 0 28px !important;
+  flex: 0 0 26px !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 28px !important;
-  height: 28px !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  border-radius: 8px !important;
-  background: linear-gradient(145deg, #ffffff 0%, #f5efff 100%) !important;
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
   color: #7029e8 !important;
-  font-size: 13px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16) !important;
+  font-size: 12px !important;
 }
 
-.dss-update-banner__eyebrow-text {
+body .dss-update-banner__eyebrow-text {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 5px !important;
-  min-height: 20px !important;
   padding: 3px 8px !important;
-  border: 1px solid rgba(196, 181, 253, 0.38) !important;
   border-radius: 999px !important;
   background: rgba(18, 13, 48, 0.48) !important;
   color: #f5f3ff !important;
   font-size: 8px !important;
   font-weight: 800 !important;
-  line-height: 1 !important;
   letter-spacing: 0.075em !important;
   text-transform: uppercase !important;
   white-space: nowrap !important;
 }
 
-.dss-update-banner__eyebrow-text::before {
+body .dss-update-banner__eyebrow-text::before {
   content: "" !important;
   display: inline-block !important;
   flex: 0 0 5px !important;
@@ -145,79 +137,73 @@
   background: #22c55e !important;
 }
 
-.dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before { background: #22c55e !important; }
-.dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before { background: #f59e0b !important; }
-.dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444 !important; }
+body .dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before { background: #22c55e !important; }
+body .dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before { background: #f59e0b !important; }
+body .dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444 !important; }
 
 /* ============================================================
-   TITLE & DESCRIPTION (Shrunk and no clipping)
+   TITLE & DESCRIPTION
    ============================================================ */
 
-.dss-update-banner__title {
+body .dss-update-banner__title {
   display: block !important;
   width: 100% !important;
   margin: 0 0 4px 0 !important;
   padding: 0 !important;
   color: #ffffff !important;
   font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 18px !important; /* Smaller font */
+  font-size: 18px !important; /* Shrunk to fit */
   font-weight: 800 !important;
   line-height: 1.15 !important;
   letter-spacing: -0.3px !important;
   white-space: normal !important;
-  /* REMOVED line-clamp so full text shows */
 }
 
-.dss-update-banner__date {
+body .dss-update-banner__date {
   display: none !important;
 }
 
-.dss-update-banner__message {
+body .dss-update-banner__message {
   display: block !important;
   width: 100% !important;
   margin: 0 0 8px 0 !important;
   padding: 0 !important;
   color: rgba(248, 247, 255, 0.88) !important;
   font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 11px !important; /* Smaller font */
+  font-size: 11px !important; /* Shrunk to fit */
   font-weight: 400 !important;
-  line-height: 1.4 !important;
+  line-height: 1.35 !important;
   white-space: normal !important;
-  /* REMOVED line-clamp so full text shows */
 }
 
 /* ============================================================
-   CALL-TO-ACTION BUTTON (Shrunk)
+   CALL-TO-ACTION BUTTON
    ============================================================ */
 
-.dss-update-banner__button {
+body .dss-update-banner__button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 6px !important;
-  min-height: 28px !important;
+  min-height: 24px !important;
   padding: 4px 12px !important;
   border: none !important;
   border-radius: 6px !important;
   background: linear-gradient(110deg, #7027e8 0%, #5b21d6 100%) !important;
   color: #ffffff !important;
   font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 10px !important; /* Smaller button text */
+  font-size: 10px !important;
   font-weight: 700 !important;
   line-height: 1.2 !important;
   white-space: nowrap !important;
   cursor: pointer !important;
 }
 
-.dss-update-banner__button:hover {
-  background: linear-gradient(110deg, #8138f3 0%, #6828e8 100%) !important;
-}
-
 /* ============================================================
    CAROUSEL DOTS
    ============================================================ */
 
-.dss-update-banner__dots {
+body .dss-update-banner__dots {
   position: absolute !important;
   top: 14px !important;
   right: 14px !important;
@@ -231,7 +217,7 @@
   background: rgba(19, 13, 43, 0.20) !important;
 }
 
-.dss-update-banner__dot {
+body .dss-update-banner__dot {
   width: 6px !important;
   height: 6px !important;
   padding: 0 !important;
@@ -241,7 +227,7 @@
   cursor: pointer !important;
 }
 
-.dss-update-banner__dot.is-active {
+body .dss-update-banner__dot.is-active {
   background: #8b5cf6 !important;
   transform: scale(1.15) !important;
 }
@@ -315,10 +301,6 @@
   margin-bottom: 12px;
   text-transform: uppercase;
 }
-
-.dss-update-modal[data-priority="normal"] .dss-update-modal__eyebrow { background: #dcfce7; color: #166534; }
-.dss-update-modal[data-priority="important"] .dss-update-modal__eyebrow { background: #fef3c7; color: #92400e; }
-.dss-update-modal[data-priority="urgent"] .dss-update-modal__eyebrow { background: #fee2e2; color: #991b1b; }
 
 .dss-update-modal__title {
   margin: 0;
@@ -400,13 +382,6 @@
   cursor: pointer;
 }
 
-.dss-update-modal__nav:hover:not(:disabled) {
-  background: #f5f0ff;
-  border-color: #cbb8ff;
-  color: #4d148c;
-}
-
-.dss-update-modal__nav:disabled { opacity: 0.4; cursor: not-allowed; }
 .dss-update-modal__dots { display: flex; gap: 8px; }
 .dss-update-modal__dot {
   width: 8px; height: 8px; border-radius: 50%; background: #d9d5e6; border: 0; padding: 0; cursor: pointer;
