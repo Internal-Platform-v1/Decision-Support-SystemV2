@@ -15,6 +15,14 @@
     { key: "guides",    label: "📚 New Guides Added",    icon: "fa-solid fa-book-open" }
   ];
 
+  const TEMPLATES = {
+    general:   { category: "general", eyebrow: "Normal", title: "System Maintenance Notice", message: "The system will be temporarily unavailable due to scheduled maintenance. We apologize for the inconvenience and appreciate your understanding.", button: "View All Updates" },
+    whats_new: { category: "whats_new", eyebrow: "Normal", title: "New Feature Release", message: "Explore the latest features added to the Decision Support System.", button: "See What's New" },
+    reminders: { category: "reminders", eyebrow: "Important", title: "Action Required", message: "Make sure you're aware of the latest policies and requirements.", button: "View Reminder" },
+    issues:    { category: "issues", eyebrow: "Urgent", title: "System Issue Being Investigated", message: "We are aware of the issue and are working on a fix.", button: "View Details" },
+    guides:    { category: "guides", eyebrow: "Normal", title: "New Guides Available", message: "Check out the newly published guides and resources.", button: "Browse New Guides" }
+  };
+
   const state = {
     posts: [],
     activeId: null,
@@ -73,9 +81,6 @@
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
-  /* ------------------------------------------------------------
-     Load posts
-     ------------------------------------------------------------ */
   async function loadAllPosts() {
     const db = firestore();
     if (!db) {
@@ -103,7 +108,6 @@
         });
       });
 
-      // Sort by newest first
       state.posts.sort((a, b) => {
         const timeA = a.updatedAt ? (a.updatedAt.toMillis ? a.updatedAt.toMillis() : new Date(a.updatedAt).getTime()) : 0;
         const timeB = b.updatedAt ? (b.updatedAt.toMillis ? b.updatedAt.toMillis() : new Date(b.updatedAt).getTime()) : 0;
@@ -117,9 +121,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Render list
-     ------------------------------------------------------------ */
   function renderPostList() {
     const list = $("atPostList");
     const count = $("atPostCount");
@@ -176,9 +177,6 @@
     });
   }
 
-  /* ------------------------------------------------------------
-     Select post
-     ------------------------------------------------------------ */
   function selectPost(id) {
     state.activeId = id;
     state.isNew = false;
@@ -195,6 +193,7 @@
     }
     if ($("atEditorEyebrow")) $("atEditorEyebrow").textContent = "EDIT ANNOUNCEMENT";
     if ($("atDelete")) $("atDelete").hidden = false;
+    if ($("atTemplate")) $("atTemplate").value = "none";
 
     showEditor(true);
     updatePreview();
@@ -202,9 +201,6 @@
     renderPostList();
   }
 
-  /* ------------------------------------------------------------
-     New announcement
-     ------------------------------------------------------------ */
   function startNew() {
     state.isNew = true;
     state.activeId = null;
@@ -222,6 +218,7 @@
     if ($("atEditorSubtitle")) $("atEditorSubtitle").textContent = "Fill in the fields below and click Publish or Save Draft.";
     if ($("atEditorEyebrow")) $("atEditorEyebrow").textContent = "CREATE ANNOUNCEMENT";
     if ($("atDelete")) $("atDelete").hidden = true;
+    if ($("atTemplate")) $("atTemplate").value = "none";
 
     showEditor(true);
     updatePreview();
@@ -229,19 +226,13 @@
     renderPostList();
   }
 
-  /* ------------------------------------------------------------
-     Fill / read editor
-     ------------------------------------------------------------ */
   function fillEditor(data) {
     if ($("atCategory")) $("atCategory").value = data.category || "general";
     if ($("atTitle"))    $("atTitle").value    = data.title   || "";
     
     if ($("atDate")) {
       let safeDate = data.date || "";
-      // Prevent DOMException if old text dates are loaded into datetime-local
-      if (safeDate && !safeDate.includes("T")) {
-        safeDate = ""; 
-      }
+      if (safeDate && !safeDate.includes("T")) safeDate = ""; 
       $("atDate").value = safeDate;
     }
 
@@ -281,9 +272,6 @@
     if (ph) ph.hidden = show;
   }
 
-  /* ------------------------------------------------------------
-     Live preview
-     ------------------------------------------------------------ */
   function updatePreview() {
     const data = readEditor();
 
@@ -305,9 +293,6 @@
     if ($("atPreviewMessage")) $("atPreviewMessage").textContent = data.message || "Message will appear here.";
   }
 
-  /* ------------------------------------------------------------
-     Character counts
-     ------------------------------------------------------------ */
   function updateCharCounts() {
     setCount("atEyebrow", "atEyebrowCount", 24);
     setCount("atTitle", "atTitleCount", 60);
@@ -325,9 +310,6 @@
     el.classList.toggle("is-max", len >= max);
   }
 
-  /* ------------------------------------------------------------
-     Save / Publish
-     ------------------------------------------------------------ */
   async function savePost(publish) {
     if (state.saving) return;
 
@@ -376,10 +358,9 @@
       state.saving = false;
       if (draftBtn) draftBtn.disabled = false;
       if (publishBtn) publishBtn.disabled = false;
-      return; // Stop execution if the database save failed
+      return; 
     }
 
-    // Separate UI update so a UI bug doesn't falsely show "Save Failed"
     try {
       await loadAllPosts(); 
       selectPost(savedId);
@@ -441,6 +422,27 @@
         updatePreview();
       });
     });
+    
+    if ($("atTemplate")) {
+      $("atTemplate").addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (val === "none") return;
+        const tpl = TEMPLATES[val];
+        if (!tpl) return;
+
+        fillEditor({
+          category: tpl.category,
+          eyebrow: tpl.eyebrow,
+          title: tpl.title,
+          date: "",
+          message: tpl.message,
+          button: tpl.button
+        });
+        
+        updatePreview();
+        updateCharCounts();
+      });
+    }
   }
 
   function init() {
