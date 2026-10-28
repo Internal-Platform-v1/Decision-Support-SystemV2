@@ -16,16 +16,16 @@
   ];
 
   const DEFAULTS = {
-    general:   { eyebrow: "SYSTEM UPDATE",      title: "EBS System Maintenance",          date: "May 25, 2025 from 1:00 AM – 5:00 AM PST.", message: "Some EBS features may be unavailable during this time.\nPlease plan your tasks accordingly.", button: "View All Updates" },
-    whats_new: { eyebrow: "WHAT'S NEW",         title: "New Feature Release",             date: "Available now",                            message: "Explore the latest features added to the Decision Support System.",                          button: "See What's New" },
-    reminders: { eyebrow: "IMPORTANT REMINDER", title: "Action Required",                 date: "Please review before the deadline.",       message: "Make sure you're aware of the latest policies and requirements.",                            button: "View Reminder" },
-    issues:    { eyebrow: "KNOWN ISSUE",        title: "System Issue Being Investigated", date: "Reported recently",                        message: "We are aware of the issue and are working on a fix.",                                         button: "View Details" },
-    guides:    { eyebrow: "NEW GUIDES",         title: "New Guides Available",            date: "Recently added",                           message: "Check out the newly published guides and resources.",                                        button: "Browse New Guides" }
+    general:   { eyebrow: "Normal", title: "", date: "", message: "", button: "View All Updates" },
+    whats_new: { eyebrow: "Normal", title: "", date: "", message: "", button: "See What's New" },
+    reminders: { eyebrow: "Important", title: "", date: "", message: "", button: "View Reminder" },
+    issues:    { eyebrow: "Urgent", title: "", date: "", message: "", button: "View Details" },
+    guides:    { eyebrow: "Normal", title: "", date: "", message: "", button: "Browse New Guides" }
   };
 
   const state = {
-    posts: {},
-    activeCat: null,
+    posts: [],           // Now an array of objects instead of a single object
+    activeId: null,      // Tracks the unique Firestore ID
     isNew: false,
     saving: false,
     filterCategory: "",
@@ -82,44 +82,40 @@
   }
 
   /* ------------------------------------------------------------
-     Load posts
+     Load posts (Fetches ALL documents in the collection)
      ------------------------------------------------------------ */
   async function loadAllPosts() {
     const db = firestore();
     if (!db) {
       showToast("Firestore is not initialized.", true);
-      renderPostList();
       return;
     }
 
     try {
-      const results = await Promise.all(
-        CATEGORIES.map(c => db.collection(COLLECTION).doc(c.key).get().catch(() => null))
-      );
+      const snap = await db.collection(COLLECTION).get();
+      
+      state.posts = [];
+      snap.forEach(doc => {
+        const data = doc.data();
+        state.posts.push({
+          id: doc.id,
+          category: data.category || "general",
+          eyebrow: data.eyebrow || "Normal",
+          title: data.title || "(Untitled)",
+          date: data.date || "",
+          message: data.message || "",
+          button: data.button || "",
+          published: data.published === true,
+          updatedAt: data.updatedAt || null,
+          exists: true
+        });
+      });
 
-      state.posts = {};
-      results.forEach((snap, i) => {
-        const catKey = CATEGORIES[i].key;
-        if (snap && snap.exists) {
-          const data = snap.data() || {};
-          state.posts[catKey] = {
-            eyebrow: data.eyebrow || DEFAULTS[catKey].eyebrow,
-            title:   data.title   || DEFAULTS[catKey].title,
-            date:    data.date    || DEFAULTS[catKey].date,
-            message: data.message || DEFAULTS[catKey].message,
-            button:  data.button  || DEFAULTS[catKey].button,
-            published: data.published === true,
-            updatedAt: data.updatedAt || null,
-            exists:  true
-          };
-        } else {
-          state.posts[catKey] = {
-            ...DEFAULTS[catKey],
-            published: false,
-            updatedAt: null,
-            exists: false
-          };
-        }
+      // Sort by newest first
+      state.posts.sort((a, b) => {
+        const timeA = a.updatedAt ? (a.updatedAt.toMillis ? a.updatedAt.toMillis() : new Date(a.updatedAt).getTime()) : 0;
+        const timeB = b.updatedAt ? (b.updatedAt.toMillis ? b.updatedAt.toMillis() : new Date(b.updatedAt).getTime()) : 0;
+        return timeB - timeA;
       });
 
       renderPostList();
@@ -141,14 +137,13 @@
     const fCat = state.filterCategory;
     const fStatus = state.filterStatus;
 
-    const entries = CATEGORIES
-      .filter(c => !fCat || c.key === fCat)
-      .map(c => ({ cat: c, data: state.posts[c.key] }))
-      .filter(({ data }) => {
-        if (fStatus === "published") return data.published === true;
-        if (fStatus === "draft") return data.published !== true;
-        return true;
-      });
+    // Filter the flat array of posts
+    const entries = state.posts.filter(post => {
+      if (fCat && post.category !== fCat) return false;
+      if (fStatus === "published" && post.published !== true) return false;
+      if (fStatus === "draft" && post.published === true) return false;
+      return true;
+    });
 
     if (title) {
       if (fCat) title.textContent = categoryLabel(fCat);
@@ -163,59 +158,57 @@
       return;
     }
 
-    list.innerHTML = entries.map(({ cat, data }) => {
-      const isActive = state.activeCat === cat.key && !state.isNew;
-      let statusClass = "empty";
-      let statusText = "Not saved";
-      if (data.exists && data.published) { statusClass = "published"; statusText = "Published"; }
-      else if (data.exists && !data.published) { statusClass = "draft"; statusText = "Draft"; }
+    list.innerHTML = entries.map((post) => {
+      const isActive = state.activeId === post.id && !state.isNew;
+      let statusClass = post.published ? "published" : "draft";
+      let statusText = post.published ? "Published" : "Draft";
 
-      const updated = data.updatedAt ? relativeTime(data.updatedAt) : "";
+      const updated = post.updatedAt ? relativeTime(post.updatedAt) : "";
       return `
-        <button type="button" class="at-post-item${isActive ? " is-active" : ""}" data-cat="${esc(cat.key)}">
-          <strong>${esc(data.title || "(Untitled)")}</strong>
-          <small>${esc((data.message || "").slice(0, 80))}${(data.message || "").length > 80 ? "…" : ""}</small>
+        <button type="button" class="at-post-item${isActive ? " is-active" : ""}" data-id="${esc(post.id)}">
+          <strong>${esc(post.title)}</strong>
+          <small>${esc((post.message || "").slice(0, 80))}${(post.message || "").length > 80 ? "…" : ""}</small>
           <div>
-            <span class="at-post-tag">${esc(cat.label)}</span>
+            <span class="at-post-tag">${esc(categoryLabel(post.category))}</span>
             <span class="at-post-status ${statusClass}">${statusText}</span>
           </div>
           <div class="at-post-meta">
-            <span><i class="fa-regular fa-calendar"></i> ${esc(data.date || "—")}</span>
+            <span><i class="fa-regular fa-calendar"></i> ${esc(post.date || "—")}</span>
             ${updated ? `<span><i class="fa-regular fa-clock"></i> ${updated}</span>` : ""}
           </div>
         </button>
       `;
     }).join("");
 
-    list.querySelectorAll("[data-cat]").forEach(btn => {
-      btn.addEventListener("click", () => selectPost(btn.dataset.cat));
+    list.querySelectorAll("[data-id]").forEach(btn => {
+      btn.addEventListener("click", () => selectPost(btn.dataset.id));
     });
   }
 
   /* ------------------------------------------------------------
      Select post
      ------------------------------------------------------------ */
-  function selectPost(catKey) {
-    state.activeCat = catKey;
+  function selectPost(id) {
+    state.activeId = id;
     state.isNew = false;
 
-    const data = state.posts[catKey];
-    if (!data) return;
+    const post = state.posts.find(p => p.id === id);
+    if (!post) return;
 
-    fillEditor({ ...data, category: catKey });
+    fillEditor(post);
 
     const editorTitle = $("atEditorTitle");
     const editorSubtitle = $("atEditorSubtitle");
     const editorEyebrow = $("atEditorEyebrow");
     const deleteBtn = $("atDelete");
 
-    if (editorTitle) editorTitle.textContent = data.title || "(Untitled)";
+    if (editorTitle) editorTitle.textContent = post.title || "(Untitled)";
     if (editorSubtitle) {
-      const status = data.exists ? (data.published ? "Published" : "Draft") : "Not saved";
-      editorSubtitle.textContent = `${categoryLabel(catKey)} · ${status}`;
+      const status = post.published ? "Published" : "Draft";
+      editorSubtitle.textContent = `${categoryLabel(post.category)} · ${status}`;
     }
     if (editorEyebrow) editorEyebrow.textContent = "EDIT ANNOUNCEMENT";
-    if (deleteBtn) deleteBtn.hidden = !data.exists;
+    if (deleteBtn) deleteBtn.hidden = false;
 
     showEditor(true);
     updatePreview();
@@ -228,11 +221,11 @@
      ------------------------------------------------------------ */
   function startNew() {
     state.isNew = true;
-    state.activeCat = null;
+    state.activeId = null;
 
     fillEditor({
       category: "general",
-      eyebrow: DEFAULTS.general.eyebrow,
+      eyebrow: "Normal",
       title: "",
       date: "",
       message: "",
@@ -243,13 +236,11 @@
     const editorSubtitle = $("atEditorSubtitle");
     const editorEyebrow = $("atEditorEyebrow");
     const deleteBtn = $("atDelete");
-    const docIds = $("atDocIds");
 
     if (editorTitle) editorTitle.textContent = "New Announcement";
     if (editorSubtitle) editorSubtitle.textContent = "Fill in the fields below and click Publish or Save Draft.";
     if (editorEyebrow) editorEyebrow.textContent = "CREATE ANNOUNCEMENT";
     if (deleteBtn) deleteBtn.hidden = true;
-    if (docIds) docIds.textContent = "";
 
     showEditor(true);
     updatePreview();
@@ -267,16 +258,13 @@
     if ($("atMessage"))  $("atMessage").value  = data.message || "";
     if ($("atButton"))   $("atButton").value   = data.button  || "";
 
-    // Handle the new Priority Pills
     let currentPriority = data.eyebrow || "Normal";
-    // Fallback: If old data had "SYSTEM UPDATE", default to Normal
     if (!["Normal", "Important", "Urgent"].includes(currentPriority)) {
         currentPriority = "Normal";
     }
     
     if ($("atEyebrow")) $("atEyebrow").value = currentPriority;
     
-    // Update the visual radio buttons
     document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('active'));
     const radio = document.querySelector(`input[name="priority"][value="${currentPriority}"]`);
     if (radio) {
@@ -315,7 +303,6 @@
     if ($("atPreviewEyebrow")) $("atPreviewEyebrow").textContent = data.eyebrow || "SYSTEM UPDATE";
     if ($("atPreviewTitle"))   $("atPreviewTitle").textContent   = data.title   || "(Title required)";
     
-    // Format date nicely
     let displayDate = data.date || "—";
     if (data.date && data.date.includes("T")) {
       const dateObj = new Date(data.date);
@@ -334,7 +321,7 @@
   function updateCharCounts() {
     setCount("atEyebrow", "atEyebrowCount", 24);
     setCount("atTitle", "atTitleCount", 60);
-    setCount("atMessage", "atMessageCount", 500); // Changed from 180 to 500
+    setCount("atMessage", "atMessageCount", 500);
     setCount("atButton", "atButtonCount", 24);
   }
 
@@ -368,8 +355,7 @@
     if (publishBtn) publishBtn.disabled = true;
 
     try {
-      const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection(COLLECTION).doc(data.category).set({
+      const payload = {
         category: data.category,
         eyebrow: data.eyebrow,
         title: data.title,
@@ -377,34 +363,24 @@
         message: data.message,
         button: data.button,
         published: publish === true,
-        updatedAt: serverTimestamp
-      }, { merge: true });
-
-      state.posts[data.category] = {
-        eyebrow: data.eyebrow,
-        title: data.title,
-        date: data.date,
-        message: data.message,
-        button: data.button,
-        published: publish === true,
-        updatedAt: new Date(),
-        exists: true
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      state.activeCat = data.category;
-      state.isNew = false;
+      if (state.isNew) {
+        // Generate a new unique document ID
+        await db.collection(COLLECTION).add(payload);
+      } else {
+        // Update the existing document by its unique ID
+        await db.collection(COLLECTION).doc(state.activeId).set(payload, { merge: true });
+      }
 
-      renderPostList();
-      selectPost(data.category);
+      state.isNew = false;
+      await loadAllPosts(); // Reload the list from database
       showToast(publish ? "Announcement published." : "Draft saved.");
+
     } catch (err) {
       console.error(err);
-      showToast(
-        err.code === "permission-denied"
-          ? "Firestore denied the save."
-          : "Unable to save announcement.",
-        true
-      );
+      showToast("Unable to save announcement.", true);
     } finally {
       state.saving = false;
       if (draftBtn) draftBtn.disabled = false;
@@ -413,20 +389,16 @@
   }
 
   async function deletePost() {
-    if (!state.activeCat || state.isNew) return;
-    if (!confirm("Delete this announcement? The banner will revert to the default content for this category.")) return;
+    if (!state.activeId || state.isNew) return;
+    if (!confirm("Delete this announcement?")) return;
 
     const db = firestore();
     if (!db) { showToast("Firestore is not initialized.", true); return; }
 
-    const catKey = state.activeCat;
-
     try {
-      await db.collection(COLLECTION).doc(catKey).delete();
-
-      state.posts[catKey] = { ...DEFAULTS[catKey], published: false, updatedAt: null, exists: false };
-
-      state.activeCat = null;
+      await db.collection(COLLECTION).doc(state.activeId).delete();
+      
+      state.activeId = null;
       state.isNew = false;
 
       showEditor(false);
@@ -434,36 +406,29 @@
       const editorSubtitle = $("atEditorSubtitle");
       if (editorTitle) editorTitle.textContent = "No announcement selected";
       if (editorSubtitle) editorSubtitle.textContent = "Select an announcement on the left, or create a new one.";
+      
       const deleteBtn = $("atDelete");
       if (deleteBtn) deleteBtn.hidden = true;
 
-      renderPostList();
+      await loadAllPosts();
       showToast("Announcement deleted.");
     } catch (err) {
       console.error(err);
-      showToast(
-        err.code === "permission-denied"
-          ? "Firestore denied the delete."
-          : "Unable to delete announcement.",
-        true
-      );
+      showToast("Unable to delete announcement.", true);
     }
   }
 
   function resetEditor() {
     if (state.isNew) { startNew(); return; }
-    if (!state.activeCat) return;
-    const data = state.posts[state.activeCat];
-    if (!data) return;
-    fillEditor({ ...data, category: state.activeCat });
+    if (!state.activeId) return;
+    const post = state.posts.find(p => p.id === state.activeId);
+    if (!post) return;
+    fillEditor(post);
     updatePreview();
     updateCharCounts();
     showToast("Editor reset to last saved values.");
   }
 
-  /* ------------------------------------------------------------
-     Bind
-     ------------------------------------------------------------ */
   function bindLiveUpdates() {
     ["atEyebrow", "atTitle", "atDate", "atMessage", "atButton", "atCategory"].forEach(id => {
       const el = $(id);
