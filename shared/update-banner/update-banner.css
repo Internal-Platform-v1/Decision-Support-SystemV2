@@ -420,3 +420,83 @@
   background: #6b25df;
   transform: scale(1.2);
 }
+
+/* ============================================================
+   PRIORITY COLOR CODING (Normal, Important, Urgent)
+   ============================================================ */
+
+/* Base styling for the eyebrow text so it looks like a pill */
+.dss-update-banner__eyebrow-text {
+  margin-left: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 9px !important; /* Slightly larger for readability */
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dss-update-banner__icon {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* --- NORMAL (Blue) --- */
+.dss-update-banner[data-priority="normal"] .dss-update-banner__icon {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+.dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+/* --- IMPORTANT (Yellow/Orange) --- */
+.dss-update-banner[data-priority="important"] .dss-update-banner__icon {
+  background: #fffbeb;
+  color: #f59e0b;
+}
+.dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* --- URGENT (Red) --- */
+.dss-update-banner[data-priority="urgent"] .dss-update-banner__icon {
+  background: #fef2f2;
+  color: #ef4444;
+}
+.dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ============================================================
+   MODAL PRIORITY COLOR CODING
+   ============================================================ */
+
+.dss-update-modal__eyebrow {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dss-update-modal[data-priority="normal"] .dss-update-modal__eyebrow {
+  color: #1e3a8a;
+  background: #dbeafe;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+.dss-update-modal[data-priority="important"] .dss-update-modal__eyebrow {
+  color: #92400e;
+  background: #fef3c7;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+.dss-update-modal[data-priority="urgent"] .dss-update-modal__eyebrow {
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
