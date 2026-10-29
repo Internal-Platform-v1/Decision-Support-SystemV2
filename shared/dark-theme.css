@@ -41,14 +41,14 @@ html[data-theme="dark"] {
     --cp-pastel: rgba(244,114,182,.14);  --cp-ink: #ffa3c2;
     --cr-pastel: rgba(248,113,113,.14);  --cr-ink: #ff9ea1;
 
-    /* EXACT SAME PASTEL ACCENT COLORS FROM LIGHT MODE */
-    --acc-purple: #d7c9ff;
-    --acc-orange: #ffd4bd;
-    --acc-blue:   #c9dcff;
-    --acc-green:  #d0f0d2;
-    --acc-indigo: #c5c9ff;
-    --acc-pink:   #ffd0df;
-    --acc-red:    #ffc2c5;
+    /* BRIGHTER ACCENT COLORS FOR DARK MODE GLOW */
+    --acc-purple: #c4b5fd;
+    --acc-orange: #fdba74;
+    --acc-blue:   #93c5fd;
+    --acc-green:  #86efac;
+    --acc-indigo: #a5b4fc;
+    --acc-pink:   #f9a8d4;
+    --acc-red:    #fca5a5;
 }
 
 /* ============================================================
@@ -368,7 +368,7 @@ html[data-theme="dark"] .stage-card {
     background: #1c1c30;
     border: 1px solid #26263f;
     border-bottom: 2px solid var(--acc-purple) !important;
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(196, 181, 253, 0.2) !important;
 }
 html[data-theme="dark"] .stage-top {
     background: #20203a;
@@ -406,20 +406,20 @@ html[data-theme="dark"] .choice {
     background: #1c1c30;
     border: 1px solid #26263f;
     border-bottom: 2px solid var(--acc-purple) !important;
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(196, 181, 253, 0.2) !important;
     color: #e7e7f2;
 }
 html[data-theme="dark"] .choice:hover {
     background: #20203a;
     border-color: #3a3a58;
     border-bottom-color: var(--acc-purple) !important;
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: var(--shadow-card-hover), 0 6px 25px rgba(196, 181, 253, 0.35) !important;
 }
 html[data-theme="dark"] .choice.selected {
     background: rgba(139,92,246,.14);
     border-color: #a78bfa;
     border-bottom-color: var(--acc-purple) !important;
-    box-shadow: 0 0 0 2px rgba(167,139,250,.24), var(--shadow-card-hover);
+    box-shadow: 0 0 0 2px rgba(167,139,250,.24), var(--shadow-card-hover), 0 6px 25px rgba(196, 181, 253, 0.35) !important;
 }
 html[data-theme="dark"] .choice-title { color: #ece9ff; }
 html[data-theme="dark"] .choice-desc  { color: #9a9ab6; }
@@ -467,7 +467,7 @@ html[data-theme="dark"] .final-card {
     background: linear-gradient(135deg, #1f1b33, #1c1c30);
     border: 1px solid #2f2a4a;
     border-bottom: 2px solid var(--acc-purple) !important;
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: var(--shadow-card-hover), 0 6px 25px rgba(196, 181, 253, 0.25) !important;
 }
 html[data-theme="dark"] .final-badge {
     background: rgba(167,139,250,.16);
@@ -497,11 +497,23 @@ html[data-theme="dark"] .side-description { color: #8b8ba8; }
 html[data-theme="dark"] .purple-icon { background: rgba(167,139,250,.14); color: #c4b5fd; }
 html[data-theme="dark"] .orange-icon { background: rgba(255,159,77,.14);  color: #ffb26e; }
 
-/* Explicitly override the bottom border to match exact light mode colors */
-html[data-theme="dark"] .path-card           { border-bottom-color: var(--acc-purple) !important; }
-html[data-theme="dark"] .recommendation-card { border-bottom-color: var(--acc-orange) !important; }
-html[data-theme="dark"] .snapshot-card       { border-bottom-color: var(--acc-red) !important; }
-html[data-theme="dark"] .info-card           { border-bottom-color: var(--acc-blue) !important; }
+/* Explicitly override the bottom border to match exact light mode colors + Add Glow */
+html[data-theme="dark"] .path-card {
+    border-bottom-color: var(--acc-purple) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(196, 181, 253, 0.2) !important;
+}
+html[data-theme="dark"] .recommendation-card {
+    border-bottom-color: var(--acc-orange) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(253, 186, 116, 0.2) !important;
+}
+html[data-theme="dark"] .snapshot-card {
+    border-bottom-color: var(--acc-red) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(252, 165, 165, 0.2) !important;
+}
+html[data-theme="dark"] .info-card {
+    border-bottom-color: var(--acc-blue) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(147, 197, 253, 0.2) !important;
+}
 
 html[data-theme="dark"] .recommendation-card .side-icon {
     background: rgba(255,159,77,.14);
@@ -581,9 +593,16 @@ html[data-theme="dark"] .template-card {
     border-bottom-width: 2px !important;
     border-bottom-style: solid !important;
     border-bottom-color: var(--acc-purple) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(196, 181, 253, 0.15) !important;
 }
-html[data-theme="dark"] .template-card:has(.code-soft)  { border-bottom-color: var(--acc-green) !important; }
-html[data-theme="dark"] .template-card:has(.email-soft) { border-bottom-color: var(--acc-orange) !important; }
+html[data-theme="dark"] .template-card:has(.code-soft) {
+    border-bottom-color: var(--acc-green) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(134, 239, 172, 0.15) !important;
+}
+html[data-theme="dark"] .template-card:has(.email-soft) {
+    border-bottom-color: var(--acc-orange) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(253, 186, 116, 0.15) !important;
+}
 
 html[data-theme="dark"] .template-head {
     background: #20203a;
