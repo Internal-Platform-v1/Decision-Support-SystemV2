@@ -41,13 +41,14 @@ html[data-theme="dark"] {
     --cp-pastel: rgba(244,114,182,.14);  --cp-ink: #ffa3c2;
     --cr-pastel: rgba(248,113,113,.14);  --cr-ink: #ff9ea1;
 
-    --acc-purple: #4c3f78;
-    --acc-orange: #7a4a2a;
-    --acc-blue:   #3d4a80;
-    --acc-green:  #3d6644;
-    --acc-indigo: #42478a;
-    --acc-pink:   #7a3d54;
-    --acc-red:    #7a3d44;
+    /* VIVID ACCENT COLORS (for the bottom borders) */
+    --acc-purple: #8b5cf6;
+    --acc-orange: #f97316;
+    --acc-blue:   #3b82f6;
+    --acc-green:  #22c55e;
+    --acc-indigo: #6366f1;
+    --acc-pink:   #ec4899;
+    --acc-red:    #ef4444;
 }
 
 /* ============================================================
@@ -215,13 +216,14 @@ html[data-theme="dark"] .guide-card .description { color: #9a9ab6; }
 html[data-theme="dark"] .arrow-btn,
 html[data-theme="dark"] .open-guide { color: #c4b5fd; }
 
+/* Card Bottom Accents (Vivid colors) */
 html[data-theme="dark"] .quick-card.purple-card:after,
-html[data-theme="dark"] .quick-card::after            { background: #4c3f78; }
-html[data-theme="dark"] .quick-card.orange-card:after { background: #7a4a2a; }
-html[data-theme="dark"] .quick-card.blue-card:after   { background: #3d4a80; }
-html[data-theme="dark"] .quick-card.green-card:after  { background: #3d6644; }
-html[data-theme="dark"] .quick-card.indigo-card:after { background: #42478a; }
-html[data-theme="dark"] .quick-card.pink-card:after   { background: #7a3d54; }
+html[data-theme="dark"] .quick-card::after            { background: #8b5cf6; }
+html[data-theme="dark"] .quick-card.orange-card:after { background: #f97316; }
+html[data-theme="dark"] .quick-card.blue-card:after   { background: #3b82f6; }
+html[data-theme="dark"] .quick-card.green-card:after  { background: #22c55e; }
+html[data-theme="dark"] .quick-card.indigo-card:after { background: #6366f1; }
+html[data-theme="dark"] .quick-card.pink-card:after   { background: #ec4899; }
 
 html[data-theme="dark"] .purple-bg { background: rgba(167,139,250,.14); color: #c4b5fd; }
 html[data-theme="dark"] .orange-bg { background: rgba(255,159,77,.14);  color: #ffb26e; }
