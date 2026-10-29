@@ -1,5 +1,5 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER (FULLY FIXED)
+   DSS V2 — SHARED UPDATE BANNER (PURPLE BACKGROUND FIX)
    ============================================================ */
 
 .dss-update-banner {
@@ -13,14 +13,24 @@
   padding: 0;
   overflow: hidden;
   border-radius: 9px;
-  background: #100c29;
+  
+  /* NEW: Matches the fading purple gradient */
+  background: linear-gradient(
+    90deg,
+    #0d0927 0%,
+    #130c34 25%,
+    #1a0f41 45%,
+    #23134b 60%,
+    #23134b 75%,
+    #140a28 100%
+  );
+  
   box-shadow: 0 3px 14px rgba(48,38,111,.06);
   box-sizing: border-box;
-  isolation: isolate;
 }
 
 /* ============================================================
-   BACKGROUND IMAGE & OVERLAY (CURVED EDGES FIX)
+   BACKGROUND IMAGE & OVERLAY
    ============================================================ */
 
 .dss-update-banner__visual {
@@ -31,7 +41,6 @@
   z-index: 1;
   border-radius: 9px;
   overflow: hidden;
-  /* Forces Safari/Chrome to respect the border-radius on children */
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
@@ -41,7 +50,6 @@
   height: 100%;
   object-fit: cover;
   object-position: right center; 
-  /* Forces the image itself to clip its own square corners */
   border-radius: 9px;
   clip-path: inset(0 round 9px);
 }
@@ -147,7 +155,7 @@
 .dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444; }
 
 /* ============================================================
-   TITLE & DESCRIPTION (TRUNCATED)
+   TITLE & DESCRIPTION
    ============================================================ */
 
 .dss-update-banner__title {
