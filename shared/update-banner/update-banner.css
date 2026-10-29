@@ -2,242 +2,233 @@
    DSS V2 — SHARED UPDATE BANNER
    ============================================================ */
 
-body .dss-update-banner {
-  position: relative !important;
-  isolation: isolate !important;
-  display: block !important;
-  width: 100% !important;
-  height: 160px !important;
-  min-height: 160px !important;
-  max-height: 160px !important;
-  margin: 0 0 16px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 15px !important;
-  background: #100c29 !important;
-  box-shadow: 0 8px 24px rgba(26, 13, 65, 0.13) !important;
+.dss-update-banner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 136px;
+  min-height: 136px;
+  margin: 0 0 10px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #f6f0ff;
+  box-shadow: 0 3px 14px rgba(48,38,111,.06);
 }
 
-/* ============================================================
-   BACKGROUND IMAGE & OVERLAY (FIXED)
-   ============================================================ */
-
-body .dss-update-banner__visual {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important;
+.dss-update-banner__visual {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
 }
 
-body .dss-update-banner__visual img {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important; /* Ensures image scales to fill the box */
-  object-position: center right !important; /* Keeps the truck on the right side */
+/* FIXED IMAGE FIT */
+.dss-update-banner__visual img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center; /* Keeps the truck visible */
+  max-width: none;
 }
 
-body .dss-update-banner__overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 1 !important;
+.dss-update-banner__visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   background: linear-gradient(
     90deg,
-    rgba(13, 9, 39, 0.97) 0%,
-    rgba(19, 12, 52, 0.94) 25%,
-    rgba(26, 15, 65, 0.84) 45%,
-    rgba(35, 19, 75, 0.50) 60%,
-    rgba(35, 19, 75, 0.12) 75%,
-    rgba(20, 10, 40, 0.02) 100%
-  ) !important;
-  pointer-events: none !important;
+    rgba(246,240,255,.42) 0%,
+    rgba(246,240,255,.27) 18%,
+    rgba(246,240,255,.12) 34%,
+    rgba(246,240,255,.03) 50%,
+    rgba(246,240,255,0) 65%
+  );
+  pointer-events: none;
 }
 
-body .dss-update-banner::after {
-  content: "" !important;
-  position: absolute !important;
-  inset: auto 0 0 !important;
-  z-index: 2 !important;
-  height: 3px !important;
-  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 28%, rgba(139, 92, 246, 0.18) 58%, transparent 78%) !important;
-  pointer-events: none !important;
+/* MOVED HIGHER FOR BALANCE */
+.dss-update-banner__copy {
+  position: relative;
+  z-index: 3;
+  width: 43%;
+  min-width: 330px;
+  height: 100%;
+  padding: 8px 12px 11px 24px; /* Reduced top padding to shift content up */
+  transition: opacity .25s ease;
 }
 
-/* ============================================================
-   CONTENT LAYOUT (Moved Higher)
-   ============================================================ */
-
-body .dss-update-banner__copy {
-  position: relative !important;
-  z-index: 3 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  justify-content: flex-start !important; /* Changed from center to push content up */
-  width: 65% !important;
-  min-width: 0 !important;
-  height: 100% !important;
-  padding: 18px 24px !important; /* Reduced top padding to balance alignment */
-  color: #ffffff !important;
-  box-sizing: border-box !important;
+.dss-update-banner__copy.is-swapping {
+  opacity: 0;
 }
 
-/* ============================================================
-   ICON + PRIORITY BADGE
-   ============================================================ */
-
-body .dss-update-banner__top {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 0 0 6px 0 !important;
+.dss-update-banner__eyebrow {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  margin: 0 0 4px;
+  color: #4d148c;
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: .045em;
 }
 
-body .dss-update-banner__icon {
-  display: inline-flex !important;
-  flex: 0 0 26px !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 26px !important;
-  height: 26px !important;
-  border-radius: 6px !important;
-  background: #ffffff !important;
-  color: #7029e8 !important;
-  font-size: 12px !important;
+.dss-update-banner__icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #f0e8ff;
+  color: #4d148c;
+  font-size: 14px;
 }
 
-body .dss-update-banner__eyebrow-text {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  padding: 3px 8px !important;
-  border-radius: 999px !important;
-  background: rgba(18, 13, 48, 0.48) !important;
-  color: #f5f3ff !important;
+.dss-update-banner__eyebrow-text {
+  margin-left: 9px;
+}
+
+.dss-update-banner__title {
+  margin: 0 0 3px 39px;
+  color: #17194f;
+  font-size: 15px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dss-update-banner__date {
+  margin: 0 0 2px 39px !important;
+  color: #17194f !important;
   font-size: 8px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.075em !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
-}
-
-body .dss-update-banner__eyebrow-text::before {
-  content: "" !important;
-  display: inline-block !important;
-  flex: 0 0 5px !important;
-  width: 5px !important;
-  height: 5px !important;
-  border-radius: 50% !important;
-  background: #22c55e !important;
-}
-
-body .dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before { background: #22c55e !important; }
-body .dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before { background: #f59e0b !important; }
-body .dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444 !important; }
-
-/* ============================================================
-   TITLE & DESCRIPTION (TRUNCATED)
-   ============================================================ */
-
-body .dss-update-banner__title {
-  display: block !important;
-  width: 100% !important;
-  margin: 0 0 3px 0 !important;
-  padding: 0 !important;
-  color: #ffffff !important;
-  font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 17px !important;
-  font-weight: 800 !important;
-  line-height: 1.15 !important;
-  letter-spacing: -0.3px !important;
-  white-space: normal !important;
-}
-
-body .dss-update-banner__date {
-  display: none !important;
-}
-
-body .dss-update-banner__message {
-  display: -webkit-box !important; /* Required for line-clamp */
-  width: 100% !important;
-  margin: 0 0 8px 0 !important;
-  padding: 0 !important;
-  color: rgba(248, 247, 255, 0.88) !important;
-  font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 10px !important;
-  font-weight: 400 !important;
-  line-height: 1.35 !important;
-  white-space: normal !important;
-  
-  /* TRUNCATION MAGIC: Limits to 2 lines */
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-/* ============================================================
-   CALL-TO-ACTION BUTTON
-   ============================================================ */
-
-body .dss-update-banner__button {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  min-height: 24px !important;
-  padding: 3px 10px !important;
-  border: none !important;
-  border-radius: 5px !important;
-  background: linear-gradient(110deg, #7027e8 0%, #5b21d6 100%) !important;
-  color: #ffffff !important;
-  font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 9px !important;
+  line-height: 1.25 !important;
   font-weight: 700 !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
-  cursor: pointer !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dss-update-banner__date i {
+  margin-right: 3px;
+  color: #4d148c;
+}
+
+/* TRUNCATED TEXT (Limits to 2 lines) */
+.dss-update-banner__message {
+  display: -webkit-box;
+  margin: 0 0 6px 39px;
+  color: #3f4168;
+  font-size: 8px;
+  line-height: 1.35;
+  font-weight: 500;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dss-update-banner__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-left: 39px;
+  min-height: 23px;
+  padding: 0 9px;
+  border: 1px solid #6a24c7;
+  border-radius: 4px;
+  background: rgba(255,255,255,.94);
+  color: #4d148c;
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+
+.dss-update-banner__button span[aria-hidden] {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.dss-update-banner__button:hover {
+  background: #fff;
+  border-color: #4d148c;
+}
+
+.dss-update-banner__button:active {
+  transform: translateY(1px);
+}
+
+.dss-update-banner__dots {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.dss-update-banner__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.7);
+  box-shadow: 0 0 0 1px rgba(77,20,140,.08);
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.dss-update-banner__dot:hover {
+  background: rgba(255,255,255,.95);
+}
+
+.dss-update-banner__dot.is-active {
+  background: #4d148c;
+  transform: scale(1.15);
+}
+
+@media (max-width: 900px) {
+  .dss-update-banner { height: 136px; min-height: 136px; }
+  .dss-update-banner__copy { width: 48%; min-width: 300px; padding-left: 18px; }
+}
+
+@media (max-width: 700px) {
+  .dss-update-banner { height: 190px; min-height: 190px; }
+  .dss-update-banner__copy {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    padding: 13px 16px 14px;
+  }
+  .dss-update-banner__visual::before {
+    background: linear-gradient(
+      90deg,
+      rgba(246,240,255,.58) 0%,
+      rgba(246,240,255,.34) 40%,
+      rgba(246,240,255,.10) 72%,
+      rgba(246,240,255,0) 100%
+    );
+  }
 }
 
 /* ============================================================
-   CAROUSEL DOTS
-   ============================================================ */
-
-body .dss-update-banner__dots {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
-  z-index: 4 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  padding: 4px 6px !important;
-  border: 1px solid rgba(255, 255, 255, 0.10) !important;
-  border-radius: 999px !important;
-  background: rgba(19, 13, 43, 0.20) !important;
-}
-
-body .dss-update-banner__dot {
-  width: 5px !important;
-  height: 5px !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.58) !important;
-  cursor: pointer !important;
-}
-
-body .dss-update-banner__dot.is-active {
-  background: #8b5cf6 !important;
-  transform: scale(1.15) !important;
-}
-
-/* ============================================================
-   UPDATE DETAIL MODAL (Unchanged)
+   UPDATE DETAIL MODAL
    ============================================================ */
 
 .dss-update-modal {
@@ -252,14 +243,19 @@ body .dss-update-banner__dot.is-active {
   transition: opacity .22s ease;
 }
 
-.dss-update-modal.is-open { opacity: 1; }
-.dss-update-modal[hidden] { display: none !important; }
+.dss-update-modal.is-open {
+  opacity: 1;
+}
+
+.dss-update-modal[hidden] {
+  display: none !important;
+}
 
 .dss-update-modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 5, 20, 0.7);
-  backdrop-filter: blur(6px);
+  background: rgba(20, 15, 45, .55);
+  backdrop-filter: blur(4px);
 }
 
 .dss-update-modal__panel {
@@ -269,9 +265,9 @@ body .dss-update-banner__dot.is-active {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: #fff;
   border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  box-shadow: 0 24px 60px rgba(23,23,75,.28);
   transform: translateY(12px) scale(.98);
   transition: transform .22s ease;
 }
@@ -285,66 +281,73 @@ body .dss-update-banner__dot.is-active {
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  padding: 24px;
-  background: #f8f6fc;
+  padding: 20px 22px 16px;
+  background: linear-gradient(135deg, #f5f0ff 0%, #eee8ff 100%);
   border-bottom: 1px solid #e8e2f5;
 }
 
 .dss-update-modal__header-copy { min-width: 0; }
 
 .dss-update-modal__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: #eee8ff;
+  display: block;
   color: #6b25df;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .08em;
-  margin-bottom: 12px;
-  text-transform: uppercase;
+  margin-bottom: 6px;
 }
 
 .dss-update-modal__title {
   margin: 0;
   color: #17194f;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1.25;
   font-weight: 800;
+  letter-spacing: -.3px;
 }
 
 .dss-update-modal__close {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
   display: grid;
   place-items: center;
   border: 0;
   border-radius: 8px;
-  background: #ffffff;
+  background: rgba(255,255,255,.7);
   color: #4d148c;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: background .15s ease;
+}
+
+.dss-update-modal__close:hover {
+  background: #fff;
 }
 
 .dss-update-modal__body {
-  padding: 24px;
+  padding: 20px 22px;
   overflow-y: auto;
+  flex: 1 1 auto;
 }
 
 .dss-update-modal__meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
 .dss-update-modal__badge {
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #eee8ff;
+  color: #5b17c5;
+  font-size: 11px;
   font-weight: 700;
-  color: #6b25df;
 }
 
 .dss-update-modal__date {
@@ -356,8 +359,8 @@ body .dss-update-banner__dot.is-active {
 .dss-update-modal__message {
   margin: 0;
   color: #3a3d5f;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.65;
   white-space: pre-line;
 }
 
@@ -366,7 +369,7 @@ body .dss-update-banner__dot.is-active {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 24px;
+  padding: 14px 22px;
   border-top: 1px solid #ececf3;
   background: #fafaff;
 }
@@ -374,20 +377,51 @@ body .dss-update-banner__dot.is-active {
 .dss-update-modal__nav {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 16px;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
   border: 1px solid #dfe2eb;
   border-radius: 8px;
-  background: #ffffff;
+  background: #fff;
   color: #4a4f6a;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
 }
 
-.dss-update-modal__dots { display: flex; gap: 8px; }
-.dss-update-modal__dot {
-  width: 8px; height: 8px; border-radius: 50%; background: #d9d5e6; border: 0; padding: 0; cursor: pointer;
+.dss-update-modal__nav:hover {
+  background: #f5f0ff;
+  border-color: #cbb8ff;
+  color: #4d148c;
 }
-.dss-update-modal__dot.is-active { background: #6b25df; transform: scale(1.2); }
+
+.dss-update-modal__nav:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.dss-update-modal__nav i {
+  font-size: 9px;
+}
+
+.dss-update-modal__dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dss-update-modal__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d9d5e6;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+}
+
+.dss-update-modal__dot.is-active {
+  background: #6b25df;
+  transform: scale(1.2);
+}
