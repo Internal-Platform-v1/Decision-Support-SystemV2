@@ -1,12 +1,11 @@
-<section class="dss-update-banner" id="dssUpdateBanner" aria-label="System updates" data-priority="normal" style="border-radius: 9px; overflow: hidden; background: #100c29;">
+<section class="dss-update-banner" id="dssUpdateBanner" aria-label="System updates" data-priority="normal" style="border-radius: 0; overflow: hidden;">
 
   <!-- BACKGROUND IMAGE -->
-  <div class="dss-update-banner__visual" aria-hidden="true" style="border-radius: 9px; overflow: hidden; -webkit-mask-image: -webkit-radial-gradient(white, black);">
+  <div class="dss-update-banner__visual" aria-hidden="true">
     <img
       src="/Decision-Support-SystemV2/assets/images/update-banner-truck.png"
       alt=""
       loading="eager"
-      style="display: block; width: 100%; height: 100%; object-fit: cover; object-position: right center; border-radius: 9px; clip-path: inset(0 round 9px);"
     >
   </div>
 
@@ -17,12 +16,10 @@
   <div class="dss-update-banner__copy">
     
     <div class="dss-update-banner__top">
-      <!-- Large White Icon -->
       <span class="dss-update-banner__icon" aria-hidden="true">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
       </span>
       
-      <!-- Priority Pill -->
       <span class="dss-update-banner__eyebrow-text">NORMAL</span>
     </div>
 
@@ -43,10 +40,10 @@
 
   </div>
 
-  <!-- DOTS -->
   <div class="dss-update-banner__dots" role="tablist" aria-label="Announcement categories"></div>
 
 </section>
+
 <!-- Update detail modal -->
 <div class="dss-update-modal" id="dssUpdateModal" hidden>
   <div class="dss-update-modal__backdrop" data-update-modal-close></div>
@@ -57,12 +54,7 @@
         <span class="dss-update-modal__eyebrow" id="dssUpdateModalEyebrow">SYSTEM UPDATE</span>
         <h2 class="dss-update-modal__title" id="dssUpdateModalTitle">EBS System Maintenance</h2>
       </div>
-      <button
-        type="button"
-        class="dss-update-modal__close"
-        data-update-modal-close
-        aria-label="Close"
-      >
+      <button type="button" class="dss-update-modal__close" data-update-modal-close aria-label="Close">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </header>
@@ -72,7 +64,6 @@
         <span class="dss-update-modal__badge" id="dssUpdateModalBadge">📢 Announcements</span>
         <span class="dss-update-modal__date" id="dssUpdateModalDate">May 25, 2025</span>
       </div>
-
       <p class="dss-update-modal__message" id="dssUpdateModalMessage">
         Some EBS features may be unavailable during this time.
       </p>
@@ -80,15 +71,11 @@
 
     <footer class="dss-update-modal__footer">
       <button type="button" class="dss-update-modal__nav" id="dssUpdateModalPrev">
-        <i class="fa-solid fa-chevron-left"></i>
-        Previous
+        <i class="fa-solid fa-chevron-left"></i> Previous
       </button>
-
       <div class="dss-update-modal__dots" id="dssUpdateModalDots"></div>
-
       <button type="button" class="dss-update-modal__nav" id="dssUpdateModalNext">
-        Next
-        <i class="fa-solid fa-chevron-right"></i>
+        Next <i class="fa-solid fa-chevron-right"></i>
       </button>
     </footer>
   </div>
