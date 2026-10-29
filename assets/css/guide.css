@@ -368,10 +368,10 @@ img { display: block; max-width: 100%; }
   position: relative;
   padding: 16px 18px;
   border: 1px solid var(--line-2);
+  border-bottom: 2px solid var(--acc-purple); /* ADDED: Colored bottom border */
   border-radius: 8px;
   background: linear-gradient(135deg, #fff 0%, #fbfaff 100%);
-  /* Added this line to give the question card the same shadow as the options */
-  box-shadow: var(--shadow-card); 
+  box-shadow: var(--shadow-card); /* ADDED: Matches the options shadow */
 }
 .question-label {
   display: inline-flex;
