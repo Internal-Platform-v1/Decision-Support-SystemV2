@@ -1,5 +1,5 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER (PURPLE BACKGROUND FIX)
+   DSS V2 — SHARED UPDATE BANNER (FORCED FIX)
    ============================================================ */
 
 .dss-update-banner {
@@ -14,24 +14,12 @@
   overflow: hidden;
   border-radius: 9px;
   
-  /* NEW: Matches the fading purple gradient */
-  background: linear-gradient(
-    90deg,
-    #0d0927 0%,
-    #130c34 25%,
-    #1a0f41 45%,
-    #23134b 60%,
-    #23134b 75%,
-    #140a28 100%
-  );
+  /* Matches the fading purple gradient on the left */
+  background: linear-gradient(90deg, #0d0927 0%, #130c34 25%, #1a0f41 45%, #23134b 60%, #23134b 75%, #140a28 100%);
   
   box-shadow: 0 3px 14px rgba(48,38,111,.06);
   box-sizing: border-box;
 }
-
-/* ============================================================
-   BACKGROUND IMAGE & OVERLAY
-   ============================================================ */
 
 .dss-update-banner__visual {
   position: absolute;
@@ -81,10 +69,6 @@
   pointer-events: none;
 }
 
-/* ============================================================
-   CONTENT LAYOUT
-   ============================================================ */
-
 .dss-update-banner__copy {
   position: relative;
   z-index: 3;
@@ -99,10 +83,6 @@
   color: #ffffff;
   box-sizing: border-box;
 }
-
-/* ============================================================
-   ICON + PRIORITY BADGE
-   ============================================================ */
 
 .dss-update-banner__top {
   display: flex;
@@ -154,10 +134,6 @@
 .dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before { background: #f59e0b; }
 .dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444; }
 
-/* ============================================================
-   TITLE & DESCRIPTION
-   ============================================================ */
-
 .dss-update-banner__title {
   display: -webkit-box;
   width: 100%;
@@ -196,10 +172,6 @@
   text-overflow: ellipsis;
 }
 
-/* ============================================================
-   CALL-TO-ACTION BUTTON
-   ============================================================ */
-
 .dss-update-banner__button {
   display: inline-flex;
   align-items: center;
@@ -218,10 +190,6 @@
   white-space: nowrap;
   cursor: pointer;
 }
-
-/* ============================================================
-   CAROUSEL DOTS
-   ============================================================ */
 
 .dss-update-banner__dots {
   position: absolute;
@@ -252,158 +220,25 @@
   transform: scale(1.15);
 }
 
-/* ============================================================
-   UPDATE DETAIL MODAL
-   ============================================================ */
-
-.dss-update-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  transition: opacity .22s ease;
-}
-
+/* MODAL */
+.dss-update-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity .22s ease; }
 .dss-update-modal.is-open { opacity: 1; }
 .dss-update-modal[hidden] { display: none !important; }
-
-.dss-update-modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(10, 5, 20, 0.7);
-  backdrop-filter: blur(6px);
-}
-
-.dss-update-modal__panel {
-  position: relative;
-  width: min(560px, 100%);
-  max-height: calc(100vh - 40px);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-  transform: translateY(12px) scale(.98);
-  transition: transform .22s ease;
-}
-
-.dss-update-modal.is-open .dss-update-modal__panel {
-  transform: translateY(0) scale(1);
-}
-
-.dss-update-modal__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 24px;
-  background: #f8f6fc;
-  border-bottom: 1px solid #e8e2f5;
-}
-
+.dss-update-modal__backdrop { position: absolute; inset: 0; background: rgba(10, 5, 20, 0.7); backdrop-filter: blur(6px); }
+.dss-update-modal__panel { position: relative; width: min(560px, 100%); max-height: calc(100vh - 40px); overflow: hidden; display: flex; flex-direction: column; background: #ffffff; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.4); transform: translateY(12px) scale(.98); transition: transform .22s ease; }
+.dss-update-modal.is-open .dss-update-modal__panel { transform: translateY(0) scale(1); }
+.dss-update-modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 24px; background: #f8f6fc; border-bottom: 1px solid #e8e2f5; }
 .dss-update-modal__header-copy { min-width: 0; }
-
-.dss-update-modal__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: #eee8ff;
-  color: #6b25df;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-
-.dss-update-modal__title {
-  margin: 0;
-  color: #17194f;
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 800;
-}
-
-.dss-update-modal__close {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #4d148c;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.dss-update-modal__body {
-  padding: 24px;
-  overflow-y: auto;
-}
-
-.dss-update-modal__meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.dss-update-modal__badge {
-  font-size: 12px;
-  font-weight: 700;
-  color: #6b25df;
-}
-
-.dss-update-modal__date {
-  color: #6d6e91;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.dss-update-modal__message {
-  margin: 0;
-  color: #3a3d5f;
-  font-size: 14px;
-  line-height: 1.6;
-  white-space: pre-line;
-}
-
-.dss-update-modal__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid #ececf3;
-  background: #fafaff;
-}
-
-.dss-update-modal__nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 16px;
-  border: 1px solid #dfe2eb;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #4a4f6a;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
+.dss-update-modal__eyebrow { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; background: #eee8ff; color: #6b25df; font-size: 10px; font-weight: 800; letter-spacing: .08em; margin-bottom: 12px; text-transform: uppercase; }
+.dss-update-modal__title { margin: 0; color: #17194f; font-size: 24px; line-height: 1.25; font-weight: 800; }
+.dss-update-modal__close { width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center; border: 0; border-radius: 8px; background: #ffffff; color: #4d148c; font-size: 16px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.dss-update-modal__body { padding: 24px; overflow-y: auto; }
+.dss-update-modal__meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.dss-update-modal__badge { font-size: 12px; font-weight: 700; color: #6b25df; }
+.dss-update-modal__date { color: #6d6e91; font-size: 12px; font-weight: 600; }
+.dss-update-modal__message { margin: 0; color: #3a3d5f; font-size: 14px; line-height: 1.6; white-space: pre-line; }
+.dss-update-modal__footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; border-top: 1px solid #ececf3; background: #fafaff; }
+.dss-update-modal__nav { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border: 1px solid #dfe2eb; border-radius: 8px; background: #ffffff; color: #4a4f6a; font-size: 12px; font-weight: 700; cursor: pointer; }
 .dss-update-modal__dots { display: flex; gap: 8px; }
-.dss-update-modal__dot {
-  width: 8px; height: 8px; border-radius: 50%; background: #d9d5e6; border: 0; padding: 0; cursor: pointer;
-}
+.dss-update-modal__dot { width: 8px; height: 8px; border-radius: 50%; background: #d9d5e6; border: 0; padding: 0; cursor: pointer; }
 .dss-update-modal__dot.is-active { background: #6b25df; transform: scale(1.2); }
