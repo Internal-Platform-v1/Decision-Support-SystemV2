@@ -2,6 +2,18 @@
    DSS V2 — SHARED UPDATE BANNER (FIXED FOR 136px GRID)
    ============================================================ */
 
+/* ============================================================
+   IMAGE CORNER FIX (OVERRIDES EVERYTHING)
+   ============================================================ */
+
+.dss-update-banner,
+.dss-update-banner__visual,
+.dss-update-banner__visual img {
+  border-radius: 9px !important; /* Matches your guide.css card curve */
+  overflow: hidden !important; 
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Safari curve fix */
+}
+
 .dss-update-banner {
   position: relative;
   display: block;
