@@ -366,8 +366,8 @@ html[data-theme="dark"] .progress-fill {
 }
 html[data-theme="dark"] .stage-card {
     background: #1c1c30;
-    border-color: #26263f;
-    border-bottom-color: var(--acc-purple);
+    border: 1px solid #26263f;
+    border-bottom: 2px solid var(--acc-purple) !important;
     box-shadow: var(--shadow-card);
 }
 html[data-theme="dark"] .stage-top {
@@ -404,19 +404,21 @@ html[data-theme="dark"] .note-body { color: #b8b8d4; }
    ============================================================ */
 html[data-theme="dark"] .choice {
     background: #1c1c30;
-    border-color: #26263f;
-    border-bottom-color: var(--acc-purple);
+    border: 1px solid #26263f;
+    border-bottom: 2px solid var(--acc-purple) !important;
     box-shadow: var(--shadow-card);
     color: #e7e7f2;
 }
 html[data-theme="dark"] .choice:hover {
     background: #20203a;
     border-color: #3a3a58;
+    border-bottom-color: var(--acc-purple) !important;
     box-shadow: var(--shadow-card-hover);
 }
 html[data-theme="dark"] .choice.selected {
     background: rgba(139,92,246,.14);
     border-color: #a78bfa;
+    border-bottom-color: var(--acc-purple) !important;
     box-shadow: 0 0 0 2px rgba(167,139,250,.24), var(--shadow-card-hover);
 }
 html[data-theme="dark"] .choice-title { color: #ece9ff; }
@@ -463,8 +465,8 @@ html[data-theme="dark"] .action-btn.primary:hover {
    ============================================================ */
 html[data-theme="dark"] .final-card {
     background: linear-gradient(135deg, #1f1b33, #1c1c30);
-    border-color: #2f2a4a;
-    border-bottom-color: var(--acc-purple);
+    border: 1px solid #2f2a4a;
+    border-bottom: 2px solid var(--acc-purple) !important;
     box-shadow: var(--shadow-card-hover);
 }
 html[data-theme="dark"] .final-badge {
@@ -480,21 +482,25 @@ html[data-theme="dark"] .final-note {
 }
 
 /* ============================================================
-   SIDE CARDS
+   SIDE CARDS (Selected Path, Rec Action, Snapshot, Guide Info)
    ============================================================ */
 html[data-theme="dark"] .side-card {
     background: #1c1c30;
-    border-color: #26263f;
+    border: 1px solid #26263f;
+    border-bottom: 2px solid var(--acc-purple) !important;
     box-shadow: var(--shadow-card);
 }
 html[data-theme="dark"] .side-head { color: #ece9ff; }
 html[data-theme="dark"] .side-description { color: #8b8ba8; }
 html[data-theme="dark"] .purple-icon { background: rgba(167,139,250,.14); color: #c4b5fd; }
 html[data-theme="dark"] .orange-icon { background: rgba(255,159,77,.14);  color: #ffb26e; }
-html[data-theme="dark"] .path-card           { border-bottom-color: var(--acc-purple); }
-html[data-theme="dark"] .recommendation-card { border-bottom-color: var(--acc-orange); }
-html[data-theme="dark"] .snapshot-card       { border-bottom-color: var(--acc-red); }
-html[data-theme="dark"] .info-card           { border-bottom-color: var(--acc-blue); }
+
+/* Explicitly override the bottom border to match exact light mode colors */
+html[data-theme="dark"] .path-card           { border-bottom-color: var(--acc-purple) !important; }
+html[data-theme="dark"] .recommendation-card { border-bottom-color: var(--acc-orange) !important; }
+html[data-theme="dark"] .snapshot-card       { border-bottom-color: var(--acc-red) !important; }
+html[data-theme="dark"] .info-card           { border-bottom-color: var(--acc-blue) !important; }
+
 html[data-theme="dark"] .recommendation-card .side-icon {
     background: rgba(255,159,77,.14);
     color: #ffb26e;
@@ -565,14 +571,16 @@ html[data-theme="dark"] .guide-info-list dt { color: #8b8ba8; }
 html[data-theme="dark"] .guide-info-list dd { color: #d0d0e4; }
 
 /* ============================================================
-   TEMPLATE CARDS
+   TEMPLATE CARDS (Suggested Comment, CORR Code, Email)
    ============================================================ */
 html[data-theme="dark"] .template-card {
     background: #1c1c30;
-    border-color: #26263f;
+    border: 1px solid #26263f;
+    border-bottom: 2px solid var(--acc-purple) !important;
 }
-html[data-theme="dark"] .template-card:has(.code-soft)  { border-bottom-color: var(--acc-green); }
-html[data-theme="dark"] .template-card:has(.email-soft) { border-bottom-color: var(--acc-orange); }
+html[data-theme="dark"] .template-card:has(.code-soft)  { border-bottom-color: var(--acc-green) !important; }
+html[data-theme="dark"] .template-card:has(.email-soft) { border-bottom-color: var(--acc-orange) !important; }
+
 html[data-theme="dark"] .template-head {
     background: #20203a;
     border-bottom-color: #26263f;
@@ -1250,8 +1258,8 @@ html[data-theme="dark"] .section-head p { color: #9a9ab6; }
 html[data-theme="dark"] .section-overline,
 html[data-theme="dark"] .badge { color: #c4b5fd; }
 html[data-theme="dark"] .section-note { color: #8b8ba8; }
-html[data-theme="dark"] .work-card,
-html[data-theme="dark"] .side-card {
+html[data-theme="dark"] .fbc-panel .work-card,
+html[data-theme="dark"] .fbc-panel .side-card {
     background: #1c1c30;
     border-color: #26263f;
     color: #d0d0e4;
