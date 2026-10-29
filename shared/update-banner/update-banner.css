@@ -1,5 +1,5 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER (BULLETPROOF CORNER FIX)
+   DSS V2 — SHARED UPDATE BANNER (FIXED FOR 136px GRID)
    ============================================================ */
 
 .dss-update-banner {
@@ -12,12 +12,11 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 9px; /* The card curve */
   background: #100c29;
   box-shadow: 0 3px 14px rgba(48,38,111,.06);
   box-sizing: border-box;
-  /* Forces the entire container to clip like a rounded card */
-  clip-path: inset(0 round 9px);
+  isolation: isolate; /* Forces clipping context */
 }
 
 /* ============================================================
@@ -30,9 +29,8 @@
   width: 100%;
   height: 100%;
   z-index: 1;
-  /* Inherits the 9px curve from the parent */
-  border-radius: inherit;
-  overflow: hidden;
+  border-radius: 9px; /* Inherits the curve */
+  overflow: hidden; /* Clips the image */
 }
 
 .dss-update-banner__visual img {
@@ -41,16 +39,14 @@
   height: 100%;
   object-fit: cover;
   object-position: right center; 
-  /* Forces the image itself to clip its square corners */
-  border-radius: inherit;
-  clip-path: inset(0 round 9px);
+  border-radius: 9px; /* Applies curve directly to the image */
 }
 
 .dss-update-banner__overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
-  border-radius: inherit;
+  border-radius: 9px; /* Matches the curve */
   background: linear-gradient(
     90deg,
     rgba(13, 9, 39, 0.97) 0%,
@@ -74,7 +70,7 @@
 }
 
 /* ============================================================
-   CONTENT LAYOUT
+   CONTENT LAYOUT (Moved Higher)
    ============================================================ */
 
 .dss-update-banner__copy {
