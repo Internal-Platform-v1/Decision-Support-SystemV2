@@ -384,8 +384,9 @@ html[data-theme="dark"] .stage-badge.alt {
 }
 html[data-theme="dark"] .question-card {
     background: linear-gradient(135deg, #1c1c30 0%, #20203a 100%);
-    border-color: #26263f;
-    box-shadow: 0 4px 20px rgba(196, 181, 253, 0.15) !important;
+    border: 1px solid #26263f;
+    border-bottom: 2px solid var(--acc-purple) !important;
+    box-shadow: var(--shadow-card), 0 4px 20px rgba(196, 181, 253, 0.2) !important;
 }
 html[data-theme="dark"] .question-label {
     background: rgba(167,139,250,.16);
