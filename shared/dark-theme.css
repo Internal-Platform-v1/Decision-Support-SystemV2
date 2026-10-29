@@ -41,14 +41,14 @@ html[data-theme="dark"] {
     --cp-pastel: rgba(244,114,182,.14);  --cp-ink: #ffa3c2;
     --cr-pastel: rgba(248,113,113,.14);  --cr-ink: #ff9ea1;
 
-    /* VIVID ACCENT COLORS (for the bottom borders) */
-    --acc-purple: #8b5cf6;
-    --acc-orange: #f97316;
-    --acc-blue:   #3b82f6;
-    --acc-green:  #22c55e;
-    --acc-indigo: #6366f1;
-    --acc-pink:   #ec4899;
-    --acc-red:    #ef4444;
+    /* EXACT SAME PASTEL ACCENT COLORS FROM LIGHT MODE */
+    --acc-purple: #d7c9ff;
+    --acc-orange: #ffd4bd;
+    --acc-blue:   #c9dcff;
+    --acc-green:  #d0f0d2;
+    --acc-indigo: #c5c9ff;
+    --acc-pink:   #ffd0df;
+    --acc-red:    #ffc2c5;
 }
 
 /* ============================================================
@@ -216,14 +216,14 @@ html[data-theme="dark"] .guide-card .description { color: #9a9ab6; }
 html[data-theme="dark"] .arrow-btn,
 html[data-theme="dark"] .open-guide { color: #c4b5fd; }
 
-/* Card Bottom Accents (Vivid colors) */
+/* Card Bottom Accents (Exact Same as Light Mode) */
 html[data-theme="dark"] .quick-card.purple-card:after,
-html[data-theme="dark"] .quick-card::after            { background: #8b5cf6; }
-html[data-theme="dark"] .quick-card.orange-card:after { background: #f97316; }
-html[data-theme="dark"] .quick-card.blue-card:after   { background: #3b82f6; }
-html[data-theme="dark"] .quick-card.green-card:after  { background: #22c55e; }
-html[data-theme="dark"] .quick-card.indigo-card:after { background: #6366f1; }
-html[data-theme="dark"] .quick-card.pink-card:after   { background: #ec4899; }
+html[data-theme="dark"] .quick-card::after            { background: var(--acc-purple); }
+html[data-theme="dark"] .quick-card.orange-card:after { background: var(--acc-orange); }
+html[data-theme="dark"] .quick-card.blue-card:after   { background: var(--acc-blue); }
+html[data-theme="dark"] .quick-card.green-card:after  { background: var(--acc-green); }
+html[data-theme="dark"] .quick-card.indigo-card:after { background: var(--acc-indigo); }
+html[data-theme="dark"] .quick-card.pink-card:after   { background: var(--acc-pink); }
 
 html[data-theme="dark"] .purple-bg { background: rgba(167,139,250,.14); color: #c4b5fd; }
 html[data-theme="dark"] .orange-bg { background: rgba(255,159,77,.14);  color: #ffb26e; }
