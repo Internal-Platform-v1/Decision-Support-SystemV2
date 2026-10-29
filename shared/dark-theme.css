@@ -487,7 +487,9 @@ html[data-theme="dark"] .final-note {
 html[data-theme="dark"] .side-card {
     background: #1c1c30;
     border: 1px solid #26263f;
-    border-bottom: 2px solid var(--acc-purple) !important;
+    border-bottom-width: 2px !important;
+    border-bottom-style: solid !important;
+    border-bottom-color: var(--acc-purple) !important;
     box-shadow: var(--shadow-card);
 }
 html[data-theme="dark"] .side-head { color: #ece9ff; }
@@ -576,7 +578,9 @@ html[data-theme="dark"] .guide-info-list dd { color: #d0d0e4; }
 html[data-theme="dark"] .template-card {
     background: #1c1c30;
     border: 1px solid #26263f;
-    border-bottom: 2px solid var(--acc-purple) !important;
+    border-bottom-width: 2px !important;
+    border-bottom-style: solid !important;
+    border-bottom-color: var(--acc-purple) !important;
 }
 html[data-theme="dark"] .template-card:has(.code-soft)  { border-bottom-color: var(--acc-green) !important; }
 html[data-theme="dark"] .template-card:has(.email-soft) { border-bottom-color: var(--acc-orange) !important; }
@@ -1258,12 +1262,17 @@ html[data-theme="dark"] .section-head p { color: #9a9ab6; }
 html[data-theme="dark"] .section-overline,
 html[data-theme="dark"] .badge { color: #c4b5fd; }
 html[data-theme="dark"] .section-note { color: #8b8ba8; }
+
+/* Scoped FBC cards so they don't override Guide Page cards */
 html[data-theme="dark"] .fbc-panel .work-card,
 html[data-theme="dark"] .fbc-panel .side-card {
     background: #1c1c30;
-    border-color: #26263f;
+    border-top-color: #26263f;
+    border-left-color: #26263f;
+    border-right-color: #26263f;
     color: #d0d0e4;
 }
+
 html[data-theme="dark"] .work-top h4 { color: #ece9ff; }
 html[data-theme="dark"] .guide-icon {
     background: rgba(167,139,250,.16);
