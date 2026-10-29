@@ -1,49 +1,49 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER
+   DSS V2 — SHARED UPDATE BANNER (FIXED FOR 136px GRID)
    ============================================================ */
 
-body .dss-update-banner {
-  position: relative !important;
-  isolation: isolate !important;
-  display: block !important;
-  width: 100% !important;
-  height: 160px !important;
-  min-height: 160px !important;
-  max-height: 160px !important;
-  margin: 0 0 16px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 15px !important;
-  background: #100c29 !important;
-  box-shadow: 0 8px 24px rgba(26, 13, 65, 0.13) !important;
+.dss-update-banner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%; /* Fills the 136px placeholder exactly */
+  min-height: 136px;
+  max-height: 136px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #100c29;
+  box-shadow: 0 3px 14px rgba(48,38,111,.06);
+  box-sizing: border-box;
 }
 
 /* ============================================================
-   BACKGROUND IMAGE & OVERLAY (FIXED TO FIT)
+   BACKGROUND IMAGE & OVERLAY (FIXED)
    ============================================================ */
 
-body .dss-update-banner__visual {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important;
+.dss-update-banner__visual {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
 }
 
-body .dss-update-banner__visual img {
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important; /* Fits the whole image instead of zooming and cropping */
-  object-position: right center !important; /* Pins it to the right */
+/* The fix: Removed the transform scale and used object-fit */
+.dss-update-banner__visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center; /* Keeps the truck visible on the right */
 }
 
-body .dss-update-banner__overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 1 !important;
+.dss-update-banner__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   background: linear-gradient(
     90deg,
     rgba(13, 9, 39, 0.97) 0%,
@@ -52,192 +52,193 @@ body .dss-update-banner__overlay {
     rgba(35, 19, 75, 0.50) 60%,
     rgba(35, 19, 75, 0.12) 75%,
     rgba(20, 10, 40, 0.02) 100%
-  ) !important;
-  pointer-events: none !important;
+  );
+  pointer-events: none;
 }
 
-body .dss-update-banner::after {
-  content: "" !important;
-  position: absolute !important;
-  inset: auto 0 0 !important;
-  z-index: 2 !important;
-  height: 3px !important;
-  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 28%, rgba(139, 92, 246, 0.18) 58%, transparent 78%) !important;
-  pointer-events: none !important;
+.dss-update-banner::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  height: 2px;
+  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 28%, rgba(139, 92, 246, 0.18) 58%, transparent 78%);
+  pointer-events: none;
 }
 
 /* ============================================================
    CONTENT LAYOUT (Moved Higher)
    ============================================================ */
 
-body .dss-update-banner__copy {
-  position: relative !important;
-  z-index: 3 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  justify-content: flex-start !important; 
-  width: 65% !important;
-  min-width: 0 !important;
-  height: 100% !important;
-  padding: 14px 24px !important; /* Shifted up for balance */
-  color: #ffffff !important;
-  box-sizing: border-box !important;
+.dss-update-banner__copy {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start; /* Aligns to top */
+  width: 65%;
+  min-width: 0;
+  height: 100%;
+  padding: 12px 16px; /* Reduced padding to shift content up */
+  color: #ffffff;
+  box-sizing: border-box;
 }
 
 /* ============================================================
    ICON + PRIORITY BADGE
    ============================================================ */
 
-body .dss-update-banner__top {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 0 0 6px 0 !important;
+.dss-update-banner__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 5px 0;
 }
 
-body .dss-update-banner__icon {
-  display: inline-flex !important;
-  flex: 0 0 26px !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 26px !important;
-  height: 26px !important;
-  border-radius: 6px !important;
-  background: #ffffff !important;
-  color: #7029e8 !important;
-  font-size: 12px !important;
+.dss-update-banner__icon {
+  display: inline-flex;
+  flex: 0 0 22px;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #7029e8;
+  font-size: 11px;
 }
 
-body .dss-update-banner__eyebrow-text {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  padding: 3px 8px !important;
-  border-radius: 999px !important;
-  background: rgba(18, 13, 48, 0.48) !important;
-  color: #f5f3ff !important;
-  font-size: 8px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.075em !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
+.dss-update-banner__eyebrow-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(18, 13, 48, 0.48);
+  color: #f5f3ff;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-body .dss-update-banner__eyebrow-text::before {
-  content: "" !important;
-  display: inline-block !important;
-  flex: 0 0 5px !important;
-  width: 5px !important;
-  height: 5px !important;
-  border-radius: 50% !important;
-  background: #22c55e !important;
+.dss-update-banner__eyebrow-text::before {
+  content: "";
+  display: inline-block;
+  flex: 0 0 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #22c55e;
 }
 
-body .dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before { background: #22c55e !important; }
-body .dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before { background: #f59e0b !important; }
-body .dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444 !important; }
+.dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before { background: #22c55e; }
+.dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before { background: #f59e0b; }
+.dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before { background: #ef4444; }
 
 /* ============================================================
-   TITLE & DESCRIPTION (TRUNCATED TO PREVENT OVERFLOW)
+   TITLE & DESCRIPTION (TRUNCATED)
    ============================================================ */
 
-body .dss-update-banner__title {
-  display: block !important;
-  width: 100% !important;
-  margin: 0 0 3px 0 !important;
-  padding: 0 !important;
-  color: #ffffff !important;
-  font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 17px !important;
-  font-weight: 800 !important;
-  line-height: 1.15 !important;
-  letter-spacing: -0.3px !important;
-  white-space: normal !important;
+.dss-update-banner__title {
+  display: -webkit-box;
+  width: 100%;
+  margin: 0 0 3px 0;
+  padding: 0;
+  color: #ffffff;
+  font-family: Inter, -apple-system, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+  white-space: normal;
+  -webkit-line-clamp: 1; /* Forces title to stay on one line */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-body .dss-update-banner__date {
-  display: none !important;
+.dss-update-banner__date {
+  display: none;
 }
 
-body .dss-update-banner__message {
-  display: -webkit-box !important; 
-  width: 100% !important;
-  margin: 0 0 8px 0 !important;
-  padding: 0 !important;
-  color: rgba(248, 247, 255, 0.88) !important;
-  font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 10px !important;
-  font-weight: 400 !important;
-  line-height: 1.35 !important;
-  white-space: normal !important;
-  
-  /* Limits the text to 2 lines with an ellipsis (...) */
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+.dss-update-banner__message {
+  display: -webkit-box;
+  width: 100%;
+  margin: 0 0 8px 0;
+  padding: 0;
+  color: rgba(248, 247, 255, 0.88);
+  font-family: Inter, -apple-system, sans-serif;
+  font-size: 9.5px;
+  font-weight: 400;
+  line-height: 1.35;
+  white-space: normal;
+  -webkit-line-clamp: 2; /* Limits message to 2 lines with ... */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ============================================================
    CALL-TO-ACTION BUTTON
    ============================================================ */
 
-body .dss-update-banner__button {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 5px !important;
-  min-height: 24px !important;
-  padding: 3px 10px !important;
-  border: none !important;
-  border-radius: 5px !important;
-  background: linear-gradient(110deg, #7027e8 0%, #5b21d6 100%) !important;
-  color: #ffffff !important;
-  font-family: Inter, -apple-system, sans-serif !important;
-  font-size: 9px !important;
-  font-weight: 700 !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
-  cursor: pointer !important;
+.dss-update-banner__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 22px;
+  padding: 2px 10px;
+  border: none;
+  border-radius: 4px;
+  background: linear-gradient(110deg, #7027e8 0%, #5b21d6 100%);
+  color: #ffffff;
+  font-family: Inter, -apple-system, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 /* ============================================================
    CAROUSEL DOTS
    ============================================================ */
 
-body .dss-update-banner__dots {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
-  z-index: 4 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  padding: 4px 6px !important;
-  border: 1px solid rgba(255, 255, 255, 0.10) !important;
-  border-radius: 999px !important;
-  background: rgba(19, 13, 43, 0.20) !important;
+.dss-update-banner__dots {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 999px;
+  background: rgba(19, 13, 43, 0.20);
 }
 
-body .dss-update-banner__dot {
-  width: 5px !important;
-  height: 5px !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.58) !important;
-  cursor: pointer !important;
+.dss-update-banner__dot {
+  width: 5px;
+  height: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
 }
 
-body .dss-update-banner__dot.is-active {
-  background: #8b5cf6 !important;
-  transform: scale(1.15) !important;
+.dss-update-banner__dot.is-active {
+  background: #8b5cf6;
+  transform: scale(1.15);
 }
 
 /* ============================================================
-   UPDATE DETAIL MODAL
+   UPDATE DETAIL MODAL (Kept Original)
    ============================================================ */
 
 .dss-update-modal {
