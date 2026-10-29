@@ -1,5 +1,5 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER (FIXED 9PX EDGE & SHRUNK TEXT)
+   DSS V2 — SHARED UPDATE BANNER (GLASS ICON & SHRUNK TEXT)
    ============================================================ */
 
 .dss-update-banner {
@@ -36,8 +36,6 @@
   height: 100%;
   object-fit: cover;
   object-position: right center;
-  
-  /* THE FIX: Zooms the image slightly to perfectly fit the 9px corners */
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -71,22 +69,43 @@
 .dss-update-banner__top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 6px;
 }
 
+/* ============================================================
+   UPGRADED GLASS ICON
+   ============================================================ */
+
 .dss-update-banner__icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
-  color: #6b25df;
-  border-radius: 6px;
-  font-size: 13px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  
+  /* Frosted Glass Effect */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  border-radius: 8px;
+  color: #ffffff; /* White icon for contrast */
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
 }
+
+.dss-update-banner:hover .dss-update-banner__icon {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   PRIORITY BADGE
+   ============================================================ */
 
 .dss-update-banner__eyebrow-text {
   display: inline-flex;
@@ -125,6 +144,10 @@
   background-color: #ef4444;
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
 }
+
+/* ============================================================
+   TEXT & BUTTONS
+   ============================================================ */
 
 .dss-update-banner__title {
   margin: 0 0 4px 0;
