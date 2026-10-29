@@ -385,6 +385,7 @@ html[data-theme="dark"] .stage-badge.alt {
 html[data-theme="dark"] .question-card {
     background: linear-gradient(135deg, #1c1c30 0%, #20203a 100%);
     border-color: #26263f;
+    box-shadow: 0 4px 20px rgba(196, 181, 253, 0.15) !important;
 }
 html[data-theme="dark"] .question-label {
     background: rgba(167,139,250,.16);
@@ -558,7 +559,7 @@ html[data-theme="dark"] .path-step { color: #c4b5fd; }
 html[data-theme="dark"] .path-question { color: #ece9ff; }
 html[data-theme="dark"] .path-answer { color: #9a9ab6; }
 html[data-theme="dark"] .path-card.path-expanded {
-    box-shadow: 0 14px 32px rgba(0,0,0,.6), 0 0 30px rgba(124,58,237,.15);
+    box-shadow: 0 14px 32px rgba(0,0,0,.6), 0 0 30px rgba(196, 181, 253, 0.25) !important;
 }
 html[data-theme="dark"] .guide-middle-column .path-card.path-expanded #pathBox::-webkit-scrollbar-thumb {
     background: #3a3a58;
