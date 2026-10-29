@@ -12,9 +12,9 @@
   padding: 0;
   overflow: hidden;
   border-radius: 16px;
-  background: #1a1528; /* Dark fallback */
+  background: #1a1528;
   box-shadow: 0 10px 30px rgba(20, 10, 40, 0.15);
-  isolation: isolate; /* Forces clipping context */
+  isolation: isolate; /* Crucial for clipping in WebKit */
 }
 
 .dss-update-banner__visual {
@@ -24,8 +24,8 @@
   height: 100%;
   overflow: hidden;
   z-index: 1;
-  border-radius: 16px; /* Forces the container to match the card */
-  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Safari clip fix */
+  border-radius: 16px;
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Safari/Chrome clip fix */
 }
 
 .dss-update-banner__visual img {
@@ -36,11 +36,9 @@
   height: 100%;
   object-fit: cover;
   object-position: right center;
-  transform: translateY(-50%);
   
-  /* THE FIX: Forces the image itself to clip its square corners */
-  border-radius: 16px;
-  clip-path: inset(0 round 16px);
+  /* THE FIX: Zooms the image slightly and centers it */
+  transform: translateY(-50%) scale(1.05);
 }
 
 .dss-update-banner__overlay {
@@ -90,7 +88,6 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Base Priority Pill Style */
 .dss-update-banner__eyebrow-text {
   display: inline-flex;
   align-items: center;
@@ -106,7 +103,6 @@
   backdrop-filter: blur(4px);
 }
 
-/* The Dot inside the Pill */
 .dss-update-banner__eyebrow-text::before {
   content: "";
   display: inline-block;
@@ -117,17 +113,16 @@
   background-color: #ffffff;
 }
 
-/* Dynamic Priority Dots */
 .dss-update-banner[data-priority="normal"] .dss-update-banner__eyebrow-text::before {
-  background-color: #22c55e; /* Green */
+  background-color: #22c55e;
   box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
 .dss-update-banner[data-priority="important"] .dss-update-banner__eyebrow-text::before {
-  background-color: #f59e0b; /* Yellow/Orange */
+  background-color: #f59e0b;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
 }
 .dss-update-banner[data-priority="urgent"] .dss-update-banner__eyebrow-text::before {
-  background-color: #ef4444; /* Red */
+  background-color: #ef4444;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 
@@ -140,7 +135,6 @@
   letter-spacing: -0.5px;
 }
 
-/* Optional: Pink/Purple Gradient text for the title (matches screenshot) */
 .dss-update-banner__title span {
   background: linear-gradient(90deg, #e879f9, #a855f7);
   -webkit-background-clip: text;
@@ -148,7 +142,7 @@
 }
 
 .dss-update-banner__date {
-  display: none; /* Hidden in screenshot layout, but kept for JS */
+  display: none;
 }
 
 .dss-update-banner__message {
@@ -210,7 +204,6 @@
   transform: scale(1.2);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .dss-update-banner__copy {
     width: 70%;
@@ -231,7 +224,7 @@
 }
 
 /* ============================================================
-   UPDATE DETAIL MODAL (Matching Dark Theme)
+   UPDATE DETAIL MODAL
    ============================================================ */
 
 .dss-update-modal {
@@ -300,7 +293,6 @@
   text-transform: uppercase;
 }
 
-/* Modal Priority Colors */
 .dss-update-modal[data-priority="normal"] .dss-update-modal__eyebrow { background: #dcfce7; color: #166534; }
 .dss-update-modal[data-priority="important"] .dss-update-modal__eyebrow { background: #fef3c7; color: #92400e; }
 .dss-update-modal[data-priority="urgent"] .dss-update-modal__eyebrow { background: #fee2e2; color: #991b1b; }
@@ -385,13 +377,6 @@
   cursor: pointer;
 }
 
-.dss-update-modal__nav:hover:not(:disabled) {
-  background: #f5f0ff;
-  border-color: #cbb8ff;
-  color: #4d148c;
-}
-
-.dss-update-modal__nav:disabled { opacity: 0.4; cursor: not-allowed; }
 .dss-update-modal__dots { display: flex; gap: 8px; }
 .dss-update-modal__dot {
   width: 8px; height: 8px; border-radius: 50%; background: #d9d5e6; border: 0; padding: 0; cursor: pointer;
