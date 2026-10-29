@@ -28,8 +28,9 @@ html { scroll-behavior: smooth; }
   --line-3:  #ececf4;
   --row-line:#f0f0f5;
   --shadow:  0 5px 20px rgba(48, 38, 111, .08);
-  --shadow-card: 0 3px 11px rgba(41, 32, 94, .045);
-  --shadow-card-hover: 0 8px 20px rgba(41, 32, 94, .10);
+  /* Added subtle purple glow to match the dark mode vibe */
+  --shadow-card: 0 3px 11px rgba(41, 32, 94, .045), 0 4px 20px rgba(107, 32, 208, 0.06);
+  --shadow-card-hover: 0 8px 20px rgba(41, 32, 94, .10), 0 6px 25px rgba(107, 32, 208, 0.12);
   --shadow-shell: 0 2px 12px rgba(34, 27, 84, .06);
 
   /* — Pastel icon surfaces — */
@@ -369,6 +370,8 @@ img { display: block; max-width: 100%; }
   border: 1px solid var(--line-2);
   border-radius: 8px;
   background: linear-gradient(135deg, #fff 0%, #fbfaff 100%);
+  /* Added this line to give the question card the same shadow as the options */
+  box-shadow: var(--shadow-card); 
 }
 .question-label {
   display: inline-flex;
