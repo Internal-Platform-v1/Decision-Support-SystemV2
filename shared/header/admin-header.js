@@ -30,7 +30,7 @@
 
   const pageMap = {
     dashboard: "../admin-dashboard/admin-dashboard.html",
-    users: "../admin-users/admin-users.html",
+    feedback: "../admin-feedback/admin-feedback.html",   // CHANGED (was: users)
     templates: "../admin-templates/admin-templates.html",
     guides: "../admin-guides/admin-guides.html",
     announcements: "../admin-announcements/admin-announcements.html",
