@@ -1,16 +1,14 @@
 /* ============================================================
    DSS V2 — SHARED FOOTER BEHAVIOR
    Feedback + Get Help
-   Uses the authenticated Firebase session already established
-   by DSS V2. If Firebase is not yet present, it loads the
-   compatible SDK and initializes the same DSS project once.
+   No auth — Firestore rules allow public read/write.
    ============================================================ */
 
 (function () {
   "use strict";
 
   const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fKDr8KwnxJU",
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
     authDomain: "bdgg-database.firebaseapp.com",
     projectId: "bdgg-database",
     storageBucket: "bdgg-database.appspot.com",
@@ -20,7 +18,6 @@
 
   const FIREBASE_SCRIPTS = [
     "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js",
     "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"
   ];
 
@@ -44,34 +41,31 @@
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
       const existing = document.querySelector('script[src="' + src + '"]');
-
-      if (existing) {
-        if (getFirebase()) {
-          resolve();
-          return;
-        }
-
-        existing.addEventListener("load", resolve, { once: true });
-        existing.addEventListener("error", reject, { once: true });
+      if (existing && existing.dataset.fbLoaded === "1") {
+        resolve();
         return;
       }
 
-      const script = document.createElement("script");
-      script.src = src;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = function () {
-        reject(new Error("Unable to load Firebase SDK."));
-      };
+      const script = existing || document.createElement("script");
+      if (!existing) {
+        script.src = src;
+        script.async = true;
+        document.head.appendChild(script);
+      }
 
-      document.head.appendChild(script);
+      script.addEventListener("load", function () {
+        script.dataset.fbLoaded = "1";
+        resolve();
+      }, { once: true });
+
+      script.addEventListener("error", function () {
+        reject(new Error("Unable to load " + src));
+      }, { once: true });
     });
   }
 
-  async function ensureFirebase() {
-    if (firebaseReadyPromise) {
-      return firebaseReadyPromise;
-    }
+  function ensureFirebase() {
+    if (firebaseReadyPromise) return firebaseReadyPromise;
 
     firebaseReadyPromise = (async function () {
       try {
@@ -83,12 +77,8 @@
           throw new Error("Firebase SDK is unavailable.");
         }
 
-        if (typeof firebase.auth !== "function") {
-          await loadScript(FIREBASE_SCRIPTS[1]);
-        }
-
         if (typeof firebase.firestore !== "function") {
-          await loadScript(FIREBASE_SCRIPTS[2]);
+          await loadScript(FIREBASE_SCRIPTS[1]);
         }
 
         if (!firebase.apps.length) {
@@ -105,24 +95,6 @@
     return firebaseReadyPromise;
   }
 
-  function getCurrentProfile() {
-    const profile = window.currentUserProfile || {};
-    const authUser =
-      getFirebase() &&
-      typeof firebase.auth === "function"
-        ? firebase.auth().currentUser
-        : null;
-
-    return {
-      uid: profile.uid || (authUser && authUser.uid) || "",
-      email: profile.email || (authUser && authUser.email) || "",
-      displayName:
-        profile.displayName ||
-        (authUser && authUser.displayName) ||
-        ""
-    };
-  }
-
   function getPageContext() {
     const pageTitle =
       document.title ||
@@ -135,42 +107,8 @@
     };
   }
 
-  function getAuthUser(firebaseInstance) {
-    const current = firebaseInstance.auth().currentUser;
-
-    if (current) {
-      return Promise.resolve(current);
-    }
-
-    return new Promise(function (resolve, reject) {
-      let settled = false;
-
-      const unsubscribe = firebaseInstance.auth().onAuthStateChanged(function (user) {
-        if (settled) return;
-
-        settled = true;
-        unsubscribe();
-
-        if (user) {
-          resolve(user);
-        } else {
-          reject(new Error("AUTH_REQUIRED"));
-        }
-      });
-
-      setTimeout(function () {
-        if (settled) return;
-
-        settled = true;
-        unsubscribe();
-        reject(new Error("AUTH_TIMEOUT"));
-      }, 7000);
-    });
-  }
-
   function setStatus(elementId, message, type) {
     const el = document.getElementById(elementId);
-
     if (!el) return;
 
     el.hidden = !message;
@@ -202,7 +140,6 @@
 
   function openModal(modalId, trigger) {
     const modal = document.getElementById(modalId);
-
     if (!modal) return;
 
     lastFocusedElement = trigger || document.activeElement;
@@ -229,7 +166,6 @@
 
   function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-
     if (!modal) return;
 
     modal.classList.remove("is-open");
@@ -355,10 +291,6 @@
       return "The request reached Firestore, but permission was denied. Please contact the DSS administrator.";
     }
 
-    if (code.includes("unauthenticated")) {
-      return "Your DSS session has expired. Please sign in again.";
-    }
-
     if (
       code.includes("failed-precondition") &&
       String(error.message || "").toLowerCase().includes("offline")
@@ -404,15 +336,10 @@
 
     try {
       const firebaseInstance = await ensureFirebase();
-      const user = await getAuthUser(firebaseInstance);
-      const profile = getCurrentProfile();
       const page = getPageContext();
 
       await firebaseInstance.firestore().collection("feedback").add({
-        uid: user.uid,
-        userId: user.uid,
-        email: user.email || profile.email || "",
-        name: name || profile.displayName || "Anonymous",
+        name: name,
         rating: selectedRating,
         comment: comment,
         page: page.page,
@@ -434,22 +361,7 @@
       }, 900);
     } catch (error) {
       setButtonLoading(button, false);
-
-      if (error && error.message === "AUTH_REQUIRED") {
-        setStatus(
-          statusId,
-          "You must be signed in to send feedback.",
-          "error"
-        );
-      } else if (error && error.message === "AUTH_TIMEOUT") {
-        setStatus(
-          statusId,
-          "We could not confirm your DSS session. Please refresh and try again.",
-          "error"
-        );
-      } else {
-        setStatus(statusId, describeFirestoreError(error), "error");
-      }
+      setStatus(statusId, describeFirestoreError(error), "error");
     }
   }
 
@@ -458,6 +370,9 @@
 
     const statusId = "helpStatus";
     const button = document.getElementById("sendHelpBtn");
+
+    const name =
+      document.getElementById("helpName")?.value.trim() || "";
 
     const category =
       document.getElementById("helpCategory")?.value.trim() || "";
@@ -490,15 +405,10 @@
 
     try {
       const firebaseInstance = await ensureFirebase();
-      const user = await getAuthUser(firebaseInstance);
-      const profile = getCurrentProfile();
       const page = getPageContext();
 
       await firebaseInstance.firestore().collection("help_requests").add({
-        uid: user.uid,
-        userId: user.uid,
-        email: user.email || profile.email || "",
-        name: profile.displayName || "User",
+        name: name,
         category: category,
         subject: subject,
         message: message,
@@ -522,22 +432,7 @@
       }, 900);
     } catch (error) {
       setButtonLoading(button, false);
-
-      if (error && error.message === "AUTH_REQUIRED") {
-        setStatus(
-          statusId,
-          "You must be signed in to send a help request.",
-          "error"
-        );
-      } else if (error && error.message === "AUTH_TIMEOUT") {
-        setStatus(
-          statusId,
-          "We could not confirm your DSS session. Please refresh and try again.",
-          "error"
-        );
-      } else {
-        setStatus(statusId, describeFirestoreError(error), "error");
-      }
+      setStatus(statusId, describeFirestoreError(error), "error");
     }
   }
 
@@ -617,24 +512,8 @@
     setupRating();
     setupCharacterCounter("feedbackText", "feedbackCharCount", 1000);
     setupCharacterCounter("helpMessage", "helpCharCount", 1500);
-
-    /*
-     * If the shared header has already loaded the user's profile,
-     * populate the optional feedback name automatically.
-     */
-    const profile = getCurrentProfile();
-    const feedbackName = document.getElementById("feedbackName");
-
-    if (feedbackName && profile.displayName) {
-      feedbackName.value = profile.displayName;
-    }
   }
 
-  /*
-   * Footer HTML is inserted asynchronously by the shared
-   * footer loader, so support both immediate and loader-driven
-   * initialization.
-   */
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
   } else {
@@ -642,10 +521,6 @@
   }
 
   document.addEventListener("footerLoaded", function () {
-    /*
-     * Guard against duplicate initialization when a loader
-     * dispatches its completion event.
-     */
     if (document.body.dataset.footerModalInitialized === "true") {
       return;
     }
