@@ -611,3 +611,33 @@ body[data-admin-page="feedback"] .admin-shell .admin-main {
   }
   .fb-spinner { animation-duration: 2s; }
 }
+
+/* ---------- Admin reply composer (help drawer) ---------- */
+.fb-reply-textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 12px;
+  border: 1px solid #e1e1ee;
+  border-radius: 8px;
+  background: #faf9ff;
+  color: #33345f;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.fb-reply-textarea:hover { border-color: #d6d2ea; }
+.fb-reply-textarea:focus {
+  border-color: #7441d5;
+  box-shadow: 0 0 0 3px rgba(107,32,208,.09);
+  background: #fff;
+}
+
+.fb-reply-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
