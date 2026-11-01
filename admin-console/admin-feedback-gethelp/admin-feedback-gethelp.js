@@ -1,7 +1,7 @@
 /* ============================================================
    DSS V2 — ADMIN · FEEDBACK & GET HELP
    Reads:  feedback, help_requests  (Firestore)
-   Writes: help_requests.status
+   Writes: help_requests.status, help_requests.adminReply
    No auth — Firestore rules allow public read/write.
    ============================================================ */
 (() => {
@@ -49,8 +49,6 @@
   };
 
   /* ---------- Firebase loader ---------- */
-  // Shared in-flight promise so concurrent callers never race
-  // past the firestore script load (fixes "fb.firestore is not a function").
   let fbPromise = null;
 
   function getFirebase() {
@@ -262,7 +260,12 @@
       const snap = await q.get();
       const items = snap.docs.map((doc) => {
         const data = doc.data();
-        return { id: doc.id, ...data, createdAt: toDate(data.createdAt) };
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: toDate(data.createdAt),
+          adminReplyAt: toDate(data.adminReplyAt)
+        };
       });
 
       bucket.items = more ? bucket.items.concat(items) : items;
@@ -440,6 +443,9 @@
     const message = item.message || "";
     const category = item.category || "Other";
     const createdLabel = formatRelative(item.createdAt);
+    const repliedBadge = item.adminReply
+      ? `<span class="fb-badge fb-badge-page" title="Reply sent">Replied</span>`
+      : "";
 
     return `
       <article class="fb-card" data-id="${escapeHtml(item.id)}" role="button" tabindex="0">
@@ -457,6 +463,7 @@
           <div class="fb-card-footer">
             <span class="fb-badge fb-badge-category">${escapeHtml(category)}</span>
             <span class="fb-badge fb-badge-status fb-badge-status-${status}">${escapeHtml(STATUS_LABELS[status])}</span>
+            ${repliedBadge}
           </div>
         </div>
       </article>`;
@@ -490,6 +497,7 @@
       sub.textContent = item.name || "Unknown user";
       body.innerHTML = renderHelpDrawer(item);
       bindHelpStatusActions(item);
+      bindHelpReplyActions(item);
     }
 
     drawer.hidden = false;
@@ -550,6 +558,8 @@
     const pageUrl = item.pageUrl || "";
     const submitted = formatFullDate(item.createdAt);
     const message = item.message || "No message provided.";
+    const existingReply = item.adminReply || "";
+    const repliedLabel = item.adminReplyAt ? formatFullDate(item.adminReplyAt) : "";
 
     return `
       <div class="fb-detail-status-group">
@@ -568,6 +578,23 @@
       <div class="fb-detail-block">
         <label>Message</label>
         <p>${escapeHtml(message)}</p>
+      </div>
+
+      <div class="fb-detail-block">
+        <label>Reply to user</label>
+        <textarea class="fb-reply-textarea" data-admin-reply
+          placeholder="Write a clarification or update for the user…">${escapeHtml(existingReply)}</textarea>
+        <div class="fb-reply-actions">
+          <button type="button" class="fb-btn fb-btn-primary" data-save-reply>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+            <span>${existingReply ? "Update reply" : "Send reply"}</span>
+          </button>
+        </div>
+        <p class="fb-status-hint" data-reply-hint>${
+          existingReply
+            ? `Last reply sent ${escapeHtml(repliedLabel)}. Editing will update what the user sees.`
+            : "Your reply will appear in the user's My Requests tab."
+        }</p>
       </div>
 
       <div class="fb-detail-block">
@@ -633,6 +660,64 @@
           container.querySelectorAll("button").forEach((b) => (b.disabled = false));
         }
       });
+    });
+  }
+
+  function bindHelpReplyActions(item) {
+    const textarea = document.querySelector("#fbDrawerBody [data-admin-reply]");
+    const saveBtn = document.querySelector("#fbDrawerBody [data-save-reply]");
+    const hint = document.querySelector("#fbDrawerBody [data-reply-hint]");
+    if (!textarea || !saveBtn) return;
+
+    saveBtn.addEventListener("click", async () => {
+      const text = textarea.value.trim();
+      const current = (item.adminReply || "").trim();
+
+      if (text === current) return;
+
+      saveBtn.disabled = true;
+      if (hint) hint.textContent = text ? "Saving…" : "Clearing…";
+
+      try {
+        const fb = await ensureFirebase();
+        const ref = fb.firestore().collection("help_requests").doc(item.id);
+
+        if (text) {
+          await ref.update({
+            adminReply: text,
+            adminReplyAt: fb.firestore.FieldValue.serverTimestamp(),
+            hasAdminReply: true
+          });
+          item.adminReply = text;
+          item.adminReplyAt = new Date();
+          item.hasAdminReply = true;
+          const span = saveBtn.querySelector("span");
+          if (span) span.textContent = "Update reply";
+          if (hint) hint.textContent = "Reply saved. The user will see it next time they open My Requests.";
+          showToast("Reply sent to user.", "success");
+        } else {
+          await ref.update({
+            adminReply: fb.firestore.FieldValue.delete(),
+            adminReplyAt: fb.firestore.FieldValue.delete(),
+            hasAdminReply: false
+          });
+          delete item.adminReply;
+          delete item.adminReplyAt;
+          item.hasAdminReply = false;
+          const span = saveBtn.querySelector("span");
+          if (span) span.textContent = "Send reply";
+          if (hint) hint.textContent = "Reply cleared.";
+          showToast("Reply cleared.", "success");
+        }
+
+        renderHelp();
+      } catch (error) {
+        console.error("[admin-feedback] reply save failed:", error);
+        showToast(describeError(error), "error");
+        if (hint) hint.textContent = "Could not save. Please try again.";
+      } finally {
+        saveBtn.disabled = false;
+      }
     });
   }
 
@@ -761,7 +846,7 @@
         showToast("No help requests to export.", "error");
         return;
       }
-      const rows = [["Name", "Email", "Subject", "Category", "Status", "Page", "Message", "Submitted"]];
+      const rows = [["Name", "Email", "Subject", "Category", "Status", "Page", "Message", "Admin Reply", "Submitted"]];
       items.forEach((i) => rows.push([
         i.name || "",
         i.email || "",
@@ -770,6 +855,7 @@
         STATUS_LABELS[statusOf(i)] || "",
         i.pageTitle || "",
         i.message || "",
+        i.adminReply || "",
         i.createdAt ? formatFullDate(i.createdAt) : ""
       ]));
       downloadCsv(`help-requests-${stamp}.csv`, rows);
