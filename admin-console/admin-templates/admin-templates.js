@@ -36,6 +36,7 @@
     renderInProgress: false,
     isFullscreen: false,
     hoverNodeKey: null,
+    hoverSuppressedKey: null,
     fsEditorOffset: { x: 0, y: 0 }
   };
 
@@ -542,6 +543,11 @@
     const meta = state.graph?.nodes.get(key);
     if (!meta) return;
 
+    // Close the hover card and don't let it pop back over the node whose
+    // details are now shown in the editor panel / fullscreen modal.
+    hideHoverTip();
+    state.hoverSuppressedKey = key;
+
     if (meta.isLeaf) {
       selectRecommendation(key);
       if (state.isFullscreen) openFullscreenEditor(key);
@@ -590,6 +596,8 @@
 
   function selectRecommendation(key) {
     if (!key) return;
+    hideHoverTip();
+    state.hoverSuppressedKey = key;
     state.activeRecommendationKey = key;
 
     document.querySelectorAll(".at-rec-item").forEach(btn => {
@@ -973,6 +981,13 @@
   }
 
   function showHoverTip(key, event) {
+    // The clicked node already has its details open — no hover card for it.
+    if (state.hoverSuppressedKey === key) return;
+    // Hovering a different node releases the suppression.
+    if (state.hoverSuppressedKey && state.hoverSuppressedKey !== key) {
+      state.hoverSuppressedKey = null;
+    }
+
     const meta = state.graph?.nodes.get(key);
     if (!meta) return;
     const node = meta.node || {};
