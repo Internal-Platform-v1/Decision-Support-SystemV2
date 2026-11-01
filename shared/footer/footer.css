@@ -1079,3 +1079,35 @@
   font-size: 8px;
   font-weight: 500;
 }
+
+/* ============================================================
+   GET HELP — LOCKED MODAL SIZE ACROSS TABS
+   ============================================================ */
+
+/* Fixed-height frame so New Request ↔ My Requests don't resize the modal */
+#helpModal .footer-modal-card {
+  height: min(92vh, 680px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header area stays fixed — the panel below scrolls instead */
+#helpModal .modal-accent,
+#helpModal .modal-header,
+#helpModal .modal-intro,
+#helpModal .help-tabs {
+  flex-shrink: 0;
+}
+
+/* Panels fill the remaining space and scroll internally */
+#helpModal .help-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Remove the old max-height cap that made My Requests shorter than the form */
+#helpModal .help-panel[data-help-panel="mine"] {
+  max-height: none;
+}
