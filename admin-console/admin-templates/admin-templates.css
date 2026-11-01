@@ -619,8 +619,8 @@ body[data-admin-page="templates"] .admin-hero { display: none !important; }
   max-width: 340px;
   padding: 11px 13px;
   border-radius: 10px;
-  background: #17174b;
-  color: #e8e8f0;
+  background: #1b1b56;
+  color: #f5f4fc;
   font-size: 11px;
   line-height: 1.5;
   box-shadow: 0 14px 32px rgba(23,23,75,.28);
@@ -635,26 +635,31 @@ body[data-admin-page="templates"] .admin-hero { display: none !important; }
   font-weight: 800;
   letter-spacing: .06em;
 }
-.at-hover-tip .at-tip-badge.decision { background: #3b2e8a; color: #c9beff; }
-.at-hover-tip .at-tip-badge.leaf { background: #2c5c3a; color: #b7f0c8; }
+.at-hover-tip .at-tip-badge.decision { background: #4a3ba8; color: #e4ddff; }
+.at-hover-tip .at-tip-badge.leaf { background: #2f6a44; color: #d6ffe5; }
 .at-hover-tip .at-tip-key {
-  color: #9d9ac8;
+  color: #c6c3e8;
   font-family: "Consolas", "Monaco", monospace;
   font-size: 9.5px;
 }
 .at-hover-tip .at-tip-text {
   font-weight: 700;
-  color: #fff;
+  color: #ffffff;
   font-size: 12px;
   line-height: 1.4;
   margin-bottom: 6px;
   white-space: pre-line;
 }
-.at-hover-tip .at-tip-help { color: #c4c2dc; font-size: 10.5px; margin-bottom: 6px; white-space: pre-line; }
+.at-hover-tip .at-tip-help {
+  color: #e6e4f6;
+  font-size: 10.5px;
+  margin-bottom: 6px;
+  white-space: pre-line;
+}
 .at-hover-tip .at-tip-note {
-  color: #ffd9a8;
-  background: rgba(255,102,0,.1);
-  border-left: 3px solid #ff6600;
+  color: #ffe4c2;
+  background: rgba(255,138,61,.14);
+  border-left: 3px solid #ff8a3d;
   padding: 6px 8px;
   border-radius: 5px;
   font-size: 10px;
@@ -664,8 +669,8 @@ body[data-admin-page="templates"] .admin-hero { display: none !important; }
 .at-hover-tip .at-tip-choices-title {
   margin-top: 6px;
   padding-top: 6px;
-  border-top: 1px solid #2a2a5e;
-  color: #9d9ac8;
+  border-top: 1px solid #3a3a7c;
+  color: #c6c3e8;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .08em;
@@ -673,14 +678,14 @@ body[data-admin-page="templates"] .admin-hero { display: none !important; }
 }
 .at-hover-tip .at-tip-choice { margin-top: 5px; }
 .at-hover-tip .at-tip-choice-label { color: #fff; font-weight: 700; font-size: 10.5px; }
-.at-hover-tip .at-tip-choice-desc { color: #b9b7d2; font-size: 10px; margin-top: 1px; }
+.at-hover-tip .at-tip-choice-desc { color: #dedcf2; font-size: 10px; margin-top: 1px; }
 .at-hover-tip .at-tip-choice code {
   display: inline-block;
   margin-top: 2px;
   padding: 1px 5px;
   border-radius: 4px;
-  background: #2a2a5e;
-  color: #a6a3ee;
+  background: #34347a;
+  color: #d3d0ff;
   font-size: 9px;
   font-family: "Consolas", "Monaco", monospace;
 }
