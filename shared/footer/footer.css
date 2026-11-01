@@ -861,3 +861,221 @@
   border-color: #7040d2;
   box-shadow: 0 0 0 3px rgba(107,32,208,.085);
 }
+
+/* ============================================================
+   GET HELP — TABS + MY REQUESTS PANEL
+   ============================================================ */
+
+/* Small badge on the Get Help footer button */
+#footerHelpBtn { position: relative; }
+.footer-help-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 20px;
+  background: #ff6600;
+  color: #fff;
+  font-size: 7px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #4d148c;
+  pointer-events: none;
+}
+.footer-help-badge[hidden] { display: none !important; }
+
+/* Tabs */
+.help-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 20px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eeeaf6;
+}
+.help-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 0;
+  background: none;
+  color: #55567a;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s ease, border-color .15s ease;
+}
+.help-tab:hover { color: #4d148c; }
+.help-tab.is-active {
+  color: #4d148c;
+  border-bottom-color: #6b20d0;
+}
+.help-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 5px;
+  border-radius: 20px;
+  background: #ff6600;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+.help-tab-badge[hidden] { display: none !important; }
+
+/* Panels */
+.help-panel[data-help-panel="mine"] {
+  padding: 0 20px 18px;
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+}
+
+/* Empty / loading states inside the My Requests panel */
+.my-requests-empty,
+.my-requests-loading {
+  padding: 28px 16px;
+  text-align: center;
+  color: #777a99;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 500;
+  border: 1px dashed #e1dfee;
+  border-radius: 10px;
+}
+.my-requests-empty strong {
+  display: block;
+  color: #10134f;
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.my-requests-loading {
+  padding: 30px 16px;
+}
+
+/* Request cards */
+.my-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.my-request-card {
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #eceaf3;
+  border-radius: 10px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.my-request-card:hover {
+  border-color: #dad3f0;
+  box-shadow: 0 4px 12px rgba(23,20,65,.05);
+}
+.my-request-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.my-request-card-title {
+  color: #10134f;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.3;
+  word-break: break-word;
+}
+.my-request-card-date {
+  color: #9a9cb5;
+  font-size: 8px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.my-request-card-meta {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.my-request-card-message {
+  margin: 0;
+  color: #4a4b70;
+  font-size: 10px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* Status + category pills */
+.my-request-status {
+  display: inline-flex;
+  align-items: center;
+  height: 17px;
+  padding: 0 7px;
+  border-radius: 20px;
+  font-size: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.my-request-status.is-open        { background: #fff1e0; color: #b35400; }
+.my-request-status.is-in_progress { background: #e7efff; color: #2557c9; }
+.my-request-status.is-resolved    { background: #e5f7ee; color: #17945c; }
+.my-request-status.is-closed      { background: #eceaf3; color: #55567a; }
+
+.my-request-category {
+  display: inline-flex;
+  align-items: center;
+  height: 17px;
+  padding: 0 7px;
+  border-radius: 20px;
+  background: #f1eefb;
+  color: #4d148c;
+  font-size: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Admin reply block inside a request card */
+.my-request-reply {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #f6f3fd;
+  border-left: 3px solid #6b20d0;
+  border-radius: 0 8px 8px 0;
+}
+.my-request-reply-label {
+  display: block;
+  color: #6b20d0;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.my-request-reply p {
+  margin: 0;
+  color: #30345d;
+  font-size: 10px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.my-request-reply-time {
+  display: block;
+  margin-top: 6px;
+  color: #9a9cb5;
+  font-size: 8px;
+  font-weight: 500;
+}
