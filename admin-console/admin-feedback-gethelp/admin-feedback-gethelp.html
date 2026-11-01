@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback &amp; Get Help · Admin · DSS V2</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../../shared/header/admin-header.css">
+  <link rel="stylesheet" href="admin-feedback.css">
+</head>
+
+<body data-admin-page="feedback" data-admin-title="Feedback &amp; Get Help">
+
+  <!-- Shared admin header (sidebar + top bar) -->
+  <div id="adminHeader"></div>
+
+  <main class="fb-main">
+
+    <!-- Page head -->
+    <header class="fb-page-head">
+      <div class="fb-page-title">
+        <span class="fb-eyebrow">ADMIN CONSOLE</span>
+        <h1>Feedback &amp; Get Help</h1>
+        <p>Review employee feedback and manage help inquiries submitted across DSS V2.</p>
+      </div>
+      <div class="fb-head-actions">
+        <button type="button" class="fb-btn fb-btn-ghost" id="fbRefreshBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 5v5h5"/></svg>
+          <span>Refresh</span>
+        </button>
+        <button type="button" class="fb-btn fb-btn-primary" id="fbExportBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Export CSV</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats -->
+    <section class="fb-stats" aria-label="Overview statistics">
+      <article class="fb-stat">
+        <div class="fb-stat-icon fb-stat-purple">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.2c0 3.8-3.7 6.8-8.3 6.8-1 0-2-.1-2.9-.4L4 20l1.1-3.2C3.8 15.6 3 13.9 3 12c0-3.8 3.7-6.8 8.3-6.8S20 7.4 20 11.2Z"/></svg>
+        </div>
+        <div class="fb-stat-body">
+          <span class="fb-stat-label">Total Feedback</span>
+          <strong class="fb-stat-value" id="statTotalFeedback">—</strong>
+          <span class="fb-stat-hint" id="statFeedbackHint">Across all pages</span>
+        </div>
+      </article>
+
+      <article class="fb-stat">
+        <div class="fb-stat-icon fb-stat-orange">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.9 5.9 6.5.9-4.7 4.6 1.1 6.4L12 17.8l-5.8 3-1.1-6.4L.4 9.8l6.5-.9Z"/></svg>
+        </div>
+        <div class="fb-stat-body">
+          <span class="fb-stat-label">Average Rating</span>
+          <strong class="fb-stat-value" id="statAvgRating">—</strong>
+          <span class="fb-stat-hint" id="statAvgHint">No data yet</span>
+        </div>
+      </article>
+
+      <article class="fb-stat">
+        <div class="fb-stat-icon fb-stat-blue">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.2a2.5 2.5 0 0 1 4.8 1c0 1.9-2.5 2.1-2.5 3.6"/><path d="M12 17.1h.01"/></svg>
+        </div>
+        <div class="fb-stat-body">
+          <span class="fb-stat-label">Open Help Requests</span>
+          <strong class="fb-stat-value" id="statOpenHelp">—</strong>
+          <span class="fb-stat-hint" id="statOpenHint">Awaiting reply or in progress</span>
+        </div>
+      </article>
+
+      <article class="fb-stat">
+        <div class="fb-stat-icon fb-stat-green">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="fb-stat-body">
+          <span class="fb-stat-label">Resolved Requests</span>
+          <strong class="fb-stat-value" id="statResolvedHelp">—</strong>
+          <span class="fb-stat-hint" id="statResolvedHint">Successfully closed</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Tabs -->
+    <div class="fb-tabs" role="tablist" aria-label="Data views">
+      <button type="button" class="fb-tab is-active" data-tab="feedback" role="tab" aria-selected="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.2c0 3.8-3.7 6.8-8.3 6.8-1 0-2-.1-2.9-.4L4 20l1.1-3.2C3.8 15.6 3 13.9 3 12c0-3.8 3.7-6.8 8.3-6.8S20 7.4 20 11.2Z"/></svg>
+        <span>Feedback</span>
+        <span class="fb-tab-count" id="tabCountFeedback">0</span>
+      </button>
+      <button type="button" class="fb-tab" data-tab="help" role="tab" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.2a2.5 2.5 0 0 1 4.8 1c0 1.9-2.5 2.1-2.5 3.6"/><path d="M12 17.1h.01"/></svg>
+        <span>Get Help</span>
+        <span class="fb-tab-count" id="tabCountHelp">0</span>
+      </button>
+    </div>
+
+    <!-- Feedback panel -->
+    <section class="fb-panel" data-panel="feedback">
+      <div class="fb-toolbar">
+        <div class="fb-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input type="search" id="fbFeedbackSearch" placeholder="Search name, email, or comment…" autocomplete="off">
+        </div>
+        <select class="fb-select" id="fbFeedbackRating" aria-label="Filter by rating">
+          <option value="">All ratings</option>
+          <option value="5">5 stars</option>
+          <option value="4">4 stars</option>
+          <option value="3">3 stars</option>
+          <option value="2">2 stars</option>
+          <option value="1">1 star</option>
+        </select>
+        <select class="fb-select" id="fbFeedbackSort" aria-label="Sort feedback">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="highest">Highest rating</option>
+          <option value="lowest">Lowest rating</option>
+        </select>
+      </div>
+
+      <div class="fb-list" id="fbFeedbackList" role="region" aria-label="Feedback list"></div>
+
+      <div class="fb-loadmore-wrap">
+        <button type="button" class="fb-btn fb-btn-ghost" id="fbFeedbackLoadMore" hidden>Load more</button>
+      </div>
+    </section>
+
+    <!-- Help panel -->
+    <section class="fb-panel" data-panel="help" hidden>
+      <div class="fb-toolbar">
+        <div class="fb-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input type="search" id="fbHelpSearch" placeholder="Search subject, message, or email…" autocomplete="off">
+        </div>
+        <select class="fb-select" id="fbHelpCategory" aria-label="Filter by category">
+          <option value="">All categories</option>
+          <option value="Guide / Decision">Guide / Decision</option>
+          <option value="Website / Navigation">Website / Navigation</option>
+          <option value="Technical Issue">Technical Issue</option>
+          <option value="Incorrect Information">Incorrect Information</option>
+          <option value="Access / Login">Access / Login</option>
+          <option value="Other">Other</option>
+        </select>
+        <select class="fb-select" id="fbHelpStatus" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+        <select class="fb-select" id="fbHelpSort" aria-label="Sort help requests">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+
+      <div class="fb-list" id="fbHelpList" role="region" aria-label="Help requests list"></div>
+
+      <div class="fb-loadmore-wrap">
+        <button type="button" class="fb-btn fb-btn-ghost" id="fbHelpLoadMore" hidden>Load more</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Detail drawer -->
+  <div class="fb-drawer" id="fbDrawer" hidden aria-hidden="true">
+    <div class="fb-drawer-backdrop" data-close-drawer></div>
+    <aside class="fb-drawer-card" role="dialog" aria-modal="true" aria-labelledby="fbDrawerTitle">
+      <header class="fb-drawer-head">
+        <div class="fb-drawer-title-wrap">
+          <div class="fb-drawer-avatar" id="fbDrawerAvatar">--</div>
+          <div class="fb-drawer-titles">
+            <span class="fb-drawer-kicker" id="fbDrawerKicker">FEEDBACK</span>
+            <h2 id="fbDrawerTitle">—</h2>
+            <p class="fb-drawer-sub" id="fbDrawerSub">—</p>
+          </div>
+        </div>
+        <button type="button" class="fb-drawer-close" data-close-drawer aria-label="Close details">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>
+        </button>
+      </header>
+      <div class="fb-drawer-body" id="fbDrawerBody"></div>
+    </aside>
+  </div>
+
+  <div class="fb-toast" id="fbToast" role="status" aria-live="polite"></div>
+
+  <script src="../../shared/header/admin-header.js"></script>
+  <script src="admin-feedback.js"></script>
+</body>
+</html>
