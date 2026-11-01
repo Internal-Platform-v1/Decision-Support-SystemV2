@@ -2,13 +2,14 @@
    DSS V2 — ADMIN · FEEDBACK & GET HELP
    Reads:  feedback, help_requests  (Firestore)
    Writes: help_requests.status
+   No auth — Firestore rules allow public read/write.
    ============================================================ */
 (() => {
   "use strict";
 
   /* ---------- Config ---------- */
   const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fKDr8KwnxJU",
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
     authDomain: "bdgg-database.firebaseapp.com",
     projectId: "bdgg-database",
     storageBucket: "bdgg-database.appspot.com",
@@ -18,7 +19,6 @@
 
   const FIREBASE_SCRIPTS = [
     "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js",
     "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"
   ];
 
@@ -76,32 +76,11 @@
 
     if (!getFirebase()) await loadScript(FIREBASE_SCRIPTS[0]);
     if (!getFirebase()) throw new Error("Firebase SDK unavailable.");
-    if (typeof firebase.auth !== "function") await loadScript(FIREBASE_SCRIPTS[1]);
-    if (typeof firebase.firestore !== "function") await loadScript(FIREBASE_SCRIPTS[2]);
+    if (typeof firebase.firestore !== "function") await loadScript(FIREBASE_SCRIPTS[1]);
     if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
 
     state.firebase = firebase;
     return firebase;
-  }
-
-  function waitForAuth(fb, timeout = 6000) {
-    const auth = fb.auth();
-    if (auth.currentUser) return Promise.resolve(auth.currentUser);
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const unsub = auth.onAuthStateChanged((user) => {
-        if (settled) return;
-        settled = true;
-        unsub();
-        user ? resolve(user) : reject(new Error("AUTH_REQUIRED"));
-      });
-      setTimeout(() => {
-        if (settled) return;
-        settled = true;
-        unsub();
-        reject(new Error("AUTH_TIMEOUT"));
-      }, timeout);
-    });
   }
 
   /* ---------- Helpers ---------- */
@@ -177,9 +156,9 @@
   function describeError(error) {
     if (!error) return "Something went wrong.";
     const code = String(error.code || "").toLowerCase();
-    if (code.includes("permission-denied")) return "Permission denied. Ask your administrator to grant read access.";
-    if (code.includes("unauthenticated")) return "Your session expired. Please sign in again.";
+    if (code.includes("permission-denied")) return "Permission denied. Check your Firestore rules.";
     if (code.includes("unavailable") || code.includes("network")) return "Network unavailable. Please try again.";
+    if (code.includes("failed-precondition")) return "This query needs a Firestore index. Check the console for the link.";
     return error.message || "Something went wrong.";
   }
 
@@ -210,7 +189,7 @@
         <div class="fb-empty">
           <div class="fb-empty-icon"><svg viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></div>
           <strong>Couldn't load ${label}</strong>
-          <p>Check your connection, make sure you're signed in, then tap Refresh.</p>
+          <p>Check your connection, then tap Refresh.</p>
         </div>`;
     }
   }
@@ -224,7 +203,6 @@
 
     try {
       const fb = await ensureFirebase();
-      await waitForAuth(fb);
       const db = fb.firestore();
 
       let q = db.collection("feedback").orderBy("createdAt", "desc").limit(PAGE_SIZE);
@@ -264,7 +242,6 @@
 
     try {
       const fb = await ensureFirebase();
-      await waitForAuth(fb);
       const db = fb.firestore();
 
       let q = db.collection("help_requests").orderBy("createdAt", "desc").limit(PAGE_SIZE);
@@ -505,7 +482,6 @@
 
     drawer.hidden = false;
     drawer.setAttribute("aria-hidden", "false");
-    // force reflow so the transition kicks in
     void drawer.offsetHeight;
     drawer.classList.add("is-open");
     document.body.style.overflow = "hidden";
@@ -611,21 +587,17 @@
 
         try {
           const fb = await ensureFirebase();
-          await waitForAuth(fb);
           await fb.firestore().collection("help_requests").doc(item.id).update({
             status: next,
             updatedAt: fb.firestore.FieldValue.serverTimestamp()
           });
 
-          // update local model
           item.status = next;
 
-          // update buttons
           container.querySelectorAll("[data-status]").forEach((b) => {
             b.classList.toggle("is-active", b.dataset.status === next);
           });
 
-          // update badge in drawer
           const group = document.querySelector("#fbDrawerBody .fb-detail-status-group");
           const badge = group && group.querySelector(".fb-badge-status");
           if (badge) {
@@ -636,14 +608,12 @@
           if (hint) hint.textContent = `Status set to ${STATUS_LABELS[next]}.`;
           showToast(`Status updated to ${STATUS_LABELS[next]}.`, "success");
 
-          // re-render list + stats to keep everything consistent
           renderHelp();
           updateStats();
         } catch (error) {
           console.error("[admin-feedback] status update failed:", error);
           if (hint) hint.textContent = "Could not save. Please try again.";
           showToast(describeError(error), "error");
-          // revert active button
           container.querySelectorAll("[data-status]").forEach((b) => {
             b.classList.toggle("is-active", b.dataset.status === current);
           });
@@ -720,7 +690,6 @@
     const btn = document.getElementById("fbRefreshBtn");
     if (btn) btn.disabled = true;
 
-    // reset both buckets
     state.feedback.items = [];
     state.feedback.cursor = null;
     state.feedback.loaded = false;
@@ -798,12 +767,10 @@
 
   /* ---------- Event wiring ---------- */
   function bindEvents() {
-    // Tabs
     document.querySelectorAll(".fb-tab").forEach((btn) => {
       btn.addEventListener("click", () => switchTab(btn.dataset.tab));
     });
 
-    // Feedback filters
     const fbSearch = document.getElementById("fbFeedbackSearch");
     const fbRating = document.getElementById("fbFeedbackRating");
     const fbSort = document.getElementById("fbFeedbackSort");
@@ -827,7 +794,6 @@
       });
     }
 
-    // Help filters
     const hSearch = document.getElementById("fbHelpSearch");
     const hCategory = document.getElementById("fbHelpCategory");
     const hStatus = document.getElementById("fbHelpStatus");
@@ -858,19 +824,16 @@
       });
     }
 
-    // Load more
     const fbMore = document.getElementById("fbFeedbackLoadMore");
     if (fbMore) fbMore.addEventListener("click", () => loadFeedback(true));
     const hMore = document.getElementById("fbHelpLoadMore");
     if (hMore) hMore.addEventListener("click", () => loadHelp(true));
 
-    // Refresh / export
     const refreshBtn = document.getElementById("fbRefreshBtn");
     if (refreshBtn) refreshBtn.addEventListener("click", refreshAll);
     const exportBtn = document.getElementById("fbExportBtn");
     if (exportBtn) exportBtn.addEventListener("click", exportCsv);
 
-    // Drawer close (backdrop + X)
     document.querySelectorAll("[data-close-drawer]").forEach((el) => {
       el.addEventListener("click", closeDrawer);
     });
@@ -882,7 +845,6 @@
   /* ---------- Init ---------- */
   function init() {
     bindEvents();
-    // Kick both loads in parallel so stats + tab counts populate
     loadFeedback();
     loadHelp();
   }
