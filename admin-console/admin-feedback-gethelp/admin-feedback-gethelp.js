@@ -49,6 +49,10 @@
   };
 
   /* ---------- Firebase loader ---------- */
+  // Shared in-flight promise so concurrent callers never race
+  // past the firestore script load (fixes "fb.firestore is not a function").
+  let fbPromise = null;
+
   function getFirebase() {
     return typeof window.firebase !== "undefined" ? window.firebase : null;
   }
@@ -56,31 +60,39 @@
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[src="${src}"]`);
-      if (existing) {
-        if (getFirebase()) return resolve();
-        existing.addEventListener("load", resolve, { once: true });
-        existing.addEventListener("error", reject, { once: true });
-        return;
+      if (existing && existing.dataset.fbLoaded === "1") return resolve();
+
+      const s = existing || document.createElement("script");
+      if (!existing) {
+        s.src = src;
+        s.async = true;
+        document.head.appendChild(s);
       }
-      const s = document.createElement("script");
-      s.src = src;
-      s.async = true;
-      s.onload = resolve;
-      s.onerror = () => reject(new Error("Unable to load Firebase SDK."));
-      document.head.appendChild(s);
+      s.addEventListener("load", () => {
+        s.dataset.fbLoaded = "1";
+        resolve();
+      }, { once: true });
+      s.addEventListener("error", () => {
+        reject(new Error(`Unable to load ${src}`));
+      }, { once: true });
     });
   }
 
-  async function ensureFirebase() {
-    if (state.firebase) return state.firebase;
+  function ensureFirebase() {
+    if (state.firebase) return Promise.resolve(state.firebase);
+    if (fbPromise) return fbPromise;
 
-    if (!getFirebase()) await loadScript(FIREBASE_SCRIPTS[0]);
-    if (!getFirebase()) throw new Error("Firebase SDK unavailable.");
-    if (typeof firebase.firestore !== "function") await loadScript(FIREBASE_SCRIPTS[1]);
-    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    fbPromise = (async () => {
+      if (!getFirebase()) await loadScript(FIREBASE_SCRIPTS[0]);
+      if (!getFirebase()) throw new Error("Firebase SDK unavailable.");
+      if (typeof firebase.firestore !== "function") await loadScript(FIREBASE_SCRIPTS[1]);
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
 
-    state.firebase = firebase;
-    return firebase;
+      state.firebase = firebase;
+      return firebase;
+    })();
+
+    return fbPromise;
   }
 
   /* ---------- Helpers ---------- */
