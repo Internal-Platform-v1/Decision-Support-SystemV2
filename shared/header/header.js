@@ -31,12 +31,18 @@
         return Boolean(s.token && typeof s.exp === "number" && s.exp > Date.now());
     }
 
-    function setAdminUnlocked() {
-        const s = getState();
-        s.token = "ok";
-        s.exp = Date.now() + 7 * 24 * 60 * 60 * 1000;
-        setState(s);
+function setAdminUnlocked(user) {
+    const s = getState();
+    s.token = "ok";
+    s.exp = Date.now() + 7 * 24 * 60 * 60 * 1000;
+    if (user && typeof user === "object") {
+        s.uid   = user.id    || "";
+        s.email = user.email || "";
+        s.name  = user.name  || "";
+        s.role  = user.role  || "";
     }
+    setState(s);
+}
 
     function clearAdminUnlocked() {
         const s = getState();
@@ -129,64 +135,163 @@
     /* ------------------------------------------------------------
        Admin gate modal
        ------------------------------------------------------------ */
-    function setupAdminGate() {
-        const gate = document.getElementById("adminGate");
-        if (!gate) return;
+function setupAdminGate() {
+    const gate = document.getElementById("adminGate");
+    if (!gate) return;
 
-        const card     = gate.querySelector(".admin-gate-card");
-        const input    = document.getElementById("adminGateInput");
-        const error    = document.getElementById("adminGateError");
-        const cancel   = document.getElementById("adminGateCancel");
-        const submit   = document.getElementById("adminGateSubmit");
-        const backdrop = gate.querySelector(".admin-gate-backdrop");
+    const card        = gate.querySelector(".admin-gate-card");
+    const form        = document.getElementById("adminGateForm");
+    const emailInput  = document.getElementById("adminGateEmail");
+    const pwInput     = document.getElementById("adminGateInput");
+    const toggleBtn   = document.getElementById("adminGateToggle");
+    const error       = document.getElementById("adminGateError");
+    const cancel      = document.getElementById("adminGateCancel");
+    const submit      = document.getElementById("adminGateSubmit");
+    const backdrop    = gate.querySelector(".admin-gate-backdrop");
 
-        function open() {
-            gate.hidden = false;
-            input.value = "";
-            error.textContent = "";
-            card.classList.remove("shake");
-            setTimeout(function () { input.focus(); }, 50);
+    function reset() {
+        pwInput.value    = "";
+        pwInput.type     = "password";
+        toggleBtn.textContent = "Show";
+        toggleBtn.setAttribute("aria-label", "Show password");
+        error.textContent = "";
+        card.classList.remove("shake");
+        submit.classList.remove("loading");
+        submit.disabled = false;
+    }
+
+    function open() {
+        gate.hidden = false;
+        reset();
+        // Pre-fill last-used email
+        try {
+            const last = localStorage.getItem("adminLastEmail");
+            if (last) emailInput.value = last;
+        } catch (e) {}
+        setTimeout(function () {
+            (emailInput.value ? pwInput : emailInput).focus();
+        }, 60);
+    }
+
+    function close() {
+        gate.hidden = true;
+        reset();
+    }
+
+    function shake() {
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+    }
+
+    toggleBtn.addEventListener("click", function () {
+        const showing = pwInput.type === "text";
+        pwInput.type = showing ? "password" : "text";
+        toggleBtn.textContent = showing ? "Show" : "Hide";
+        toggleBtn.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+        pwInput.focus();
+    });
+
+    async function attemptUnlock() {
+        error.textContent = "";
+
+        const email    = emailInput.value.trim().toLowerCase();
+        const password = pwInput.value;
+
+        if (!email) {
+            error.textContent = "Enter your approved email address.";
+            emailInput.focus();
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            error.textContent = "Enter a valid email address.";
+            emailInput.focus();
+            return;
+        }
+        if (!password) {
+            error.textContent = "Enter your password.";
+            pwInput.focus();
+            return;
+        }
+        if (password !== ADMIN_PASSWORD) {
+            error.textContent = "Incorrect password.";
+            pwInput.value = "";
+            pwInput.focus();
+            shake();
+            return;
         }
 
-        function close() {
-            gate.hidden = true;
-            input.value = "";
-            error.textContent = "";
-            card.classList.remove("shake");
+        const db = firestore();
+        if (!db) {
+            error.textContent = "Authentication service is not available. Please refresh and try again.";
+            return;
         }
 
-        function attemptUnlock() {
-            const value = input.value;
-            if (!value) { error.textContent = "Enter the admin password."; input.focus(); return; }
+        submit.disabled = true;
+        submit.classList.add("loading");
 
-            if (value === ADMIN_PASSWORD) {
-                setAdminUnlocked();
-                close();
-                window.location.href = ADMIN_URL;
+        try {
+            const snap = await db.collection("approved_users")
+                .where("email", "==", email)
+                .limit(1)
+                .get();
+
+            if (snap.empty) {
+                error.textContent = "This email is not approved for admin access.";
+                shake();
                 return;
             }
 
-            error.textContent = "Incorrect password.";
-            input.value = "";
-            input.focus();
-            card.classList.remove("shake");
-            void card.offsetWidth;
-            card.classList.add("shake");
+            const doc  = snap.docs[0];
+            const data = doc.data() || {};
+            const user = {
+                id:    doc.id,
+                email: data.email || email,
+                name:  data.name || data.displayName || email,
+                role:  data.role || "User"
+            };
+
+            setAdminUnlocked(user);
+
+            // Let the shared admin header pick up the real user
+            try {
+                localStorage.setItem("adminUser", JSON.stringify({
+                    name:  user.name,
+                    email: user.email,
+                    role:  user.role
+                }));
+            } catch (e) {}
+            try { localStorage.setItem("adminLastEmail", email); } catch (e) {}
+
+            close();
+            window.location.href = ADMIN_URL;
+        } catch (err) {
+            console.error("[admin gate]", err);
+            if (err && err.code === "permission-denied") {
+                error.textContent = "Unable to verify. Firestore access rules need updating.";
+            } else {
+                error.textContent = "Could not verify your account. Please try again.";
+            }
+            shake();
+        } finally {
+            submit.disabled = false;
+            submit.classList.remove("loading");
         }
-
-        submit.addEventListener("click", attemptUnlock);
-        input.addEventListener("keydown", function (event) {
-            if (event.key === "Enter")  { event.preventDefault(); attemptUnlock(); }
-            if (event.key === "Escape") { event.preventDefault(); close(); }
-        });
-        cancel.addEventListener("click", close);
-        if (backdrop) backdrop.addEventListener("click", close);
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape" && !gate.hidden) close();
-        });
-
-        window.BDAdminGate = { open: open, close: close };
     }
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        attemptUnlock();
+    });
+
+    cancel.addEventListener("click", close);
+    if (backdrop) backdrop.addEventListener("click", close);
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !gate.hidden) close();
+    });
+
+    window.BDAdminGate = { open: open, close: close };
+}
 
     /* ------------------------------------------------------------
        Settings dropdown
