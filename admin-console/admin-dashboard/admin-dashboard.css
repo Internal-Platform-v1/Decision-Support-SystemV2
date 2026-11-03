@@ -8,7 +8,9 @@
 .admin-dashboard-content {
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   margin-left: var(--admin-sidebar-width);
-  min-height: calc(100vh - 305px);
+  /* ✅ was: calc(100vh - 305px) */
+  /* Header is now 70px, hero removed entirely */
+  min-height: calc(100vh - 70px);
   padding: 18px 22px 34px;
   background: #f7f7fb;
 }
