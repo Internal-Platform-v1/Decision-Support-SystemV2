@@ -106,14 +106,61 @@
     <div class="admin-gate-backdrop" data-admin-gate-close></div>
 
     <div class="admin-gate-card" role="dialog" aria-modal="true" aria-labelledby="adminGateTitle">
-        <div class="admin-gate-icon" aria-hidden="true">🛡️</div>
-        <h2 id="adminGateTitle">Admin access</h2>
-        <p class="admin-gate-copy">Enter the admin password to open the dashboard.</p>
-        <input type="password" id="adminGateInput" class="admin-gate-input" placeholder="Admin password" autocomplete="off" spellcheck="false">
-        <div class="admin-gate-error" id="adminGateError" role="alert"></div>
-        <div class="admin-gate-actions">
-            <button type="button" class="admin-gate-btn ghost" id="adminGateCancel">Cancel</button>
-            <button type="button" class="admin-gate-btn primary" id="adminGateSubmit">Unlock</button>
+        <div class="admin-gate-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 3 20 6v5c0 5-3.3 8.2-8 10-4.7-1.8-8-5-8-10V6l8-3Z"/>
+                <path d="m8.5 12 2.2 2.2 4.8-5"/>
+            </svg>
+        </div>
+
+        <h2 id="adminGateTitle">Admin Access</h2>
+        <p class="admin-gate-copy">Sign in with your approved FedEx email to open the admin console.</p>
+
+        <form class="admin-gate-form" id="adminGateForm" novalidate>
+            <label class="admin-gate-field">
+                <span class="admin-gate-label">Email</span>
+                <span class="admin-gate-input-wrap">
+                    <svg class="admin-gate-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6.5h16v11H4z"/><path d="m4 7 8 6 8-6"/>
+                    </svg>
+                    <input type="email" id="adminGateEmail" class="admin-gate-input"
+                           placeholder="name@fedexfreight.com"
+                           autocomplete="username" spellcheck="false" autocapitalize="off">
+                </span>
+            </label>
+
+            <label class="admin-gate-field">
+                <span class="admin-gate-label">Password</span>
+                <span class="admin-gate-input-wrap">
+                    <svg class="admin-gate-field-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="4" y="10" width="16" height="10" rx="2"/>
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                    </svg>
+                    <input type="password" id="adminGateInput" class="admin-gate-input"
+                           placeholder="Enter your password"
+                           autocomplete="current-password">
+                    <button type="button" class="admin-gate-toggle" id="adminGateToggle"
+                            aria-label="Show password">Show</button>
+                </span>
+            </label>
+
+            <div class="admin-gate-error" id="adminGateError" role="alert" aria-live="polite"></div>
+
+            <div class="admin-gate-actions">
+                <button type="button" class="admin-gate-btn ghost" id="adminGateCancel">Cancel</button>
+                <button type="submit" class="admin-gate-btn primary" id="adminGateSubmit">
+                    <span class="admin-gate-btn-label">Sign In</span>
+                    <span class="admin-gate-btn-spinner" aria-hidden="true"></span>
+                </button>
+            </div>
+        </form>
+
+        <div class="admin-gate-footnote">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 8v.01M11 12h1v4h1"/>
+            </svg>
+            Only approved users can sign in.
         </div>
     </div>
 </div>
