@@ -267,7 +267,8 @@
 
 .admin-main {
   min-width: 0;
-  min-height: 305px;
+  /* ✅ was 305px — hero removed, spacer for fixed header only */
+  min-height: 70px;
   margin-left: var(--admin-sidebar-width);
   padding-top: 70px;
 }
@@ -319,41 +320,32 @@
   gap: 13px;
 }
 
-.admin-search {
-  width: min(330px, 30vw);
-  height: 37px;
+/* ✅ NEW: date & time (was inside the hero) */
+.admin-header-datetime {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 0 12px;
-  border: 1px solid #e0dfed;
-  border-radius: 8px;
-  background: #fafaff;
+  gap: 7px;
+  padding: 0 4px;
+  color: #6c6d94;
+  font-size: 9px;
+  white-space: nowrap;
 }
 
-.admin-search svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 auto;
-  fill: none;
-  stroke: #7d7da5;
-  stroke-width: 1.8;
-  stroke-linecap: round;
+.admin-header-datetime > span:first-child {
+  color: #9b9ab5;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .3px;
 }
 
-.admin-search input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #30305e;
-  font: inherit;
-  font-size: 10px;
+.admin-header-datetime strong {
+  color: #26285f;
+  font-size: 9px;
+  font-weight: 600;
 }
 
-.admin-search input::placeholder {
-  color: #9999b5;
+.admin-time-separator {
+  color: #b0aec7;
 }
 
 .admin-icon-button {
@@ -531,152 +523,6 @@
 }
 
 /* ============================================================
-   HERO
-   ============================================================ */
-
-.admin-hero {
-  position: relative;
-  min-height: 235px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  padding: 29px 40px 27px;
-  background:
-    radial-gradient(ellipse at 74% 35%, rgba(255,255,255,.96) 0%, rgba(255,255,255,.7) 18%, transparent 43%),
-    radial-gradient(ellipse at 30% 90%, rgba(232,223,255,.88) 0%, transparent 52%),
-    linear-gradient(115deg, #f5f1ff 0%, #e9e1ff 48%, #faf9ff 100%);
-}
-
-.admin-hero::before,
-.admin-hero::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  border-radius: 50%;
-}
-
-.admin-hero::before {
-  width: 780px;
-  height: 230px;
-  left: -80px;
-  top: -125px;
-  background: rgba(255,255,255,.45);
-  transform: rotate(12deg);
-}
-
-.admin-hero::after {
-  width: 700px;
-  height: 220px;
-  right: -180px;
-  bottom: -150px;
-  background: rgba(255,255,255,.55);
-  transform: rotate(-12deg);
-}
-
-.admin-hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-.admin-hero-eyebrow {
-  color: #6235ce;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
-.admin-hero h1 {
-  margin: 4px 0 5px;
-  color: #16195d;
-  font-size: clamp(31px, 3vw, 42px);
-  line-height: 1;
-  letter-spacing: -1.5px;
-}
-
-.admin-hero h1 span {
-  color: #ff6600;
-}
-
-.admin-hero p {
-  margin: 0;
-  color: #31346a;
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.admin-shortcuts {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.admin-shortcut {
-  min-width: 126px;
-  height: 37px;
-  padding: 0 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid #ddd7f2;
-  border-radius: 7px;
-  background: rgba(255,255,255,.88);
-  color: #292966;
-  font-size: 9px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(71, 40, 155, .06);
-}
-
-.admin-shortcut.primary {
-  border-color: #5220c2;
-  background: linear-gradient(135deg, #5720c9, #4d148c);
-  color: #fff;
-}
-
-.admin-shortcut:hover {
-  transform: translateY(-1px);
-}
-
-.shortcut-icon {
-  width: 16px;
-  height: 16px;
-  display: grid;
-  place-items: center;
-}
-
-.shortcut-icon svg {
-  width: 16px;
-  height: 16px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.admin-hero-time {
-  position: absolute;
-  top: 16px;
-  right: 35px;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #6c6d94;
-  font-size: 8px;
-}
-
-.admin-hero-time strong {
-  color: #26285f;
-  font-size: 8px;
-}
-
-.admin-time-separator {
-  color: #b0aec7;
-}
-
-/* ============================================================
    RESPONSIVE
    ============================================================ */
 
@@ -685,16 +531,16 @@
     --admin-sidebar-width: 225px;
   }
 
-  .admin-search {
-    width: 220px;
-  }
-
   .admin-top-header {
     padding: 0 18px;
   }
 
-  .admin-hero {
-    padding-left: 28px;
+  .admin-header-datetime {
+    font-size: 8px;
+  }
+
+  .admin-header-datetime strong {
+    font-size: 8px;
   }
 }
 
@@ -739,36 +585,15 @@
     display: none;
   }
 
-  .admin-search {
-    width: 170px;
-  }
-
-  .admin-hero {
-    min-height: 260px;
-    padding: 30px 24px;
-  }
-
-  .admin-hero-time {
-    top: 12px;
-    right: 20px;
+  /* hide "Today is" prefix on smaller screens */
+  .admin-header-datetime > span:first-child {
+    display: none;
   }
 }
 
 @media (max-width: 520px) {
-  .admin-search {
-    width: 40px;
-    padding: 0 11px;
-  }
-
-  .admin-search input {
+  /* hide the datetime entirely on the smallest screens */
+  .admin-header-datetime {
     display: none;
-  }
-
-  .admin-hero h1 {
-    font-size: 31px;
-  }
-
-  .admin-shortcuts {
-    flex-wrap: wrap;
   }
 }
