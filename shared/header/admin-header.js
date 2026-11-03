@@ -30,7 +30,7 @@
 
   const pageMap = {
     dashboard: "../admin-dashboard/admin-dashboard.html",
-    feedback: "../admin-feedback-gethelp/admin-feedback-gethelp.html",   // CHANGED (was: users)
+    feedback: "../admin-feedback-gethelp/admin-feedback-gethelp.html",
     templates: "../admin-templates/admin-templates.html",
     guides: "../admin-guides/admin-guides.html",
     announcements: "../admin-announcements/admin-announcements.html",
@@ -73,14 +73,13 @@
   function applyUser() {
     const user = getCurrentUser();
     const initials = getInitials(user.name);
-    const firstName = String(user.name || "Admin").trim().split(/\s+/)[0] || "Admin";
     setText("sidebarUserName", user.name);
     setText("sidebarUserRole", user.role);
     setText("sidebarAvatar", initials);
     setText("topUserAvatar", initials);
     setText("dropdownUserName", user.name);
     setText("dropdownUserEmail", user.email);
-    setText("adminHeroName", firstName);
+    /* ❌ removed: setText("adminHeroName", firstName); — hero no longer exists */
   }
 
   function getPageKey() {
@@ -102,12 +101,7 @@
     setText("adminPageTitle", title);
   }
 
-  function applyHeroVisibility() {
-    const key = getPageKey();
-    if (key === "dashboard") return;
-    const hero = document.getElementById("adminHero");
-    if (hero && hero.parentNode) hero.parentNode.removeChild(hero);
-  }
+  /* ❌ removed: applyHeroVisibility() — hero no longer exists anywhere */
 
   function updateClock() {
     const now = new Date();
@@ -129,9 +123,7 @@
     document.querySelectorAll(".admin-nav-item").forEach(item => {
       item.addEventListener("click", () => navigate(item.dataset.adminPage));
     });
-    document.querySelectorAll("[data-admin-shortcut]").forEach(button => {
-      button.addEventListener("click", () => navigate(button.dataset.adminShortcut));
-    });
+    /* ❌ removed: [data-admin-shortcut] handler — hero shortcuts gone */
   }
 
   function setupSettingsDropdown() {
@@ -215,16 +207,7 @@
     });
   }
 
-  function setupSearch() {
-    const input = document.getElementById("adminGlobalSearch");
-    if (!input) return;
-    input.addEventListener("keydown", event => {
-      if (event.key !== "Enter") return;
-      const query = input.value.trim();
-      if (!query) return;
-      window.dispatchEvent(new CustomEvent("adminGlobalSearch", { detail: { query } }));
-    });
-  }
+  /* ❌ removed: setupSearch() — search box no longer exists in the header */
 
   async function load() {
     const mount = document.getElementById("adminHeader");
@@ -235,7 +218,7 @@
       if (!response.ok) throw new Error("Header failed to load");
       mount.innerHTML = await response.text();
 
-      applyHeroVisibility();
+      /* ❌ removed: applyHeroVisibility(); */
       applyUser();
       setActiveNavigation();
       updateClock();
@@ -244,7 +227,7 @@
       setupTheme();
       setupRole();
       setupActions();
-      setupSearch();
+      /* ❌ removed: setupSearch(); */
 
       setInterval(updateClock, 1000);
       window.dispatchEvent(new CustomEvent("adminHeaderReady"));
