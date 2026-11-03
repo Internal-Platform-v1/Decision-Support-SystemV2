@@ -1231,3 +1231,7 @@
     .admin-gate-card { padding: 28px 22px 20px; }
     .admin-gate-card h2 { font-size: 18px; }
 }
+
+.notification-dot[hidden] {
+    display: none !important;
+}
