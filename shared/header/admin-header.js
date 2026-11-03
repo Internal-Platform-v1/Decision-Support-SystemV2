@@ -195,6 +195,7 @@
         if (action === "logout") {
           try { window.name = ""; } catch (e) {}
           localStorage.removeItem("bd_role");
+           localStorage.removeItem("adminUser");  
           window.location.href = "/Decision-Support-SystemV2/index.html";
         }
 
