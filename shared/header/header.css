@@ -942,7 +942,7 @@
 }
 
 /* ============================================================
-   ADMIN GATE — password prompt
+   ADMIN GATE — email + password prompt
    ============================================================ */
 
 .admin-gate {
@@ -954,108 +954,184 @@
     padding: 20px;
 }
 
-.admin-gate[hidden] {
-    display: none !important;
-}
+.admin-gate[hidden] { display: none !important; }
 
 .admin-gate-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(20, 15, 45, .42);
-    backdrop-filter: blur(3px);
-    animation: adminGateFade .2s ease;
+    background: rgba(20, 15, 45, .48);
+    backdrop-filter: blur(4px);
+    animation: adminGateFade .22s ease;
 }
 
 .admin-gate-card {
     position: relative;
-    width: min(380px, 100%);
-    padding: 28px 26px 22px;
+    width: min(420px, 100%);
+    padding: 32px 30px 22px;
     background: #fff;
-    border-radius: 16px;
+    border-radius: 18px;
     box-shadow:
-        0 24px 60px rgba(31, 25, 87, .24),
-        0 4px 14px rgba(31, 25, 87, .08);
+        0 30px 70px rgba(31, 25, 87, .28),
+        0 6px 18px rgba(31, 25, 87, .08);
     text-align: center;
-    animation: adminGateRise .28s cubic-bezier(.22, 1, .36, 1);
+    animation: adminGateRise .3s cubic-bezier(.22, 1, .36, 1);
 }
 
 .admin-gate-card.shake {
-    animation: adminGateShake .4s cubic-bezier(.36, .07, .19, .97);
+    animation: adminGateShake .45s cubic-bezier(.36, .07, .19, .97);
 }
 
 .admin-gate-icon {
-    width: 44px;
-    height: 44px;
-    margin: 0 auto 14px;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 16px;
     display: grid;
     place-items: center;
-    border-radius: 50%;
-    background: #f1eaff;
-    color: #6b25df;
-    font-size: 22px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #6b25df, #4d148c);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(77, 20, 140, .28);
+}
+
+.admin-gate-icon svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .admin-gate-card h2 {
     margin: 0 0 6px;
-    font-size: 1.05rem;
+    font-size: 20px;
     font-weight: 800;
-    color: #20235e;
-    letter-spacing: -.01em;
+    color: #17174b;
+    letter-spacing: -.02em;
 }
 
 .admin-gate-copy {
-    margin: 0 0 18px;
-    font-size: .82rem;
+    margin: 0 0 22px;
+    font-size: 12.5px;
     color: #6d6e91;
-    line-height: 1.45;
+    line-height: 1.5;
 }
 
-.admin-gate-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 11px 14px;
-    border: 1px solid #dedfec;
-    border-radius: 9px;
-    font-size: .9rem;
-    color: #20235e;
-    background: #fff;
-    outline: none;
-    transition: border-color .2s ease, box-shadow .25s ease;
-}
-
-.admin-gate-input:focus {
-    border-color: #6b25df;
-    box-shadow: 0 0 0 3px rgba(107, 37, 223, .1);
-}
-
-.admin-gate-error {
-    min-height: 1.15rem;
-    margin-top: 10px;
-    color: #c81e3a;
-    font-size: .78rem;
+.admin-gate-form {
+    display: grid;
+    gap: 14px;
     text-align: left;
 }
 
+.admin-gate-field { display: block; }
+
+.admin-gate-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4b4d6b;
+}
+
+.admin-gate-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #e3e0f0;
+    border-radius: 10px;
+    background: #faf9ff;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.admin-gate-input-wrap:focus-within {
+    border-color: #6b25df;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(107, 37, 223, .1);
+}
+
+.admin-gate-field-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    fill: none;
+    stroke: #9ea0b8;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke .2s ease;
+}
+
+.admin-gate-input-wrap:focus-within .admin-gate-field-icon {
+    stroke: #6b25df;
+}
+
+.admin-gate-input {
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    color: #17174b;
+}
+
+.admin-gate-input::placeholder { color: #b2b1c5; }
+
+.admin-gate-toggle {
+    border: 0;
+    background: transparent;
+    color: #6b25df;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background .2s ease;
+}
+
+.admin-gate-toggle:hover { background: rgba(107, 37, 223, .08); }
+
+.admin-gate-error {
+    min-height: 18px;
+    font-size: 11.5px;
+    color: #c81e3a;
+    font-weight: 500;
+    text-align: left;
+    opacity: 0;
+    transition: opacity .2s ease;
+}
+
+.admin-gate-error:not(:empty) { opacity: 1; }
+
 .admin-gate-actions {
     display: flex;
-    gap: 8px;
-    margin-top: 14px;
+    gap: 9px;
+    margin-top: 4px;
 }
 
 .admin-gate-btn {
     flex: 1;
-    padding: 10px 14px;
+    height: 46px;
+    padding: 0 16px;
     border: 0;
-    border-radius: 9px;
-    font-size: .85rem;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    transition: transform .18s ease, box-shadow .25s ease, background .2s ease, color .2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, filter .2s ease;
 }
 
-.admin-gate-btn:active {
-    transform: scale(.97);
-}
+.admin-gate-btn:active { transform: scale(.97); }
 
 .admin-gate-btn.ghost {
     background: #f3f2fa;
@@ -1068,13 +1144,57 @@
 }
 
 .admin-gate-btn.primary {
-    background: linear-gradient(135deg, #6b25df, #4d14b8);
+    background: linear-gradient(135deg, #6b25df, #4d148c);
     color: #fff;
-    box-shadow: 0 6px 16px rgba(77, 20, 184, .25);
+    box-shadow: 0 8px 20px rgba(77, 20, 140, .24);
 }
 
 .admin-gate-btn.primary:hover {
-    box-shadow: 0 8px 22px rgba(77, 20, 184, .32);
+    box-shadow: 0 12px 26px rgba(77, 20, 140, .3);
+}
+
+.admin-gate-btn:disabled {
+    cursor: wait;
+    filter: saturate(.75) brightness(.94);
+    transform: none;
+}
+
+.admin-gate-btn-label { display: inline-block; }
+
+.admin-gate-btn-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, .35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    display: none;
+    animation: adminGateSpin .7s linear infinite;
+}
+
+.admin-gate-btn.loading .admin-gate-btn-label { opacity: .55; }
+.admin-gate-btn.loading .admin-gate-btn-spinner { display: block; }
+
+.admin-gate-footnote {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #f0f0f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #9ea0b8;
+    font-size: 10.5px;
+    font-weight: 500;
+}
+
+.admin-gate-footnote svg {
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 @keyframes adminGateFade {
@@ -1083,7 +1203,7 @@
 }
 
 @keyframes adminGateRise {
-    from { opacity: 0; transform: translateY(10px) scale(.97); }
+    from { opacity: 0; transform: translateY(14px) scale(.97); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -1094,21 +1214,20 @@
     40%, 60% { transform: translateX(6px); }
 }
 
+@keyframes adminGateSpin {
+    to { transform: rotate(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .admin-gate-backdrop,
     .admin-gate-card,
-    .admin-gate-card.shake {
+    .admin-gate-card.shake,
+    .admin-gate-btn-spinner {
         animation: none !important;
     }
 }
 
-.fedex-logo-link {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    flex: 0 0 auto;
-}
-
-.notification-dot[hidden] {
-    display: none !important;
+@media (max-width: 440px) {
+    .admin-gate-card { padding: 28px 22px 20px; }
+    .admin-gate-card h2 { font-size: 18px; }
 }
