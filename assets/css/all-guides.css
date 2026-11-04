@@ -265,7 +265,6 @@ a{text-decoration:none;color:inherit}
 
 /* ============================================================
    LIBRARY SECTION — V2 MASTER CARD GRID
-   Keep the same visual language as the V2 dashboard/group pages.
    ============================================================ */
 
 .section{padding:10px 5.6% 0}
@@ -335,8 +334,6 @@ a{text-decoration:none;color:inherit}
 
 /* ============================================================
    LIBRARY HEADER — FILTER + SORT ON THE SAME RIGHT SIDE
-   Desired:
-   All Guides                              Filtered by | Sort A-Z
    ============================================================ */
 
 .library-heading{
@@ -361,23 +358,14 @@ a{text-decoration:none;color:inherit}
   gap:7px;
 }
 
-/*
-   The filter pill is a sibling of .library-heading in the current
-   static All Guides HTML, so it cannot be positioned through
-   .library-heading .active-filter-pill.
-
-   Place it directly beside the Sort A-Z control.
-*/
 .library-section > .active-filter-pill{
   position:absolute;
   top:22px;
   right:82px;
-
   margin:0;
   z-index:4;
 }
 
-/* Keep any nested/legacy filter pill positioning harmless. */
 .library-heading .active-filter-pill{
   position:static;
   margin:0;
@@ -418,11 +406,9 @@ a{text-decoration:none;color:inherit}
 
 .active-filter-pill button:hover{background:#5b17c5;color:#fff}
 
-/*
-   Six-column rhythm intentionally matches the V2 group pages.
-   The cards are wider/roomier than the previous All Guides version,
-   while retaining the compact DSS dashboard footprint.
-*/
+/* ============================================================
+   GUIDE CARDS (Exact match to styles.css .quick-card)
+   ============================================================ */
 .guide-grid{
   display:grid;
   grid-template-columns:repeat(6,minmax(0,1fr));
@@ -437,37 +423,47 @@ a{text-decoration:none;color:inherit}
   min-height:214px;
   display:flex;
   flex-direction:column;
-  padding:13px 11px 11px;
+  padding:14px 12px 10px;
   background:#fff;
-  border:1px solid #e4e6f0;
+  border:1px solid #e8e9f2;
+  border-bottom:2px solid #d9d7ef; /* Matches index border */
   border-radius:9px;
-  box-shadow:0 3px 12px rgba(41,32,94,.055);
+  box-shadow:0 3px 11px rgba(41,32,94,.045);
   overflow:hidden;
   cursor:pointer;
-  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
-}
-
-.guide-card::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:2px;
-  background:#e4e6f0;
-  opacity:1;
+  transition:transform .18s ease, box-shadow .18s ease;
 }
 
 .guide-card:hover{
   transform:translateY(-2px);
-  box-shadow:0 9px 22px rgba(41,32,94,.11);
-  border-color:#dcdfea;
+  box-shadow:0 8px 20px rgba(41,32,94,.1);
 }
 
 .guide-card:focus-visible{
   outline:2px solid var(--card-accent,#7131dc);
   outline-offset:2px;
 }
+
+/* Centered colored stripe at the bottom */
+.guide-card::after{
+  content:"";
+  position:absolute;
+  bottom:-2px; 
+  left:15%; 
+  right:15%;
+  height:2px; 
+  border-radius:4px;
+  background:transparent;
+}
+
+/* Map group classes to the exact index colors */
+.group-billing::after   { background: #d7c9ff; }
+.group-pricing::after   { background: #ffd4bd; }
+.group-surcharge::after { background: #c9dcff; }
+.group-account::after   { background: #d0f0d2; }
+.group-paud::after      { background: #c5c9ff; }
+.group-other::after     { background: #ffd0df; }
+
 
 .guide-top{
   display:flex;
@@ -518,7 +514,6 @@ a{text-decoration:none;color:inherit}
   font-weight:800;
 }
 
-/* Readability upgrade requested — larger than the old DSS details text. */
 .guide-card .description{
   margin:0;
   color:#707591;
@@ -593,7 +588,7 @@ a{text-decoration:none;color:inherit}
 .favorite-button.active{color:#f2a500}
 
 /* ============================================================
-   GROUP COLOR SYSTEM — ICON ONLY
+   GROUP COLOR SYSTEM — ICON ONLY (Light Mode)
    ============================================================ */
 
 .group-billing{--card-accent:#7131dc;--card-soft:#f0e8ff}
@@ -693,7 +688,6 @@ a{text-decoration:none;color:inherit}
 
 /* ============================================================
    DSS V2 — DEFAULT SECONDARY TEXT SIZE
-   10px is the standard readable size for grey supporting text.
    ============================================================ */
 .guide-filter small,
 #resultsText,
