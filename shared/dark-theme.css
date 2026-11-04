@@ -1778,3 +1778,51 @@ html[data-theme="dark"] .case-hero {
     background-repeat: no-repeat;
     background-blend-mode: normal;
 }
+
+
+/* ============================================================
+   ALL GUIDES — DARK MODE GROUP COLORS
+   Keeps the icons and bottom borders color-coded in dark mode
+   ============================================================ */
+html[data-theme="dark"] .group-billing {
+    --card-accent: #c4b5fd; /* Purple */
+    --card-soft: rgba(167,139,250,.16);
+}
+html[data-theme="dark"] .group-billing::after { background: #c4b5fd; }
+
+html[data-theme="dark"] .group-pricing {
+    --card-accent: #ffb26e; /* Orange */
+    --card-soft: rgba(255,159,77,.16);
+}
+html[data-theme="dark"] .group-pricing::after { background: #ffb26e; }
+
+html[data-theme="dark"] .group-surcharge {
+    --card-accent: #93b4ff; /* Blue */
+    --card-soft: rgba(99,155,255,.16);
+}
+html[data-theme="dark"] .group-surcharge::after { background: #93b4ff; }
+
+html[data-theme="dark"] .group-account {
+    --card-accent: #86d693; /* Green */
+    --card-soft: rgba(96,196,110,.16);
+}
+html[data-theme="dark"] .group-account::after { background: #86d693; }
+
+html[data-theme="dark"] .group-paud {
+    --card-accent: #a5acff; /* Indigo */
+    --card-soft: rgba(129,140,248,.16);
+}
+html[data-theme="dark"] .group-paud::after { background: #a5acff; }
+
+html[data-theme="dark"] .group-other {
+    --card-accent: #ffa3c2; /* Pink */
+    --card-soft: rgba(244,114,182,.16);
+}
+html[data-theme="dark"] .group-other::after { background: #ffa3c2; }
+
+/* Fix the FBC global icon override so it doesn't bleed into All Guides */
+html[data-theme="dark"] .guide-icon {
+    /* Remove the global force purple and let the group variables take over */
+    background: var(--card-soft, rgba(167,139,250,.14));
+    color: var(--card-accent, #c4b5fd);
+}
