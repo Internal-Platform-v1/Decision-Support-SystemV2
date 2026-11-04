@@ -12,7 +12,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   margin-left: var(--admin-sidebar-width);
   padding: 90px 24px 40px !important;
   min-height: 100vh;
-  background: #f4f5f9; /* Matches screenshot bg */
+  background: #f4f5f9;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   color: #17174b;
 }
@@ -45,7 +45,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-header-area h1 {
   margin: 0 0 6px;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -54,7 +54,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-header-area p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: #6b7280;
 }
 
@@ -69,8 +69,8 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 .at-tab {
   background: none;
   border: none;
-  padding: 12px 0;
-  font-size: 14px;
+  padding: 13px 0;
+  font-size: 15px;
   font-weight: 600;
   color: #6b7280;
   cursor: pointer;
@@ -101,26 +101,26 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 .at-search i {
   position: absolute;
   left: 12px;
-  top: 11px;
+  top: 12px;
   color: #9ca3af;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .at-search input {
   width: 100%;
-  padding: 10px 10px 10px 35px;
+  padding: 11px 11px 11px 38px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   outline: none;
-  font-size: 13px;
+  font-size: 14px;
   background: #fff;
 }
 
 .at-select {
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   background: #fff;
   outline: none;
   cursor: pointer;
@@ -132,8 +132,8 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   align-items: center;
   padding: 16px 24px 8px;
 }
-.at-list-title { font-weight: 600; font-size: 14px; }
-.at-list-count { font-size: 12px; color: #6b7280; }
+.at-list-title { font-weight: 600; font-size: 15px; }
+.at-list-count { font-size: 13px; color: #6b7280; }
 
 .at-rec-list {
   padding: 0 24px 24px;
@@ -142,7 +142,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 }
 
 /* =========================================
-   LEFT PANEL CARDS (Styled via CSS to match JS output)
+   LEFT PANEL CARDS
    ========================================= */
 .at-post-item {
   display: block;
@@ -151,7 +151,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  padding: 16px;
+  padding: 17px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -171,14 +171,14 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-post-item strong {
   display: block;
-  font-size: 15px;
-  margin-bottom: 4px;
+  font-size: 16px;
+  margin-bottom: 5px;
   color: #111827;
 }
 
 .at-post-item small {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: #6b7280;
   margin-bottom: 12px;
   line-height: 1.4;
@@ -186,9 +186,9 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-post-tag {
   display: inline-block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 4px 9px;
   border-radius: 12px;
   background: #f3f4f6;
   color: #4b5563;
@@ -197,9 +197,9 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-post-status {
   display: inline-block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 4px 9px;
   border-radius: 12px;
 }
 .at-post-status.published { background: #def7ec; color: #03543f; }
@@ -208,7 +208,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-post-meta {
   margin-top: 12px;
-  font-size: 12px;
+  font-size: 13px;
   color: #6b7280;
   display: flex;
   gap: 16px;
@@ -217,7 +217,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 .at-empty {
   padding: 24px 12px;
   color: #8b95a7;
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
 }
 
@@ -244,9 +244,9 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   text-align: center;
   padding: 40px;
 }
-.at-editor-placeholder i { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-.at-editor-placeholder h3 { margin: 0 0 8px; color: #111827; font-size: 16px; }
-.at-editor-placeholder p { margin: 0; font-size: 13px; }
+.at-editor-placeholder i { font-size: 52px; margin-bottom: 16px; opacity: 0.3; }
+.at-editor-placeholder h3 { margin: 0 0 8px; color: #111827; font-size: 17px; }
+.at-editor-placeholder p { margin: 0; font-size: 14px; }
 
 .at-editor-body {
   padding: 24px;
@@ -258,18 +258,18 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 .at-editor-header {
   margin-bottom: 24px;
 }
-.at-editor-header h2 { margin: 0 0 4px; font-size: 20px; font-weight: 700; }
-.at-editor-subtitle { margin: 0; font-size: 13px; color: #6b7280; }
+.at-editor-header h2 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+.at-editor-subtitle { margin: 0; font-size: 14px; color: #6b7280; }
 
 /* Form Fields */
 .at-edit-field {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   position: relative;
 }
 
 .at-edit-field label {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   margin-bottom: 6px;
   color: #111827;
@@ -279,10 +279,10 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 .at-edit-field select,
 .at-edit-field textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-family: inherit;
   box-sizing: border-box;
   background: #fff;
@@ -297,13 +297,13 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   box-shadow: 0 0 0 3px rgba(94, 23, 235, 0.1);
 }
 
-.at-edit-field textarea { resize: vertical; min-height: 80px; }
+.at-edit-field textarea { resize: vertical; min-height: 84px; }
 
 .at-char-count {
   position: absolute;
   right: 10px;
-  bottom: -16px;
-  font-size: 10px;
+  bottom: -17px;
+  font-size: 11px;
   color: #9ca3af;
 }
 .at-char-count.is-warn { color: #f59e0b; }
@@ -311,7 +311,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 /* Live Preview Box */
 .at-preview-wrap {
-  margin-top: 24px;
+  margin-top: 26px;
   margin-bottom: 24px;
   padding: 16px;
   border: 1px solid #e5e7eb;
@@ -320,7 +320,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 }
 
 .at-preview-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #111827;
   margin-bottom: 12px;
@@ -336,22 +336,22 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 }
 
 .at-preview__icon {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   background: #f3f4f6;
   color: #5e17eb;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .at-preview__copy { flex: 1; min-width: 0; }
 .at-preview__eyebrow {
   display: inline-block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   background: #e0e7ff;
   color: #4338ca;
@@ -359,9 +359,9 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   border-radius: 12px;
   margin-bottom: 8px;
 }
-.at-preview__title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.at-preview__date { font-size: 11px; color: #6b7280; margin-bottom: 6px; }
-.at-preview__message { font-size: 12px; color: #4b5563; line-height: 1.4; white-space: pre-line; }
+.at-preview__title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+.at-preview__date { font-size: 12px; color: #6b7280; margin-bottom: 6px; }
+.at-preview__message { font-size: 13px; color: #4b5563; line-height: 1.5; white-space: pre-line; }
 
 /* Footer & Buttons */
 .at-editor-footer {
@@ -378,9 +378,9 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 16px;
+  padding: 11px 17px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   border: 1px solid #e5e7eb;
@@ -408,7 +408,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 /* Toast */
 .at-toast {
   position: fixed; right: 24px; bottom: 24px; background: #1f2937; color: #fff;
-  padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  padding: 13px 26px; border-radius: 8px; font-size: 15px; font-weight: 500;
   opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; z-index: 9999;
 }
 .at-toast.show { opacity: 1; transform: translateY(0); }
@@ -439,7 +439,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 12px;
+  padding: 9px 13px;
   background: #fafafa;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -448,14 +448,14 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   background: transparent;
   border: none;
   color: #4b5563;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   transition: all 0.2s;
 }
 
@@ -482,11 +482,11 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-datepicker {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   color: #111827;
   background: #fff;
   outline: none;
@@ -499,7 +499,6 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   box-shadow: 0 0 0 3px rgba(94, 23, 235, 0.1);
 }
 
-/* Fix the native calendar icon alignment */
 .at-datepicker::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.6;
@@ -520,23 +519,23 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 16px;
+  padding: 7px 17px;
   border-radius: 20px;
   border: 1px solid #e5e7eb;
   background: #fff;
   color: #4b5563;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .priority-pill input {
-  display: none; /* hide the actual radio button */
+  display: none;
 }
 
 .priority-pill i {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 /* Normal State */
