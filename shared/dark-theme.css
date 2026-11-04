@@ -236,8 +236,14 @@ html[data-theme="dark"] .guide-icon {
     background: var(--card-soft, rgba(167,139,250,.14));
     color: var(--card-accent, #c4b5fd);
 }
-html[data-theme="dark"] .guide-group,
-html[data-theme="dark"] .guide-badge { background: #26263f; color: #9a9ab6; }
+html[data-theme="dark"] .guide-group { 
+    background: var(--card-soft, #26263f); 
+    color: var(--card-accent, #9a9ab6); 
+}
+html[data-theme="dark"] .guide-badge { 
+    background: #26263f; 
+    color: #9a9ab6; 
+}
 html[data-theme="dark"] .favorite-button {
     background: #1e1e33;
     border-color: #2f2f4a;
