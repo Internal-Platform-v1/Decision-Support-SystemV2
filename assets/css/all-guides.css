@@ -493,8 +493,9 @@ a{text-decoration:none;color:inherit}
   max-width:72%;
   padding:4px 6px;
   border-radius:999px;
-  background:#f5f6fa;
-  color:#777b93;
+  /* Apply group colors to the badge */
+  background: var(--card-soft, #f5f6fa);
+  color: var(--card-accent, #777b93);
   font-size:6.7px;
   line-height:1.1;
   font-weight:800;
