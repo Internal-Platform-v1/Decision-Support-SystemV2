@@ -429,7 +429,7 @@ a{text-decoration:none;color:inherit}
   border-bottom:2px solid #d9d7ef; /* Matches index border */
   border-radius:9px;
   box-shadow:0 3px 11px rgba(41,32,94,.045);
-  overflow:hidden;
+  /* overflow: hidden; <-- REMOVED THIS SO THE STRIPE CAN SHOW */
   cursor:pointer;
   transition:transform .18s ease, box-shadow .18s ease;
 }
@@ -457,12 +457,12 @@ a{text-decoration:none;color:inherit}
 }
 
 /* Map group classes to the exact index colors */
-.group-billing::after   { background: #d7c9ff; }
-.group-pricing::after   { background: #ffd4bd; }
-.group-surcharge::after { background: #c9dcff; }
-.group-account::after   { background: #d0f0d2; }
-.group-paud::after      { background: #c5c9ff; }
-.group-other::after     { background: #ffd0df; }
+.guide-card.group-billing::after   { background: #d7c9ff; }
+.guide-card.group-pricing::after   { background: #ffd4bd; }
+.guide-card.group-surcharge::after { background: #c9dcff; }
+.guide-card.group-account::after   { background: #d0f0d2; }
+.guide-card.group-paud::after      { background: #c5c9ff; }
+.guide-card.group-other::after     { background: #ffd0df; }
 
 
 .guide-top{
