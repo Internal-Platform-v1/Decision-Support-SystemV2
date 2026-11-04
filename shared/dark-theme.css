@@ -2179,3 +2179,68 @@ html[data-theme="dark"] .progress-card {
         animation: none !important;
     }
 }
+
+
+/* ============================================================
+   DARK MODE — NEON HERO · ANIMATED BACKGROUND
+   Three independent motion layers:
+     1. Base gradient drifts (aurora-like light shift)
+     2. Grid texture slides diagonally
+     3. Rings pulse in/out
+   All layered on top of the existing box-shadow pulse.
+   ============================================================ */
+
+/* ---- 1. Base gradient drift + existing glow pulse ---- */
+html[data-theme="dark"] .guide-hero-card {
+    background-size: 220% 220%, 220% 220%, 100% 100%;
+    animation:
+        heroNeonPulse 5.2s ease-in-out infinite,
+        heroBgDrift 28s ease-in-out infinite alternate;
+}
+
+@keyframes heroBgDrift {
+    0% {
+        /* Lavender hotspot upper-left, orange hotspot bottom-right */
+        background-position: 18% 12%, 100% 100%, 0 0;
+    }
+    100% {
+        /* Both hotspots drift past each other toward the center */
+        background-position: 55% 45%, 45% 55%, 0 0;
+    }
+}
+
+/* ---- 2. Grid texture drift ---- */
+html[data-theme="dark"] .guide-hero-card::before {
+    animation: heroGridDrift 22s linear infinite;
+}
+
+@keyframes heroGridDrift {
+    0%   { background-position: 0 0, 0 0; }
+    100% { background-position: 34px 34px, 34px 34px; }
+}
+
+/* ---- 3. Rings gentle pulse ---- */
+html[data-theme="dark"] .guide-hero-card::after {
+    animation: heroRingsPulse 6s ease-in-out infinite;
+    will-change: opacity, transform;
+}
+
+@keyframes heroRingsPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.06);
+    }
+}
+
+/* ---- Respect reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme="dark"] .guide-hero-card,
+    html[data-theme="dark"] .guide-hero-card::before,
+    html[data-theme="dark"] .guide-hero-card::after {
+        animation: none !important;
+    }
+}
