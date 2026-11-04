@@ -1832,3 +1832,164 @@ html[data-theme="dark"] .guide-icon {
     background: var(--card-soft, rgba(167,139,250,.14));
     color: var(--card-accent, #c4b5fd);
 }
+
+
+/* ============================================================
+   DARK MODE — TEXT READABILITY / SUBTLE GLOW
+   Brightens text + adds a soft violet-white glow so content
+   lifts off the dark surfaces without washing out.
+   Append this block to the END of the dark theme file.
+   ============================================================ */
+
+/* ---- Base body ---- */
+html[data-theme="dark"] body {
+    color: #e6e3f5;
+}
+
+/* ---- Primary question prompt ---- */
+html[data-theme="dark"] .question-text {
+    color: #ffffff;
+    text-shadow:
+        0 0 1px rgba(255, 255, 255, .14),
+        0 0 14px rgba(196, 181, 253, .24);
+}
+
+/* ---- Question help (long lists, instructions) ---- */
+html[data-theme="dark"] .question-help {
+    color: #c8c4dc;
+    text-shadow: 0 0 8px rgba(167, 139, 250, .10);
+}
+
+/* ---- Reminder note text ---- */
+html[data-theme="dark"] .note-body {
+    color: #d6d2ea;
+    text-shadow: 0 0 8px rgba(255, 159, 77, .07);
+}
+
+/* ---- Choice cards (the answers) ---- */
+html[data-theme="dark"] .choice-title {
+    color: #f7f4ff;
+    text-shadow:
+        0 0 1px rgba(255, 255, 255, .12),
+        0 0 10px rgba(196, 181, 253, .16);
+}
+html[data-theme="dark"] .choice-desc {
+    color: #c0bcd8;
+    text-shadow: 0 0 6px rgba(167, 139, 250, .07);
+}
+
+/* ---- Final card (recommended action) ---- */
+html[data-theme="dark"] .final-text {
+    color: #ffffff;
+    text-shadow:
+        0 0 1px rgba(255, 255, 255, .14),
+        0 0 14px rgba(196, 181, 253, .24);
+}
+html[data-theme="dark"] .final-note {
+    color: #c8c4dc;
+    text-shadow: 0 0 8px rgba(167, 139, 250, .07);
+}
+
+/* ---- Selected Path timeline ---- */
+html[data-theme="dark"] .path-question {
+    color: #f4f0ff;
+    text-shadow: 0 0 8px rgba(196, 181, 253, .12);
+}
+html[data-theme="dark"] .path-answer {
+    color: #c8c4dc;
+    text-shadow: 0 0 6px rgba(167, 139, 250, .07);
+}
+html[data-theme="dark"] .path-step {
+    color: #d4c5ff;
+    text-shadow: 0 0 8px rgba(196, 181, 253, .20);
+}
+html[data-theme="dark"] .path-hint,
+html[data-theme="dark"] .path-empty {
+    color: #b8b4d0;
+}
+
+/* ---- Recommended Action card body ---- */
+html[data-theme="dark"] .recommendation {
+    color: #e2def2;
+    text-shadow: 0 0 6px rgba(255, 159, 77, .07);
+}
+html[data-theme="dark"] .recommendation.empty {
+    color: #b0accc;
+}
+
+/* ---- Quick Snapshot ---- */
+html[data-theme="dark"] .metric-v {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(252, 165, 165, .22);
+}
+html[data-theme="dark"] .metric-k {
+    color: #b0accc;
+}
+
+/* ---- Guide Info ---- */
+html[data-theme="dark"] .guide-info-list dd {
+    color: #d6d2ea;
+    text-shadow: 0 0 6px rgba(147, 197, 253, .08);
+}
+html[data-theme="dark"] .guide-info-list dt {
+    color: #b0accc;
+}
+
+/* ---- Side card heads & descriptions ---- */
+html[data-theme="dark"] .side-head {
+    color: #f4f0ff;
+    text-shadow: 0 0 8px rgba(196, 181, 253, .14);
+}
+html[data-theme="dark"] .side-description {
+    color: #bab6d2;
+}
+
+/* ---- Suggested Templates ---- */
+html[data-theme="dark"] .template-title {
+    color: #f4f0ff;
+    text-shadow: 0 0 8px rgba(196, 181, 253, .12);
+}
+html[data-theme="dark"] .template-sub {
+    color: #b0accc;
+}
+html[data-theme="dark"] .template-box {
+    color: #d6d2ea;
+    text-shadow: 0 0 6px rgba(167, 139, 250, .07);
+}
+html[data-theme="dark"] .template-box.empty {
+    color: #918ba8;
+}
+
+/* ---- Progress bar labels ---- */
+html[data-theme="dark"] .progress-title {
+    color: #f4f0ff;
+    text-shadow: 0 0 8px rgba(196, 181, 253, .12);
+}
+html[data-theme="dark"] .progress-status {
+    color: #b8b4d0;
+}
+
+/* ---- Decision footer ---- */
+html[data-theme="dark"] .footer-step {
+    color: #b0accc;
+}
+html[data-theme="dark"] .footer-step strong {
+    color: #f4f0ff;
+    text-shadow: 0 0 8px rgba(196, 181, 253, .12);
+}
+
+/* ---- Stage badge labels (already accent-colored, add lift) ---- */
+html[data-theme="dark"] .stage-badge {
+    text-shadow: 0 0 6px rgba(196, 181, 253, .18);
+}
+html[data-theme="dark"] .stage-badge.alt {
+    text-shadow: 0 0 6px rgba(253, 186, 116, .18);
+}
+
+/* ---- Final card title & badge ---- */
+html[data-theme="dark"] .final-title {
+    color: #b0accc;
+}
+html[data-theme="dark"] .final-badge {
+    text-shadow: 0 0 6px rgba(196, 181, 253, .18);
+}
