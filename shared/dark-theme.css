@@ -2238,28 +2238,56 @@ html[data-theme="dark"] .guide-hero-card::after {
 }
 
 /* ============================================================
-   DARK MODE — HERO · MOVING BACKGROUND
-   Drifts the lavender & orange hotspots across the card.
+   DARK MODE — HERO · NO GLOW, JUST MOTION
+   Removes the pulse glow and ring glow.
+   Keeps only the moving gradient background.
    ============================================================ */
 
+/* Clean card: gradient + subtle shadow + drift animation */
 html[data-theme="dark"] .guide-hero-card {
+    background:
+        radial-gradient(120% 140% at 18% 12%,
+            rgba(224, 214, 255, .28) 0%,
+            rgba(139, 92, 246, .14) 26%,
+            transparent 58%),
+        radial-gradient(90% 120% at 100% 100%,
+            rgba(255, 159, 77, .16) 0%,
+            transparent 55%),
+        linear-gradient(135deg,
+            #3a1189 0%,
+            #5b21b6 42%,
+            #7c3aed 78%,
+            #a855f7 100%);
     background-size: 200% 200%, 200% 200%, 100% 100%;
-    animation:
-        heroNeonPulse   5.2s ease-in-out infinite,
-        heroBgDrift    28s   ease-in-out infinite alternate;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .40);
+    animation: heroBgDrift 28s ease-in-out infinite alternate;
 }
 
 @keyframes heroBgDrift {
     0% {
-        background-position:
-            15% 10%,     /* lavender hotspot — top-left  */
-            100% 100%,   /* orange hotspot   — bottom-right */
-            0 0;
+        background-position: 15% 10%, 100% 100%, 0 0;
     }
     100% {
-        background-position:
-            60% 55%,     /* lavender drifts toward center */
-            40% 45%,     /* orange drifts opposite way    */
-            0 0;
+        background-position: 60% 55%, 40% 45%, 0 0;
+    }
+}
+
+/* Kill the grid slide animation */
+html[data-theme="dark"] .guide-hero-card::before {
+    animation: none;
+}
+
+/* Kill the rings pulse + remove the ring glow shadow */
+html[data-theme="dark"] .guide-hero-card::after {
+    animation: none;
+    box-shadow:
+        0 0 0 34px rgba(196, 181, 253, .08),
+        0 0 0 68px rgba(196, 181, 253, .05);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme="dark"] .guide-hero-card {
+        animation: none !important;
     }
 }
