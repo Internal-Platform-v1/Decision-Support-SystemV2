@@ -437,7 +437,7 @@
         return s;
     }
 
-        function renderNotifications() {
+            function renderNotifications() {
         const list = document.getElementById("notificationList");
         const badge = document.getElementById("sharedNotificationBadge");
         const btn = document.getElementById("sharedNotificationBtn");
@@ -514,39 +514,27 @@
                         window.location.href = "index.html";
                     }
                 } else {
-                    // Robust announcement click logic with fallback
-                    const banner = document.querySelector('.dss-update-banner');
-                    const viewAll = document.querySelector('[data-update-action="view-all"]');
+                    // Announcement Routing
                     const modal = document.getElementById("dssUpdateModal");
-                    
+                    const viewAll = document.querySelector('[data-update-action="view-all"]');
+
+                    // 1. Try to trigger the banner's native click handler
                     if (viewAll) {
-                        // Trigger native click
                         viewAll.click();
-                        
-                        // FALLBACK: If the banner hasn't loaded its data yet, 
-                        // the native click might fail. Force it open after a tiny delay.
+                    }
+
+                    // 2. Fallback: Force the modal open if it exists on the page
+                    if (modal) {
                         setTimeout(() => {
-                            if (modal && modal.hidden) {
+                            // If the native click didn't open it (e.g. data was still loading)
+                            if (modal.hidden) {
                                 modal.hidden = false;
-                                modal.classList.remove("is-open");
-                                requestAnimationFrame(() => {
-                                    modal.classList.add("is-open");
-                                });
+                                modal.classList.add("is-open");
                                 document.body.classList.add("dss-modal-open");
                             }
-                        }, 150);
-                    } else if (banner) {
-                        banner.scrollIntoView({ behavior: "smooth", block: "center" });
-                    } else if (modal) {
-                        // Fallback: if modal exists but banner is missing, force it open
-                        modal.hidden = false;
-                        modal.classList.remove("is-open");
-                        requestAnimationFrame(() => {
-                            modal.classList.add("is-open");
-                        });
-                        document.body.classList.add("dss-modal-open");
+                        }, 250);
                     } else {
-                        // If on a page without the banner at all, redirect to home
+                        // If the modal doesn't exist on this page, redirect to home
                         const currentPage = window.location.pathname.split("/").pop();
                         if (currentPage !== "" && currentPage !== "index.html") {
                             window.location.href = "index.html";
