@@ -52,10 +52,23 @@
             <input id="globalSearch" type="text" placeholder="Search guides, tools, topics..." autocomplete="off">
         </div>
 
-        <button class="icon-btn notification-btn" id="sharedNotificationBtn" aria-label="Notifications" type="button">
-            <span class="bell-icon"></span>
-            <b class="notification-dot" id="sharedNotificationBadge" hidden>0</b>
-        </button>
+        <div class="notification-wrapper">
+            <button class="icon-btn notification-btn" id="sharedNotificationBtn" aria-label="Notifications" type="button">
+                <span class="bell-icon"></span>
+                <b class="notification-dot" id="sharedNotificationBadge" hidden>0</b>
+            </button>
+
+            <!-- NOTIFICATION DROPDOWN -->
+            <div class="notification-dropdown" id="notificationDropdown">
+                <div class="notification-header">
+                    <span>Notifications</span>
+                    <button type="button" id="markAllReadBtn">Mark all as read</button>
+                </div>
+                <div class="notification-list" id="notificationList">
+                    <!-- Notifications will be injected here by JS -->
+                </div>
+            </div>
+        </div>
 
         <div class="settings-wrapper">
             <button
