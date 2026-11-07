@@ -52,33 +52,27 @@
             <input id="globalSearch" type="text" placeholder="Search guides, tools, topics..." autocomplete="off">
         </div>
 
+        <!-- NOTIFICATION SYSTEM -->
         <div class="notification-wrapper">
             <button class="icon-btn notification-btn" id="sharedNotificationBtn" aria-label="Notifications" type="button">
                 <span class="bell-icon"></span>
                 <b class="notification-dot" id="sharedNotificationBadge" hidden>0</b>
             </button>
 
-            <!-- NOTIFICATION DROPDOWN -->
             <div class="notification-dropdown" id="notificationDropdown">
                 <div class="notification-header">
                     <span>Notifications</span>
                     <button type="button" id="markAllReadBtn">Mark all as read</button>
                 </div>
                 <div class="notification-list" id="notificationList">
-                    <!-- Notifications will be injected here by JS -->
+                    <!-- Notifications injected via JS -->
                 </div>
             </div>
         </div>
 
+        <!-- SETTINGS SYSTEM -->
         <div class="settings-wrapper">
-            <button
-                class="icon-btn settings-btn"
-                id="settingsBtn"
-                type="button"
-                aria-label="Open settings"
-                aria-haspopup="true"
-                aria-expanded="false"
-            >
+            <button class="icon-btn settings-btn" id="settingsBtn" type="button" aria-label="Open settings" aria-haspopup="true" aria-expanded="false">
                 <span class="settings-icon" aria-hidden="true">⚙</span>
             </button>
 
@@ -115,6 +109,7 @@
     </div>
 </header>
 
+<!-- ADMIN GATE MODAL -->
 <div class="admin-gate" id="adminGate" hidden>
     <div class="admin-gate-backdrop" data-admin-gate-close></div>
 
@@ -136,9 +131,7 @@
                     <svg class="admin-gate-field-icon" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M4 6.5h16v11H4z"/><path d="m4 7 8 6 8-6"/>
                     </svg>
-                    <input type="email" id="adminGateEmail" class="admin-gate-input"
-                           placeholder="name@fedexfreight.com"
-                           autocomplete="username" spellcheck="false" autocapitalize="off">
+                    <input type="email" id="adminGateEmail" class="admin-gate-input" placeholder="name@fedexfreight.com" autocomplete="username" spellcheck="false" autocapitalize="off">
                 </span>
             </label>
 
@@ -149,11 +142,8 @@
                         <rect x="4" y="10" width="16" height="10" rx="2"/>
                         <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
                     </svg>
-                    <input type="password" id="adminGateInput" class="admin-gate-input"
-                           placeholder="Enter your password"
-                           autocomplete="current-password">
-                    <button type="button" class="admin-gate-toggle" id="adminGateToggle"
-                            aria-label="Show password">Show</button>
+                    <input type="password" id="adminGateInput" class="admin-gate-input" placeholder="Enter your password" autocomplete="current-password">
+                    <button type="button" class="admin-gate-toggle" id="adminGateToggle" aria-label="Show password">Show</button>
                 </span>
             </label>
 
