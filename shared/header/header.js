@@ -564,7 +564,7 @@ function setupAdminGate() {
             `;
         }).join("");
 
-        // Bind click events to items
+               // Bind click events to items
         list.querySelectorAll(".notif-item").forEach(item => {
             item.addEventListener("click", function(e) {
                 e.stopPropagation();
@@ -582,24 +582,36 @@ function setupAdminGate() {
                         helpBtn.click();
                         // Switch to "My Requests" tab after a tiny delay
                         setTimeout(() => {
-                            document.querySelector('[data-help-tab="mine"]')?.click();
-                        }, 50);
+                            const mineTab = document.querySelector('[data-help-tab="mine"]');
+                            if (mineTab) mineTab.click();
+                        }, 100);
                     } else {
                         window.location.href = "index.html";
                     }
                 } else {
+                    // Robust announcement click logic
+                    const banner = document.querySelector('.dss-update-banner');
                     const viewAll = document.querySelector('[data-update-action="view-all"]');
+                    const modal = document.getElementById("dssUpdateModal");
+                    
                     if (viewAll) {
                         viewAll.click();
+                    } else if (banner) {
+                        banner.scrollIntoView({ behavior: "smooth", block: "center" });
+                    } else if (modal) {
+                        // Fallback: if modal exists but banner is weird, just try to open it
+                        modal.hidden = false;
+                        modal.classList.add("is-open");
                     } else {
-                        const banner = document.getElementById("dssUpdateBanner");
-                        if (banner) banner.scrollIntoView({ behavior: "smooth", block: "center" });
-                        else window.location.href = "index.html";
+                        // If on a page without the banner at all, redirect to home
+                        const currentPage = window.location.pathname.split("/").pop();
+                        if (currentPage !== "" && currentPage !== "index.html") {
+                            window.location.href = "index.html";
+                        }
                     }
                 }
             });
         });
-    }
 
     function markNotificationRead(type, id) {
         if (type === "announcement") {
