@@ -1,5 +1,5 @@
 /* ============================================================
-   DSS V2 — SHARED UPDATE BANNER ROTATOR + MODAL
+   DSS V2 — SHARED UPDATE BANNER ROTATOR
    ============================================================ */
 (function () {
   "use strict";
@@ -19,8 +19,6 @@
   let activeIndex = 0;
   let timerId = null;
   let banner = null;
-  let modal = null;
-  let modalIndex = 0;
   let initialized = false;
   let unsubscribeBanner = null;
 
@@ -83,6 +81,7 @@
       });
 
       publishedSlides = next;
+      window.BDUpdateData = publishedSlides; // Save for the shared modal
       
       if (!publishedSlides.length) {
         if (banner) banner.style.display = "none";
@@ -193,98 +192,19 @@
     const btn = banner.querySelector('[data-update-action="view-all"]');
     if (!btn) return;
     btn.addEventListener("click", () => {
-      if (!publishedSlides.length) return;
-      openModal(activeIndex);
+      // Hand off to the shared Notification Modal
+      if (window.BDNotificationModal && typeof window.BDNotificationModal.openFullUpdates === 'function') {
+        window.BDNotificationModal.openFullUpdates();
+      } else {
+        console.warn("Shared Notification Modal not loaded yet.");
+      }
     });
   }
 
   function bindHover() {
+    if (!banner) return;
     banner.addEventListener("mouseenter", stopAutoAdvance);
     banner.addEventListener("mouseleave", startAutoAdvance);
-  }
-
-  function renderModal(index) {
-    if (!modal) return;
-    if (!publishedSlides.length) return;
-
-    modalIndex = index;
-    const slide = publishedSlides[index];
-    if (!slide) return;
-    const { meta, content } = slide;
-
-    // SET PRIORITY COLOR DATA ATTRIBUTE FOR MODAL
-    const priorityVal = (content.eyebrow || "Normal").toLowerCase();
-    if (["normal", "important", "urgent"].includes(priorityVal)) {
-      modal.setAttribute("data-priority", priorityVal);
-    } else {
-      modal.removeAttribute("data-priority");
-    }
-
-    const eyebrow = modal.querySelector("#dssUpdateModalEyebrow");
-    const title   = modal.querySelector("#dssUpdateModalTitle");
-    const badge   = modal.querySelector("#dssUpdateModalBadge");
-    const date    = modal.querySelector("#dssUpdateModalDate");
-    const message = modal.querySelector("#dssUpdateModalMessage");
-
-    if (eyebrow) eyebrow.textContent = content.eyebrow;
-    if (title)   title.textContent   = content.title;
-    if (badge)   badge.textContent   = meta.label;
-    if (date)    date.textContent    = content.date;
-    if (message) message.textContent  = content.message;
-
-    const dotsWrap = modal.querySelector("#dssUpdateModalDots");
-    if (dotsWrap) {
-      dotsWrap.innerHTML = publishedSlides.map((_, i) =>
-        `<button type="button" class="dss-update-modal__dot${i === index ? " is-active" : ""}" data-modal-slide="${i}" aria-label="${esc(publishedSlides[i].meta.label)}"></button>`
-      ).join("");
-      dotsWrap.querySelectorAll("[data-modal-slide]").forEach(dot => {
-        dot.addEventListener("click", () => {
-          const i = Number(dot.dataset.modalSlide);
-          if (Number.isFinite(i)) renderModal(i);
-        });
-      });
-    }
-
-    const prev = modal.querySelector("#dssUpdateModalPrev");
-    const next = modal.querySelector("#dssUpdateModalNext");
-    if (prev) prev.disabled = index === 0;
-    if (next) next.disabled = index === publishedSlides.length - 1;
-  }
-
-  function openModal(index) {
-    if (!modal || !publishedSlides.length) return;
-    renderModal(index);
-    modal.hidden = false;
-    modal.classList.remove("is-open");
-    requestAnimationFrame(() => {
-      modal.classList.add("is-open");
-    });
-    document.body.classList.add("dss-modal-open");
-  }
-
-  function closeModal() {
-    if (!modal) return;
-    modal.classList.remove("is-open");
-    document.body.classList.remove("dss-modal-open");
-    setTimeout(() => {
-      modal.hidden = true;
-    }, 220);
-  }
-
-  function bindModal() {
-    if (!modal) return;
-    modal.querySelectorAll("[data-update-modal-close]").forEach(el => {
-      el.addEventListener("click", closeModal);
-    });
-    modal.querySelector("#dssUpdateModalPrev")?.addEventListener("click", () => {
-      if (modalIndex > 0) renderModal(modalIndex - 1);
-    });
-    modal.querySelector("#dssUpdateModalNext")?.addEventListener("click", () => {
-      if (modalIndex < publishedSlides.length - 1) renderModal(modalIndex + 1);
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal && !modal.hidden) closeModal();
-    });
   }
 
   function tryInit(attempt) {
@@ -292,7 +212,6 @@
     if (initialized) return;
 
     banner = document.getElementById("dssUpdateBanner");
-    modal = document.getElementById("dssUpdateModal");
 
     if (!banner) {
       if (attempt < 40) {
@@ -304,7 +223,6 @@
     initialized = true;
     bindButton();
     bindHover();
-    bindModal();
 
     const waitForFirebase = async (fbAttempt = 0) => {
       if (firestore()) {
