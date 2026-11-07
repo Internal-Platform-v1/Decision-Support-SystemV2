@@ -514,41 +514,95 @@
                         window.location.href = "index.html";
                     }
                 } else {
-                    // Announcement Routing with Polling
-                    console.log("🟢 Notification clicked. Looking for update modal...");
-                    
-                    let attempts = 0;
-                    const interval = setInterval(() => {
-                        const modal = document.getElementById("dssUpdateModal");
-                        const viewAll = document.querySelector('[data-update-action="view-all"]');
-
-                        if (modal) {
-                            clearInterval(interval);
-                            console.log("✅ Modal found! Opening...");
-                            
-                            if (viewAll) viewAll.click();
-                            
-                            modal.hidden = false;
-                            modal.classList.remove("is-open");
-                            requestAnimationFrame(() => {
-                                modal.classList.add("is-open");
-                            });
-                            document.body.classList.add("dss-modal-open");
-                            
-                        } else {
-                            attempts++;
-                            if (attempts >= 10) { // 10 * 100ms = 1 second
-                                clearInterval(interval);
-                                console.warn("⚠️ Modal NOT found after 1s. Redirecting...");
-                                const currentPage = window.location.pathname.split("/").pop();
-                                if (currentPage !== "" && currentPage !== "index.html") {
-                                    window.location.href = "index.html";
-                                }
-                            }
-                        }
-                    }, 100);
+                    openAnnouncementModal(obj);
                 }
             });
+        });
+    }
+
+    // Helper function to guarantee the modal opens
+    function openAnnouncementModal(notif) {
+        let modal = document.getElementById("dssUpdateModal");
+        
+        // If modal exists, just open it
+        if (modal) {
+            const viewAll = document.querySelector('[data-update-action="view-all"]');
+            if (viewAll) viewAll.click();
+            
+            modal.hidden = false;
+            modal.classList.add("is-open");
+            document.body.classList.add("dss-modal-open");
+            return;
+        }
+
+        // If modal is missing, inject it dynamically!
+        console.warn("⚠️ Modal missing from DOM. Injecting it dynamically...");
+        
+        const data = notif.originalData || {};
+        const categoryMap = {
+            general: "📢 Announcements", whats_new: "✨ What's New?", reminders: "⚠ Important Reminders",
+            issues: "🐞 Known Issues", guides: "📚 New Guides Added"
+        };
+        const badgeText = categoryMap[data.category] || "📢 Announcements";
+        const priority = (data.eyebrow || "normal").toLowerCase();
+        
+        let priorityStyle = "";
+        if (priority === "urgent") priorityStyle = "background-color: #fee2e2; color: #991b1b;";
+        else if (priority === "important") priorityStyle = "background-color: #fef3c7; color: #92400e;";
+        else priorityStyle = "background-color: #dcfce7; color: #166534;";
+
+        const modalHTML = `
+        <div class="dss-update-modal is-open" id="dssUpdateModal">
+          <div class="dss-update-modal__backdrop" data-update-modal-close></div>
+          <div class="dss-update-modal__panel" role="dialog" aria-modal="true" aria-labelledby="dssUpdateModalTitle">
+            <header class="dss-update-modal__header">
+              <div class="dss-update-modal__header-copy">
+                <span class="dss-update-modal__eyebrow" id="dssUpdateModalEyebrow" style="${priorityStyle}">${esc(data.eyebrow || "SYSTEM UPDATE")}</span>
+                <h2 class="dss-update-modal__title" id="dssUpdateModalTitle">${esc(notif.title)}</h2>
+              </div>
+              <button type="button" class="dss-update-modal__close" data-update-modal-close aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </header>
+            <div class="dss-update-modal__body">
+              <div class="dss-update-modal__meta">
+                <span class="dss-update-modal__badge" id="dssUpdateModalBadge">${esc(badgeText)}</span>
+                <span class="dss-update-modal__date" id="dssUpdateModalDate">${esc(notif.timeStr)}</span>
+              </div>
+              <p class="dss-update-modal__message" id="dssUpdateModalMessage">${esc(notif.desc)}</p>
+            </div>
+            <footer class="dss-update-modal__footer">
+              <button type="button" class="dss-update-modal__nav" id="dssUpdateModalPrev" disabled>
+                <i class="fa-solid fa-chevron-left"></i> Previous
+              </button>
+              <div class="dss-update-modal__dots" id="dssUpdateModalDots"></div>
+              <button type="button" class="dss-update-modal__nav" id="dssUpdateModalNext" disabled>
+                Next <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </footer>
+          </div>
+        </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        modal = document.getElementById("dssUpdateModal");
+        document.body.classList.add("dss-modal-open");
+
+        // Bind close events to the injected modal
+        modal.querySelectorAll("[data-update-modal-close]").forEach(el => {
+            el.addEventListener("click", () => {
+                modal.classList.remove("is-open");
+                document.body.classList.remove("dss-modal-open");
+                setTimeout(() => { modal.hidden = true; }, 220);
+            });
+        });
+        
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape" && modal && !modal.hidden) {
+                modal.classList.remove("is-open");
+                document.body.classList.remove("dss-modal-open");
+                setTimeout(() => { modal.hidden = true; }, 220);
+            }
         });
     }
    
@@ -598,7 +652,8 @@
                         desc: data.message || "A new update has been posted.",
                         rawTime: rawTime,
                         timeStr: data.date || "Recently",
-                        unread: isUnread
+                        unread: isUnread,
+                        originalData: data // <--- SAVING THE FULL DATA
                     });
                 });
                 
