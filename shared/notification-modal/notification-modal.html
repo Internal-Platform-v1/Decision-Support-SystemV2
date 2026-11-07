@@ -1,6 +1,6 @@
+<!-- PREVIEW MODAL (Single Update) -->
 <div class="notif-modal" id="sharedNotifModal" hidden>
   <div class="notif-modal__backdrop" data-notif-close></div>
-
   <div class="notif-modal__panel" role="dialog" aria-modal="true" aria-labelledby="notifModalTitle">
     <header class="notif-modal__header">
       <div class="notif-modal__header-copy">
@@ -11,7 +11,6 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
     </header>
-
     <div class="notif-modal__body">
       <div class="notif-modal__meta">
         <span class="notif-modal__badge" id="notifModalBadge">📢 Announcements</span>
@@ -19,9 +18,27 @@
       </div>
       <p class="notif-modal__message" id="notifModalMessage">Message goes here.</p>
     </div>
-
     <footer class="notif-modal__footer">
       <button type="button" class="notif-modal__btn" id="notifModalActionBtn">View All Updates</button>
     </footer>
+  </div>
+</div>
+
+<!-- FULL UPDATES LIST MODAL -->
+<div class="dss-update-modal" id="dssUpdateModal" hidden>
+  <div class="dss-update-modal__backdrop" data-update-modal-close></div>
+  <div class="dss-update-modal__panel" role="dialog" aria-modal="true" aria-labelledby="dssUpdateModalTitle">
+    <header class="dss-update-modal__header">
+      <div class="dss-update-modal__header-copy">
+        <h2 class="dss-update-modal__title" id="dssUpdateModalTitle">Latest Announcements</h2>
+      </div>
+      <button type="button" class="dss-update-modal__close" data-update-modal-close aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </header>
+    
+    <div class="dss-update-modal__body" id="dssUpdateModalList">
+      <!-- Updates are injected here by JavaScript -->
+    </div>
   </div>
 </div>
