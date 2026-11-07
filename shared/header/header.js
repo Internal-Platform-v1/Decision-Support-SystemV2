@@ -444,7 +444,6 @@
         if (!list || !badge) return;
 
         currentNotifications.sort((a, b) => b.rawTime - a.rawTime);
-
         const unreadCount = currentNotifications.filter(n => n.unread).length;
 
         if (unreadCount > 0) {
@@ -501,7 +500,7 @@
                 
                 document.getElementById("notificationDropdown").classList.remove("open");
 
-                // Route to modal
+                // Route
                 if (type === "help") {
                     const helpBtn = document.getElementById("footerHelpBtn");
                     if (helpBtn) {
@@ -514,12 +513,18 @@
                         window.location.href = "index.html";
                     }
                 } else {
-                    openAnnouncementModal(obj);
+                    // Announcement - trigger the new shared modal
+                    if (window.BDNotificationModal && obj.originalData) {
+                        window.BDNotificationModal.open(obj.originalData);
+                    } else {
+                        // Fallback
+                        window.location.href = "index.html";
+                    }
                 }
             });
         });
     }
-
+   
     // Helper function to guarantee the modal opens
     function openAnnouncementModal(notif) {
         let modal = document.getElementById("dssUpdateModal");
