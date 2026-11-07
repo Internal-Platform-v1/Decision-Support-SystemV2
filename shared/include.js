@@ -1,58 +1,28 @@
 /* ============================================================
    shared/include.js — DSS V2
-   ------------------------------------------------------------
-   Central shared-component loader + theme bootstrap.
-
-   IMPORTANT: The theme bootstrap MUST run before this file's
-   main IIFE, because the loader HTML is already in the DOM by
-   the time this script executes. Running synchronously here
-   means the attribute is set BEFORE the first paint of any
-   later-loaded stylesheet (footer, dark-theme, etc.), and the
-   loader gets re-themed on the same tick.
    ============================================================ */
-
-/* ------------------------------------------------------------
-   0. THEME BOOTSTRAP — runs synchronously on script parse
-      Sets <html data-theme="dark|light"> immediately.
-      Also injects a <style> block that dark-styles the page
-      loader so it doesn't flash light before page-loader.css
-      + dark-theme.css are applied.
-   ------------------------------------------------------------ */
 (function bootstrapTheme() {
     var THEME_KEY = "bd_theme";
-
     function resolveTheme() {
         try {
             var stored = localStorage.getItem(THEME_KEY);
             if (stored === "dark" || stored === "light") return stored;
-        } catch (e) { /* storage blocked */ }
-
+        } catch (e) {}
         try {
-            if (window.matchMedia &&
-                window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                return "dark";
-            }
-        } catch (e) { /* no matchMedia */ }
-
+            if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+        } catch (e) {}
         return "light";
     }
-
     var theme = resolveTheme();
     document.documentElement.setAttribute("data-theme", theme);
 
-    /* Inject a blocking <style> that themes the loader on the
-       very first paint, regardless of when page-loader.css or
-       dark-theme.css finish loading. */
     if (theme === "dark") {
         var style = document.createElement("style");
         style.id = "dss-early-dark-loader";
         style.textContent = [
             "html[data-theme=\"dark\"] .page-loader { background: #0b0b17 !important; }",
             "html[data-theme=\"dark\"] .page-loader-text { color: #b8b8d4 !important; }",
-            "html[data-theme=\"dark\"] .page-loader-ring {",
-            "  border-color: rgba(167,139,250,.18) !important;",
-            "  border-top-color: #c4b5fd !important;",
-            "}",
+            "html[data-theme=\"dark\"] .page-loader-ring { border-color: rgba(167,139,250,.18) !important; border-top-color: #c4b5fd !important; }",
             "html[data-theme=\"dark\"] .page-loader-dot { background: #c4b5fd !important; }",
             "html[data-theme=\"dark\"] body { background: #0b0b17; color: #e7e7f2; }"
         ].join("\n");
@@ -61,56 +31,37 @@
 })();
 
 
-/* ============================================================
-   MAIN LOADER
-   ============================================================ */
 (function () {
-
     "use strict";
 
     function loadText(url) {
-        return fetch(url, { cache: "no-cache" })
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error(
-                        "Unable to load " + url + " (" + response.status + ")"
-                    );
-                }
-                return response.text();
-            });
+        return fetch(url, { cache: "no-cache" }).then(function (response) {
+            if (!response.ok) throw new Error("Unable to load " + url);
+            return response.text();
+        });
     }
 
     function loadCss(url) {
         return new Promise(function (resolve, reject) {
-            if (document.querySelector('link[data-shared-style="' + url + '"]')) {
-                resolve();
-                return;
-            }
+            if (document.querySelector('link[data-shared-style="' + url + '"]')) { resolve(); return; }
             var link = document.createElement("link");
             link.rel = "stylesheet";
             link.href = url;
             link.dataset.sharedStyle = url;
             link.onload = function () { resolve(); };
-            link.onerror = function () {
-                reject(new Error("Unable to load stylesheet " + url));
-            };
+            link.onerror = function () { reject(new Error("Unable to load CSS " + url)); };
             document.head.appendChild(link);
         });
     }
 
     function loadScript(url) {
         return new Promise(function (resolve, reject) {
-            if (document.querySelector('script[data-shared-script="' + url + '"]')) {
-                resolve();
-                return;
-            }
+            if (document.querySelector('script[data-shared-script="' + url + '"]')) { resolve(); return; }
             var script = document.createElement("script");
             script.src = url;
             script.dataset.sharedScript = url;
             script.onload = function () { resolve(); };
-            script.onerror = function () {
-                reject(new Error("Unable to load script " + url));
-            };
+            script.onerror = function () { reject(new Error("Unable to load JS " + url)); };
             document.body.appendChild(script);
         });
     }
@@ -118,101 +69,66 @@
     async function loadHeader() {
         var placeholder = document.getElementById("header-placeholder");
         if (!placeholder) return;
-
-        var headerHtml = await loadText("shared/header/header.html");
-        placeholder.innerHTML = headerHtml;
-
+        placeholder.innerHTML = await loadText("shared/header/header.html");
         await loadCss("shared/header/header.css");
         await loadScript("shared/header/header.js");
-
         window.dispatchEvent(new Event("bdtools:header-ready"));
     }
 
     async function loadUpdateBanner() {
         var placeholder = document.getElementById("update-banner-placeholder");
         if (!placeholder) return;
-
-        var bannerHtml = await loadText("shared/update-banner/update-banner.html");
-        placeholder.innerHTML = bannerHtml;
-
+        placeholder.innerHTML = await loadText("shared/update-banner/update-banner.html");
         await loadCss("shared/update-banner/update-banner.css");
         await loadScript("shared/update-banner/update-banner.js");
-
         window.dispatchEvent(new Event("bdtools:update-banner-ready"));
     }
 
     async function loadFooter() {
         var placeholder = document.getElementById("footer-placeholder");
         if (!placeholder) return;
-
-        var footerHtml = await loadText("shared/footer/footer.html");
-        placeholder.innerHTML = footerHtml;
-
+        placeholder.innerHTML = await loadText("shared/footer/footer.html");
         await loadCss("shared/footer/footer.css");
         await loadScript("shared/footer/footer.js");
-
         window.dispatchEvent(new Event("bdtools:footer-ready"));
     }
 
-    /* ------------------------------------------------------
-       EARLY-STYLESHEET PRE-LINK
-       Forces dark-theme.css to be the LAST stylesheet
-       in <head>, so it always wins the cascade.
-       ------------------------------------------------------ */
+    /* NEW: LOAD NOTIFICATION MODAL */
+    async function loadNotificationModal() {
+        try {
+            var modalHtml = await loadText("shared/notification-modal/notification-modal.html");
+            var container = document.createElement("div");
+            container.id = "notification-modal-container";
+            container.innerHTML = modalHtml;
+            document.body.appendChild(container);
+            
+            await loadCss("shared/notification-modal/notification-modal.css");
+            await loadScript("shared/notification-modal/notification-modal.js");
+        } catch (error) {
+            console.error("DSS V2 Notification Modal loader error:", error);
+        }
+    }
+
     function ensureDarkThemeLast() {
         var darkHref = "shared/dark-theme.css";
         var existing = document.querySelector('link[data-shared-style="' + darkHref + '"]');
         if (existing && existing.parentNode) {
-            existing.parentNode.appendChild(existing); /* move to end */
+            existing.parentNode.appendChild(existing);
             return;
         }
-        /* Will be loaded by start() below. */
     }
 
     async function start() {
+        try { await loadHeader(); } catch (error) { console.error("Header loader error:", error); }
+        try { await loadNotificationModal(); } catch (error) { console.error("Notif Modal loader error:", error); }
+        try { await loadUpdateBanner(); } catch (error) { console.error("Update Banner loader error:", error); }
+        try { await loadFooter(); } catch (error) { console.error("Footer loader error:", error); }
 
-        /* -----------------------------------------------------
-           HEADER
-           ----------------------------------------------------- */
-        try {
-            await loadHeader();
-        } catch (error) {
-            console.error("DSS V2 Header loader error:", error);
-        }
-
-        /* -----------------------------------------------------
-           UPDATE BANNER
-           ----------------------------------------------------- */
-        try {
-            await loadUpdateBanner();
-        } catch (error) {
-            console.error("DSS V2 Update Banner loader error:", error);
-        }
-
-        /* -----------------------------------------------------
-           FOOTER
-           ----------------------------------------------------- */
-        try {
-            await loadFooter();
-        } catch (error) {
-            console.error("DSS V2 Footer loader error:", error);
-        }
-
-        /* -----------------------------------------------------
-           DARK THEME — LOADED LAST
-           After every other shared stylesheet so its
-           html[data-theme="dark"] rules win the cascade.
-           ----------------------------------------------------- */
         try {
             await loadCss("shared/dark-theme.css");
             ensureDarkThemeLast();
-        } catch (error) {
-            console.error("DSS V2 dark theme loader error:", error);
-        }
+        } catch (error) { console.error("Dark theme loader error:", error); }
 
-        /* -----------------------------------------------------
-           ALL SHARED COMPONENTS READY
-           ----------------------------------------------------- */
         window.dispatchEvent(new Event("bdtools:shared-ready"));
     }
 
@@ -221,13 +137,8 @@
     } else {
         start();
     }
-
 })();
 
-
-/* ------------------------------------------------------------
-   Auto-inject GuideStore on every page.
-   ------------------------------------------------------------ */
 (function () {
     if (!window.__guideStoreInjected) {
         window.__guideStoreInjected = true;
@@ -235,91 +146,40 @@
     }
 })();
 
-
-/* ------------------------------------------------------------
-   THEME PERSISTENCE ACROSS BACK/FORWARD NAVIGATION
-   ------------------------------------------------------------
-   When the user presses the browser Back or Forward button,
-   the browser often restores the page from its BFcache
-   (back-forward cache) — a snapshot of the DOM from the moment
-   they left. That snapshot still has the OLD data-theme value
-   painted on <html>, so the page flashes the wrong theme.
-
-   Fix: on `pageshow` (which fires for BFcache restores too),
-   re-read the saved theme from localStorage and force it back
-   onto <html>. The user's choice stays permanent until they
-   explicitly toggle the theme again.
-   ------------------------------------------------------------ */
 (function ensureThemePersistsAcrossHistory() {
-
     var THEME_KEY = "bd_theme";
-
     function applyStoredTheme() {
         try {
             var stored = localStorage.getItem(THEME_KEY);
-            if (stored !== "dark" && stored !== "light") {
-                /* No stored choice yet — do nothing, let the bootstrap
-                   resolve the OS preference normally. */
-                return;
-            }
-
+            if (stored !== "dark" && stored !== "light") return;
             var current = document.documentElement.getAttribute("data-theme");
-            if (current === stored) return; /* Already correct — no-op */
-
+            if (current === stored) return;
             document.documentElement.setAttribute("data-theme", stored);
 
-            /* If we're switching to dark and the early-loader <style>
-               is missing (e.g. because the first load was light),
-               inject it now so the loader stays consistent. */
-            if (stored === "dark" &&
-                !document.getElementById("dss-early-dark-loader")) {
+            if (stored === "dark" && !document.getElementById("dss-early-dark-loader")) {
                 var style = document.createElement("style");
                 style.id = "dss-early-dark-loader";
                 style.textContent = [
                     "html[data-theme=\"dark\"] .page-loader { background: #0b0b17 !important; }",
                     "html[data-theme=\"dark\"] .page-loader-text { color: #b8b8d4 !important; }",
-                    "html[data-theme=\"dark\"] .page-loader-ring {",
-                    "  border-color: rgba(167,139,250,.18) !important;",
-                    "  border-top-color: #c4b5fd !important;",
-                    "}",
+                    "html[data-theme=\"dark\"] .page-loader-ring { border-color: rgba(167,139,250,.18) !important; border-top-color: #c4b5fd !important; }",
                     "html[data-theme=\"dark\"] .page-loader-dot { background: #c4b5fd !important; }",
                     "html[data-theme=\"dark\"] body { background: #0b0b17; color: #e7e7f2; }"
                 ].join("\n");
                 (document.head || document.documentElement).appendChild(style);
             }
-
-            /* Notify any listeners (header.js updates its own UI,
-               other scripts may listen too) */
-            document.dispatchEvent(
-                new CustomEvent("bdthemechange", { detail: { theme: stored } })
-            );
-        } catch (e) {
-            /* localStorage inaccessible — ignore */
-        }
+            document.dispatchEvent(new CustomEvent("bdthemechange", { detail: { theme: stored } }));
+        } catch (e) {}
     }
 
-    /* 1. On BFcache restore (Back/Forward) */
-    window.addEventListener("pageshow", function (event) {
-        /* event.persisted is true for BFcache restores,
-           but pageshow also fires on normal loads — running
-           it always is harmless and just verifies consistency. */
-        applyStoredTheme();
-    });
-
-    /* 2. When the tab becomes visible again (some browsers don't
-          fire pageshow on tab switch) */
+    window.addEventListener("pageshow", applyStoredTheme);
     document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "visible") {
-            applyStoredTheme();
-        }
+        if (document.visibilityState === "visible") applyStoredTheme();
     });
 
-    /* 3. Belt-and-suspenders: on load, verify the painted theme
-          matches localStorage. Runs once. */
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", applyStoredTheme, { once: true });
     } else {
         applyStoredTheme();
     }
-
 })();
