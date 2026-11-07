@@ -1,7 +1,8 @@
 /* ============================================================
-   SHARED NOTIFICATION MODAL
+   SHARED NOTIFICATION MODAL & UPDATE FEED
    ============================================================ */
 
+/* --- 1. PREVIEW MODAL --- */
 .notif-modal {
   position: fixed;
   inset: 0;
@@ -15,14 +16,8 @@
   transition: opacity .22s ease;
 }
 
-.notif-modal.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.notif-modal[hidden] {
-  display: none !important;
-}
+.notif-modal.is-open { opacity: 1; pointer-events: auto; }
+.notif-modal[hidden] { display: none !important; }
 
 .notif-modal__backdrop {
   position: absolute;
@@ -45,9 +40,7 @@
   transition: transform .22s ease;
 }
 
-.notif-modal.is-open .notif-modal__panel {
-  transform: translateY(0) scale(1);
-}
+.notif-modal.is-open .notif-modal__panel { transform: translateY(0) scale(1); }
 
 .notif-modal__header {
   display: flex;
@@ -75,89 +68,213 @@
   text-transform: uppercase;
 }
 
-/* Priority Colors */
 .notif-modal[data-priority="normal"] .notif-modal__eyebrow { background: #dcfce7; color: #166534; }
 .notif-modal[data-priority="important"] .notif-modal__eyebrow { background: #fef3c7; color: #92400e; }
 .notif-modal[data-priority="urgent"] .notif-modal__eyebrow { background: #fee2e2; color: #991b1b; }
 
-.notif-modal__title {
+.notif-modal__title { margin: 0; color: #17194f; font-size: 24px; line-height: 1.25; font-weight: 800; }
+
+.notif-modal__close {
+  width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center;
+  border: 0; border-radius: 8px; background: #ffffff; color: #4d148c;
+  font-size: 16px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.notif-modal__body { padding: 24px; overflow-y: auto; }
+.notif-modal__meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.notif-modal__badge { font-size: 12px; font-weight: 700; color: #6b25df; }
+.notif-modal__date { color: #6d6e91; font-size: 12px; font-weight: 600; }
+.notif-modal__message { margin: 0; color: #3a3d5f; font-size: 14px; line-height: 1.6; white-space: pre-line; }
+
+.notif-modal__footer {
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 16px 24px; border-top: 1px solid #ececf3; background: #fafaff;
+}
+
+.notif-modal__btn {
+  display: inline-flex; align-items: center; padding: 10px 20px;
+  border: 0; border-radius: 8px; background: #6b25df; color: #ffffff;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s ease;
+}
+.notif-modal__btn:hover { background: #5b1fc2; }
+
+/* --- 2. FULL UPDATES FEED MODAL --- */
+.dss-update-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+
+.dss-update-modal.is-open { opacity: 1; }
+.dss-update-modal[hidden] { display: none !important; }
+
+.dss-update-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 20, 0.7);
+  backdrop-filter: blur(6px);
+}
+
+.dss-update-modal__panel {
+  position: relative;
+  width: min(680px, 100%);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f6fc;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  transform: translateY(12px) scale(.98);
+  transition: transform .22s ease;
+}
+
+.dss-update-modal.is-open .dss-update-modal__panel { transform: translateY(0) scale(1); }
+
+.dss-update-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e8e2f5;
+  border-radius: 16px 16px 0 0;
+}
+
+.dss-update-modal__title { margin: 0; color: #17194f; font-size: 20px; font-weight: 800; }
+
+.dss-update-modal__close {
+  width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center;
+  border: 0; border-radius: 8px; background: #f3f2fa; color: #4d148c;
+  font-size: 16px; cursor: pointer; transition: 0.2s;
+}
+.dss-update-modal__close:hover { background: #e5e3ee; }
+
+/* Feed List Container */
+.dss-update-modal__body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* --- INDIVIDUAL UPDATE CARD (ACCORDION) --- */
+.update-feed-item {
+  background: #ffffff;
+  border: 1px solid #e8e2f5;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.update-feed-item:hover {
+  border-color: #d1c4f0;
+  box-shadow: 0 4px 12px rgba(26, 13, 65, 0.05);
+}
+
+/* Priority Left Border */
+.update-feed-item[data-priority="normal"] { border-left: 4px solid #22c55e; }
+.update-feed-item[data-priority="important"] { border-left: 4px solid #f59e0b; }
+.update-feed-item[data-priority="urgent"] { border-left: 4px solid #ef4444; }
+
+/* Header (Clickable) */
+.update-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.update-feed-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.update-feed-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.update-feed-category { color: #6b25df; }
+.update-feed-date { color: #9ea0b8; }
+
+.update-feed-title {
   margin: 0;
-  color: #17194f;
-  font-size: 24px;
-  line-height: 1.25;
+  color: #232a3b;
+  font-size: 15px;
   font-weight: 800;
 }
 
-.notif-modal__close {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #4d148c;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.notif-modal__body {
-  padding: 24px;
-  overflow-y: auto;
-}
-
-.notif-modal__meta {
+.update-feed-toggle {
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.notif-modal__badge {
-  font-size: 12px;
-  font-weight: 700;
-  color: #6b25df;
-}
-
-.notif-modal__date {
+  justify-content: center;
+  border-radius: 50%;
+  background: #f3f2fa;
   color: #6d6e91;
   font-size: 12px;
-  font-weight: 600;
+  transition: transform 0.3s ease, background 0.2s ease;
 }
 
-.notif-modal__message {
-  margin: 0;
-  color: #3a3d5f;
-  font-size: 14px;
+.update-feed-item.is-expanded .update-feed-toggle {
+  transform: rotate(180deg);
+  background: #6b25df;
+  color: #ffffff;
+}
+
+/* Expandable Body using CSS Grid trick */
+.update-feed-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.update-feed-item.is-expanded .update-feed-body {
+  grid-template-rows: 1fr;
+}
+
+.update-feed-content {
+  overflow: hidden;
+}
+
+.update-feed-message {
+  padding: 0 16px 16px;
+  color: #4a4f6a;
+  font-size: 13px;
   line-height: 1.6;
   white-space: pre-line;
 }
 
-.notif-modal__footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 16px 24px;
-  border-top: 1px solid #ececf3;
-  background: #fafaff;
-}
-
-.notif-modal__btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 20px;
+.update-feed-action {
+  margin: 0 16px 16px;
+  padding: 8px 16px;
+  background: #f3f2fa;
+  color: #6b25df;
   border: 0;
-  border-radius: 8px;
-  background: #6b25df;
-  color: #ffffff;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-
-.notif-modal__btn:hover {
-  background: #5b1fc2;
-}
+.update-feed-action:hover { background: #e5e3ee; }
