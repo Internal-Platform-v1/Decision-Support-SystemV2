@@ -437,7 +437,7 @@
         return s;
     }
 
-    function renderNotifications() {
+        function renderNotifications() {
         const list = document.getElementById("notificationList");
         const badge = document.getElementById("sharedNotificationBadge");
         const btn = document.getElementById("sharedNotificationBtn");
@@ -514,18 +514,39 @@
                         window.location.href = "index.html";
                     }
                 } else {
+                    // Robust announcement click logic with fallback
                     const banner = document.querySelector('.dss-update-banner');
                     const viewAll = document.querySelector('[data-update-action="view-all"]');
                     const modal = document.getElementById("dssUpdateModal");
                     
                     if (viewAll) {
+                        // Trigger native click
                         viewAll.click();
+                        
+                        // FALLBACK: If the banner hasn't loaded its data yet, 
+                        // the native click might fail. Force it open after a tiny delay.
+                        setTimeout(() => {
+                            if (modal && modal.hidden) {
+                                modal.hidden = false;
+                                modal.classList.remove("is-open");
+                                requestAnimationFrame(() => {
+                                    modal.classList.add("is-open");
+                                });
+                                document.body.classList.add("dss-modal-open");
+                            }
+                        }, 150);
                     } else if (banner) {
                         banner.scrollIntoView({ behavior: "smooth", block: "center" });
                     } else if (modal) {
+                        // Fallback: if modal exists but banner is missing, force it open
                         modal.hidden = false;
-                        modal.classList.add("is-open");
+                        modal.classList.remove("is-open");
+                        requestAnimationFrame(() => {
+                            modal.classList.add("is-open");
+                        });
+                        document.body.classList.add("dss-modal-open");
                     } else {
+                        // If on a page without the banner at all, redirect to home
                         const currentPage = window.location.pathname.split("/").pop();
                         if (currentPage !== "" && currentPage !== "index.html") {
                             window.location.href = "index.html";
