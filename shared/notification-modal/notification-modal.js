@@ -62,9 +62,9 @@
     title.textContent = data.title || "Announcement";
     message.textContent = data.message || "";
     
-    const priority = (data.priority || "normal").toLowerCase();
+    const priority = (data.eyebrow || data.priority || "normal").toLowerCase();
     previewModal.setAttribute("data-priority", priority);
-    eyebrow.textContent = data.priority || "NORMAL";
+    eyebrow.textContent = data.eyebrow || data.priority || "NORMAL";
 
     const categories = {
       general: "📢 Announcements",
@@ -93,14 +93,13 @@
     if (!updateModal) init();
     if (!updateModal) return;
 
-    // Grab data saved by the banner script
+    // Grab data populated by header.js or update-banner.js
     const slides = window.BDUpdateData || [];
     const container = document.getElementById("dssUpdateModalList");
 
     if (!slides.length) {
       container.innerHTML = `<div style="text-align:center; padding: 20px; color: #6d6e91;">No updates available at this time.</div>`;
     } else {
-      // Build the accordion list
       container.innerHTML = slides.map(slide => {
         const { meta, content } = slide;
         const priority = (content.eyebrow || "Normal").toLowerCase();
@@ -132,7 +131,7 @@
         `;
       }).join("");
 
-      // Bind click events to toggle the accordion
+      // Bind accordion toggle
       container.querySelectorAll(".update-feed-header").forEach(header => {
         header.addEventListener("click", function() {
           const item = this.closest(".update-feed-item");
