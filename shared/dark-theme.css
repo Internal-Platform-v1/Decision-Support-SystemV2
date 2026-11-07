@@ -2236,3 +2236,30 @@ html[data-theme="dark"] .guide-hero-card::after {
         animation: none !important;
     }
 }
+
+/* ============================================================
+   DARK MODE — HERO · MOVING BACKGROUND
+   Drifts the lavender & orange hotspots across the card.
+   ============================================================ */
+
+html[data-theme="dark"] .guide-hero-card {
+    background-size: 200% 200%, 200% 200%, 100% 100%;
+    animation:
+        heroNeonPulse   5.2s ease-in-out infinite,
+        heroBgDrift    28s   ease-in-out infinite alternate;
+}
+
+@keyframes heroBgDrift {
+    0% {
+        background-position:
+            15% 10%,     /* lavender hotspot — top-left  */
+            100% 100%,   /* orange hotspot   — bottom-right */
+            0 0;
+    }
+    100% {
+        background-position:
+            60% 55%,     /* lavender drifts toward center */
+            40% 45%,     /* orange drifts opposite way    */
+            0 0;
+    }
+}
