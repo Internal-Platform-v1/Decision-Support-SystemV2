@@ -437,7 +437,7 @@
         return s;
     }
 
-            function renderNotifications() {
+    function renderNotifications() {
         const list = document.getElementById("notificationList");
         const badge = document.getElementById("sharedNotificationBadge");
         const btn = document.getElementById("sharedNotificationBtn");
@@ -515,26 +515,28 @@
                     }
                 } else {
                     // Announcement Routing
+                    console.log("🟢 Notification clicked. Looking for update modal...");
+                    
                     const modal = document.getElementById("dssUpdateModal");
                     const viewAll = document.querySelector('[data-update-action="view-all"]');
 
-                    // 1. Try to trigger the banner's native click handler
-                    if (viewAll) {
-                        viewAll.click();
-                    }
-
-                    // 2. Fallback: Force the modal open if it exists on the page
                     if (modal) {
-                        setTimeout(() => {
-                            // If the native click didn't open it (e.g. data was still loading)
-                            if (modal.hidden) {
-                                modal.hidden = false;
-                                modal.classList.add("is-open");
-                                document.body.classList.add("dss-modal-open");
-                            }
-                        }, 250);
+                        console.log("✅ Modal found! Forcing it open.");
+                        
+                        // 1. Try to trigger the banner's native logic first
+                        if (viewAll) viewAll.click();
+
+                        // 2. Manually force the modal classes (bulletproof)
+                        modal.hidden = false;
+                        modal.classList.remove("is-open");
+                        // Small delay to allow CSS transition to work
+                        requestAnimationFrame(() => {
+                            modal.classList.add("is-open");
+                        });
+                        document.body.classList.add("dss-modal-open");
+                        
                     } else {
-                        // If the modal doesn't exist on this page, redirect to home
+                        console.warn("⚠️ Modal NOT found on this page. Redirecting to index...");
                         const currentPage = window.location.pathname.split("/").pop();
                         if (currentPage !== "" && currentPage !== "index.html") {
                             window.location.href = "index.html";
@@ -544,7 +546,6 @@
             });
         });
     }
-
     function markAllRead() {
         const seenA = getSeenAnnouncements();
         const seenH = getSeenHelp();
