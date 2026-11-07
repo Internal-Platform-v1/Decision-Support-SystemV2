@@ -428,12 +428,18 @@ function setupAdminGate() {
     }
 
     /* ------------------------------------------------------------
-       Notifications — live count of UNSEEN published announcements
+       Notifications — combined Announcements & Help Requests
        ------------------------------------------------------------ */
     const VIEWED_KEY = "bd_viewed_announcements_v1";
+    const HELP_IDS_KEY = "dss_help_ids";
+    const HELP_SEEN_KEY = "dss_help_seen";
 
     let announcementsUnsubscribe = null;
-    let currentPublished = [];     // [{ id, key }] from the latest snapshot
+    let helpUnsubscribe = null;
+    
+    let currentAnnouncements = [];
+    let currentHelpRequests = [];
+    let currentNotifications = [];
 
     function firestore() {
         if (window.firebase && firebase.apps && firebase.apps.length) {
@@ -448,29 +454,21 @@ function setupAdminGate() {
         return p === true || p === "true" || p === 1;
     }
 
-    /**
-     * A stable "version" fingerprint of an announcement.
-     * Changes whenever the admin updates the content, so the badge
-     * re-appears for announcements that have been edited.
-     *
-     * Precedence: updatedAt → date → hash of title+message.
-     */
     function announcementStamp(doc) {
         const data = doc.data() || {};
         const u = data.updatedAt;
         let s = "";
         if (u) {
             if (typeof u.toMillis === "function") s = String(u.toMillis());
-            else if (typeof u.seconds === "number") {
-                s = String(u.seconds * 1000 + Math.floor((u.nanoseconds || 0) / 1e6));
-            } else s = String(u);
+            else if (typeof u.seconds === "number") s = String(u.seconds * 1000);
+            else s = String(u);
         }
         if (!s) s = String(data.date || "");
         if (!s) s = (data.title || "") + "|" + (data.message || "");
         return s;
     }
 
-    function getSeen() {
+    function getSeenAnnouncements() {
         try {
             const raw = localStorage.getItem(VIEWED_KEY);
             const obj = raw ? JSON.parse(raw) : null;
@@ -478,64 +476,161 @@ function setupAdminGate() {
         } catch (e) { return {}; }
     }
 
-    function setSeen(map) {
+    function setSeenAnnouncements(map) {
         try { localStorage.setItem(VIEWED_KEY, JSON.stringify(map)); } catch (e) {}
     }
 
-    function setSharedBadge(count) {
+    function getHelpIds() {
+        try {
+            const raw = localStorage.getItem(HELP_IDS_KEY);
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr.filter(Boolean) : [];
+        } catch (_) { return []; }
+    }
+
+    function getSeenHelp() {
+        try {
+            const raw = localStorage.getItem(HELP_SEEN_KEY);
+            const obj = raw ? JSON.parse(raw) : {};
+            return obj && typeof obj === "object" ? obj : {};
+        } catch (_) { return {}; }
+    }
+
+    function setSeenHelp(map) {
+        try { localStorage.setItem(HELP_SEEN_KEY, JSON.stringify(map)); } catch (_) {}
+    }
+
+    function timeAgo(date) {
+        if (!date) return "";
+        const diff = Date.now() - date.getTime();
+        const min = Math.floor(diff / 60000);
+        if (min < 1) return "Just now";
+        if (min < 60) return `${min}m ago`;
+        const h = Math.floor(min / 60);
+        if (h < 24) return `${h}h ago`;
+        return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
+
+    function renderNotifications() {
+        const list = document.getElementById("notificationList");
         const badge = document.getElementById("sharedNotificationBadge");
-        if (!badge) return;
-        if (count > 0) {
-            badge.textContent = count > 9 ? "9+" : String(count);
+        const btn = document.getElementById("sharedNotificationBtn");
+        
+        if (!list || !badge) return;
+
+        // Merge sources
+        currentNotifications = [
+            ...currentAnnouncements,
+            ...currentHelpRequests
+        ];
+
+        // Sort by timestamp (newest first)
+        currentNotifications.sort((a, b) => b.rawTime - a.rawTime);
+
+        const unreadCount = currentNotifications.filter(n => n.unread).length;
+
+        // Update Badge
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount > 9 ? "9+" : String(unreadCount);
             badge.hidden = false;
         } else {
-            badge.textContent = "0";
             badge.hidden = true;
         }
-    }
 
-    function setSharedButtonTitle(count) {
-        const btn = document.getElementById("sharedNotificationBtn");
-        if (!btn) return;
-        const label = count === 1
-            ? "1 published announcement"
-            : `${count} published announcements`;
-        btn.setAttribute("aria-label", count > 0 ? label : "Notifications");
-        btn.title = count > 0
-            ? `${label} — click to view`
-            : "No announcements available";
-    }
+        if (btn) {
+            btn.title = unreadCount > 0 ? `${unreadCount} unread notifications` : "Notifications";
+        }
 
-    function computeUnseenFromSnapshot(snap) {
-        const seen = getSeen();
-        currentPublished = [];
-        let unseen = 0;
-        snap.forEach(function (doc) {
-            const data = doc.data() || {};
-            if (!isPublishedDoc(data)) return;
-            const key = doc.id + "::" + announcementStamp(doc);
-            currentPublished.push({ id: doc.id, key: key });
-            if (!seen[key]) unseen++;
+        // Render List
+        if (!currentNotifications.length) {
+            list.innerHTML = `<div class="notif-empty">No notifications yet.</div>`;
+            return;
+        }
+
+        list.innerHTML = currentNotifications.map(n => {
+            const unreadClass = n.unread ? " unread" : "";
+            const iconClass = n.type === "help" ? "help" : "announcement";
+            const iconFA = n.type === "help" ? "fa-solid fa-circle-question" : "fa-solid fa-bullhorn";
+            
+            return `
+                <button class="notif-item${unreadClass}" data-id="${n.id}" data-type="${n.type}">
+                    <span class="notif-icon ${iconClass}"><i class="${iconFA}"></i></span>
+                    <span class="notif-content">
+                        <span class="notif-title">${n.title}</span>
+                        <span class="notif-desc">${n.desc}</span>
+                        <span class="notif-time">${n.timeStr}</span>
+                    </span>
+                </button>
+            `;
+        }).join("");
+
+        // Bind click events to items
+        list.querySelectorAll(".notif-item").forEach(item => {
+            item.addEventListener("click", function(e) {
+                e.stopPropagation();
+                const type = this.dataset.type;
+                const id = this.dataset.id;
+                markNotificationRead(type, id);
+                
+                // Close dropdown
+                document.getElementById("notificationDropdown").classList.remove("open");
+
+                // Route to correct modal
+                if (type === "help") {
+                    const helpBtn = document.getElementById("footerHelpBtn");
+                    if (helpBtn) {
+                        helpBtn.click();
+                        // Switch to "My Requests" tab after a tiny delay
+                        setTimeout(() => {
+                            document.querySelector('[data-help-tab="mine"]')?.click();
+                        }, 50);
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                } else {
+                    const viewAll = document.querySelector('[data-update-action="view-all"]');
+                    if (viewAll) {
+                        viewAll.click();
+                    } else {
+                        const banner = document.getElementById("dssUpdateBanner");
+                        if (banner) banner.scrollIntoView({ behavior: "smooth", block: "center" });
+                        else window.location.href = "index.html";
+                    }
+                }
+            });
         });
-        return unseen;
     }
 
-    function markAllPublishedSeen() {
-        if (!currentPublished.length) return;
-        const seen = getSeen();
+    function markNotificationRead(type, id) {
+        if (type === "announcement") {
+            const seen = getSeenAnnouncements();
+            seen[id] = Date.now();
+            setSeenAnnouncements(seen);
+            
+            const obj = currentAnnouncements.find(n => n.id === id);
+            if (obj) obj.unread = false;
+        } else if (type === "help") {
+            const seen = getSeenHelp();
+            seen[id] = Date.now();
+            setSeenHelp(seen);
+
+            const obj = currentHelpRequests.find(n => n.id === id);
+            if (obj) obj.unread = false;
+        }
+        renderNotifications();
+    }
+
+    function markAllRead() {
+        const seenA = getSeenAnnouncements();
+        const seenH = getSeenHelp();
         const now = Date.now();
-        currentPublished.forEach(function (item) { seen[item.key] = now; });
-        setSeen(seen);
-    }
 
-    function recountFromCache() {
-        const seen = getSeen();
-        let unseen = 0;
-        currentPublished.forEach(function (item) {
-            if (!seen[item.key]) unseen++;
-        });
-        setSharedBadge(unseen);
-        setSharedButtonTitle(unseen);
+        currentAnnouncements.forEach(n => { seenA[n.id] = now; n.unread = false; });
+        currentHelpRequests.forEach(n => { seenH[n.id] = now; n.unread = false; });
+        
+        setSeenAnnouncements(seenA);
+        setSeenHelp(seenH);
+        renderNotifications();
     }
 
     function subscribeToAnnouncements() {
@@ -544,58 +639,121 @@ function setupAdminGate() {
 
         announcementsUnsubscribe = db.collection(ANNOUNCEMENTS_COLLECTION)
             .onSnapshot(function (snap) {
-                const unseen = computeUnseenFromSnapshot(snap);
-                setSharedBadge(unseen);
-                setSharedButtonTitle(unseen);
+                const seen = getSeenAnnouncements();
+                currentAnnouncements = [];
+
+                snap.forEach(doc => {
+                    const data = doc.data() || {};
+                    if (!isPublishedDoc(data)) return;
+
+                    const key = doc.id + "::" + announcementStamp(doc);
+                    const isUnread = !seen[key];
+                    
+                    let rawTime = 0;
+                    if (data.updatedAt && typeof data.updatedAt.toMillis === "function") {
+                        rawTime = data.updatedAt.toMillis();
+                    } else {
+                        rawTime = Date.now(); 
+                    }
+
+                    currentAnnouncements.push({
+                        id: key,
+                        type: "announcement",
+                        title: data.title || "New Announcement",
+                        desc: data.message || "A new update has been posted.",
+                        rawTime: rawTime,
+                        timeStr: data.date || "Recently",
+                        unread: isUnread
+                    });
+                });
+                
+                renderNotifications();
             }, function (err) {
                 console.warn("[header.js] announcements listener failed:", err.code || err.message);
             });
     }
 
+    function subscribeToHelp() {
+        const db = firestore();
+        const ids = getHelpIds();
+        if (!db || !ids.length || helpUnsubscribe) return;
+
+        // Firestore 'in' query supports max 30 items
+        const queryIds = ids.slice(0, 30);
+
+        helpUnsubscribe = db.collection("help_requests")
+            .where(firebase.firestore.FieldPath.documentId(), "in", queryIds)
+            .onSnapshot(snap => {
+                const seen = getSeenHelp();
+                currentHelpRequests = [];
+
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    if (!data.adminReply) return; // Only notify if admin replied
+
+                    const repliedAt = data.adminReplyAt?.toDate ? data.adminReplyAt.toDate() : new Date();
+                    const seenAt = seen[doc.id] || 0;
+                    const isUnread = repliedAt.getTime() > seenAt;
+
+                    currentHelpRequests.push({
+                        id: doc.id,
+                        type: "help",
+                        title: "Reply from DSS Team",
+                        desc: data.adminReply,
+                        rawTime: repliedAt.getTime(),
+                        timeStr: timeAgo(repliedAt),
+                        unread: isUnread
+                    });
+                });
+
+                renderNotifications();
+            }, err => {
+                console.warn("[header.js] help requests listener failed:", err.code || err.message);
+            });
+    }
+
     function setupSharedNotifications() {
         const btn = document.getElementById("sharedNotificationBtn");
-        if (!btn) return;
+        const dropdown = document.getElementById("notificationDropdown");
+        const markAllBtn = document.getElementById("markAllReadBtn");
+        
+        if (!btn || !dropdown) return;
 
+        // Toggle Dropdown
         btn.addEventListener("click", function (event) {
             event.preventDefault();
             event.stopPropagation();
+            dropdown.classList.toggle("open");
+        });
 
-            // The user is about to see the announcements → clear the badge now.
-            markAllPublishedSeen();
-            setSharedBadge(0);
-            setSharedButtonTitle(0);
+        // Close on outside click
+        document.addEventListener("click", function (event) {
+            if (!dropdown.contains(event.target) && !btn.contains(event.target)) {
+                dropdown.classList.remove("open");
+            }
+        });
 
-            // Open the modal if the banner is on this page…
-            const viewAll = document.querySelector('[data-update-action="view-all"]');
-            if (viewAll) { viewAll.click(); return; }
+        // Mark all read button
+        if (markAllBtn) {
+            markAllBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                markAllRead();
+            });
+        }
 
-            // …otherwise scroll to the banner…
-            const banner = document.getElementById("dssUpdateBanner");
-            if (banner) {
-                banner.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Initial fetches
+        (function waitForFirebase() {
+            if (firestore()) {
+                subscribeToAnnouncements();
+                subscribeToHelp();
                 return;
             }
-
-            // …otherwise send them to the home page where the banner lives.
-            const file = window.location.pathname.split("/").pop().toLowerCase();
-            if (file !== "" && file !== "index.html") {
-                window.location.href = "index.html";
-            }
-        });
-
-        // Cross-tab sync: if another tab marks announcements as viewed,
-        // refresh this tab's badge too.
-        window.addEventListener("storage", function (e) {
-            if (e.key === VIEWED_KEY) recountFromCache();
-        });
-
-        (function waitForFirebase() {
-            if (firestore()) { subscribeToAnnouncements(); return; }
             setTimeout(waitForFirebase, 250);
         })();
 
         window.addEventListener("bdtools:firebase-ready", function () {
-            if (!announcementsUnsubscribe) subscribeToAnnouncements();
+            subscribeToAnnouncements();
+            subscribeToHelp();
         });
     }
 
