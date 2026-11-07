@@ -514,38 +514,44 @@
                         window.location.href = "index.html";
                     }
                 } else {
-                    // Announcement Routing
+                    // Announcement Routing with Polling
                     console.log("🟢 Notification clicked. Looking for update modal...");
                     
-                    const modal = document.getElementById("dssUpdateModal");
-                    const viewAll = document.querySelector('[data-update-action="view-all"]');
+                    let attempts = 0;
+                    const interval = setInterval(() => {
+                        const modal = document.getElementById("dssUpdateModal");
+                        const viewAll = document.querySelector('[data-update-action="view-all"]');
 
-                    if (modal) {
-                        console.log("✅ Modal found! Forcing it open.");
-                        
-                        // 1. Try to trigger the banner's native logic first
-                        if (viewAll) viewAll.click();
-
-                        // 2. Manually force the modal classes (bulletproof)
-                        modal.hidden = false;
-                        modal.classList.remove("is-open");
-                        // Small delay to allow CSS transition to work
-                        requestAnimationFrame(() => {
-                            modal.classList.add("is-open");
-                        });
-                        document.body.classList.add("dss-modal-open");
-                        
-                    } else {
-                        console.warn("⚠️ Modal NOT found on this page. Redirecting to index...");
-                        const currentPage = window.location.pathname.split("/").pop();
-                        if (currentPage !== "" && currentPage !== "index.html") {
-                            window.location.href = "index.html";
+                        if (modal) {
+                            clearInterval(interval);
+                            console.log("✅ Modal found! Opening...");
+                            
+                            if (viewAll) viewAll.click();
+                            
+                            modal.hidden = false;
+                            modal.classList.remove("is-open");
+                            requestAnimationFrame(() => {
+                                modal.classList.add("is-open");
+                            });
+                            document.body.classList.add("dss-modal-open");
+                            
+                        } else {
+                            attempts++;
+                            if (attempts >= 10) { // 10 * 100ms = 1 second
+                                clearInterval(interval);
+                                console.warn("⚠️ Modal NOT found after 1s. Redirecting...");
+                                const currentPage = window.location.pathname.split("/").pop();
+                                if (currentPage !== "" && currentPage !== "index.html") {
+                                    window.location.href = "index.html";
+                                }
+                            }
                         }
-                    }
+                    }, 100);
                 }
             });
         });
     }
+   
     function markAllRead() {
         const seenA = getSeenAnnouncements();
         const seenH = getSeenHelp();
