@@ -191,10 +191,27 @@
   function bindButton() {
     const btn = banner.querySelector('[data-update-action="view-all"]');
     if (!btn) return;
+    
     btn.addEventListener("click", () => {
-      // Hand off to the shared Notification Modal
-      if (window.BDNotificationModal && typeof window.BDNotificationModal.openFullUpdates === 'function') {
-        window.BDNotificationModal.openFullUpdates();
+      if (!publishedSlides.length) return;
+      
+      const activeSlide = publishedSlides[activeIndex];
+      if (!activeSlide) return;
+      
+      const { meta, content } = activeSlide;
+      
+      // Construct data for the Preview Modal
+      const previewData = {
+        title: content.title,
+        message: content.message,
+        priority: content.eyebrow,
+        category: meta.key,
+        date: content.date
+      };
+      
+      // Open the Preview Modal first!
+      if (window.BDNotificationModal && typeof window.BDNotificationModal.open === 'function') {
+        window.BDNotificationModal.open(previewData);
       } else {
         console.warn("Shared Notification Modal not loaded yet.");
       }
