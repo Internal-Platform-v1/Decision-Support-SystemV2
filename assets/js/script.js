@@ -10,7 +10,7 @@ function updateDashboardUserName(profile) {
   if (!displayName) return;
 
   const firstName = displayName.trim().split(/\s+/)[0];
-  nameElement.textContent = firstName;
+  nameElement.textContent = firstName ? (', ' + firstName) : '';
 
   if (typeof window.bdToolsUserReady === "function") {
     window.bdToolsUserReady();
