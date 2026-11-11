@@ -16,6 +16,18 @@
     const HELP_IDS_KEY = "dss_help_ids";
     const HELP_SEEN_KEY = "dss_help_seen";
 
+    /* ---- User login ---- */
+    const LOGGED_USER_KEY  = "bd_logged_in_user";
+    const DISPLAY_NAME_KEY = "bd_display_name";
+
+    /* Firestore collections to search when resolving an EMP ID.
+       Edit this list if your employee directory lives elsewhere. */
+    const USER_LOOKUP_COLLECTIONS = [
+        { name: "employees",      idFields: ["empId", "employeeId", "emp_id"] },
+        { name: "users",          idFields: ["empId", "employeeId", "emp_id"] },
+        { name: "approved_users", idFields: ["empId", "employeeId", "emp_id"] }
+    ];
+
     const SLIDES = [
         { key: "general",   icon: "fa-solid fa-bullhorn",              label: "📢 Announcements" },
         { key: "whats_new", icon: "fa-solid fa-wand-magic-sparkles",   label: "✨ What's New?" },
@@ -88,7 +100,7 @@
        ------------------------------------------------------------ */
     function getRole() {
         if (isAdminUnlocked()) return "admin";
-        try { return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user"; } 
+        try { return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user"; }
         catch (e) { return "user"; }
     }
 
@@ -290,6 +302,224 @@
     }
 
     /* ------------------------------------------------------------
+       4b. User Login Gate (FXF Employee ID)
+       ------------------------------------------------------------ */
+    function getStoredUser() {
+        try { return JSON.parse(localStorage.getItem(LOGGED_USER_KEY)) || null; }
+        catch (e) { return null; }
+    }
+
+    function persistUser(user) {
+        try { localStorage.setItem(LOGGED_USER_KEY, JSON.stringify(user)); } catch (e) {}
+    }
+
+    function clearStoredUser() {
+        try {
+            localStorage.removeItem(LOGGED_USER_KEY);
+            localStorage.removeItem(DISPLAY_NAME_KEY);
+        } catch (e) {}
+    }
+
+    function getInitials(name) {
+        const n = String(name || "").trim();
+        if (!n) return "?";
+        const parts = n.split(/\s+/);
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function displayNameOf(user) {
+        if (!user) return "";
+        const composed = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+        return user.name || user.displayName || user.fullName || composed || "";
+    }
+
+    function applyLoggedInUser(user) {
+        const gearEl      = document.getElementById("settingsGearIcon");
+        const initialsEl  = document.getElementById("settingsUserInitials");
+        const userBlock   = document.getElementById("settingsUserBlock");
+        const userAvatar  = document.getElementById("settingsUserAvatar");
+        const userName    = document.getElementById("settingsUserName");
+        const userEmpEl   = document.getElementById("settingsUserEmpId");
+        const signOutBtn  = document.getElementById("signOutBtn");
+        const settingsBtn = document.getElementById("settingsBtn");
+
+        if (!user) {
+            if (initialsEl) { initialsEl.hidden = true; initialsEl.textContent = "--"; }
+            if (gearEl) gearEl.hidden = false;
+            if (userBlock) userBlock.hidden = true;
+            if (signOutBtn) signOutBtn.hidden = true;
+            if (settingsBtn) {
+                settingsBtn.setAttribute("aria-label", "Open settings");
+                settingsBtn.title = "Settings";
+            }
+            try { localStorage.removeItem(DISPLAY_NAME_KEY); } catch (e) {}
+            return;
+        }
+
+        const fullName  = displayNameOf(user);
+        const firstName = user.firstName || fullName.split(/\s+/)[0] || "";
+        const initials  = getInitials(fullName || firstName || user.empId || "");
+
+        if (gearEl) gearEl.hidden = true;
+        if (initialsEl) {
+            initialsEl.textContent = initials || "?";
+            initialsEl.hidden = false;
+            initialsEl.title = fullName || firstName || "Signed in";
+        }
+        if (userBlock) userBlock.hidden = false;
+        if (userAvatar) userAvatar.textContent = initials || "?";
+        if (userName) userName.textContent = fullName || firstName || "Signed in";
+        if (userEmpEl) userEmpEl.textContent = user.empId ? `EMP ${user.empId}` : "";
+        if (signOutBtn) signOutBtn.hidden = false;
+        if (settingsBtn) {
+            settingsBtn.setAttribute("aria-label", `Account menu for ${fullName || "user"}`);
+            settingsBtn.title = fullName || "Account";
+        }
+
+        try { if (firstName) localStorage.setItem(DISPLAY_NAME_KEY, firstName); } catch (e) {}
+
+        document.dispatchEvent(new CustomEvent("bdtools:user-changed", { detail: { user } }));
+    }
+
+    function waitForFirestore(timeoutMs = 6000) {
+        return new Promise((resolve) => {
+            const start = Date.now();
+            (function tick() {
+                const db = firestore();
+                if (db) return resolve(db);
+                if (Date.now() - start > timeoutMs) return resolve(null);
+                setTimeout(tick, 150);
+            })();
+        });
+    }
+
+    async function findEmployeeById(empId) {
+        const db = await waitForFirestore();
+        if (!db) return null;
+
+        for (const col of USER_LOOKUP_COLLECTIONS) {
+            for (const field of col.idFields) {
+                try {
+                    const snap = await db.collection(col.name)
+                        .where(field, "==", empId)
+                        .limit(1)
+                        .get();
+                    if (!snap.empty) {
+                        const doc  = snap.docs[0];
+                        const data = doc.data() || {};
+                        return {
+                            id:        doc.id,
+                            empId:     empId,
+                            firstName: data.firstName || "",
+                            lastName:  data.lastName  || "",
+                            name:      data.name || data.displayName || data.fullName || "",
+                            email:     data.email || "",
+                            role:      data.role  || "User"
+                        };
+                    }
+                } catch (err) {
+                    /* collection or field may not exist — keep trying */
+                }
+            }
+        }
+        return null;
+    }
+
+    function setupUserLogin() {
+        const gate    = document.getElementById("userLoginGate");
+        const form    = document.getElementById("userLoginForm");
+        const input   = document.getElementById("userLoginEmpId");
+        const error   = document.getElementById("userLoginError");
+        const submit  = document.getElementById("userLoginSubmit");
+        const signOut = document.getElementById("signOutBtn");
+        if (!gate || !form) return;
+
+        function open() {
+            gate.hidden = false;
+            if (error) error.textContent = "";
+            if (submit) { submit.classList.remove("loading"); submit.disabled = false; }
+            setTimeout(() => input && input.focus(), 80);
+        }
+        function close() { gate.hidden = true; }
+
+        /* ---- Already signed in? Apply instantly and signal ready ---- */
+        const existing = getStoredUser();
+        if (existing && (existing.empId || existing.name || existing.firstName)) {
+            applyLoggedInUser(existing);
+            close();
+            setTimeout(() => {
+                if (typeof window.bdToolsUserReady === "function") window.bdToolsUserReady();
+            }, 0);
+            return;
+        }
+
+        /* ---- Fresh visit — block until logged in ---- */
+        open();
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (error) error.textContent = "";
+
+            const raw   = (input && input.value) || "";
+            const empId = raw.trim().replace(/\s+/g, "");
+
+            if (!empId) {
+                if (error) error.textContent = "Please enter your Employee ID.";
+                if (input) input.focus();
+                return;
+            }
+            if (empId.length < 3 || empId.length > 20) {
+                if (error) error.textContent = "Please enter a valid Employee ID.";
+                if (input) input.focus();
+                return;
+            }
+
+            if (submit) { submit.disabled = true; submit.classList.add("loading"); }
+
+            try {
+                const user = await findEmployeeById(empId);
+                if (!user) {
+                    if (error) error.textContent = "Employee ID not found. Please check and try again.";
+                    if (input) input.focus();
+                    return;
+                }
+
+                persistUser(user);
+                applyLoggedInUser(user);
+                close();
+
+                if (typeof window.bdToolsUserReady === "function") {
+                    window.bdToolsUserReady();
+                } else {
+                    window.dispatchEvent(new Event("bdtools:user-ready"));
+                }
+            } catch (err) {
+                console.error("[header.js] login failed:", err);
+                if (error) error.textContent = "Could not verify your Employee ID. Please try again.";
+            } finally {
+                if (submit) { submit.disabled = false; submit.classList.remove("loading"); }
+            }
+        });
+
+        /* ---- Sign out ---- */
+        if (signOut) {
+            signOut.hidden = false;
+            signOut.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                clearStoredUser();
+                applyLoggedInUser(null);
+                const menu = document.getElementById("settingsMenu");
+                if (menu) menu.classList.remove("open");
+                const btn = document.getElementById("settingsBtn");
+                if (btn) btn.setAttribute("aria-expanded", "false");
+                open();
+            });
+        }
+    }
+
+    /* ------------------------------------------------------------
        5. Settings Dropdown & Navigation
        ------------------------------------------------------------ */
     function setupSettings() {
@@ -465,7 +695,7 @@
             const unreadClass = n.unread ? " unread" : "";
             const iconClass = n.type === "help" ? "help" : "announcement";
             const iconFA = n.type === "help" ? "fa-solid fa-circle-question" : "fa-solid fa-bullhorn";
-            
+
             return `
                 <button class="notif-item${unreadClass}" data-id="${esc(n.id)}" data-type="${esc(n.type)}">
                     <span class="notif-icon ${iconClass}"><i class="${iconFA}"></i></span>
@@ -483,7 +713,7 @@
                 e.stopPropagation();
                 const type = this.dataset.type;
                 const id = this.dataset.id;
-                
+
                 // Mark Read
                 if (type === "announcement") {
                     const seen = getSeenAnnouncements();
@@ -494,11 +724,11 @@
                     seen[id] = Date.now();
                     setSeenHelp(seen);
                 }
-                
+
                 const obj = currentNotifications.find(n => n.id === id);
                 if (obj) obj.unread = false;
                 renderNotifications();
-                
+
                 document.getElementById("notificationDropdown").classList.remove("open");
 
                 // Route
@@ -535,7 +765,7 @@
             if (n.type === "help") seenH[n.id] = now;
             n.unread = false;
         });
-        
+
         setSeenAnnouncements(seenA);
         setSeenHelp(seenH);
         renderNotifications();
@@ -559,12 +789,12 @@
 
                     const key = doc.id + "::" + announcementStamp(doc);
                     const isUnread = !seen[key];
-                    
+
                     let rawTime = 0;
                     if (data.updatedAt && typeof data.updatedAt.toMillis === "function") {
                         rawTime = data.updatedAt.toMillis();
                     } else {
-                        rawTime = Date.now(); 
+                        rawTime = Date.now();
                     }
 
                     newAnns.push({
@@ -602,7 +832,7 @@
                 });
 
                 window.BDUpdateData = formattedSlides; // Save for the shared modal
-                
+
                 currentNotifications = currentNotifications.filter(n => n.type !== "announcement").concat(newAnns);
                 renderNotifications();
             }, err => console.warn("[header.js] announcements listener failed:", err));
@@ -687,6 +917,7 @@
        8. Initialize
        ------------------------------------------------------------ */
     function start() {
+        setupUserLogin();        // ← runs first, blocks until signed in
         setupTheme();
         setupAdminGate();
         setupSettings();
