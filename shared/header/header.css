@@ -364,3 +364,278 @@
 .topbar:hover::after {
     width: 100%;
 }
+
+/* ============================================================
+   USER INITIALS AVATAR (replaces gear when logged in)
+   ============================================================ */
+.user-initials {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6b25df, #4d148c);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(77, 20, 140, 0.25);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.user-initials:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(77, 20, 140, 0.32);
+}
+.user-initials[hidden] { display: none !important; }
+
+.settings-icon[hidden] { display: none !important; }
+
+/* Signed-in identity block inside the settings menu */
+.settings-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f5;
+    margin-bottom: 6px;
+}
+.settings-user[hidden] { display: none !important; }
+
+.settings-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6b25df, #4d148c);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    flex: 0 0 auto;
+}
+
+.settings-user-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.settings-user-meta strong {
+    font-size: 10px;
+    font-weight: 800;
+    color: #17174b;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.settings-user-meta small {
+    font-size: 8px;
+    color: #8c8da7;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sign out button */
+#signOutBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    padding: 8px 14px;
+    font-size: 9px;
+    color: #343565;
+    cursor: pointer;
+    transition: 0.2s;
+    border-top: 1px solid #f0f0f5;
+    margin-top: 4px;
+}
+#signOutBtn:hover {
+    background: #fdf3f5;
+    color: #c81e3a;
+    box-shadow: inset 2px 0 0 #c81e3a;
+}
+#signOutBtn[hidden] { display: none !important; }
+
+/* ============================================================
+   USER LOGIN GATE MODAL
+   ============================================================ */
+.user-login-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483645;           /* above page-loader, above admin gate */
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+.user-login-gate[hidden] { display: none !important; }
+
+.user-login-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 15, 45, .55);
+    backdrop-filter: blur(5px);
+    animation: userGateFade .22s ease;
+}
+
+.user-login-card {
+    position: relative;
+    width: min(420px, 100%);
+    padding: 30px 28px 22px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 30px 70px rgba(31, 25, 87, .32);
+    text-align: center;
+    animation: userGateRise .32s cubic-bezier(.22, 1, .36, 1);
+}
+
+.user-login-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #6b25df, #4d148c);
+    color: #fff;
+}
+.user-login-icon svg {
+    width: 26px; height: 26px;
+    fill: none; stroke: currentColor;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+.user-login-card h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #17174b;
+}
+.user-login-copy {
+    margin: 0 0 22px;
+    font-size: 12.5px;
+    color: #6d6e91;
+}
+
+.user-login-form { display: grid; gap: 14px; text-align: left; }
+.user-login-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4b4d6b;
+}
+
+.user-login-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid #e3e0f0;
+    border-radius: 10px;
+    background: #faf9ff;
+    transition: 0.2s;
+}
+.user-login-input-wrap:focus-within {
+    border-color: #6b25df;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(107, 37, 223, .1);
+}
+
+.user-login-field-icon {
+    width: 18px; height: 18px;
+    fill: none; stroke: #9ea0b8;
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+    flex: 0 0 auto;
+    transition: stroke .2s ease;
+}
+.user-login-input-wrap:focus-within .user-login-field-icon { stroke: #6b25df; }
+
+.user-login-input {
+    flex: 1;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #17174b;
+    letter-spacing: 0.02em;
+}
+.user-login-input::placeholder { color: #b7b8c8; font-weight: 500; }
+
+.user-login-error {
+    min-height: 18px;
+    font-size: 11.5px;
+    color: #c81e3a;
+    opacity: 0;
+    transition: 0.2s;
+}
+.user-login-error:not(:empty) { opacity: 1; }
+
+.user-login-actions { display: flex; }
+
+.user-login-btn {
+    flex: 1;
+    height: 48px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+}
+.user-login-btn.primary {
+    background: linear-gradient(135deg, #6b25df, #4d148c);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(77, 20, 140, .24);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+.user-login-btn.primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(77, 20, 140, .32);
+}
+.user-login-btn.primary:disabled { opacity: .72; cursor: default; }
+
+.user-login-btn-spinner {
+    display: none;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: userGateSpin .7s linear infinite;
+}
+.user-login-btn.loading .user-login-btn-label { opacity: .8; }
+.user-login-btn.loading .user-login-btn-spinner { display: inline-block; }
+
+.user-login-footnote {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #f0f0f5;
+    font-size: 10.5px;
+    color: #9ea0b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.user-login-footnote svg {
+    width: 14px; height: 14px;
+    fill: none; stroke: currentColor;
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+
+@keyframes userGateFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes userGateRise { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes userGateSpin { to { transform: rotate(360deg); } }
