@@ -317,7 +317,14 @@
             var el = document.getElementById('currentUserName');
             if (!el) return;
             var trimmed = String(name || '').trim();
-            el.textContent = trimmed ? (', ' + trimmed) : '';
+            el.textContent = '';
+            if (trimmed) {
+                var commaSpan = document.createElement('span');
+                commaSpan.style.color = '#10134f';
+                commaSpan.textContent = ', ';
+                el.appendChild(commaSpan);
+                el.appendChild(document.createTextNode(trimmed));
+            }
         }
 
         // Initial pass (in case user is already stored)
