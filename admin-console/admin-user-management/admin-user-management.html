@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" class="page-loading">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management | Decision Support System</title>
+
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
+
+  <link rel="stylesheet" href="../../assets/css/page-loader.css">
+  <link rel="stylesheet" href="../../shared/header/admin-header.css">
+  <link rel="stylesheet" href="admin-user-management.css">
+</head>
+
+<body data-admin-page="users" data-admin-title="User Management">
+
+  <!-- PAGE LOADER -->
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading user management">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading Users…</p>
+    </div>
+  </div>
+
+  <!-- Shared Admin Console shell -->
+  <div id="adminHeader"></div>
+
+  <main class="um-main">
+
+    <!-- Page head -->
+    <header class="um-page-head">
+      <div class="um-page-title">
+        <span class="um-eyebrow">ADMIN CONSOLE</span>
+        <h1>User Management</h1>
+        <p>Add new employees, update roles, activate or deactivate accounts, and remove users.</p>
+      </div>
+      <div class="um-head-actions">
+        <button type="button" class="um-btn um-btn-ghost" id="umExportBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+          <span>Export CSV</span>
+        </button>
+        <button type="button" class="um-btn um-btn-primary" id="umAddUserBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add User</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stat cards -->
+    <section class="um-stats" aria-label="User overview">
+      <article class="um-stat">
+        <div class="um-stat-icon um-stat-purple">
+          <svg viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 0 0-3-3.87"/><path d="M9 20H4v-2a4 4 0 0 1 3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><circle cx="17" cy="7" r="4"/></svg>
+        </div>
+        <div class="um-stat-body">
+          <span class="um-stat-label">Total Users</span>
+          <strong class="um-stat-value" id="umStatTotal">—</strong>
+          <span class="um-stat-hint">All registered employees</span>
+        </div>
+      </article>
+
+      <article class="um-stat">
+        <div class="um-stat-icon um-stat-green">
+          <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="um-stat-body">
+          <span class="um-stat-label">Active</span>
+          <strong class="um-stat-value" id="umStatActive">—</strong>
+          <span class="um-stat-hint">Can log in</span>
+        </div>
+      </article>
+
+      <article class="um-stat">
+        <div class="um-stat-icon um-stat-red">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5 19 19 5"/></svg>
+        </div>
+        <div class="um-stat-body">
+          <span class="um-stat-label">Inactive</span>
+          <strong class="um-stat-value" id="umStatInactive">—</strong>
+          <span class="um-stat-hint">Access suspended</span>
+        </div>
+      </article>
+
+      <article class="um-stat">
+        <div class="um-stat-icon um-stat-orange">
+          <svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.3 8.2-8 10-4.7-1.8-8-5-8-10V6l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg>
+        </div>
+        <div class="um-stat-body">
+          <span class="um-stat-label">Admins &amp; Managers</span>
+          <strong class="um-stat-value" id="umStatAdmin">—</strong>
+          <span class="um-stat-hint">Elevated access</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="um-panel">
+      <div class="um-toolbar">
+        <div class="um-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input type="search" id="umSearch" placeholder="Search by name, EMP ID, or email…" autocomplete="off">
+        </div>
+
+        <select class="um-select" id="umRoleFilter" aria-label="Filter by role">
+          <option value="">All roles</option>
+          <option value="Employee">Employee</option>
+          <option value="Team Leader">Team Leader</option>
+          <option value="Manager">Manager</option>
+          <option value="Admin">Admin</option>
+        </select>
+
+        <select class="um-select" id="umRegionFilter" aria-label="Filter by region">
+          <option value="">All regions</option>
+        </select>
+
+        <select class="um-select" id="umStatusFilter" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+
+        <select class="um-select" id="umSort" aria-label="Sort users">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="name">Name A–Z</option>
+          <option value="role">Role</option>
+        </select>
+      </div>
+
+      <!-- Bulk action bar -->
+      <div class="um-bulk-bar" id="umBulkBar" hidden>
+        <span class="um-bulk-count" id="umBulkCount">0 selected</span>
+        <div class="um-bulk-actions">
+          <button type="button" class="um-bulk-btn" data-bulk="activate">Activate</button>
+          <button type="button" class="um-bulk-btn" data-bulk="deactivate">Deactivate</button>
+          <button type="button" class="um-bulk-btn danger" data-bulk="delete">Delete</button>
+          <button type="button" class="um-bulk-btn ghost" data-bulk="clear">Clear</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="um-table-wrap">
+        <table class="um-table">
+          <thead>
+            <tr>
+              <th class="um-col-check"><input type="checkbox" id="umSelectAll" aria-label="Select all users"></th>
+              <th>Name</th>
+              <th>EMP ID</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Region</th>
+              <th>Status</th>
+              <th>Added</th>
+              <th class="um-col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="umTableBody">
+            <tr><td colspan="9" class="um-loading-row"><span class="um-spinner"></span>Loading users…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div class="um-empty" id="umEmptyState" hidden>
+        <div class="um-empty-icon">
+          <svg viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.2"/><path d="M4.5 19c.6-3.4 2.7-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><path d="m17.5 8.5 2 2 3.5-4"/></svg>
+        </div>
+        <strong id="umEmptyTitle">No users yet</strong>
+        <p id="umEmptyText">Add your first employee to get started.</p>
+        <button type="button" class="um-btn um-btn-primary" id="umEmptyAddBtn" hidden>
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add User</span>
+        </button>
+      </div>
+
+      <div class="um-footer-info" id="umFooterInfo"></div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       ADD / EDIT USER MODAL
+       ========================================================= -->
+  <div class="um-modal" id="umUserModal" hidden>
+    <div class="um-modal-backdrop" data-close-modal="user"></div>
+
+    <div class="um-modal-card" role="dialog" aria-modal="true" aria-labelledby="umModalTitle">
+      <header class="um-modal-head">
+        <div>
+          <span class="um-modal-kicker" id="umModalKicker">NEW EMPLOYEE</span>
+          <h2 id="umModalTitle">Add New User</h2>
+        </div>
+        <button type="button" class="um-modal-close" data-close-modal="user" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>
+        </button>
+      </header>
+
+      <form class="um-form" id="umUserForm" novalidate>
+        <input type="hidden" id="umEditingId" value="">
+        <input type="hidden" id="umEditingEmpId" value="">
+
+        <div class="um-form-row">
+          <label class="um-field">
+            <span class="um-field-label">FXF Employee ID *</span>
+            <input type="text" id="umFieldEmpId" placeholder="e.g. 1234567" autocomplete="off"
+                   spellcheck="false" autocapitalize="off" required>
+          </label>
+
+          <label class="um-field">
+            <span class="um-field-label">Email *</span>
+            <input type="email" id="umFieldEmail" placeholder="name@fedex.com" autocomplete="off"
+                   spellcheck="false" autocapitalize="off" required>
+          </label>
+        </div>
+
+        <div class="um-form-row">
+          <label class="um-field">
+            <span class="um-field-label">First Name *</span>
+            <input type="text" id="umFieldFirstName" placeholder="First name" autocomplete="off" required>
+          </label>
+
+          <label class="um-field">
+            <span class="um-field-label">Last Name *</span>
+            <input type="text" id="umFieldLastName" placeholder="Last name" autocomplete="off" required>
+          </label>
+        </div>
+
+        <div class="um-form-row">
+          <label class="um-field">
+            <span class="um-field-label">Role *</span>
+            <select id="umFieldRole" required>
+              <option value="">Select role…</option>
+              <option value="Employee">Employee</option>
+              <option value="Team Leader">Team Leader</option>
+              <option value="Manager">Manager</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </label>
+
+          <label class="um-field">
+            <span class="um-field-label">Region</span>
+            <input type="text" id="umFieldRegion" placeholder="e.g. Philippines"
+                   list="umRegionSuggestions" autocomplete="off">
+            <datalist id="umRegionSuggestions">
+              <option value="Philippines">
+              <option value="India">
+              <option value="United States">
+              <option value="Canada">
+              <option value="Mexico">
+            </datalist>
+          </label>
+        </div>
+
+        <label class="um-field um-field-toggle">
+          <span class="um-field-label">Account Status</span>
+          <span class="um-toggle-wrap">
+            <input type="checkbox" id="umFieldActive" checked>
+            <span class="um-toggle">
+              <span class="um-toggle-knob"></span>
+            </span>
+            <span class="um-toggle-label" id="umToggleLabel">Active — can log in</span>
+          </span>
+        </label>
+
+        <div class="um-form-error" id="umFormError" role="alert" aria-live="polite"></div>
+
+        <footer class="um-modal-foot">
+          <button type="button" class="um-btn um-btn-ghost" data-close-modal="user">Cancel</button>
+          <button type="submit" class="um-btn um-btn-primary" id="umSubmitBtn">
+            <span class="um-submit-label">Save User</span>
+            <span class="um-submit-spinner" aria-hidden="true"></span>
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       DELETE CONFIRM MODAL
+       ========================================================= -->
+  <div class="um-modal" id="umDeleteModal" hidden>
+    <div class="um-modal-backdrop" data-close-modal="delete"></div>
+
+    <div class="um-modal-card um-modal-danger" role="dialog" aria-modal="true" aria-labelledby="umDeleteTitle">
+      <header class="um-modal-head">
+        <div>
+          <span class="um-modal-kicker danger" id="umDeleteKicker">DANGER ZONE</span>
+          <h2 id="umDeleteTitle">Delete User?</h2>
+        </div>
+        <button type="button" class="um-modal-close" data-close-modal="delete" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>
+        </button>
+      </header>
+
+      <div class="um-delete-body">
+        <p id="umDeleteCopy">This permanently removes the user from Firestore. This cannot be undone.</p>
+
+        <div class="um-delete-names" id="umDeleteNames"></div>
+
+        <p class="um-delete-hint">Type <code>DELETE</code> to confirm.</p>
+        <input type="text" id="umDeleteConfirmInput" class="um-delete-input" placeholder="DELETE"
+               autocomplete="off" spellcheck="false">
+
+        <div class="um-form-error" id="umDeleteError" role="alert" aria-live="polite"></div>
+      </div>
+
+      <footer class="um-modal-foot">
+        <button type="button" class="um-btn um-btn-ghost" data-close-modal="delete">Cancel</button>
+        <button type="button" class="um-btn um-btn-danger" id="umDeleteConfirmBtn" disabled>
+          <span class="um-submit-label">Delete</span>
+          <span class="um-submit-spinner" aria-hidden="true"></span>
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="um-toast" id="umToast" role="status" aria-live="polite"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+  </script>
+
+  <script src="../../shared/header/admin-header.js"></script>
+  <script src="admin-user-management.js"></script>
+</body>
+</html>
