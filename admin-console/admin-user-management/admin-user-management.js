@@ -1,7 +1,7 @@
 /* ============================================================
    ADMIN · USER MANAGEMENT
-   CRUD against Firestore `employees` collection.
-   Realtime — table updates the instant any doc changes.
+   CRUD against Firestore — reads/writes the approved_users
+   collection by default.
    ============================================================ */
 (() => {
   "use strict";
@@ -10,19 +10,19 @@
      CONFIG
      ------------------------------------------------------------ */
   const CONFIG = {
-    /* The collection that User Management reads and writes.
-       Change this to "approved_users" or "users" if your employee
-       records live in a different collection. */
-    USERS_COLLECTION: "employees",
+    /* Which Firestore collection User Management reads & writes.
+       Defaults to approved_users — can be overridden before this
+       script loads by setting `window.ADMIN_USERS_COLLECTION`. */
+    USERS_COLLECTION: window.ADMIN_USERS_COLLECTION || "approved_users",
 
-    /* Column(s) checked for EMP-ID uniqueness across collections.
-       Prevents creating two records with the same FXF ID. */
-    UNIQUENESS_COLLECTIONS: ["employees", "users", "approved_users"],
+    /* Any of these collections is checked for EMP-ID uniqueness
+       before a new user is created. Prevents duplicate FXF IDs. */
+    UNIQUENESS_COLLECTIONS: ["approved_users", "employees", "users"],
 
     TOAST_MS: 2600
   };
 
-  const ROLES = ["Employee", "Team Leader", "Manager", "Admin"];
+  console.log("[user-mgmt] loading from collection:", CONFIG.USERS_COLLECTION);
 
   /* ------------------------------------------------------------
      STATE
@@ -37,8 +37,8 @@
       status: "",
       sort: "newest"
     },
-    editing: null,       // user being edited, or null for new
-    deleting: null,      // { ids: [..], users: [..] }
+    editing: null,
+    deleting: null,
     loaded: false
   };
 
@@ -55,11 +55,18 @@
     }[c]));
   }
 
-  function initials(first, last, empId) {
+  function initials(first, last, empId, name) {
     const f = String(first || "").trim();
     const l = String(last || "").trim();
     if (f && l) return (f[0] + l[0]).toUpperCase();
     if (f) return f.slice(0, 2).toUpperCase();
+    const n = String(name || "").trim();
+    if (n) {
+      const parts = n.split(/\s+/);
+      return parts.length > 1
+        ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+        : n.slice(0, 2).toUpperCase();
+    }
     return String(empId || "??").slice(0, 2).toUpperCase();
   }
 
@@ -87,19 +94,26 @@
 
   function normalizeUser(doc) {
     const d = doc.data() || {};
-    const empId = String(d.empId || d.employeeId || d.emp_id || "").trim();
+
+    // empId: read the first field that exists; do NOT fall back to doc.id
+    // because that would look like a real EMP ID in the UI.
+    const empIdField = String(
+      d.empId || d.employeeId || d.emp_id || ""
+    ).trim();
+
     const firstName = String(d.firstName || "").trim();
     const lastName  = String(d.lastName || "").trim();
     const composed  = [firstName, lastName].filter(Boolean).join(" ");
+
     const name = String(
-      d.name || d.displayName || d.fullName || composed || empId || doc.id
+      d.name || d.displayName || d.fullName || composed || empIdField || d.email || doc.id
     ).trim();
 
     const active = d.active !== false && d.status !== "inactive";
 
     return {
-      id: doc.id,
-      empId: empId || doc.id,
+      id: doc.id,                          // Firestore doc id — internal key
+      empId: empIdField,                    // may be empty for legacy records
       firstName,
       lastName,
       name,
@@ -158,15 +172,29 @@
      ------------------------------------------------------------ */
   function attachRealtime() {
     const db = window.db;
-    if (!db) { hideLoader(); return; }
+    if (!db) {
+      console.error("[user-mgmt] Firestore not initialized — window.db is missing.");
+      hideLoader();
+      showToast("Firestore not initialized. Check the Firebase scripts.", "error");
+      return;
+    }
 
     try {
       unsubscribe = db.collection(CONFIG.USERS_COLLECTION).onSnapshot(
         snap => {
+          console.log(`[user-mgmt] ${CONFIG.USERS_COLLECTION}: ${snap.size} docs`);
           state.users = snap.docs.map(normalizeUser);
           state.loaded = true;
 
-          // Drop any selected IDs that no longer exist
+          if (snap.size === 0) {
+            console.warn(
+              `[user-mgmt] "${CONFIG.USERS_COLLECTION}" is empty. ` +
+              `If your user records live in a different collection, set ` +
+              `window.ADMIN_USERS_COLLECTION = "<name>" in the HTML before this script loads.`
+            );
+          }
+
+          // Drop selections that no longer exist
           const existing = new Set(state.users.map(u => u.id));
           state.selected.forEach(id => { if (!existing.has(id)) state.selected.delete(id); });
 
@@ -183,11 +211,10 @@
         }
       );
     } catch (err) {
-      console.error(err);
+      console.error("[user-mgmt] attach error:", err);
       hideLoader();
     }
 
-    // Safety net
     setTimeout(hideLoader, 5000);
   }
 
@@ -203,7 +230,7 @@
       if (f.status === "active" && !u.active) return false;
       if (f.status === "inactive" && u.active) return false;
       if (q) {
-        const hay = (u.name + " " + u.empId + " " + u.email + " " + u.role + " " + u.region).toLowerCase();
+        const hay = `${u.name} ${u.empId} ${u.email} ${u.role} ${u.region}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -219,7 +246,7 @@
       case "role":
         rows.sort((a, b) => (a.role || "").localeCompare(b.role || ""));
         break;
-      default: // newest
+      default:
         rows.sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0));
     }
     return rows;
@@ -260,6 +287,31 @@
   }
 
   /* ------------------------------------------------------------
+     RENDER — ROLE DROPDOWN (add any unknown roles found in data)
+     ------------------------------------------------------------ */
+  function ensureRolesCovered() {
+    const sel = $("umFieldRole");
+    if (!sel) return;
+
+    const standardRoles = Array.from(sel.options)
+      .map(o => o.value)
+      .filter(Boolean);
+
+    const foundRoles = Array.from(new Set(
+      state.users.map(u => u.role).filter(Boolean)
+    ));
+
+    foundRoles.forEach(role => {
+      if (!standardRoles.includes(role)) {
+        const opt = document.createElement("option");
+        opt.value = role;
+        opt.textContent = role;
+        sel.appendChild(opt);
+      }
+    });
+  }
+
+  /* ------------------------------------------------------------
      RENDER — TABLE
      ------------------------------------------------------------ */
   function renderTable() {
@@ -273,8 +325,7 @@
 
     const rows = filteredUsers();
     const hasAnyUsers = state.users.length > 0;
-    const hasFilters =
-      state.filters.search || state.filters.role ||
+    const hasFilters = state.filters.search || state.filters.role ||
       state.filters.region || state.filters.status;
 
     if (!rows.length) {
@@ -282,7 +333,7 @@
       empty.hidden = false;
       if (!hasAnyUsers) {
         emptyTitle.textContent = "No users yet";
-        emptyText.textContent = "Add your first employee to get started.";
+        emptyText.textContent = `No records found in "${CONFIG.USERS_COLLECTION}". Add your first employee to get started.`;
         emptyAddBtn.hidden = false;
       } else if (hasFilters) {
         emptyTitle.textContent = "No users match your filters";
@@ -312,15 +363,15 @@
         </td>
         <td>
           <div class="um-user-cell">
-            <span class="um-avatar">${esc(initials(u.firstName, u.lastName, u.empId))}</span>
+            <span class="um-avatar">${esc(initials(u.firstName, u.lastName, u.empId, u.name))}</span>
             <div>
-              <div class="um-user-name">${esc(u.name)}</div>
+              <div class="um-user-name">${esc(u.name || "—")}</div>
             </div>
           </div>
         </td>
-        <td>${esc(u.empId)}</td>
+        <td>${esc(u.empId || "—")}</td>
         <td>${esc(u.email || "—")}</td>
-        <td><span class="um-pill ${roleClass(u.role)}">${esc(u.role)}</span></td>
+        <td><span class="um-pill ${roleClass(u.role)}">${esc(u.role || "—")}</span></td>
         <td>${esc(u.region || "—")}</td>
         <td><span class="um-pill ${u.active ? "um-pill-status-active" : "um-pill-status-inactive"}">${u.active ? "Active" : "Inactive"}</span></td>
         <td>${esc(fmtDate(u.createdAt))}</td>
@@ -406,28 +457,47 @@
     const fieldRegion = $("umFieldRegion");
     const fieldActive = $("umFieldActive");
 
+    ensureRolesCovered();
+
     if (user) {
       kicker.textContent = "EDIT EMPLOYEE";
       title.textContent = "Edit User";
       if (submitLabel) submitLabel.textContent = "Save Changes";
+
       $("umEditingId").value = user.id;
-      $("umEditingEmpId").value = user.empId;
-      fieldEmpId.value = user.empId;
-      fieldEmpId.disabled = true;   // EMP ID is the identity — not editable
+      $("umEditingEmpId").value = user.empId || "";
+
+      fieldEmpId.value = user.empId || "";
+      // Lock EMP ID only if the record already has one (identity is fixed).
+      // If a legacy record is missing it, allow adding it via edit.
+      fieldEmpId.disabled = Boolean(user.empId);
+
       fieldFirst.value = user.firstName || (user.name || "").split(" ")[0] || "";
       fieldLast.value = user.lastName || (user.name || "").split(" ").slice(1).join(" ") || "";
       fieldEmail.value = user.email || "";
-      fieldRole.value = user.role || "Employee";
+
+      // Ensure the current role is selectable even if it's non-standard
+      if (user.role && !Array.from(fieldRole.options).some(o => o.value === user.role)) {
+        const opt = document.createElement("option");
+        opt.value = user.role;
+        opt.textContent = user.role;
+        fieldRole.appendChild(opt);
+      }
+      fieldRole.value = user.role || "";
+
       fieldRegion.value = user.region || "";
       fieldActive.checked = user.active;
     } else {
       kicker.textContent = "NEW EMPLOYEE";
       title.textContent = "Add New User";
       if (submitLabel) submitLabel.textContent = "Add User";
+
       $("umEditingId").value = "";
       $("umEditingEmpId").value = "";
+
       fieldEmpId.value = "";
       fieldEmpId.disabled = false;
+
       fieldFirst.value = "";
       fieldLast.value = "";
       fieldEmail.value = "";
@@ -473,8 +543,8 @@
     const active = $("umFieldActive").checked;
 
     const editingId = $("umEditingId").value;
+    const originalEmpId = $("umEditingEmpId").value;
 
-    // Validation
     if (!empId || empId.length < 3 || empId.length > 20) {
       return showFormError("EMP ID must be between 3 and 20 characters.");
     }
@@ -492,9 +562,9 @@
     try {
       const db = window.db;
 
-      // EMP-ID uniqueness check (on add only)
-      if (!editingId) {
-        const taken = await empIdExists(empId);
+      // Uniqueness check — only if empId changed or is new
+      if (!editingId || empId !== originalEmpId) {
+        const taken = await empIdExists(empId, editingId);
         if (taken) {
           submitBtn.disabled = false;
           submitBtn.classList.remove("loading");
@@ -533,23 +603,20 @@
     }
   }
 
-  async function empIdExists(empId) {
+  async function empIdExists(empId, exceptDocId) {
     const db = window.db;
+    const fieldNames = ["empId", "employeeId", "emp_id"];
+
     for (const col of CONFIG.UNIQUENESS_COLLECTIONS) {
-      try {
-        const snap = await db.collection(col)
-          .where("empId", "==", empId)
-          .limit(1).get();
-        if (!snap.empty) return true;
-      } catch (_) {
-        // try alternate field names below
+      for (const field of fieldNames) {
+        try {
+          const snap = await db.collection(col).where(field, "==", empId).limit(2).get();
+          if (snap.empty) continue;
+          // Ignore the record we're currently editing
+          const conflict = snap.docs.find(d => d.id !== exceptDocId);
+          if (conflict) return true;
+        } catch (_) { /* field may not exist in this collection — skip */ }
       }
-      try {
-        const snap = await db.collection(col)
-          .where("employeeId", "==", empId)
-          .limit(1).get();
-        if (!snap.empty) return true;
-      } catch (_) {}
     }
     return false;
   }
@@ -576,11 +643,13 @@
     if (btn) btn.disabled = true;
 
     if (users.length === 1) {
-      copy.textContent = "This permanently removes this user from Firestore. This cannot be undone.";
-      namesEl.innerHTML = `<div>${esc(users[0].name)} — ${esc(users[0].empId)}</div>`;
+      copy.textContent = `This permanently removes this user from ${CONFIG.USERS_COLLECTION}. This cannot be undone.`;
+      namesEl.innerHTML = `<div>${esc(users[0].name)}${users[0].empId ? " — " + esc(users[0].empId) : ""}</div>`;
     } else {
-      copy.textContent = `This permanently removes ${users.length} users from Firestore. This cannot be undone.`;
-      namesEl.innerHTML = users.map(u => `<div>${esc(u.name)} — ${esc(u.empId)}</div>`).join("");
+      copy.textContent = `This permanently removes ${users.length} users from ${CONFIG.USERS_COLLECTION}. This cannot be undone.`;
+      namesEl.innerHTML = users.map(u =>
+        `<div>${esc(u.name)}${u.empId ? " — " + esc(u.empId) : ""}</div>`
+      ).join("");
     }
 
     modal.hidden = false;
@@ -645,7 +714,6 @@
       return;
     }
 
-    // activate / deactivate
     const target = action === "activate";
     const users = state.users.filter(u => ids.includes(u.id) && u.active !== target);
     if (!users.length) {
@@ -682,15 +750,8 @@
 
     const header = ["Name", "EMP ID", "First Name", "Last Name", "Email", "Role", "Region", "Status", "Date Added"];
     const data = rows.map(u => [
-      u.name,
-      u.empId,
-      u.firstName,
-      u.lastName,
-      u.email,
-      u.role,
-      u.region,
-      u.active ? "Active" : "Inactive",
-      fmtDate(u.createdAt)
+      u.name, u.empId, u.firstName, u.lastName, u.email, u.role, u.region,
+      u.active ? "Active" : "Inactive", fmtDate(u.createdAt)
     ]);
 
     const csv = [header, ...data]
@@ -718,12 +779,10 @@
      EVENT WIRING
      ------------------------------------------------------------ */
   function bindEvents() {
-    // Add
     $("umAddUserBtn")?.addEventListener("click", () => openUserModal(null));
     $("umEmptyAddBtn")?.addEventListener("click", () => openUserModal(null));
     $("umExportBtn")?.addEventListener("click", exportCsv);
 
-    // Filters
     $("umSearch")?.addEventListener("input", debounce(e => {
       state.filters.search = e.target.value.trim();
       renderTable();
@@ -750,7 +809,6 @@
       syncSelectionUI();
     });
 
-    // Select all
     $("umSelectAll")?.addEventListener("change", e => {
       const visible = filteredUsers();
       if (e.target.checked) visible.forEach(u => state.selected.add(u.id));
@@ -759,19 +817,16 @@
       syncSelectionUI();
     });
 
-    // Bulk actions
     document.querySelectorAll("[data-bulk]").forEach(btn => {
       btn.addEventListener("click", () => bulkAction(btn.dataset.bulk));
     });
 
-    // User modal
     $("umUserForm")?.addEventListener("submit", saveUser);
     $("umFieldActive")?.addEventListener("change", updateToggleLabel);
     document.querySelectorAll('[data-close-modal="user"]').forEach(el => {
       el.addEventListener("click", closeUserModal);
     });
 
-    // Delete modal
     $("umDeleteConfirmInput")?.addEventListener("input", e => {
       $("umDeleteConfirmBtn").disabled = e.target.value.trim() !== "DELETE";
     });
@@ -780,7 +835,6 @@
       el.addEventListener("click", closeDeleteModal);
     });
 
-    // Escape
     document.addEventListener("keydown", e => {
       if (e.key !== "Escape") return;
       if (!$("umUserModal").hidden) closeUserModal();
@@ -799,8 +853,7 @@
       try { unsubscribe && unsubscribe(); } catch (_) {}
     });
 
-    // Public API (for debugging)
-    window.UserManagement = { state };
+    window.UserManagement = { state, reload: () => location.reload() };
   }
 
   if (document.readyState === "loading") {
