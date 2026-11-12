@@ -10,7 +10,15 @@ function updateDashboardUserName(profile) {
   if (!displayName) return;
 
   const firstName = displayName.trim().split(/\s+/)[0];
-  nameElement.textContent = firstName ? (", " + firstName) : "";
+
+  nameElement.textContent = "";
+  if (firstName) {
+    const commaSpan = document.createElement("span");
+    commaSpan.style.color = "#10134f";
+    commaSpan.textContent = ", ";
+    nameElement.appendChild(commaSpan);
+    nameElement.appendChild(document.createTextNode(firstName));
+  }
 
   if (typeof window.bdToolsUserReady === "function") {
     window.bdToolsUserReady();
