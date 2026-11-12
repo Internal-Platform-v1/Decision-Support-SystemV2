@@ -72,54 +72,53 @@
 
         <!-- SETTINGS SYSTEM -->
         <div class="settings-wrapper">
-<button class="icon-btn settings-btn" id="settingsBtn" type="button" aria-label="Open settings" aria-haspopup="true" aria-expanded="false">
-    <span class="settings-icon" id="settingsGearIcon" aria-hidden="true">⚙</span>
-    <span class="user-initials" id="settingsUserInitials" aria-hidden="true" hidden>--</span>
-</button>
-
-<div class="settings-menu" id="settingsMenu" role="menu">
-    <!-- NEW: signed-in user identity -->
-    <div class="settings-user" id="settingsUserBlock" hidden>
-        <div class="settings-user-avatar" id="settingsUserAvatar">--</div>
-        <div class="settings-user-meta">
-            <strong id="settingsUserName">User</strong>
-            <small id="settingsUserEmpId">EMP ID</small>
-        </div>
-    </div>
-
-    <div class="settings-heading">Settings</div>
-
-    <div class="settings-group">
-        <div class="settings-label" id="themeLabel">Theme</div>
-        <div class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
-            <button type="button" class="theme-option" data-theme-choice="light" role="radio" aria-checked="true">
-                <span class="theme-option-icon" aria-hidden="true">☀</span>
-                <span>Light</span>
+            <button class="icon-btn settings-btn" id="settingsBtn" type="button" aria-label="Open settings" aria-haspopup="true" aria-expanded="false">
+                <span class="settings-icon" id="settingsGearIcon" aria-hidden="true">⚙</span>
+                <span class="user-initials" id="settingsUserInitials" aria-hidden="true" hidden>--</span>
             </button>
-            <button type="button" class="theme-option" data-theme-choice="dark" role="radio" aria-checked="false">
-                <span class="theme-option-icon" aria-hidden="true">☾</span>
-                <span>Dark</span>
-            </button>
-        </div>
-    </div>
 
-    <div class="settings-group">
-        <div class="settings-label" id="roleLabel">View mode</div>
-        <div class="role-options" role="radiogroup" aria-labelledby="roleLabel">
-            <button type="button" class="role-option" data-role="user" role="radio" aria-checked="true">User</button>
-            <button type="button" class="role-option" data-role="admin" role="radio" aria-checked="false">Admin</button>
-        </div>
-    </div>
+            <div class="settings-menu" id="settingsMenu" role="menu">
+                <!-- Signed-in user identity -->
+                <div class="settings-user" id="settingsUserBlock" hidden>
+                    <div class="settings-user-avatar" id="settingsUserAvatar">--</div>
+                    <div class="settings-user-meta">
+                        <strong id="settingsUserName">User</strong>
+                        <small id="settingsUserEmpId">EMP ID</small>
+                    </div>
+                </div>
 
-    <button id="adminDashboardBtn" type="button" role="menuitem" hidden>
-        <span aria-hidden="true">🛡️</span> Admin Dashboard
-    </button>
+                <div class="settings-heading">Settings</div>
 
-    <!-- NEW: sign out -->
-    <button id="signOutBtn" type="button" role="menuitem" hidden>
-        <span aria-hidden="true">↩</span> Sign Out
-    </button>
-</div>
+                <div class="settings-group">
+                    <div class="settings-label" id="themeLabel">Theme</div>
+                    <div class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
+                        <button type="button" class="theme-option" data-theme-choice="light" role="radio" aria-checked="true">
+                            <span class="theme-option-icon" aria-hidden="true">☀</span>
+                            <span>Light</span>
+                        </button>
+                        <button type="button" class="theme-option" data-theme-choice="dark" role="radio" aria-checked="false">
+                            <span class="theme-option-icon" aria-hidden="true">☾</span>
+                            <span>Dark</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-label" id="roleLabel">View mode</div>
+                    <div class="role-options" role="radiogroup" aria-labelledby="roleLabel">
+                        <button type="button" class="role-option" data-role="user" role="radio" aria-checked="true">User</button>
+                        <button type="button" class="role-option" data-role="admin" role="radio" aria-checked="false">Admin</button>
+                    </div>
+                </div>
+
+                <button id="adminDashboardBtn" type="button" role="menuitem" hidden>
+                    <span aria-hidden="true">🛡️</span> Admin Dashboard
+                </button>
+
+                <button id="signOutBtn" type="button" role="menuitem" hidden>
+                    <span aria-hidden="true">↩</span> Sign Out
+                </button>
+            </div>
         </div>
     </div>
 </header>
