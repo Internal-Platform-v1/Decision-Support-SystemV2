@@ -96,9 +96,39 @@
         return "user";
     }
 
-    /* Backwards compat for any external callers */
     function getRole() {
         return getUserRoleFromSession();
+    }
+
+    /* Writes the same admin session state the old password flow used to set.
+       The admin dashboard page reads this to authorize access. */
+    function setAdminSession(user) {
+        try {
+            window.name = JSON.stringify({
+                token: "ok",
+                exp: Date.now() + 7 * 24 * 60 * 60 * 1000,
+                uid: user.id || "",
+                email: user.email || "",
+                name: user.name || "",
+                role: user.role || ""
+            });
+        } catch (e) {}
+
+        try { localStorage.setItem("adminUser", JSON.stringify(user)); } catch (e) {}
+        try { localStorage.setItem("bd_admin_unlocked", "true"); } catch (e) {}
+    }
+
+    function clearAdminSession() {
+        try {
+            const s = JSON.parse(window.name) || {};
+            delete s.token;
+            delete s.exp;
+            window.name = JSON.stringify(s);
+        } catch (e) {
+            try { window.name = ""; } catch (_) {}
+        }
+        try { localStorage.removeItem("bd_admin_unlocked"); } catch (e) {}
+        try { localStorage.removeItem("adminUser"); } catch (e) {}
     }
 
     /* ------------------------------------------------------------
@@ -296,21 +326,28 @@
         }
         function close() { gate.hidden = true; }
 
-        /* ---- Already signed in? Apply instantly and signal ready ---- */
-        const existing = getStoredUser();
-        if (existing && (existing.empId || existing.name || existing.firstName)) {
-            applyLoggedInUser(existing);
-            close();
-            setTimeout(() => {
-                if (typeof window.bdToolsUserReady === "function") window.bdToolsUserReady();
-            }, 0);
-            return;
+        /* ---------- Sign out — attach ALWAYS (before any early return) ---------- */
+        if (signOut) {
+            signOut.hidden = false;
+            signOut.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                clearStoredUser();
+                clearAdminSession();
+                applyLoggedInUser(null);
+
+                const menu = document.getElementById("settingsMenu");
+                if (menu) menu.classList.remove("open");
+                const btn = document.getElementById("settingsBtn");
+                if (btn) btn.setAttribute("aria-expanded", "false");
+
+                open();
+            });
         }
 
-        /* ---- Fresh visit — block until logged in ---- */
-        open();
-
-        form.addEventListener("submit", async (e) => {
+        /* ---------- Form submit — attach ALWAYS ---------- */
+        form.addEventListener("submit", async function (e) {
             e.preventDefault();
             if (error) error.textContent = "";
 
@@ -355,21 +392,19 @@
             }
         });
 
-        /* ---- Sign out ---- */
-        if (signOut) {
-            signOut.hidden = false;
-            signOut.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                clearStoredUser();
-                applyLoggedInUser(null);
-                const menu = document.getElementById("settingsMenu");
-                if (menu) menu.classList.remove("open");
-                const btn = document.getElementById("settingsBtn");
-                if (btn) btn.setAttribute("aria-expanded", "false");
-                open();
-            });
+        /* ---------- Existing session — restore and bail early ---------- */
+        const existing = getStoredUser();
+        if (existing && (existing.empId || existing.name || existing.firstName)) {
+            applyLoggedInUser(existing);
+            close();
+            setTimeout(() => {
+                if (typeof window.bdToolsUserReady === "function") window.bdToolsUserReady();
+            }, 0);
+            return;
         }
+
+        /* ---------- Fresh visit — block until logged in ---------- */
+        open();
     }
 
     /* ------------------------------------------------------------
@@ -408,9 +443,14 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                /* Only login-session admins/managers see + can click this button.
-                   No password required — role is verified via Firestore at login. */
                 if (getUserRoleFromSession() !== "admin") return;
+
+                const user = getStoredUser();
+                if (!user) return;
+
+                /* Write the same auth state the old password flow used to write,
+                   so the admin dashboard page authorizes this navigation. */
+                setAdminSession(user);
 
                 close();
                 window.location.href = ADMIN_URL;
@@ -771,7 +811,7 @@
        8. Initialize
        ------------------------------------------------------------ */
     function start() {
-        setupUserLogin();        // ← runs first, blocks until signed in
+        setupUserLogin();
         setupTheme();
         setupSettings();
         setupCaseDirectory();
