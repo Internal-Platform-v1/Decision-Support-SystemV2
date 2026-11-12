@@ -12,7 +12,7 @@
   const CONFIG = {
     userCollections: ["employees", "users", "approved_users"],
     announcementsCollection: "announcements",
-    guidesCollection: "guides",
+    guidesCollection: "guides",           // Firestore — realtime source
     feedbackCollection: "feedback",
     helpCollection: "help_requests",
     guideStatsCollection: "guide_stats",
@@ -20,6 +20,12 @@
     timeZone: "Asia/Manila",
     activityWindowDays: 7
   };
+
+  /* Matches the guide catalog in all-guides.js / script.js.
+     When a new guide is added to the codebase, bump this number
+     AND (ideally) add it to the Firestore `guides` collection —
+     Firestore takes priority over this constant. */
+  const GUIDE_COUNT_FALLBACK = 75;
 
   const pageMap = {
     dashboard: "admin-dashboard.html",
@@ -116,6 +122,30 @@
     if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
     const days = Math.floor(hours / 24);
     return days === 1 ? "Yesterday" : `${days} days ago`;
+  }
+
+  /**
+   * Resolve the current total guide count from the best available source.
+   * Priority order:
+   *   1. Firestore `guides` collection (realtime)
+   *   2. window.GUIDE_REGISTRY — set by all-guides.js when present
+   *   3. window.GUIDES / window.ALL_GUIDES — common aliases
+   *   4. GUIDE_COUNT_FALLBACK — matches all-guides catalog / script.js
+   */
+  function resolveGuideCount() {
+    if (state.guides.length > 0) return state.guides.length;
+
+    if (Array.isArray(window.GUIDE_REGISTRY) && window.GUIDE_REGISTRY.length > 0) {
+      return window.GUIDE_REGISTRY.length;
+    }
+    if (Array.isArray(window.GUIDES) && window.GUIDES.length > 0) {
+      return window.GUIDES.length;
+    }
+    if (Array.isArray(window.ALL_GUIDES) && window.ALL_GUIDES.length > 0) {
+      return window.ALL_GUIDES.length;
+    }
+
+    return GUIDE_COUNT_FALLBACK;
   }
 
   /* ------------------------------------------------------------
@@ -332,7 +362,7 @@
       scheduleLoaderHide();
     }
 
-    // Guides
+    // Guides — realtime from Firestore (falls back to all-guides catalog otherwise)
     try {
       const unsubGuides = db.collection(CONFIG.guidesCollection).onSnapshot(
         snap => {
@@ -453,12 +483,8 @@
     setText("totalUsers", state.users.length);
     setText("activeUsers", state.users.filter(u => u.active !== false).length);
 
-    // Guides
-    let totalGuides = state.guides.length;
-    if (totalGuides === 0 && Array.isArray(window.GUIDE_REGISTRY)) {
-      totalGuides = window.GUIDE_REGISTRY.length;
-    }
-    setText("totalGuides", totalGuides);
+    // Guides — uses resolveGuideCount() for the priority chain
+    setText("totalGuides", resolveGuideCount());
 
     // Announcements
     const publishedAnnouncements = state.announcements.filter(a => a.published).length;
@@ -556,9 +582,12 @@
     const container = document.querySelector(".guide-usage-list");
     if (!container) return;
 
-    const registry = state.guides.length > 0
-      ? state.guides
-      : (Array.isArray(window.GUIDE_REGISTRY) ? window.GUIDE_REGISTRY : []);
+    const registry =
+      state.guides.length > 0
+        ? state.guides
+        : (Array.isArray(window.GUIDE_REGISTRY) && window.GUIDE_REGISTRY.length > 0
+            ? window.GUIDE_REGISTRY
+            : (Array.isArray(window.GUIDES) ? window.GUIDES : []));
     if (!registry.length) return;
 
     const rows = registry
@@ -741,7 +770,7 @@
     // Initial paint with whatever is in state (empty)
     renderAll();
 
-    // Attach realtime listeners — they'll fire snapshots that update the UI
+    // Attach realtime listeners
     attachRealtimeListeners();
 
     // React to activity log updates from other tabs
@@ -751,11 +780,6 @@
         renderRecentActivity();
         renderActivityChart();
       }
-    });
-
-    // Optional: react to auth-ready from shared header
-    window.addEventListener("adminHeaderReady", () => {
-      // Listeners are already attached — nothing to do, but keep hook for compat.
     });
 
     // Public API
