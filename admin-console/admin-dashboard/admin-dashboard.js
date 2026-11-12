@@ -1,6 +1,6 @@
 /* ============================================================
    ADMIN DASHBOARD
-   Dashboard-only behavior — data wiring.
+   Dashboard-only behavior — realtime data wiring via onSnapshot.
    ============================================================ */
 
 (() => {
@@ -10,13 +10,11 @@
      CONFIG
      ------------------------------------------------------------ */
   const CONFIG = {
-    /* Employee records live in one (or more) of these collections.
-       We merge them all, deduped by empId / doc-id, so whichever
-       collection your login uses will show up here. */
     userCollections: ["employees", "users", "approved_users"],
     announcementsCollection: "announcements",
     guidesCollection: "guides",
-    templatesCollection: "templates",
+    feedbackCollection: "feedback",
+    helpCollection: "help_requests",
     guideStatsCollection: "guide_stats",
     activityKey: "dss_admin_activity",
     timeZone: "Asia/Manila",
@@ -40,14 +38,18 @@
      ------------------------------------------------------------ */
   const state = {
     users: [],
+    usersByCollection: {},
     announcements: [],
     guides: [],
-    templates: [],
-    guideUsage: {},          // { guideId: count }
-    activity: [],            // [{ type, action, details, user, time }]
+    feedback: [],
+    help: [],
+    guideUsage: {},
+    activity: [],
     region: "All Regions",
     firebaseReady: false
   };
+
+  const unsubscribers = [];
 
   /* ------------------------------------------------------------
      SAFE FIREBASE ACCESS
@@ -84,6 +86,7 @@
   function toDate(value) {
     if (!value) return null;
     if (typeof value.toDate === "function") return value.toDate();
+    if (typeof value.seconds === "number") return new Date(value.seconds * 1000);
     const d = new Date(value);
     return Number.isNaN(d.getTime()) ? null : d;
   }
@@ -116,9 +119,15 @@
   }
 
   /* ------------------------------------------------------------
-     PAGE LOADER
+     LOADER CONTROL
      ------------------------------------------------------------ */
+  let loaderHidden = false;
+  let loaderHideTimer = null;
+
   function hidePageLoader() {
+    if (loaderHidden) return;
+    loaderHidden = true;
+
     const loader = document.getElementById("pageLoader");
     if (loader) {
       loader.style.transition = "opacity 0.35s ease";
@@ -129,6 +138,21 @@
     }
     document.documentElement.classList.remove("page-loading");
     document.documentElement.removeAttribute("aria-busy");
+  }
+
+  function scheduleLoaderHide() {
+    if (loaderHidden) return;
+    clearTimeout(loaderHideTimer);
+    loaderHideTimer = setTimeout(hidePageLoader, 400);
+  }
+
+  /* ------------------------------------------------------------
+     RENDER DEBOUNCING
+     ------------------------------------------------------------ */
+  let renderTimer = null;
+  function scheduleRender() {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(renderAll, 80);
   }
 
   /* ------------------------------------------------------------
@@ -185,7 +209,7 @@
   }
 
   /* ------------------------------------------------------------
-     DATA LOADING
+     LOCAL ACTIVITY LOG
      ------------------------------------------------------------ */
   function loadLocalActivity() {
     try {
@@ -197,154 +221,223 @@
     }
   }
 
-  /**
-   * Merge every employee record from all configured collections.
-   * Dedupe by empId (falls back to doc id). Compose a display name
-   * from firstName + lastName if a full "name" field isn't present.
-   */
-  async function loadUsers() {
+  /* ------------------------------------------------------------
+     USER MERGE
+     ------------------------------------------------------------ */
+  function normalizeUserDoc(doc) {
+    const data = doc.data() || {};
+    const empId = String(data.empId || data.employeeId || data.emp_id || "").trim();
+    const key = empId || doc.id;
+
+    const firstName = String(data.firstName || "").trim();
+    const lastName  = String(data.lastName  || "").trim();
+    const composed  = [firstName, lastName].filter(Boolean).join(" ");
+    const name = String(
+      data.name || data.displayName || data.fullName || composed || empId || doc.id
+    ).trim();
+
+    const email = String(data.email || "").trim();
+    const role = String(data.role || "User").trim();
+    const region = String(
+      data.region || data.country || data.location || "Unknown"
+    ).trim();
+
+    const active = data.active !== false && data.status !== "inactive";
+    const createdAt =
+      data.createdAt ||
+      data.updatedAt ||
+      data.dateAdded ||
+      data.created_on ||
+      null;
+
+    return {
+      id: doc.id,
+      empId: key,
+      name,
+      firstName,
+      lastName,
+      email,
+      role,
+      region,
+      active,
+      createdAt
+    };
+  }
+
+  function mergeAllUsers() {
+    const combined = new Map();
+    Object.values(state.usersByCollection).forEach(arr => {
+      arr.forEach(u => {
+        if (!combined.has(u.empId)) combined.set(u.empId, u);
+      });
+    });
+    state.users = Array.from(combined.values());
+  }
+
+  /* ------------------------------------------------------------
+     REALTIME LISTENERS
+     ------------------------------------------------------------ */
+  function attachRealtimeListeners() {
     const db = firestore();
-    if (!db) return false;
+    if (!db) {
+      hidePageLoader();
+      return;
+    }
 
-    const userMap = new Map();
-
-    for (const colName of CONFIG.userCollections) {
+    // Users — three collections merged
+    CONFIG.userCollections.forEach(colName => {
       try {
-        const snapshot = await db.collection(colName).get();
-
-        snapshot.docs.forEach(doc => {
-          const data = doc.data() || {};
-          const empId = String(
-            data.empId || data.employeeId || data.emp_id || ""
-          ).trim();
-          const key = empId || doc.id;
-
-          if (userMap.has(key)) return;
-
-          const firstName = String(data.firstName || "").trim();
-          const lastName  = String(data.lastName  || "").trim();
-          const composed  = [firstName, lastName].filter(Boolean).join(" ");
-          const name = String(
-            data.name || data.displayName || data.fullName || composed || empId || doc.id
-          ).trim();
-
-          const email = String(data.email || "").trim();
-          const role = String(data.role || "User").trim();
-          const region = String(
-            data.region || data.country || data.location || "Unknown"
-          ).trim();
-
-          const active = data.active !== false && data.status !== "inactive";
-
-          const createdAt =
-            data.createdAt ||
-            data.updatedAt ||
-            data.dateAdded ||
-            data.created_on ||
-            null;
-
-          userMap.set(key, {
-            id: doc.id,
-            empId: empId || doc.id,
-            name,
-            firstName,
-            lastName,
-            email,
-            role,
-            region,
-            active,
-            createdAt
-          });
-        });
+        const unsub = db.collection(colName).onSnapshot(
+          snap => {
+            state.usersByCollection[colName] = snap.docs.map(normalizeUserDoc);
+            mergeAllUsers();
+            scheduleRender();
+            scheduleLoaderHide();
+          },
+          err => {
+            console.info(`Dashboard: ${colName} listener failed —`, err.code || err.message);
+            scheduleLoaderHide();
+          }
+        );
+        unsubscribers.push(unsub);
       } catch (err) {
-        console.info(`Dashboard: ${colName} unavailable —`, err.code || err.message);
+        console.info(`Dashboard: ${colName} unavailable —`, err.message);
+        scheduleLoaderHide();
       }
-    }
+    });
 
-    state.users = Array.from(userMap.values());
-    return state.users.length > 0;
-  }
-
-  async function loadAnnouncements() {
-    const db = firestore();
-    if (!db) return false;
-
+    // Announcements
     try {
-      const snapshot = await db.collection(CONFIG.announcementsCollection).get();
-      state.announcements = snapshot.docs.map(doc => {
-        const data = doc.data() || {};
-        return {
-          id: doc.id,
-          title: data.title || "",
-          createdAt: data.createdAt || data.date || data.updatedAt || null,
-          published: data.published !== false
-        };
-      });
-      return true;
+      const unsubAnn = db.collection(CONFIG.announcementsCollection).onSnapshot(
+        snap => {
+          state.announcements = snap.docs.map(doc => {
+            const data = doc.data() || {};
+            return {
+              id: doc.id,
+              title: data.title || "",
+              createdAt: data.createdAt || data.date || data.updatedAt || null,
+              published: data.published !== false
+            };
+          });
+          scheduleRender();
+          scheduleLoaderHide();
+        },
+        err => {
+          console.info("Dashboard: announcements listener failed —", err.code || err.message);
+          scheduleLoaderHide();
+        }
+      );
+      unsubscribers.push(unsubAnn);
     } catch (err) {
-      console.info("Dashboard: announcements unavailable —", err.code || err.message);
-      return false;
+      scheduleLoaderHide();
     }
-  }
 
-  async function loadGuides() {
-    const db = firestore();
-    if (!db) return false;
-
+    // Guides
     try {
-      const snapshot = await db.collection(CONFIG.guidesCollection).get();
-      state.guides = snapshot.docs.map(doc => {
-        const data = doc.data() || {};
-        return {
-          id: doc.id,
-          title: data.title || data.name || doc.id,
-          category: data.category || "",
-          published: data.published !== false
-        };
-      });
-      return true;
+      const unsubGuides = db.collection(CONFIG.guidesCollection).onSnapshot(
+        snap => {
+          state.guides = snap.docs.map(doc => {
+            const data = doc.data() || {};
+            return {
+              id: doc.id,
+              title: data.title || data.name || doc.id,
+              category: data.category || "",
+              published: data.published !== false
+            };
+          });
+          scheduleRender();
+          scheduleLoaderHide();
+        },
+        err => {
+          console.info("Dashboard: guides listener failed —", err.code || err.message);
+          scheduleLoaderHide();
+        }
+      );
+      unsubscribers.push(unsubGuides);
     } catch (err) {
-      console.info("Dashboard: guides collection unavailable —", err.code || err.message);
-      return false;
+      scheduleLoaderHide();
     }
-  }
 
-  async function loadTemplates() {
-    const db = firestore();
-    if (!db) return false;
-
+    // Feedback — realtime
     try {
-      const snapshot = await db.collection(CONFIG.templatesCollection).get();
-      state.templates = snapshot.docs.map(doc => {
-        const data = doc.data() || {};
-        return { id: doc.id, ...data };
-      });
-      return true;
+      const unsubFb = db.collection(CONFIG.feedbackCollection).onSnapshot(
+        snap => {
+          state.feedback = snap.docs.map(doc => {
+            const data = doc.data() || {};
+            return {
+              id: doc.id,
+              ...data,
+              rating: Number(data.rating) || 0,
+              createdAt: toDate(data.createdAt)
+            };
+          });
+          scheduleRender();
+          scheduleLoaderHide();
+        },
+        err => {
+          console.info("Dashboard: feedback listener failed —", err.code || err.message);
+          scheduleLoaderHide();
+        }
+      );
+      unsubscribers.push(unsubFb);
     } catch (err) {
-      console.info("Dashboard: templates collection unavailable —", err.code || err.message);
-      return false;
+      scheduleLoaderHide();
     }
-  }
 
-  async function loadGuideStats() {
-    const db = firestore();
-    if (!db) return false;
-
+    // Help requests — realtime
     try {
-      const snapshot = await db.collection(CONFIG.guideStatsCollection).get();
-      const next = {};
-      snapshot.docs.forEach(doc => {
-        const data = doc.data() || {};
-        const id = data.guideId || doc.id;
-        const count = Number(data.usageCount ?? data.count ?? 0);
-        if (id) next[id] = (next[id] || 0) + (Number.isFinite(count) ? count : 0);
-      });
-      state.guideUsage = next;
-      return true;
+      const unsubHelp = db.collection(CONFIG.helpCollection).onSnapshot(
+        snap => {
+          state.help = snap.docs.map(doc => {
+            const data = doc.data() || {};
+            return {
+              id: doc.id,
+              ...data,
+              status: data.status || "open",
+              createdAt: toDate(data.createdAt),
+              adminReplyAt: toDate(data.adminReplyAt)
+            };
+          });
+          scheduleRender();
+          scheduleLoaderHide();
+        },
+        err => {
+          console.info("Dashboard: help listener failed —", err.code || err.message);
+          scheduleLoaderHide();
+        }
+      );
+      unsubscribers.push(unsubHelp);
     } catch (err) {
-      console.info("Dashboard: guide_stats unavailable —", err.code || err.message);
-      return false;
+      scheduleLoaderHide();
     }
+
+    // Guide stats — realtime
+    try {
+      const unsubStats = db.collection(CONFIG.guideStatsCollection).onSnapshot(
+        snap => {
+          const next = {};
+          snap.docs.forEach(doc => {
+            const data = doc.data() || {};
+            const id = data.guideId || doc.id;
+            const count = Number(data.usageCount ?? data.count ?? 0);
+            if (id) next[id] = (next[id] || 0) + (Number.isFinite(count) ? count : 0);
+          });
+          state.guideUsage = next;
+          scheduleRender();
+          scheduleLoaderHide();
+        },
+        err => {
+          console.info("Dashboard: guide_stats listener failed —", err.code || err.message);
+          scheduleLoaderHide();
+        }
+      );
+      unsubscribers.push(unsubStats);
+    } catch (err) {
+      scheduleLoaderHide();
+    }
+
+    // Safety net — hide the loader even if all listeners hang
+    setTimeout(hidePageLoader, 5000);
   }
 
   /* ------------------------------------------------------------
@@ -356,36 +449,53 @@
   }
 
   function renderKPIs() {
-    if (!state.users.length && !state.announcements.length) return;
+    // Users
+    setText("totalUsers", state.users.length);
+    setText("activeUsers", state.users.filter(u => u.active !== false).length);
 
-    const totalUsers = state.users.length;
-    const activeUsers = state.users.filter(u => u.active !== false).length;
-    const totalAnnouncements = state.announcements.filter(a => a.published).length;
-
-    if (totalUsers > 0) {
-      setText("totalUsers", totalUsers);
-      setText("activeUsers", activeUsers);
-    }
-
-    if (state.announcements.length > 0) {
-      setText("totalAnnouncements", totalAnnouncements);
-    }
-
-    /* Guides: prefer real collection, then GUIDE_REGISTRY, then leave demo. */
-    let totalGuides = 0;
-    if (state.guides.length > 0) {
-      totalGuides = state.guides.length;
-    } else if (Array.isArray(window.GUIDE_REGISTRY)) {
+    // Guides
+    let totalGuides = state.guides.length;
+    if (totalGuides === 0 && Array.isArray(window.GUIDE_REGISTRY)) {
       totalGuides = window.GUIDE_REGISTRY.length;
     }
-    if (totalGuides > 0) setText("totalGuides", totalGuides);
+    setText("totalGuides", totalGuides);
 
-    /* Templates: prefer real collection, then guideUsage sum, then leave demo. */
-    let totalTemplates = state.templates.length;
-    if (totalTemplates === 0) {
-      totalTemplates = Object.values(state.guideUsage).reduce((a, b) => a + b, 0);
+    // Announcements
+    const publishedAnnouncements = state.announcements.filter(a => a.published).length;
+    setText("totalAnnouncements", publishedAnnouncements);
+
+    // Feedback
+    const fbCount = state.feedback.length;
+    setText("totalFeedback", fbCount);
+
+    const ratings = state.feedback
+      .map(f => Number(f.rating))
+      .filter(n => n > 0);
+    let fbHint = "Employee feedback";
+    if (ratings.length > 0) {
+      const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+      fbHint = `Avg ${avg.toFixed(1)} ★ from ${ratings.length} rating${ratings.length === 1 ? "" : "s"}`;
+    } else if (fbCount > 0) {
+      fbHint = `${fbCount} submitted · no ratings yet`;
     }
-    if (totalTemplates > 0) setText("totalTemplates", totalTemplates);
+    setText("totalFeedbackHint", fbHint);
+
+    // Open Help
+    const openHelp = state.help.filter(h => {
+      const s = String(h.status || "open").toLowerCase();
+      return s === "open" || s === "in_progress";
+    }).length;
+    const resolvedHelp = state.help.filter(h =>
+      String(h.status || "").toLowerCase() === "resolved"
+    ).length;
+
+    setText("totalHelp", openHelp);
+    setText(
+      "totalHelpHint",
+      state.help.length > 0
+        ? `${state.help.length} total · ${resolvedHelp} resolved`
+        : "Awaiting reply or in progress"
+    );
   }
 
   /* ------------------------------------------------------------
@@ -476,7 +586,7 @@
   }
 
   /* ------------------------------------------------------------
-     RENDERING — REGION CARD (donut + legend)
+     RENDERING — REGION CARD
      ------------------------------------------------------------ */
   function renderRegionCard() {
     const donut = document.querySelector(".donut-chart");
@@ -498,7 +608,12 @@
 
     const totalFiltered = filtered.reduce((a, [, count]) => a + count, 0);
 
-    if (!totalFiltered) return;
+    if (!totalFiltered) {
+      donut.style.background = "#e9e8f1";
+      center.textContent = "0";
+      legend.innerHTML = "";
+      return;
+    }
 
     const palette = ["#6640d4", "#aa93ed", "#d4c8f6", "#8ed5b0", "#ffb470", "#7fb3ff"];
     const stops = [];
@@ -531,7 +646,12 @@
      ------------------------------------------------------------ */
   function renderRecentUsers() {
     const body = $("recentUsersBody");
-    if (!body || !state.users.length) return;
+    if (!body) return;
+
+    if (!state.users.length) {
+      body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#9999ad;padding:20px 0;">No users yet</td></tr>`;
+      return;
+    }
 
     const rows = state.users
       .slice()
@@ -547,14 +667,13 @@
 
     body.innerHTML = rows.map(u => {
       const initial = initials(u.name, u.email);
-      const roleClass = "role-pill";
       const statusClass = u.active === false ? "status-pill inactive" : "status-pill active";
       const statusLabel = u.active === false ? "Inactive" : "Active";
       return `
         <tr>
           <td><span class="table-person"><i>${esc(initial)}</i>${esc(u.name)}</span></td>
           <td>${esc(u.email || u.empId || "—")}</td>
-          <td><span class="${roleClass}">${esc(u.role)}</span></td>
+          <td><span class="role-pill">${esc(u.role)}</span></td>
           <td>${esc(u.region)}</td>
           <td><span class="${statusClass}">${esc(statusLabel)}</span></td>
           <td>${esc(formatDate(u.createdAt))}</td>
@@ -568,7 +687,12 @@
      ------------------------------------------------------------ */
   function renderRecentActivity() {
     const body = $("recentActivityBody");
-    if (!body || !state.activity.length) return;
+    if (!body) return;
+
+    if (!state.activity.length) {
+      body.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#9999ad;padding:20px 0;">No recent activity</td></tr>`;
+      return;
+    }
 
     const rows = state.activity.slice(0, 5);
 
@@ -609,40 +733,18 @@
   /* ------------------------------------------------------------
      INIT
      ------------------------------------------------------------ */
-  async function init() {
+  function init() {
     setupNavigation();
     setupRegionFilter();
-
     loadLocalActivity();
 
-    /* Safety net — if anything below hangs (Firebase unreachable,
-       network failure), the loader still dismisses after 8s. */
-    const loaderSafety = setTimeout(hidePageLoader, 8000);
-
-    try {
-      await Promise.allSettled([
-        loadUsers(),
-        loadAnnouncements(),
-        loadGuides(),
-        loadTemplates(),
-        loadGuideStats()
-      ]);
-    } catch (err) {
-      console.error("[admin-dashboard] data load error:", err);
-    } finally {
-      clearTimeout(loaderSafety);
-    }
-
-    state.firebaseReady = state.users.length > 0 || state.announcements.length > 0;
-
+    // Initial paint with whatever is in state (empty)
     renderAll();
 
-    /* Small delay so the loader fades out cleanly after paint. */
-    requestAnimationFrame(() => {
-      setTimeout(hidePageLoader, 150);
-    });
+    // Attach realtime listeners — they'll fire snapshots that update the UI
+    attachRealtimeListeners();
 
-    /* React to activity log updates from other tabs / sections. */
+    // React to activity log updates from other tabs
     window.addEventListener("storage", event => {
       if (event.key === CONFIG.activityKey) {
         loadLocalActivity();
@@ -651,25 +753,25 @@
       }
     });
 
-    /* If the shared header publishes an auth-ready signal, re-run data loads. */
-    window.addEventListener("adminHeaderReady", async () => {
-      await Promise.allSettled([
-        loadUsers(),
-        loadAnnouncements(),
-        loadGuides(),
-        loadTemplates(),
-        loadGuideStats()
-      ]);
-      renderAll();
+    // Optional: react to auth-ready from shared header
+    window.addEventListener("adminHeaderReady", () => {
+      // Listeners are already attached — nothing to do, but keep hook for compat.
     });
 
-    /* Public API for other dashboard scripts / modules. */
+    // Public API
     window.AdminDashboard = {
       refresh: renderAll,
       state,
       navigate
     };
   }
+
+  // Cleanup on unload
+  window.addEventListener("beforeunload", () => {
+    unsubscribers.forEach(fn => {
+      try { fn(); } catch (_) {}
+    });
+  });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
