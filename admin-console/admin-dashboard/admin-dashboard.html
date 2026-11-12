@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-loading">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Decision Support System</title>
+
+  <script>
+  (function() {
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  })();
+  </script>
 
   <script>
   (function() {
@@ -22,13 +29,25 @@
       return origClear.apply(this, arguments);
     };
   })();
-</script>
+  </script>
 
+  <link rel="stylesheet" href="../../assets/css/page-loader.css">
   <link rel="stylesheet" href="../../shared/header/admin-header.css">
   <link rel="stylesheet" href="admin-dashboard.css">
 </head>
 
 <body data-admin-page="dashboard" data-admin-title="Decision Support System">
+
+  <!-- PAGE LOADER -->
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading admin dashboard">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading Admin Dashboard…</p>
+    </div>
+  </div>
 
   <!-- Shared Admin Console shell -->
   <div id="adminHeader"></div>
@@ -51,7 +70,7 @@
           <strong id="totalUsers">24</strong>
           <small>All registered users</small>
         </div>
-        <div class="kpi-change positive">↑ 8%</div>
+        <div class="kpi-change positive" id="totalUsersChange">↑ 8%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -63,7 +82,7 @@
           <strong id="activeUsers">21</strong>
           <small>Currently active</small>
         </div>
-        <div class="kpi-change positive">↑ 5%</div>
+        <div class="kpi-change positive" id="activeUsersChange">↑ 5%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -75,7 +94,7 @@
           <strong id="totalTemplates">58</strong>
           <small>Total template records</small>
         </div>
-        <div class="kpi-change positive">↑ 12%</div>
+        <div class="kpi-change positive" id="totalTemplatesChange">↑ 12%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -87,7 +106,7 @@
           <strong id="totalGuides">24</strong>
           <small>Decision guides available</small>
         </div>
-        <div class="kpi-change neutral">— 0%</div>
+        <div class="kpi-change neutral" id="totalGuidesChange">— 0%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -99,7 +118,7 @@
           <strong id="totalAnnouncements">6</strong>
           <small>Published announcements</small>
         </div>
-        <div class="kpi-change positive">↑ 50%</div>
+        <div class="kpi-change positive" id="totalAnnouncementsChange">↑ 50%</div>
       </article>
 
     </section>
@@ -340,6 +359,23 @@
     </section>
 
   </main>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
 
   <script src="../../shared/header/admin-header.js"></script>
   <script src="admin-dashboard.js"></script>
