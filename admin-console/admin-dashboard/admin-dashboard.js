@@ -10,8 +10,13 @@
      CONFIG
      ------------------------------------------------------------ */
   const CONFIG = {
-    usersCollection: "approved_users",
+    /* Employee records live in one (or more) of these collections.
+       We merge them all, deduped by empId / doc-id, so whichever
+       collection your login uses will show up here. */
+    userCollections: ["employees", "users", "approved_users"],
     announcementsCollection: "announcements",
+    guidesCollection: "guides",
+    templatesCollection: "templates",
     guideStatsCollection: "guide_stats",
     activityKey: "dss_admin_activity",
     timeZone: "Asia/Manila",
@@ -36,6 +41,8 @@
   const state = {
     users: [],
     announcements: [],
+    guides: [],
+    templates: [],
     guideUsage: {},          // { guideId: count }
     activity: [],            // [{ type, action, details, user, time }]
     region: "All Regions",
@@ -52,11 +59,6 @@
     const f = fb();
     if (!f || !f.firestore) return null;
     try { return window.db || f.firestore(); } catch (_) { return null; }
-  }
-  function fireauth() {
-    const f = fb();
-    if (!f || !f.auth) return null;
-    try { return window.auth || f.auth(); } catch (_) { return null; }
   }
 
   /* ------------------------------------------------------------
@@ -114,6 +116,22 @@
   }
 
   /* ------------------------------------------------------------
+     PAGE LOADER
+     ------------------------------------------------------------ */
+  function hidePageLoader() {
+    const loader = document.getElementById("pageLoader");
+    if (loader) {
+      loader.style.transition = "opacity 0.35s ease";
+      loader.style.opacity = "0";
+      setTimeout(() => {
+        if (loader.parentNode) loader.parentNode.removeChild(loader);
+      }, 380);
+    }
+    document.documentElement.classList.remove("page-loading");
+    document.documentElement.removeAttribute("aria-busy");
+  }
+
+  /* ------------------------------------------------------------
      NAVIGATION
      ------------------------------------------------------------ */
   function navigate(page) {
@@ -162,7 +180,6 @@
       .map(r => `<option${r === state.region ? " selected" : ""}>${esc(r)}</option>`)
       .join("");
 
-    // Preserve current selection if still valid, else fall back to All Regions.
     if (!options.includes(state.region)) state.region = "All Regions";
     select.value = state.region;
   }
@@ -180,40 +197,72 @@
     }
   }
 
+  /**
+   * Merge every employee record from all configured collections.
+   * Dedupe by empId (falls back to doc id). Compose a display name
+   * from firstName + lastName if a full "name" field isn't present.
+   */
   async function loadUsers() {
     const db = firestore();
     if (!db) return false;
 
-    const auth = fireauth();
-    if (auth && !auth.currentUser) {
-      // Wait briefly for auth to settle — the shared header relies on it too.
-      await new Promise(resolve => {
-        let settled = false;
-        const finish = () => { if (!settled) { settled = true; resolve(); } };
-        const unsub = auth.onAuthStateChanged(() => { try { unsub(); } catch (_) {} finish(); });
-        setTimeout(() => { try { unsub(); } catch (_) {} finish(); }, 3000);
-      });
+    const userMap = new Map();
+
+    for (const colName of CONFIG.userCollections) {
+      try {
+        const snapshot = await db.collection(colName).get();
+
+        snapshot.docs.forEach(doc => {
+          const data = doc.data() || {};
+          const empId = String(
+            data.empId || data.employeeId || data.emp_id || ""
+          ).trim();
+          const key = empId || doc.id;
+
+          if (userMap.has(key)) return;
+
+          const firstName = String(data.firstName || "").trim();
+          const lastName  = String(data.lastName  || "").trim();
+          const composed  = [firstName, lastName].filter(Boolean).join(" ");
+          const name = String(
+            data.name || data.displayName || data.fullName || composed || empId || doc.id
+          ).trim();
+
+          const email = String(data.email || "").trim();
+          const role = String(data.role || "User").trim();
+          const region = String(
+            data.region || data.country || data.location || "Unknown"
+          ).trim();
+
+          const active = data.active !== false && data.status !== "inactive";
+
+          const createdAt =
+            data.createdAt ||
+            data.updatedAt ||
+            data.dateAdded ||
+            data.created_on ||
+            null;
+
+          userMap.set(key, {
+            id: doc.id,
+            empId: empId || doc.id,
+            name,
+            firstName,
+            lastName,
+            email,
+            role,
+            region,
+            active,
+            createdAt
+          });
+        });
+      } catch (err) {
+        console.info(`Dashboard: ${colName} unavailable —`, err.code || err.message);
+      }
     }
 
-    try {
-      const snapshot = await db.collection(CONFIG.usersCollection).get();
-      state.users = snapshot.docs.map(doc => {
-        const data = doc.data() || {};
-        return {
-          id: doc.id,
-          name: data.name || data.displayName || doc.id,
-          email: data.email || doc.id,
-          role: String(data.role || "User").trim(),
-          region: String(data.region || data.country || "All regions").trim(),
-          active: data.active !== false,
-          createdAt: data.createdAt || data.updatedAt || null
-        };
-      });
-      return true;
-    } catch (err) {
-      console.info("Dashboard: approved_users unavailable —", err.code || err.message);
-      return false;
-    }
+    state.users = Array.from(userMap.values());
+    return state.users.length > 0;
   }
 
   async function loadAnnouncements() {
@@ -227,13 +276,52 @@
         return {
           id: doc.id,
           title: data.title || "",
-          createdAt: data.createdAt || data.date || null,
+          createdAt: data.createdAt || data.date || data.updatedAt || null,
           published: data.published !== false
         };
       });
       return true;
     } catch (err) {
       console.info("Dashboard: announcements unavailable —", err.code || err.message);
+      return false;
+    }
+  }
+
+  async function loadGuides() {
+    const db = firestore();
+    if (!db) return false;
+
+    try {
+      const snapshot = await db.collection(CONFIG.guidesCollection).get();
+      state.guides = snapshot.docs.map(doc => {
+        const data = doc.data() || {};
+        return {
+          id: doc.id,
+          title: data.title || data.name || doc.id,
+          category: data.category || "",
+          published: data.published !== false
+        };
+      });
+      return true;
+    } catch (err) {
+      console.info("Dashboard: guides collection unavailable —", err.code || err.message);
+      return false;
+    }
+  }
+
+  async function loadTemplates() {
+    const db = firestore();
+    if (!db) return false;
+
+    try {
+      const snapshot = await db.collection(CONFIG.templatesCollection).get();
+      state.templates = snapshot.docs.map(doc => {
+        const data = doc.data() || {};
+        return { id: doc.id, ...data };
+      });
+      return true;
+    } catch (err) {
+      console.info("Dashboard: templates collection unavailable —", err.code || err.message);
       return false;
     }
   }
@@ -274,18 +362,29 @@
     const activeUsers = state.users.filter(u => u.active !== false).length;
     const totalAnnouncements = state.announcements.filter(a => a.published).length;
 
-    // Guides come from the shared header registry (already loaded on the page
-    // before this script runs, per admin-dashboard.html).
-    const guides = Array.isArray(window.GUIDE_REGISTRY) ? window.GUIDE_REGISTRY : [];
-    const totalGuides = guides.length;
+    if (totalUsers > 0) {
+      setText("totalUsers", totalUsers);
+      setText("activeUsers", activeUsers);
+    }
 
-    // Templates count: sum guide-specific template usage where available.
-    const totalTemplates = Object.values(state.guideUsage).reduce((a, b) => a + b, 0);
+    if (state.announcements.length > 0) {
+      setText("totalAnnouncements", totalAnnouncements);
+    }
 
-    setText("totalUsers", totalUsers);
-    setText("activeUsers", activeUsers);
-    setText("totalGuides", totalGuides);
-    setText("totalAnnouncements", totalAnnouncements);
+    /* Guides: prefer real collection, then GUIDE_REGISTRY, then leave demo. */
+    let totalGuides = 0;
+    if (state.guides.length > 0) {
+      totalGuides = state.guides.length;
+    } else if (Array.isArray(window.GUIDE_REGISTRY)) {
+      totalGuides = window.GUIDE_REGISTRY.length;
+    }
+    if (totalGuides > 0) setText("totalGuides", totalGuides);
+
+    /* Templates: prefer real collection, then guideUsage sum, then leave demo. */
+    let totalTemplates = state.templates.length;
+    if (totalTemplates === 0) {
+      totalTemplates = Object.values(state.guideUsage).reduce((a, b) => a + b, 0);
+    }
     if (totalTemplates > 0) setText("totalTemplates", totalTemplates);
   }
 
@@ -304,7 +403,6 @@
       days.push(d);
     }
 
-    // Logins per day from local activity log.
     const loginsPerDay = days.map(d => state.activity.filter(entry => {
       const entryDate = toDate(entry.time);
       if (!entryDate) return false;
@@ -312,7 +410,6 @@
       return entryDate.toDateString() === d.toDateString();
     }).length);
 
-    // Active users per day: users whose createdAt/updatedAt lands on that day.
     const activePerDay = days.map(d => {
       return state.users.filter(u => {
         if (u.active === false) return false;
@@ -338,7 +435,6 @@
       `;
     }).join("");
 
-    // Update y-axis max label to reflect real scale.
     const yAxis = document.querySelector(".chart-y-axis span");
     if (yAxis) yAxis.textContent = String(maxValue);
   }
@@ -350,7 +446,9 @@
     const container = document.querySelector(".guide-usage-list");
     if (!container) return;
 
-    const registry = Array.isArray(window.GUIDE_REGISTRY) ? window.GUIDE_REGISTRY : [];
+    const registry = state.guides.length > 0
+      ? state.guides
+      : (Array.isArray(window.GUIDE_REGISTRY) ? window.GUIDE_REGISTRY : []);
     if (!registry.length) return;
 
     const rows = registry
@@ -358,7 +456,6 @@
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // If we have no real stats at all, leave the HTML's static demo list intact.
     const hasAnyStats = rows.some(r => r.count > 0);
     if (!hasAnyStats) return;
 
@@ -387,29 +484,22 @@
     const legend = document.querySelector(".region-legend");
     if (!donut || !center || !legend) return;
 
-    // Aggregate users by region.
     const counts = {};
     state.users.forEach(u => {
       const region = String(u.region || "Other").trim() || "Other";
       counts[region] = (counts[region] || 0) + 1;
     });
 
-    const entries = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1]);
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
 
-    // If a specific region is selected, filter the donut to that one region.
     const filtered = state.region === "All Regions"
       ? entries
       : entries.filter(([region]) => region === state.region);
 
     const totalFiltered = filtered.reduce((a, [, count]) => a + count, 0);
 
-    if (!totalFiltered) {
-      // Nothing to show — keep existing static content untouched.
-      return;
-    }
+    if (!totalFiltered) return;
 
-    // Build conic-gradient stops.
     const palette = ["#6640d4", "#aa93ed", "#d4c8f6", "#8ed5b0", "#ffb470", "#7fb3ff"];
     const stops = [];
     let acc = 0;
@@ -423,7 +513,6 @@
     donut.style.background = `conic-gradient(${stops.join(", ")})`;
     center.textContent = String(totalFiltered);
 
-    // Legend.
     legend.innerHTML = filtered.slice(0, 4).map(([region, count], i) => {
       const pct = Math.round((count / totalFiltered) * 100);
       return `
@@ -450,6 +539,8 @@
         const at = toDate(a.createdAt);
         const bt = toDate(b.createdAt);
         if (at && bt) return bt - at;
+        if (bt && !at) return 1;
+        if (at && !bt) return -1;
         return 0;
       })
       .slice(0, 5);
@@ -462,7 +553,7 @@
       return `
         <tr>
           <td><span class="table-person"><i>${esc(initial)}</i>${esc(u.name)}</span></td>
-          <td>${esc(u.email)}</td>
+          <td>${esc(u.email || u.empId || "—")}</td>
           <td><span class="${roleClass}">${esc(u.role)}</span></td>
           <td>${esc(u.region)}</td>
           <td><span class="${statusClass}">${esc(statusLabel)}</span></td>
@@ -524,20 +615,34 @@
 
     loadLocalActivity();
 
-    // Firebase loads asynchronously; the shared admin-header script may still
-    // be settling auth. We try each source independently and re-render
-    // whenever new data lands.
-    const results = await Promise.allSettled([
-      loadUsers(),
-      loadAnnouncements(),
-      loadGuideStats()
-    ]);
+    /* Safety net — if anything below hangs (Firebase unreachable,
+       network failure), the loader still dismisses after 8s. */
+    const loaderSafety = setTimeout(hidePageLoader, 8000);
 
-    state.firebaseReady = results.some(r => r.status === "fulfilled" && r.value === true);
+    try {
+      await Promise.allSettled([
+        loadUsers(),
+        loadAnnouncements(),
+        loadGuides(),
+        loadTemplates(),
+        loadGuideStats()
+      ]);
+    } catch (err) {
+      console.error("[admin-dashboard] data load error:", err);
+    } finally {
+      clearTimeout(loaderSafety);
+    }
+
+    state.firebaseReady = state.users.length > 0 || state.announcements.length > 0;
 
     renderAll();
 
-    // React to activity log updates from other tabs / sections.
+    /* Small delay so the loader fades out cleanly after paint. */
+    requestAnimationFrame(() => {
+      setTimeout(hidePageLoader, 150);
+    });
+
+    /* React to activity log updates from other tabs / sections. */
     window.addEventListener("storage", event => {
       if (event.key === CONFIG.activityKey) {
         loadLocalActivity();
@@ -546,13 +651,19 @@
       }
     });
 
-    // If the shared header publishes an auth-ready signal, re-run data loads.
+    /* If the shared header publishes an auth-ready signal, re-run data loads. */
     window.addEventListener("adminHeaderReady", async () => {
-      await Promise.allSettled([loadUsers(), loadAnnouncements()]);
+      await Promise.allSettled([
+        loadUsers(),
+        loadAnnouncements(),
+        loadGuides(),
+        loadTemplates(),
+        loadGuideStats()
+      ]);
       renderAll();
     });
 
-    // Public API for other dashboard scripts / modules.
+    /* Public API for other dashboard scripts / modules. */
     window.AdminDashboard = {
       refresh: renderAll,
       state,
