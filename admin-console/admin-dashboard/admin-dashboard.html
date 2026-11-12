@@ -58,7 +58,7 @@
        ========================================================= -->
   <main class="admin-dashboard-content">
 
-    <!-- TOP KPI CARDS -->
+    <!-- TOP KPI CARDS — 6 cards, realtime -->
     <section class="dashboard-kpi-grid">
 
       <article class="dashboard-kpi-card">
@@ -67,10 +67,9 @@
         </div>
         <div class="kpi-copy">
           <span>Total Users</span>
-          <strong id="totalUsers">24</strong>
+          <strong id="totalUsers">0</strong>
           <small>All registered users</small>
         </div>
-        <div class="kpi-change positive" id="totalUsersChange">↑ 8%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -79,22 +78,9 @@
         </div>
         <div class="kpi-copy">
           <span>Active Users</span>
-          <strong id="activeUsers">21</strong>
+          <strong id="activeUsers">0</strong>
           <small>Currently active</small>
         </div>
-        <div class="kpi-change positive" id="activeUsersChange">↑ 5%</div>
-      </article>
-
-      <article class="dashboard-kpi-card">
-        <div class="kpi-icon kpi-orange">
-          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5M9 12h6M9 16h6"/></svg>
-        </div>
-        <div class="kpi-copy">
-          <span>Templates</span>
-          <strong id="totalTemplates">58</strong>
-          <small>Total template records</small>
-        </div>
-        <div class="kpi-change positive" id="totalTemplatesChange">↑ 12%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -103,10 +89,9 @@
         </div>
         <div class="kpi-copy">
           <span>Guides</span>
-          <strong id="totalGuides">24</strong>
+          <strong id="totalGuides">0</strong>
           <small>Decision guides available</small>
         </div>
-        <div class="kpi-change neutral" id="totalGuidesChange">— 0%</div>
       </article>
 
       <article class="dashboard-kpi-card">
@@ -115,10 +100,31 @@
         </div>
         <div class="kpi-copy">
           <span>Announcements</span>
-          <strong id="totalAnnouncements">6</strong>
+          <strong id="totalAnnouncements">0</strong>
           <small>Published announcements</small>
         </div>
-        <div class="kpi-change positive" id="totalAnnouncementsChange">↑ 50%</div>
+      </article>
+
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-pink">
+          <svg viewBox="0 0 24 24"><path d="M20 11.2c0 3.8-3.7 6.8-8.3 6.8-1 0-2-.1-2.9-.4L4 20l1.1-3.2C3.8 15.6 3 13.9 3 12c0-3.8 3.7-6.8 8.3-6.8S20 7.4 20 11.2Z"/></svg>
+        </div>
+        <div class="kpi-copy">
+          <span>Feedback</span>
+          <strong id="totalFeedback">0</strong>
+          <small id="totalFeedbackHint">Employee feedback</small>
+        </div>
+      </article>
+
+      <article class="dashboard-kpi-card">
+        <div class="kpi-icon kpi-teal">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.2a2.5 2.5 0 0 1 4.8 1c0 1.9-2.5 2.1-2.5 3.6"/><path d="M12 17.1h.01"/></svg>
+        </div>
+        <div class="kpi-copy">
+          <span>Open Help</span>
+          <strong id="totalHelp">0</strong>
+          <small id="totalHelpHint">Awaiting reply or in progress</small>
+        </div>
       </article>
 
     </section>
@@ -151,13 +157,13 @@
             <div class="chart-gridline g0"></div>
 
             <div class="bar-groups">
-              <div class="bar-group"><div class="bars"><b style="height:34%"></b><b class="soft" style="height:52%"></b></div><span>Sep 17</span></div>
-              <div class="bar-group"><div class="bars"><b style="height:40%"></b><b class="soft" style="height:61%"></b></div><span>Sep 18</span></div>
-              <div class="bar-group"><div class="bars"><b style="height:37%"></b><b class="soft" style="height:75%"></b></div><span>Sep 19</span></div>
-              <div class="bar-group"><div class="bars"><b style="height:30%"></b><b class="soft" style="height:51%"></b></div><span>Sep 20</span></div>
-              <div class="bar-group"><div class="bars"><b style="height:35%"></b><b class="soft" style="height:45%"></b></div><span>Sep 21</span></div>
-              <div class="bar-group"><div class="bars"><b style="height:38%"></b><b class="soft" style="height:62%"></b></div><span>Sep 22</span></div>
-              <div class="bar-group"><div class="bars"><b style="height:44%"></b><b class="soft" style="height:69%"></b></div><span>Sep 23</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:34%"></b><b class="soft" style="height:52%"></b></div><span>—</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:40%"></b><b class="soft" style="height:61%"></b></div><span>—</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:37%"></b><b class="soft" style="height:75%"></b></div><span>—</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:30%"></b><b class="soft" style="height:51%"></b></div><span>—</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:35%"></b><b class="soft" style="height:45%"></b></div><span>—</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:38%"></b><b class="soft" style="height:62%"></b></div><span>—</span></div>
+              <div class="bar-group"><div class="bars"><b style="height:44%"></b><b class="soft" style="height:69%"></b></div><span>—</span></div>
             </div>
           </div>
         </div>
@@ -210,8 +216,6 @@
           <h2>User Distribution by Region</h2>
           <select id="regionFilter" aria-label="Region">
             <option>All Regions</option>
-            <option>Philippines</option>
-            <option>India</option>
           </select>
         </div>
 
@@ -219,16 +223,16 @@
           <div class="donut-wrap">
             <div class="donut-chart">
               <div class="donut-center">
-                <strong>24</strong>
+                <strong>0</strong>
                 <span>Users</span>
               </div>
             </div>
           </div>
 
           <div class="region-legend">
-            <div><i class="region-dot ph"></i><span>Philippines</span><b>16</b><small>67%</small></div>
-            <div><i class="region-dot india"></i><span>India</span><b>5</b><small>21%</small></div>
-            <div><i class="region-dot other"></i><span>Other</span><b>3</b><small>12%</small></div>
+            <div><i class="region-dot ph"></i><span>Philippines</span><b>0</b><small>0%</small></div>
+            <div><i class="region-dot india"></i><span>India</span><b>0</b><small>0%</small></div>
+            <div><i class="region-dot other"></i><span>Other</span><b>0</b><small>0%</small></div>
           </div>
         </div>
       </article>
@@ -258,46 +262,7 @@
               </tr>
             </thead>
             <tbody id="recentUsersBody">
-              <tr>
-                <td><span class="table-person"><i>MS</i>Maria Santos</span></td>
-                <td>maria.santos@iqor.com</td>
-                <td><span class="role-pill">Team Leader</span></td>
-                <td>Philippines</td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>Sep 22, 2025</td>
-              </tr>
-              <tr>
-                <td><span class="table-person"><i>JC</i>John Cruz</span></td>
-                <td>john.cruz@iqor.com</td>
-                <td><span class="role-pill">Employee</span></td>
-                <td>Philippines</td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>Sep 21, 2025</td>
-              </tr>
-              <tr>
-                <td><span class="table-person"><i>PS</i>Priya Sharma</span></td>
-                <td>priya.sharma@iqor.com</td>
-                <td><span class="role-pill">Team Leader</span></td>
-                <td>India</td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>Sep 20, 2025</td>
-              </tr>
-              <tr>
-                <td><span class="table-person"><i>VS</i>Vikram Singh</span></td>
-                <td>vikram.singh@iqor.com</td>
-                <td><span class="role-pill">Employee</span></td>
-                <td>India</td>
-                <td><span class="status-pill inactive">Inactive</span></td>
-                <td>Sep 18, 2025</td>
-              </tr>
-              <tr>
-                <td><span class="table-person"><i>AR</i>Ana Reyes</span></td>
-                <td>ana.reyes@iqor.com</td>
-                <td><span class="role-pill">Manager</span></td>
-                <td>Philippines</td>
-                <td><span class="status-pill active">Active</span></td>
-                <td>Sep 17, 2025</td>
-              </tr>
+              <tr><td colspan="6" style="text-align:center;color:#9999ad;padding:20px 0;">Loading users…</td></tr>
             </tbody>
           </table>
         </div>
@@ -321,36 +286,7 @@
               </tr>
             </thead>
             <tbody id="recentActivityBody">
-              <tr>
-                <td><span class="activity-action login">↪ <b>User Login</b></span></td>
-                <td>Maria Santos</td>
-                <td>Logged in to the system</td>
-                <td>10 mins ago</td>
-              </tr>
-              <tr>
-                <td><span class="activity-action template">▣ <b>Template Updated</b></span></td>
-                <td>John Cruz</td>
-                <td>Updated EBS Response template</td>
-                <td>1 hour ago</td>
-              </tr>
-              <tr>
-                <td><span class="activity-action user">● <b>New User Added</b></span></td>
-                <td>Ana Reyes</td>
-                <td>Added new team member</td>
-                <td>2 hours ago</td>
-              </tr>
-              <tr>
-                <td><span class="activity-action guide">▣ <b>Guide Published</b></span></td>
-                <td>System Admin</td>
-                <td>Published Fuel Guide</td>
-                <td>2 hours ago</td>
-              </tr>
-              <tr>
-                <td><span class="activity-action announce">⚑ <b>Announcement</b></span></td>
-                <td>Vikram Singh</td>
-                <td>Posted new announcement</td>
-                <td>1 day ago</td>
-              </tr>
+              <tr><td colspan="4" style="text-align:center;color:#9999ad;padding:20px 0;">No recent activity</td></tr>
             </tbody>
           </table>
         </div>
@@ -360,7 +296,6 @@
 
   </main>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
