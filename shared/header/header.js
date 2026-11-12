@@ -4,10 +4,8 @@
 (function () {
     "use strict";
 
-    const ROLE_KEY  = "bd_role";
     const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
-    const ADMIN_PASSWORD = "fedex-admin-2026";
 
     const ANNOUNCEMENTS_COLLECTION = "announcements";
     const HELP_COLLECTION = "help_requests";
@@ -27,6 +25,10 @@
         { name: "users",          idFields: ["empId", "employeeId", "emp_id"] },
         { name: "approved_users", idFields: ["empId", "employeeId", "emp_id"] }
     ];
+
+    /* Roles from Firestore that unlock the Admin Dashboard button.
+       Case-insensitive match. Add more if needed. */
+    const ADMIN_ROLES = ["admin", "manager", "administrator"];
 
     const SLIDES = [
         { key: "general",   icon: "fa-solid fa-bullhorn",              label: "📢 Announcements" },
@@ -67,58 +69,53 @@
     }
 
     /* ------------------------------------------------------------
-       1. Admin State & Token
+       1. User Session Helpers
        ------------------------------------------------------------ */
-    function getState() {
-        try { return JSON.parse(window.name) || {}; } catch (e) { return {}; }
+    function getStoredUser() {
+        try { return JSON.parse(localStorage.getItem(LOGGED_USER_KEY)) || null; }
+        catch (e) { return null; }
     }
 
-    function setState(obj) {
-        try { window.name = JSON.stringify(obj); } catch (e) {}
+    function persistUser(user) {
+        try { localStorage.setItem(LOGGED_USER_KEY, JSON.stringify(user)); } catch (e) {}
     }
 
-    function isAdminUnlocked() {
-        const s = getState();
-        return Boolean(s.token && typeof s.exp === "number" && s.exp > Date.now());
+    function clearStoredUser() {
+        try {
+            localStorage.removeItem(LOGGED_USER_KEY);
+            localStorage.removeItem(DISPLAY_NAME_KEY);
+        } catch (e) {}
     }
 
-    function setAdminUnlocked(user) {
-        const s = getState();
-        s.token = "ok";
-        s.exp = Date.now() + 7 * 24 * 60 * 60 * 1000;
-        if (user) {
-            s.uid = user.id || "";
-            s.email = user.email || "";
-            s.name = user.name || "";
-            s.role = user.role || "";
-        }
-        setState(s);
+    /* Role is derived entirely from the logged-in user's Firestore record. */
+    function getUserRoleFromSession() {
+        const user = getStoredUser();
+        if (!user) return "user";
+        const role = String(user.role || "").trim().toLowerCase();
+        if (ADMIN_ROLES.includes(role)) return "admin";
+        return "user";
+    }
+
+    /* Backwards compat for any external callers */
+    function getRole() {
+        return getUserRoleFromSession();
     }
 
     /* ------------------------------------------------------------
-       2. Role Management
+       2. Apply Role to UI (drives the Admin Dashboard button)
        ------------------------------------------------------------ */
-    function getRole() {
-        if (isAdminUnlocked()) return "admin";
-        try { return localStorage.getItem(ROLE_KEY) === "admin" ? "admin" : "user"; }
-        catch (e) { return "user"; }
-    }
-
-    function setRole(role) {
-        const safe = role === "admin" ? "admin" : "user";
-        try { localStorage.setItem(ROLE_KEY, safe); } catch (e) {}
-        return safe;
-    }
-
     function applyRole(role) {
         document.documentElement.setAttribute("data-role", role);
+
         document.querySelectorAll(".role-option").forEach(opt => {
             const active = opt.dataset.role === role;
             opt.classList.toggle("active", active);
             opt.setAttribute("aria-checked", String(active));
         });
+
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
+
         document.dispatchEvent(new CustomEvent("bdrolechange", { detail: { role } }));
     }
 
@@ -172,154 +169,8 @@
     }
 
     /* ------------------------------------------------------------
-       4. Admin Gate Modal
+       4. User Login Gate (FXF Employee ID)
        ------------------------------------------------------------ */
-    function setupAdminGate() {
-        const gate = document.getElementById("adminGate");
-        if (!gate) return;
-
-        const card = gate.querySelector(".admin-gate-card");
-        const form = document.getElementById("adminGateForm");
-        const emailInput = document.getElementById("adminGateEmail");
-        const pwInput = document.getElementById("adminGateInput");
-        const toggleBtn = document.getElementById("adminGateToggle");
-        const error = document.getElementById("adminGateError");
-        const cancel = document.getElementById("adminGateCancel");
-        const submit = document.getElementById("adminGateSubmit");
-        const backdrop = gate.querySelector(".admin-gate-backdrop");
-
-        function reset() {
-            pwInput.value = "";
-            pwInput.type = "password";
-            toggleBtn.textContent = "Show";
-            error.textContent = "";
-            card.classList.remove("shake");
-            submit.classList.remove("loading");
-            submit.disabled = false;
-        }
-
-        function open() {
-            gate.hidden = false;
-            reset();
-            try {
-                const last = localStorage.getItem("adminLastEmail");
-                if (last) emailInput.value = last;
-            } catch (e) {}
-            setTimeout(() => (emailInput.value ? pwInput : emailInput).focus(), 60);
-        }
-
-        function close() {
-            gate.hidden = true;
-            reset();
-        }
-
-        function shake() {
-            card.classList.remove("shake");
-            void card.offsetWidth;
-            card.classList.add("shake");
-        }
-
-        toggleBtn.addEventListener("click", () => {
-            const showing = pwInput.type === "text";
-            pwInput.type = showing ? "password" : "text";
-            toggleBtn.textContent = showing ? "Show" : "Hide";
-            pwInput.focus();
-        });
-
-        async function attemptUnlock() {
-            error.textContent = "";
-            const email = emailInput.value.trim().toLowerCase();
-            const password = pwInput.value;
-
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                error.textContent = "Enter a valid email address.";
-                emailInput.focus();
-                return;
-            }
-            if (!password) {
-                error.textContent = "Enter your password.";
-                pwInput.focus();
-                return;
-            }
-            if (password !== ADMIN_PASSWORD) {
-                error.textContent = "Incorrect password.";
-                pwInput.value = "";
-                pwInput.focus();
-                shake();
-                return;
-            }
-
-            const db = firestore();
-            if (!db) {
-                error.textContent = "Authentication service unavailable.";
-                return;
-            }
-
-            submit.disabled = true;
-            submit.classList.add("loading");
-
-            try {
-                const snap = await db.collection("approved_users").where("email", "==", email).limit(1).get();
-                if (snap.empty) {
-                    error.textContent = "This email is not approved for admin access.";
-                    shake();
-                    return;
-                }
-
-                const doc = snap.docs[0];
-                const data = doc.data() || {};
-                const user = {
-                    id: doc.id,
-                    email: data.email || email,
-                    name: data.name || data.displayName || email,
-                    role: data.role || "User"
-                };
-
-                setAdminUnlocked(user);
-                try {
-                    localStorage.setItem("adminUser", JSON.stringify(user));
-                    localStorage.setItem("adminLastEmail", email);
-                } catch (e) {}
-
-                close();
-                window.location.href = ADMIN_URL;
-            } catch (err) {
-                console.error(err);
-                error.textContent = "Could not verify your account. Please try again.";
-                shake();
-            } finally {
-                submit.disabled = false;
-                submit.classList.remove("loading");
-            }
-        }
-
-        form.addEventListener("submit", e => { e.preventDefault(); attemptUnlock(); });
-        cancel.addEventListener("click", close);
-        if (backdrop) backdrop.addEventListener("click", close);
-        document.addEventListener("keydown", e => { if (e.key === "Escape" && !gate.hidden) close(); });
-
-        window.BDAdminGate = { open, close };
-    }
-
-    /* ------------------------------------------------------------
-       4b. User Login Gate (FXF Employee ID)
-       ------------------------------------------------------------ */
-    function getStoredUser() {
-        try { return JSON.parse(localStorage.getItem(LOGGED_USER_KEY)) || null; }
-        catch (e) { return null; }
-    }
-
-    function persistUser(user) {
-        try { localStorage.setItem(LOGGED_USER_KEY, JSON.stringify(user)); } catch (e) {}
-    }
-
-    function clearStoredUser() {
-        try {
-            localStorage.removeItem(LOGGED_USER_KEY);
-            localStorage.removeItem(DISPLAY_NAME_KEY);
-        } catch (e) {}
-    }
-
     function getInitials(name) {
         const n = String(name || "").trim();
         if (!n) return "?";
@@ -354,32 +205,34 @@
                 settingsBtn.title = "Settings";
             }
             try { localStorage.removeItem(DISPLAY_NAME_KEY); } catch (e) {}
-            return;
+        } else {
+            const fullName  = displayNameOf(user);
+            const firstName = user.firstName || fullName.split(/\s+/)[0] || "";
+            const initials  = getInitials(fullName || firstName || user.empId || "");
+
+            if (gearEl) gearEl.hidden = true;
+            if (initialsEl) {
+                initialsEl.textContent = initials || "?";
+                initialsEl.hidden = false;
+                initialsEl.title = fullName || firstName || "Signed in";
+            }
+            if (userBlock) userBlock.hidden = false;
+            if (userAvatar) userAvatar.textContent = initials || "?";
+            if (userName) userName.textContent = fullName || firstName || "Signed in";
+            if (userEmpEl) userEmpEl.textContent = user.empId ? `EMP ${user.empId}` : "";
+            if (signOutBtn) signOutBtn.hidden = false;
+            if (settingsBtn) {
+                settingsBtn.setAttribute("aria-label", `Account menu for ${fullName || "user"}`);
+                settingsBtn.title = fullName || "Account";
+            }
+            try { if (firstName) localStorage.setItem(DISPLAY_NAME_KEY, firstName); } catch (e) {}
         }
 
-        const fullName  = displayNameOf(user);
-        const firstName = user.firstName || fullName.split(/\s+/)[0] || "";
-        const initials  = getInitials(fullName || firstName || user.empId || "");
+        /* Role is derived from session — updates Admin Dashboard button */
+        applyRole(getUserRoleFromSession());
 
-        if (gearEl) gearEl.hidden = true;
-        if (initialsEl) {
-            initialsEl.textContent = initials || "?";
-            initialsEl.hidden = false;
-            initialsEl.title = fullName || firstName || "Signed in";
-        }
-        if (userBlock) userBlock.hidden = false;
-        if (userAvatar) userAvatar.textContent = initials || "?";
-        if (userName) userName.textContent = fullName || firstName || "Signed in";
-        if (userEmpEl) userEmpEl.textContent = user.empId ? `EMP ${user.empId}` : "";
-        if (signOutBtn) signOutBtn.hidden = false;
-        if (settingsBtn) {
-            settingsBtn.setAttribute("aria-label", `Account menu for ${fullName || "user"}`);
-            settingsBtn.title = fullName || "Account";
-        }
-
-        try { if (firstName) localStorage.setItem(DISPLAY_NAME_KEY, firstName); } catch (e) {}
-
-        document.dispatchEvent(new CustomEvent("bdtools:user-changed", { detail: { user } }));
+        /* Always notify listeners (index page, other scripts) */
+        document.dispatchEvent(new CustomEvent("bdtools:user-changed", { detail: { user: user || null } }));
     }
 
     function waitForFirestore(timeoutMs = 6000) {
@@ -520,7 +373,7 @@
     }
 
     /* ------------------------------------------------------------
-       5. Settings Dropdown & Navigation
+       5. Settings Dropdown
        ------------------------------------------------------------ */
     function setupSettings() {
         const button = document.getElementById("settingsBtn");
@@ -528,7 +381,15 @@
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (!button || !menu) return;
 
-        applyRole(getRole());
+        /* Remove the manual View Mode toggle — role is now login-driven */
+        const roleLabelEl = document.getElementById("roleLabel");
+        if (roleLabelEl) {
+            const roleGroup = roleLabelEl.closest(".settings-group");
+            if (roleGroup) roleGroup.remove();
+        }
+
+        /* Apply the initial role from the login session */
+        applyRole(getUserRoleFromSession());
 
         function close() {
             menu.classList.remove("open");
@@ -542,24 +403,17 @@
             button.setAttribute("aria-expanded", String(open));
         });
 
-        menu.querySelectorAll(".role-option").forEach(opt => {
-            opt.addEventListener("click", e => {
-                e.stopPropagation();
-                applyRole(setRole(this.dataset.role));
-            });
-        });
-
         if (adminBtn) {
             adminBtn.addEventListener("click", e => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (getRole() !== "admin") return;
+
+                /* Only login-session admins/managers see + can click this button.
+                   No password required — role is verified via Firestore at login. */
+                if (getUserRoleFromSession() !== "admin") return;
+
                 close();
-                if (isAdminUnlocked()) {
-                    window.location.href = ADMIN_URL;
-                } else if (window.BDAdminGate) {
-                    window.BDAdminGate.open();
-                }
+                window.location.href = ADMIN_URL;
             });
         }
 
@@ -919,7 +773,6 @@
     function start() {
         setupUserLogin();        // ← runs first, blocks until signed in
         setupTheme();
-        setupAdminGate();
         setupSettings();
         setupCaseDirectory();
         setupNavigation();
