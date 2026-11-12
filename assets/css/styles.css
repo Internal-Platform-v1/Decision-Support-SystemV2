@@ -465,7 +465,7 @@ button { cursor: pointer; }
     font-size: 10px;
 }
 
-.hero-copy h1 .greet-day  { color: #ff6600; }
+.hero-copy h1 .greet-day  { color: inherit; }
 
 /* ============================================================
    LOWER GRID — responsive (3 → 2 → 1 columns)
