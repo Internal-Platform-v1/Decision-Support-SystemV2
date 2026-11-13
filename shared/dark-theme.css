@@ -2291,3 +2291,75 @@ html[data-theme="dark"] .guide-hero-card::after {
         animation: none !important;
     }
 }
+
+/* ============================================================
+   DARK MODE — NOTIFICATIONS DROPDOWN
+   ============================================================ */
+html[data-theme="dark"] .notification-dropdown {
+    background: #1c1c30;
+    border-color: #2c2c47;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35);
+}
+
+html[data-theme="dark"] .notification-header {
+    background: #20203a;
+    border-bottom-color: #26263f;
+}
+
+html[data-theme="dark"] .notification-header span {
+    color: #ece9ff;
+}
+
+html[data-theme="dark"] #markAllReadBtn {
+    color: #c4b5fd;
+}
+
+html[data-theme="dark"] #markAllReadBtn:hover {
+    color: #ddd0ff;
+}
+
+html[data-theme="dark"] .notif-item {
+    border-bottom-color: #26263f;
+}
+
+html[data-theme="dark"] .notif-item:hover {
+    background: #262640;
+}
+
+html[data-theme="dark"] .notif-item.unread {
+    background: rgba(139, 92, 246, .12);
+}
+
+html[data-theme="dark"] .notif-item.unread:hover {
+    background: rgba(139, 92, 246, .18);
+}
+
+html[data-theme="dark"] .notif-title {
+    color: #ece9ff;
+}
+
+html[data-theme="dark"] .notif-desc {
+    color: #9a9ab6;
+}
+
+html[data-theme="dark"] .notif-time {
+    color: #7a7a94;
+}
+
+html[data-theme="dark"] .notif-empty {
+    color: #8b8ba8;
+}
+
+html[data-theme="dark"] .notif-icon.announcement {
+    background: rgba(129, 140, 248, .16);
+    color: #a5acff;
+}
+
+html[data-theme="dark"] .notif-icon.help {
+    background: rgba(255, 159, 77, .16);
+    color: #ffb26e;
+}
+
+html[data-theme="dark"] .notification-list::-webkit-scrollbar-thumb {
+    background: #3a3a58;
+}
