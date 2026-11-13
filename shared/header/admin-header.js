@@ -49,8 +49,6 @@
     return (parts[0][0] + parts.at(-1)[0]).toUpperCase();
   }
 
-  /* ✅ UPDATED: also reads `bd_logged_in_user` (what the index header writes)
-     and returns empId so we can show "EMP 4512763" like the home header. */
   function getCurrentUser() {
     const keys = ["bd_logged_in_user", "currentUser", "adminUser", "user", "loggedInUser"];
     for (const key of keys) {
@@ -78,7 +76,6 @@
     if (el) el.textContent = value;
   }
 
-  /* ✅ UPDATED: also fills the new identity block inside the settings menu. */
   function applyUser() {
     const user = getCurrentUser();
     const initials = getInitials(user.name);
@@ -108,11 +105,16 @@
 
   function setActiveNavigation() {
     const key = getPageKey();
+
     document.querySelectorAll(".admin-nav-item").forEach(item => {
       item.classList.toggle("active", item.dataset.adminPage === key);
     });
+
     const title = document.body.dataset.adminTitle || "Decision Support System";
+    const description = document.body.dataset.adminDescription || "Admin Console";
+
     setText("adminPageTitle", title);
+    setText("adminPageDescription", description);
   }
 
   function updateClock() {
@@ -176,7 +178,6 @@
     });
   }
 
-  /* ✅ UPDATED: "Return to Home" + full session clear on sign-out. */
   function setupActions() {
     const returnHome = document.getElementById("adminReturnHomeBtn");
     if (returnHome) {
