@@ -25,7 +25,8 @@
   const CONFIG = {
     htmlPath: "../../shared/header/admin-header.html",
     timeZone: "Asia/Manila",
-    defaultUser: { name: "Admin User", role: "System Administrator", email: "admin@example.com" }
+    homeUrl: "/Decision-Support-SystemV2/index.html",
+    defaultUser: { name: "Admin User", role: "System Administrator", email: "admin@example.com", empId: "" }
   };
 
   const pageMap = {
@@ -48,18 +49,24 @@
     return (parts[0][0] + parts.at(-1)[0]).toUpperCase();
   }
 
+  /* ✅ UPDATED: also reads `bd_logged_in_user` (what the index header writes)
+     and returns empId so we can show "EMP 4512763" like the home header. */
   function getCurrentUser() {
-    const keys = ["currentUser", "adminUser", "user", "loggedInUser"];
+    const keys = ["bd_logged_in_user", "currentUser", "adminUser", "user", "loggedInUser"];
     for (const key of keys) {
       try {
         const raw = localStorage.getItem(key);
         if (!raw) continue;
         const user = JSON.parse(raw);
         if (!user || typeof user !== "object") continue;
+
+        const composed = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+
         return {
-          name: user.name || user.displayName || user.employeeName || user.fullName || CONFIG.defaultUser.name,
+          name: user.name || user.displayName || user.employeeName || user.fullName || composed || CONFIG.defaultUser.name,
           role: user.role || user.userRole || CONFIG.defaultUser.role,
-          email: user.email || user.userEmail || CONFIG.defaultUser.email
+          email: user.email || user.userEmail || CONFIG.defaultUser.email,
+          empId: user.empId || user.employeeId || user.emp_id || ""
         };
       } catch (_) {}
     }
@@ -71,16 +78,22 @@
     if (el) el.textContent = value;
   }
 
+  /* ✅ UPDATED: also fills the new identity block inside the settings menu. */
   function applyUser() {
     const user = getCurrentUser();
     const initials = getInitials(user.name);
+
     setText("sidebarUserName", user.name);
     setText("sidebarUserRole", user.role);
     setText("sidebarAvatar", initials);
     setText("topUserAvatar", initials);
-    setText("dropdownUserName", user.name);
-    setText("dropdownUserEmail", user.email);
-    /* ❌ removed: setText("adminHeroName", firstName); — hero no longer exists */
+
+    setText("adminSettingsUserName", user.name);
+    setText("adminSettingsUserAvatar", initials);
+    setText(
+      "adminSettingsUserEmpId",
+      user.empId ? `EMP ${user.empId}` : (user.email || user.role || "Administrator")
+    );
   }
 
   function getPageKey() {
@@ -102,8 +115,6 @@
     setText("adminPageTitle", title);
   }
 
-  /* ❌ removed: applyHeroVisibility() — hero no longer exists anywhere */
-
   function updateClock() {
     const now = new Date();
     const date = new Intl.DateTimeFormat("en-US", {
@@ -124,7 +135,6 @@
     document.querySelectorAll(".admin-nav-item").forEach(item => {
       item.addEventListener("click", () => navigate(item.dataset.adminPage));
     });
-    /* ❌ removed: [data-admin-shortcut] handler — hero shortcuts gone */
   }
 
   function setupSettingsDropdown() {
@@ -166,38 +176,29 @@
     });
   }
 
-  function setupRole() {
-    const apply = (role) => {
-      document.querySelectorAll(".admin-role-btn").forEach(b => {
-        b.classList.toggle("active", b.dataset.role === role);
-      });
-      localStorage.setItem("bd_role", role);
-    };
-    let storedRole = localStorage.getItem("bd_role") || "admin";
-    apply(storedRole);
-
-    document.querySelectorAll(".admin-role-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const role = btn.dataset.role;
-        apply(role);
-        if (role === "user") {
-          try { window.name = ""; } catch (e) {}
-          window.location.href = "/Decision-Support-SystemV2/index.html";
-        }
-      });
-    });
-  }
-
+  /* ✅ UPDATED: "Return to Home" + full session clear on sign-out. */
   function setupActions() {
+    const returnHome = document.getElementById("adminReturnHomeBtn");
+    if (returnHome) {
+      returnHome.addEventListener("click", () => {
+        window.location.href = CONFIG.homeUrl;
+      });
+    }
+
     document.querySelectorAll("[data-admin-action]").forEach(button => {
       button.addEventListener("click", () => {
         const action = button.dataset.adminAction;
 
         if (action === "logout") {
           try { window.name = ""; } catch (e) {}
-          localStorage.removeItem("bd_role");
-           localStorage.removeItem("adminUser");  
-          window.location.href = "/Decision-Support-SystemV2/index.html";
+          try {
+            localStorage.removeItem("bd_role");
+            localStorage.removeItem("adminUser");
+            localStorage.removeItem("bd_admin_unlocked");
+            localStorage.removeItem("bd_logged_in_user");
+            localStorage.removeItem("bd_display_name");
+          } catch (e) {}
+          window.location.href = CONFIG.homeUrl;
         }
 
         if (action === "settings") navigate("settings");
@@ -209,8 +210,6 @@
     });
   }
 
-  /* ❌ removed: setupSearch() — search box no longer exists in the header */
-
   async function load() {
     const mount = document.getElementById("adminHeader");
     if (!mount) return;
@@ -220,16 +219,13 @@
       if (!response.ok) throw new Error("Header failed to load");
       mount.innerHTML = await response.text();
 
-      /* ❌ removed: applyHeroVisibility(); */
       applyUser();
       setActiveNavigation();
       updateClock();
       setupNavigation();
       setupSettingsDropdown();
       setupTheme();
-      setupRole();
       setupActions();
-      /* ❌ removed: setupSearch(); */
 
       setInterval(updateClock, 1000);
       window.dispatchEvent(new CustomEvent("adminHeaderReady"));
