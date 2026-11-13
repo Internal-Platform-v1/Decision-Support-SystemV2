@@ -312,16 +312,19 @@
 
 .admin-console-title strong {
   color: #19195d;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 800;
   line-height: 1.2;
+  letter-spacing: -0.2px;
 }
 
 .admin-console-title span {
-  margin-top: 5px;
+  margin-top: 4px;
   color: #9b9ab5;
-  font-size: 7px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  max-width: 560px;
 }
 
 .admin-top-actions {
