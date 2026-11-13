@@ -107,31 +107,40 @@
             <svg class="admin-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5"/></svg>
           </button>
 
-          <div class="admin-settings-dropdown" id="adminSettingsDropdown" hidden>
-            <div class="admin-settings-heading">Settings</div>
+<div class="admin-settings-dropdown" id="adminSettingsDropdown" hidden>
 
-            <div class="admin-settings-group">
-              <span class="admin-settings-label">Theme</span>
-              <div class="admin-theme-row">
-                <button type="button" class="admin-theme-btn" data-theme-choice="light">☀ Light</button>
-                <button type="button" class="admin-theme-btn" data-theme-choice="dark">☾ Dark</button>
-              </div>
-            </div>
+  <!-- Signed-in user identity -->
+  <div class="admin-settings-user" id="adminSettingsUserBlock">
+    <div class="admin-settings-user-avatar" id="adminSettingsUserAvatar">--</div>
+    <div class="admin-settings-user-meta">
+      <strong id="adminSettingsUserName">Admin User</strong>
+      <small id="adminSettingsUserEmpId">System Administrator</small>
+    </div>
+  </div>
 
-            <div class="admin-settings-group">
-              <span class="admin-settings-label">View mode</span>
-              <div class="admin-role-row">
-                <button type="button" class="admin-role-btn" data-role="user">User</button>
-                <button type="button" class="admin-role-btn" data-role="admin">Admin</button>
-              </div>
-            </div>
+  <div class="admin-settings-heading">Settings</div>
 
-            <div class="admin-settings-divider"></div>
+  <div class="admin-settings-group">
+    <span class="admin-settings-label">Theme</span>
+    <div class="admin-theme-row">
+      <button type="button" class="admin-theme-btn" data-theme-choice="light">☀ Light</button>
+      <button type="button" class="admin-theme-btn" data-theme-choice="dark">☾ Dark</button>
+    </div>
+  </div>
 
-            <button type="button" class="admin-settings-link" data-admin-action="profile">My Profile</button>
-            <button type="button" class="admin-settings-link danger" data-admin-action="logout">Logout</button>
-          </div>
-        </div>
+  <div class="admin-settings-divider"></div>
+
+  <button type="button" class="admin-settings-link" id="adminReturnHomeBtn">
+    <span aria-hidden="true">🏠</span>
+    Return to Home
+  </button>
+
+  <button type="button" class="admin-settings-link danger" data-admin-action="logout">
+    <span aria-hidden="true">↩</span>
+    Sign Out
+  </button>
+
+</div>
 
       </div>
     </header>
