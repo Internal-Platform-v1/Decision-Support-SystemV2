@@ -2293,73 +2293,73 @@ html[data-theme="dark"] .guide-hero-card::after {
 }
 
 /* ============================================================
-   DARK MODE — NOTIFICATIONS DROPDOWN
+   DARK MODE — NOTIFICATION DROPDOWN
    ============================================================ */
 html[data-theme="dark"] .notification-dropdown {
-    background: #1c1c30;
-    border-color: #2c2c47;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35);
+    background: #1c1c30 !important;
+    border-color: #2c2c47 !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35) !important;
 }
 
 html[data-theme="dark"] .notification-header {
-    background: #20203a;
-    border-bottom-color: #26263f;
+    background: #20203a !important;
+    border-bottom-color: #26263f !important;
 }
 
 html[data-theme="dark"] .notification-header span {
-    color: #ece9ff;
+    color: #ece9ff !important;
 }
 
 html[data-theme="dark"] #markAllReadBtn {
-    color: #c4b5fd;
+    color: #c4b5fd !important;
 }
 
 html[data-theme="dark"] #markAllReadBtn:hover {
-    color: #ddd0ff;
+    color: #ddd0ff !important;
 }
 
 html[data-theme="dark"] .notif-item {
-    border-bottom-color: #26263f;
+    border-bottom-color: #26263f !important;
 }
 
 html[data-theme="dark"] .notif-item:hover {
-    background: #262640;
+    background: #262640 !important;
 }
 
 html[data-theme="dark"] .notif-item.unread {
-    background: rgba(139, 92, 246, .12);
+    background: rgba(139, 92, 246, .12) !important;
 }
 
 html[data-theme="dark"] .notif-item.unread:hover {
-    background: rgba(139, 92, 246, .18);
+    background: rgba(139, 92, 246, .18) !important;
 }
 
 html[data-theme="dark"] .notif-title {
-    color: #ece9ff;
+    color: #ece9ff !important;
 }
 
 html[data-theme="dark"] .notif-desc {
-    color: #9a9ab6;
+    color: #9a9ab6 !important;
 }
 
 html[data-theme="dark"] .notif-time {
-    color: #7a7a94;
+    color: #7a7a94 !important;
 }
 
 html[data-theme="dark"] .notif-empty {
-    color: #8b8ba8;
+    color: #8b8ba8 !important;
 }
 
 html[data-theme="dark"] .notif-icon.announcement {
-    background: rgba(129, 140, 248, .16);
-    color: #a5acff;
+    background: rgba(129, 140, 248, .16) !important;
+    color: #a5acff !important;
 }
 
 html[data-theme="dark"] .notif-icon.help {
-    background: rgba(255, 159, 77, .16);
-    color: #ffb26e;
+    background: rgba(255, 159, 77, .16) !important;
+    color: #ffb26e !important;
 }
 
 html[data-theme="dark"] .notification-list::-webkit-scrollbar-thumb {
-    background: #3a3a58;
+    background: #3a3a58 !important;
 }
