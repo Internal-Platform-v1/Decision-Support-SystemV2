@@ -2293,73 +2293,73 @@ html[data-theme="dark"] .guide-hero-card::after {
 }
 
 /* ============================================================
-   DARK MODE — NOTIFICATION DROPDOWN
+   DARK MODE — NOTIFICATION DROPDOWN (FORCED)
    ============================================================ */
-html[data-theme="dark"] .notification-dropdown {
+html[data-theme="dark"] body .notification-dropdown {
     background: #1c1c30 !important;
     border-color: #2c2c47 !important;
     box-shadow: 0 16px 40px rgba(0, 0, 0, .5), 0 2px 8px rgba(0, 0, 0, .35) !important;
 }
 
-html[data-theme="dark"] .notification-header {
+html[data-theme="dark"] body .notification-header {
     background: #20203a !important;
     border-bottom-color: #26263f !important;
 }
 
-html[data-theme="dark"] .notification-header span {
+html[data-theme="dark"] body .notification-header span {
     color: #ece9ff !important;
 }
 
-html[data-theme="dark"] #markAllReadBtn {
+html[data-theme="dark"] body #markAllReadBtn {
     color: #c4b5fd !important;
 }
 
-html[data-theme="dark"] #markAllReadBtn:hover {
+html[data-theme="dark"] body #markAllReadBtn:hover {
     color: #ddd0ff !important;
 }
 
-html[data-theme="dark"] .notif-item {
+html[data-theme="dark"] body .notif-item {
     border-bottom-color: #26263f !important;
 }
 
-html[data-theme="dark"] .notif-item:hover {
+html[data-theme="dark"] body .notif-item:hover {
     background: #262640 !important;
 }
 
-html[data-theme="dark"] .notif-item.unread {
+html[data-theme="dark"] body .notif-item.unread {
     background: rgba(139, 92, 246, .12) !important;
 }
 
-html[data-theme="dark"] .notif-item.unread:hover {
+html[data-theme="dark"] body .notif-item.unread:hover {
     background: rgba(139, 92, 246, .18) !important;
 }
 
-html[data-theme="dark"] .notif-title {
+html[data-theme="dark"] body .notif-title {
     color: #ece9ff !important;
 }
 
-html[data-theme="dark"] .notif-desc {
+html[data-theme="dark"] body .notif-desc {
     color: #9a9ab6 !important;
 }
 
-html[data-theme="dark"] .notif-time {
+html[data-theme="dark"] body .notif-time {
     color: #7a7a94 !important;
 }
 
-html[data-theme="dark"] .notif-empty {
+html[data-theme="dark"] body .notif-empty {
     color: #8b8ba8 !important;
 }
 
-html[data-theme="dark"] .notif-icon.announcement {
+html[data-theme="dark"] body .notif-icon.announcement {
     background: rgba(129, 140, 248, .16) !important;
     color: #a5acff !important;
 }
 
-html[data-theme="dark"] .notif-icon.help {
+html[data-theme="dark"] body .notif-icon.help {
     background: rgba(255, 159, 77, .16) !important;
     color: #ffb26e !important;
 }
 
-html[data-theme="dark"] .notification-list::-webkit-scrollbar-thumb {
+html[data-theme="dark"] body .notification-list::-webkit-scrollbar-thumb {
     background: #3a3a58 !important;
 }
