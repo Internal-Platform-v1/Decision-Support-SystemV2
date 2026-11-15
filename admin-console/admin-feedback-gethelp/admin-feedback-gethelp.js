@@ -93,6 +93,24 @@
     return fbPromise;
   }
 
+  /* ---------- Page loader ---------- */
+  let loaderHidden = false;
+  function hideLoader() {
+    if (loaderHidden) return;
+    loaderHidden = true;
+
+    const el = document.getElementById("pageLoader");
+    if (el) {
+      el.style.transition = "opacity .35s ease";
+      el.style.opacity = "0";
+      setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 380);
+    }
+    document.documentElement.classList.remove("page-loading");
+    document.documentElement.removeAttribute("aria-busy");
+  }
+
   /* ---------- Helpers ---------- */
   function initials(name) {
     const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
@@ -943,8 +961,13 @@
   /* ---------- Init ---------- */
   function init() {
     bindEvents();
-    loadFeedback();
-    loadHelp();
+
+    Promise.all([loadFeedback(), loadHelp()]).finally(() => {
+      setTimeout(hideLoader, 200);
+    });
+
+    /* Safety net — never leave the loader stuck if something hangs. */
+    setTimeout(hideLoader, 5000);
   }
 
   if (document.readyState === "loading") {
