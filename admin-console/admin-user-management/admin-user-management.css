@@ -12,7 +12,7 @@ body[data-admin-page="users"] .admin-shell .admin-main {
 .um-main {
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   margin-left: var(--admin-sidebar-width, 270px);
-  padding: 26px 28px 48px;
+  padding: 92px 28px 48px;
   color: var(--admin-text, #17174b);
   background: #f7f7fc;
   min-height: 100vh;
@@ -711,7 +711,7 @@ body[data-admin-page="users"] .admin-shell .admin-main {
   .um-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
-  .um-main { padding: 24px 20px 40px; }
+  .um-main { padding: 88px 20px 40px; }
   .um-toolbar { flex-direction: column; align-items: stretch; }
   .um-select { width: 100%; }
   .um-toolbar-actions { margin-left: 0; width: 100%; }
