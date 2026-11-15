@@ -13,7 +13,7 @@
   const LS_USAGE       = "guideUsageCounts";
   const LS_HISTORY     = "guideHistory";
   const LS_FAVS        = "guideFavorites";
-  const LS_OWNER       = "guideDataOwner";     // tracks whose data lives in LS
+  const LS_OWNER       = "guideDataOwner";
   const MAX_HISTORY    = 100;
 
   function getStoredUser() {
@@ -60,17 +60,17 @@
 
   const UserGuideStore = {
     empId: "",
-    data: { usage: {}, history: {}, favorites: {} },
+    data: { usage: {}, history: [], favorites: {} },
     ready: false,
     _promise: null,
 
-    /* ---- Public: init ---- */
+    /* ---- init ---- */
     init() {
       this.empId = getEmpId();
       return this.load();
     },
 
-    /* ---- Public: full reload (used after user switches) ---- */
+    /* ---- full reload (used after user switches) ---- */
     reset() {
       this._promise = null;
       this.ready = false;
@@ -78,12 +78,11 @@
       return this.init();
     },
 
-    /* ---- Public: promise resolves when data is ready ---- */
+    /* ---- promise resolves when data is ready ---- */
     load() {
       if (this._promise) return this._promise;
 
       this._promise = (async () => {
-        // 1) No signed-in user -> local-only view (empty if someone else's data is cached)
         if (!this.empId) {
           const owner = getLocalOwner();
           this.data = owner ? { usage: {}, history: [], favorites: {} } : readLocal();
@@ -93,7 +92,6 @@
 
         const db = firestore();
         if (!db) {
-          // Firestore not loaded yet -> show local copy while waiting
           this.data = readLocal();
           this.ready = true;
           return this.data;
@@ -105,22 +103,19 @@
           if (snap.exists) {
             const d = snap.data() || {};
             this.data = {
-              usage:     d.usage     && typeof d.usage === "object" ? d.usage     : {},
-              history:   Array.isArray(d.history)                   ? d.history   : [],
+              usage:     d.usage     && typeof d.usage     === "object" ? d.usage     : {},
+              history:   Array.isArray(d.history)                       ? d.history   : [],
               favorites: d.favorites && typeof d.favorites === "object" ? d.favorites : {}
             };
           } else {
-            // First time this employee logs in.
-            // Migrate local data only if it belongs to this user (or nobody yet).
             const owner = getLocalOwner();
             const local = readLocal();
 
             if (owner === "" || owner === this.empId) {
               this.data = local;
               setLocalOwner(this.empId);
-              this._saveAll();                // seed Firestore with legacy data
+              this._saveAll();
             } else {
-              // Local cache belongs to a different employee -> start clean
               this.data = { usage: {}, history: [], favorites: {} };
               setLocalOwner(this.empId);
             }
@@ -131,14 +126,14 @@
         }
 
         this.ready = true;
-        writeLocal(this.data);   // mirror to LS as an offline cache
+        writeLocal(this.data);
         return this.data;
       })();
 
       return this._promise;
     },
 
-    /* ---- Private: persist whole doc (fire-and-forget) ---- */
+    /* ---- persist whole doc (fire-and-forget) ---- */
     _saveAll() {
       if (!this.empId) return Promise.resolve();
       const db = firestore();
@@ -156,32 +151,34 @@
         .catch((err) => console.warn("[UserGuideStore] write failed:", err.code || err.message));
     },
 
-    /* ---- Public: track a guide open ---- */
-    trackOpen(title, url) {
-      if (!url) return Promise.resolve();
+    /* ---- track a guide open ---- */
+    async trackOpen(title, url) {
+      if (!url) return;
+      await this.load();
+
       const t   = title || "Untitled Guide";
       const now = Date.now();
 
-      // Usage
       const u = this.data.usage[url] || { title: t, count: 0 };
       u.title    = t;
       u.count    = (Number(u.count) || 0) + 1;
       u.lastUsed = now;
       this.data.usage[url] = u;
 
-      // History (append; cap)
       this.data.history.push({ title: t, url, timestamp: now });
       if (this.data.history.length > MAX_HISTORY) {
         this.data.history.splice(0, this.data.history.length - MAX_HISTORY);
       }
 
       writeLocal(this.data);
-      return this._saveAll();   // awaited by caller (with timeout in script.js)
+      return this._saveAll();
     },
 
-    /* ---- Public: toggle favorite ---- */
-    toggleFavorite(title, url) {
+    /* ---- toggle favorite ---- */
+    async toggleFavorite(title, url) {
       if (!url) return false;
+      await this.load();
+
       const t = title || "Untitled Guide";
 
       let added;
@@ -198,7 +195,7 @@
       return added;
     },
 
-    /* ---- Public: read helpers (same shape as GuideStore) ---- */
+    /* ---- read helpers ---- */
     getMostUsed() {
       return Object.keys(this.data.usage).map((url) => ({
         url,
@@ -208,7 +205,7 @@
     },
 
     getHistory() {
-      return this.data.history.slice().reverse();   // newest first
+      return this.data.history.slice().reverse();
     },
 
     getFavoriteList() {
