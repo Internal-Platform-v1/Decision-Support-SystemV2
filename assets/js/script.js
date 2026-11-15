@@ -13,10 +13,10 @@ function updateDashboardUserName(profile) {
 
   nameElement.textContent = "";
   if (firstName) {
-    const commaSpan = document.createElement("span");
-    commaSpan.style.color = "#10134f";
-    commaSpan.textContent = "";
-    nameElement.appendChild(commaSpan);
+    const spaceSpan = document.createElement("span");
+    spaceSpan.style.color = "#10134f";
+    spaceSpan.textContent = " ";              // ← was ", "
+    nameElement.appendChild(spaceSpan);
     nameElement.appendChild(document.createTextNode(firstName));
   }
 
@@ -32,7 +32,6 @@ document.addEventListener("currentUserProfileLoaded", function (event) {
 document.addEventListener("DOMContentLoaded", function () {
   updateDashboardUserName(window.currentUserProfile);
 });
-
 
 /* =========================================================
    BD TOOLS — MAIN DASHBOARD JS
