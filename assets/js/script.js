@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 "use strict";
 
-const Store = window.UserGuideStore;   // ← was: window.GuideStore
+const Store = window.UserGuideStore;
 
 const TOTAL_GUIDE_COUNT = 75;
 const TOTAL_TOOLS_COUNT = 6;
@@ -51,7 +51,7 @@ const LS_FAVS    = "guideFavorites";
 
 
 /* ---------------------------------------------------------
-   Storage helpers (fallback)
+   Storage helpers (fallback only — used when Store is null)
    --------------------------------------------------------- */
 
 function readJSONFallback(key, fallback) {
@@ -195,7 +195,7 @@ function escapeAttr(value) {
 
 
 /* ---------------------------------------------------------
-   Data reads (via UserGuideStore when available)
+   Data reads
    --------------------------------------------------------- */
 
 function getMostUsedList(limit) {
@@ -259,9 +259,10 @@ function updateStats() {
 
 const toast = document.getElementById("toast");
 
-function showToast(message) {
+function showToast(message, isError) {
   if (!toast) return;
   toast.textContent = message;
+  toast.classList.toggle("error", !!isError);
   toast.classList.add("show");
   clearTimeout(window.toastTimer);
   window.toastTimer = setTimeout(function () { toast.classList.remove("show"); }, 1800);
@@ -351,8 +352,9 @@ function renderLists() {
 
 function bootUserStore() {
   if (Store && typeof Store.init === "function") {
-    Store.init().then(function () { renderLists(); })
-                .catch(function () { renderLists(); });
+    Store.init()
+      .then(function () { renderLists(); })
+      .catch(function () { renderLists(); });
   } else {
     renderLists();
   }
@@ -362,8 +364,9 @@ bootUserStore();
 
 document.addEventListener("bdtools:user-changed", function () {
   if (Store && typeof Store.reset === "function") {
-    Store.reset().then(function () { renderLists(); })
-                 .catch(function () { renderLists(); });
+    Store.reset()
+      .then(function () { renderLists(); })
+      .catch(function () { renderLists(); });
   } else {
     renderLists();
   }
@@ -381,7 +384,7 @@ async function trackAndOpen(url, title) {
     try {
       await Promise.race([
         Promise.resolve(Store.trackOpen(title, url)),
-        new Promise(function (r) { setTimeout(r, 800); })   // cap the wait
+        new Promise(function (r) { setTimeout(r, 800); })
       ]);
     } catch (_) { /* navigation shouldn't be blocked by a write failure */ }
   } else {
@@ -400,21 +403,26 @@ async function trackAndOpen(url, title) {
 }
 
 function toggleFavorite(url, title) {
-  if (!url) return false;
+  if (!url) return;
 
-  let added;
   if (Store && typeof Store.toggleFavorite === "function") {
-    added = Store.toggleFavorite(title, url);
+    Promise.resolve(Store.toggleFavorite(title, url))
+      .then(function (added) {
+        showToast(added ? "Added to Favorites" : "Removed from Favorites");
+        renderLists();
+      })
+      .catch(function () {
+        showToast("Could not update favorites", true);
+      });
   } else {
     const favs = readJSONFallback(LS_FAVS, {});
+    let added;
     if (favs[url]) { delete favs[url]; added = false; }
     else { favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() }; added = true; }
     writeJSONFallback(LS_FAVS, favs);
+    showToast(added ? "Added to Favorites" : "Removed from Favorites");
+    renderLists();
   }
-
-  showToast(added ? "Added to Favorites" : "Removed from Favorites");
-  renderLists();
-  return added;
 }
 
 
@@ -470,7 +478,7 @@ document.addEventListener("bdtools:explore-guides", function () { openGuideLibra
 
 
 /* ---------------------------------------------------------
-   Delegated click — stars + rows only (no clears on dashboard)
+   Delegated click — stars + rows only
    --------------------------------------------------------- */
 
 document.addEventListener("click", function (event) {
