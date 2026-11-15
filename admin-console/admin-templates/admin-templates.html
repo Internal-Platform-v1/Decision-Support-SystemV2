@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-loading">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Templates Management | Decision Support System</title>
   <link rel="icon" href="data:,">
 
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
+
+  <link rel="stylesheet" href="../../assets/css/page-loader.css" />
   <link rel="stylesheet" href="../../shared/header/admin-header.css" />
   <link rel="stylesheet" href="admin-templates.css" />
 </head>
@@ -15,6 +21,17 @@
   data-admin-title="Templates Management"
   data-admin-description="Create, edit, and organize suggested templates for every guide recommendation."
 >
+
+  <!-- PAGE LOADER -->
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading templates management">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading Templates…</p>
+    </div>
+  </div>
 
   <div id="adminHeader"></div>
 
