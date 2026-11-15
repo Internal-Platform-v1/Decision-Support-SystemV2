@@ -1,14 +1,13 @@
 /* ============================================================
-   GUIDE STORE — single source of truth for guide URLs
-   Shared by all-guides.js, group-guides.js, guide.js,
-   script.js, my-guides.js.
+   GUIDE STORE  —  shim over UserGuideStore (Firestore-backed)
+   Preserves ALL original exports:
+     canonicalGuideUrl, trackOpen, pushHistory, bumpUsage,
+     isFavorite, toggleFavorite, readFavorites, writeFavorites,
+     getHistory, getUsage, getMostUsed, getFavoriteList
 
-   Responsibilities:
-   - canonicalize any guide URL to one stable form
-   - read/write guideHistory, guideUsageCounts, guideFavorites
-   - dedupe by canonical URL on read
-
-   Load this BEFORE any other DSS script.
+   When UserGuideStore is active (signed-in employee + Firestore
+   loaded), all reads and writes go through it. Otherwise the
+   original localStorage implementation is used verbatim.
    ============================================================ */
 (function () {
   "use strict";
@@ -17,7 +16,7 @@
   const LS_USAGE   = "guideUsageCounts";
   const LS_FAVS    = "guideFavorites";
 
-  /* ---------- canonicalizer ---------- */
+  /* ---------- canonicalizer (unchanged) ---------- */
   function canonicalGuideUrl(rawUrl, baseUrl) {
     if (!rawUrl) return "";
     let u;
@@ -36,7 +35,7 @@
     return u.origin + path;
   }
 
-  /* ---------- low-level storage ---------- */
+  /* ---------- low-level storage (unchanged) ---------- */
   function readJSON(key, fallback) {
     try {
       const raw = localStorage.getItem(key);
@@ -54,11 +53,24 @@
     catch (e) { return false; }
   }
 
+  /* ---------- UserGuideStore gate ---------- */
+  function userStoreActive() {
+    return Boolean(
+      window.UserGuideStore &&
+      window.UserGuideStore.ready &&
+      window.UserGuideStore.empId
+    );
+  }
+
   /* ---------- writers ---------- */
 
   function pushHistory(title, rawUrl) {
     const url = canonicalGuideUrl(rawUrl);
     if (!url) return;
+
+    if (userStoreActive()) {
+      return window.UserGuideStore.pushHistory(title, url);
+    }
 
     let history = readJSON(LS_HISTORY, []);
     if (!Array.isArray(history)) history = [];
@@ -77,6 +89,10 @@
     const url = canonicalGuideUrl(rawUrl);
     if (!url) return;
 
+    if (userStoreActive()) {
+      return window.UserGuideStore.bumpUsage(title, url);
+    }
+
     const usage = readJSON(LS_USAGE, {});
     const safe = usage && typeof usage === "object" && !Array.isArray(usage) ? usage : {};
 
@@ -88,46 +104,79 @@
   }
 
   function trackOpen(title, rawUrl) {
-    pushHistory(title, rawUrl);
-    bumpUsage(title, rawUrl);
+    const url = canonicalGuideUrl(rawUrl);
+    if (!url) return;
+
+    if (userStoreActive()) {
+      return window.UserGuideStore.trackOpen(title, url);
+    }
+
+    pushHistory(title, url);
+    bumpUsage(title, url);
   }
 
   /* ---------- favorites ---------- */
 
   function readFavorites() {
+    if (userStoreActive()) {
+      const d = window.UserGuideStore.data.favorites;
+      return d && typeof d === "object" && !Array.isArray(d) ? d : {};
+    }
+
     const favs = readJSON(LS_FAVS, {});
     return favs && typeof favs === "object" && !Array.isArray(favs) ? favs : {};
   }
 
   function writeFavorites(favs) {
+    if (userStoreActive()) {
+      // Rebuild UserGuideStore favorites from the incoming map.
+      const us = window.UserGuideStore;
+      const rebuilt = {};
+      Object.keys(favs || {}).forEach(function (rawUrl) {
+        const canon = canonicalGuideUrl(rawUrl);
+        if (!canon) return;
+        rebuilt[canon] = favs[rawUrl];
+      });
+      us.data.favorites = rebuilt;
+      us._saveAll();
+    }
     return writeJSON(LS_FAVS, favs || {});
   }
 
   function isFavorite(rawUrl) {
     const url = canonicalGuideUrl(rawUrl);
     if (!url) return false;
-    return !!readFavorites()[url];
+    return Boolean(readFavorites()[url]);
   }
 
   function toggleFavorite(title, rawUrl) {
     const url = canonicalGuideUrl(rawUrl);
     if (!url) return false;
 
+    if (userStoreActive()) {
+      const us = window.UserGuideStore;
+      let added;
+      if (us.data.favorites[url]) {
+        delete us.data.favorites[url];
+        added = false;
+      } else {
+        us.data.favorites[url] = { title: title || "Untitled Guide", timestamp: Date.now() };
+        added = true;
+      }
+      us._saveAll();
+      writeJSON(LS_FAVS, us.data.favorites);
+      return added;
+    }
+
     const favs = readFavorites();
     let added;
-
     if (favs[url]) {
       delete favs[url];
       added = false;
     } else {
-      favs[url] = {
-        title: title || "Untitled Guide",
-        url: url,
-        timestamp: Date.now()
-      };
+      favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() };
       added = true;
     }
-
     writeFavorites(favs);
     return added;
   }
@@ -135,11 +184,14 @@
   /* ---------- readers (dedupe by canonical URL) ---------- */
 
   function getHistory() {
-    const raw = readJSON(LS_HISTORY, []);
+    const raw = userStoreActive()
+      ? (window.UserGuideStore.getHistory() || [])
+      : readJSON(LS_HISTORY, []);
+
     if (!Array.isArray(raw)) return [];
 
     const seen = new Set();
-    const out = [];
+    const out  = [];
 
     const sorted = raw
       .filter(function (h) { return h && h.url; })
@@ -162,7 +214,10 @@
   }
 
   function getUsage() {
-    const raw = readJSON(LS_USAGE, {});
+    const raw = userStoreActive()
+      ? (window.UserGuideStore.data.usage || {})
+      : readJSON(LS_USAGE, {});
+
     const safe = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
     const merged = {};
 
@@ -221,7 +276,7 @@
       .sort(function (a, b) { return b.timestamp - a.timestamp; });
   }
 
-  /* ---------- export ---------- */
+  /* ---------- export (unchanged shape) ---------- */
   window.GuideStore = {
     canonicalGuideUrl: canonicalGuideUrl,
     trackOpen:         trackOpen,
