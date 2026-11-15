@@ -29,7 +29,8 @@
     isNew: false,
     saving: false,
     filterCategory: "",
-    filterStatus: "all"
+    filterStatus: "all",
+    firstSnapshotReceived: false
   };
 
   const $ = id => document.getElementById(id);
@@ -56,6 +57,24 @@
       return window.db || firebase.firestore();
     }
     return null;
+  }
+
+  /* ---------- Page loader ---------- */
+  let loaderHidden = false;
+  function hideLoader() {
+    if (loaderHidden) return;
+    loaderHidden = true;
+
+    const el = document.getElementById("pageLoader");
+    if (el) {
+      el.style.transition = "opacity .35s ease";
+      el.style.opacity = "0";
+      setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 380);
+    }
+    document.documentElement.classList.remove("page-loading");
+    document.documentElement.removeAttribute("aria-busy");
   }
 
   function categoryLabel(key) {
@@ -86,6 +105,7 @@
     const db = firestore();
     if (!db) {
       showToast("Firestore is not initialized.", true);
+      hideLoader();
       return;
     }
 
@@ -93,7 +113,7 @@
 
     unsubscribePosts = db.collection(COLLECTION).onSnapshot(snap => {
       console.log(`🔥 [DATABASE] Live Sync. Total documents found: ${snap.size}`);
-      
+
       state.posts = [];
       snap.forEach(doc => {
         const data = doc.data();
@@ -120,9 +140,15 @@
       });
 
       renderPostList();
+
+      if (!state.firstSnapshotReceived) {
+        state.firstSnapshotReceived = true;
+        setTimeout(hideLoader, 200);
+      }
     }, err => {
       console.error("Snapshot error:", err);
       showToast("Unable to load announcements.", true);
+      hideLoader();
     });
   }
 
@@ -209,7 +235,7 @@
   function startNew() {
     state.isNew = true;
     state.activeId = null;
-    
+
     state.filterCategory = "";
     state.filterStatus = "all";
     if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
@@ -241,11 +267,11 @@
   function fillEditor(data) {
     if ($("atCategory")) $("atCategory").value = data.category || "general";
     if ($("atTitle"))    $("atTitle").value    = data.title   || "";
-    
+
     if ($("atDate")) {
       let safeDate = data.date || "";
       if (typeof safeDate !== "string" || (safeDate && !safeDate.includes("T"))) {
-        safeDate = ""; 
+        safeDate = "";
       }
       $("atDate").value = safeDate;
     }
@@ -257,9 +283,9 @@
     if (!["Normal", "Important", "Urgent"].includes(currentPriority)) {
         currentPriority = "Normal";
     }
-    
+
     if ($("atEyebrow")) $("atEyebrow").value = currentPriority;
-    
+
     document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('active'));
     const radio = document.querySelector(`input[name="priority"][value="${currentPriority}"]`);
     if (radio) {
@@ -294,16 +320,16 @@
 
     if ($("atPreviewEyebrow")) $("atPreviewEyebrow").textContent = data.eyebrow || "SYSTEM UPDATE";
     if ($("atPreviewTitle"))   $("atPreviewTitle").textContent   = data.title   || "(Title required)";
-    
+
     let displayDate = data.date || "—";
     if (data.date && data.date.includes("T")) {
       const dateObj = new Date(data.date);
-      displayDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + 
-                    " at " + 
+      displayDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+                    " at " +
                     dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     }
     if ($("atPreviewDate")) $("atPreviewDate").textContent = displayDate;
-    
+
     if ($("atPreviewMessage")) $("atPreviewMessage").textContent = data.message || "Message will appear here.";
   }
 
@@ -376,13 +402,13 @@
 
       state.activeId = savedId;
       state.isNew = false;
-      
+
       // Force UI to show All posts to ensure the new one is visible
       state.filterCategory = "";
       state.filterStatus = "all";
       if ($("atCategoryFilter")) $("atCategoryFilter").value = "";
       if ($("atStatusFilter")) $("atStatusFilter").value = "all";
-      
+
       showToast(publish ? "Announcement published." : "Draft saved.");
 
     } catch (err) {
@@ -404,7 +430,7 @@
 
     try {
       await db.collection(COLLECTION).doc(state.activeId).delete();
-      
+
       state.activeId = null;
       state.isNew = false;
 
@@ -443,7 +469,7 @@
         updatePreview();
       });
     });
-    
+
     if ($("atTemplate")) {
       $("atTemplate").addEventListener("change", (e) => {
         const val = e.target.value;
@@ -459,7 +485,7 @@
           message: tpl.message,
           button: tpl.button
         });
-        
+
         updatePreview();
         updateCharCounts();
       });
@@ -491,6 +517,9 @@
 
     bindLiveUpdates();
     loadAllPosts();
+
+    /* Safety net — hide loader if snapshot never fires (e.g. offline). */
+    setTimeout(hideLoader, 5000);
   }
 
   if (document.readyState === "loading") {
