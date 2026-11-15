@@ -15,7 +15,7 @@ function updateDashboardUserName(profile) {
   if (firstName) {
     const spaceSpan = document.createElement("span");
     spaceSpan.style.color = "#10134f";
-    spaceSpan.textContent = " ";              // ← was ", "
+    spaceSpan.textContent = " ";
     nameElement.appendChild(spaceSpan);
     nameElement.appendChild(document.createTextNode(firstName));
   }
@@ -33,13 +33,14 @@ document.addEventListener("DOMContentLoaded", function () {
   updateDashboardUserName(window.currentUserProfile);
 });
 
+
 /* =========================================================
    BD TOOLS — MAIN DASHBOARD JS
    ========================================================= */
 
 "use strict";
 
-const Store = window.GuideStore;
+const Store = window.UserGuideStore;   // ← was: window.GuideStore
 
 const TOTAL_GUIDE_COUNT = 75;
 const TOTAL_TOOLS_COUNT = 6;
@@ -194,7 +195,7 @@ function escapeAttr(value) {
 
 
 /* ---------------------------------------------------------
-   Data reads (via GuideStore when available)
+   Data reads (via UserGuideStore when available)
    --------------------------------------------------------- */
 
 function getMostUsedList(limit) {
@@ -279,12 +280,12 @@ function renderLists() {
 
   /* ---- Most Used ---- */
   if (mostUsedList) {
-    const items = getMostUsedList();          /* was: getMostUsedList(5) */
+    const items = getMostUsedList();
     if (!items.length) {
       mostUsedList.innerHTML = '<div class="list-row"><span class="row-name">No usage yet — open a guide to start tracking.</span></div>';
     } else {
       mostUsedList.innerHTML = items.map(function (g) {
-        const cat = categoryFromUrl(g.url);
+        const cat  = categoryFromUrl(g.url);
         const icon = guideIconFromUrl(g.url);
         return (
           '<div class="list-row clickable" data-name="' + escapeAttr(g.title) + '" data-url="' + escapeAttr(g.url) + '">' +
@@ -300,12 +301,12 @@ function renderLists() {
 
   /* ---- Recent ---- */
   if (recentList) {
-    const items = getRecentList();            /* was: getRecentList(5) */
+    const items = getRecentList();
     if (!items.length) {
       recentList.innerHTML = '<div class="list-row"><span class="row-name">Nothing here yet — your recently opened guides will appear here.</span></div>';
     } else {
       recentList.innerHTML = items.map(function (r) {
-        const cat = categoryFromUrl(r.url);
+        const cat  = categoryFromUrl(r.url);
         const icon = guideIconFromUrl(r.url);
         return (
           '<div class="list-row clickable" data-name="' + escapeAttr(r.title) + '" data-url="' + escapeAttr(r.url) + '">' +
@@ -321,12 +322,12 @@ function renderLists() {
 
   /* ---- Favorites ---- */
   if (favoritesList) {
-    const items = getFavoriteList();          /* was: getFavoriteList(5) */
+    const items = getFavoriteList();
     if (!items.length) {
       favoritesList.innerHTML = '<div class="list-row"><span class="row-name">No favorites yet — click the ☆ on any guide to save it.</span></div>';
     } else {
       favoritesList.innerHTML = items.map(function (g) {
-        const cat = categoryFromUrl(g.url);
+        const cat  = categoryFromUrl(g.url);
         const icon = guideIconFromUrl(g.url);
         return (
           '<div class="list-row clickable" data-name="' + escapeAttr(g.title) + '" data-url="' + escapeAttr(g.url) + '">' +
@@ -343,18 +344,46 @@ function renderLists() {
   updateStats();
 }
 
-renderLists();
+
+/* ---------------------------------------------------------
+   Init / re-init on user switch
+   --------------------------------------------------------- */
+
+function bootUserStore() {
+  if (Store && typeof Store.init === "function") {
+    Store.init().then(function () { renderLists(); })
+                .catch(function () { renderLists(); });
+  } else {
+    renderLists();
+  }
+}
+
+bootUserStore();
+
+document.addEventListener("bdtools:user-changed", function () {
+  if (Store && typeof Store.reset === "function") {
+    Store.reset().then(function () { renderLists(); })
+                 .catch(function () { renderLists(); });
+  } else {
+    renderLists();
+  }
+});
 
 
 /* ---------------------------------------------------------
    Track + open
    --------------------------------------------------------- */
 
-function trackAndOpen(url, title) {
+async function trackAndOpen(url, title) {
   if (!url) return;
 
-  if (Store) {
-    Store.trackOpen(title, url);
+  if (Store && typeof Store.trackOpen === "function") {
+    try {
+      await Promise.race([
+        Promise.resolve(Store.trackOpen(title, url)),
+        new Promise(function (r) { setTimeout(r, 800); })   // cap the wait
+      ]);
+    } catch (_) { /* navigation shouldn't be blocked by a write failure */ }
   } else {
     const h = readJSONFallback(LS_HISTORY, []);
     h.push({ title: title || "Untitled Guide", url: url, timestamp: Date.now() });
@@ -374,7 +403,7 @@ function toggleFavorite(url, title) {
   if (!url) return false;
 
   let added;
-  if (Store) {
+  if (Store && typeof Store.toggleFavorite === "function") {
     added = Store.toggleFavorite(title, url);
   } else {
     const favs = readJSONFallback(LS_FAVS, {});
@@ -450,8 +479,8 @@ document.addEventListener("click", function (event) {
   if (fav) {
     event.preventDefault();
     event.stopPropagation();
-    const row = fav.closest("[data-url]");
-    const url = fav.dataset.favUrl || row?.dataset.url;
+    const row   = fav.closest("[data-url]");
+    const url   = fav.dataset.favUrl || row?.dataset.url;
     const title = row?.dataset.name;
     toggleFavorite(url, title);
     return;
