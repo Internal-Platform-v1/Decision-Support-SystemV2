@@ -1,23 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-loading">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Announcements | Decision Support System</title>
   <link rel="icon" href="data:,">
 
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
+
+  <link rel="stylesheet" href="../../assets/css/page-loader.css" />
   <link rel="stylesheet" href="../../shared/header/admin-header.css" />
   <link rel="stylesheet" href="admin-announcements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body data-admin-page="announcements" data-admin-title="Announcements">
+<body
+  data-admin-page="announcements"
+  data-admin-title="Announcements"
+  data-admin-description="Create and manage announcements to keep everyone informed and up to date."
+>
+
+  <!-- PAGE LOADER -->
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading announcements">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading Announcements…</p>
+    </div>
+  </div>
 
   <div id="adminHeader"></div>
 
   <main class="at-main">
     <div class="at-layout">
-      
+
       <!-- LEFT PANEL -->
       <aside class="at-left-panel">
         <div class="at-header-area">
@@ -41,7 +62,7 @@
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Search by title or content..." disabled title="Search coming soon">
           </div>
-          
+
           <select id="atCategoryFilter" class="at-select">
             <option value="">All Categories</option>
             <option value="general">📢 Announcements</option>
@@ -68,9 +89,9 @@
 
       <!-- RIGHT PANEL -->
       <section class="at-right-panel">
-        
+
         <div class="at-editor-body" id="atEditorBody" hidden>
-          
+
           <div class="at-editor-header">
             <h2 id="atEditorTitle">Create / Edit Announcement</h2>
             <p id="atEditorSubtitle" class="at-editor-subtitle">Fill in the fields below.</p>
@@ -214,7 +235,7 @@
   </script>
 
   <script src="../../shared/header/admin-header.js"></script>
-  
+
   <!-- IMPORTANT: THE ?v=3 FORCES THE BROWSER TO LOAD THE NEW CODE -->
   <script src="admin-announcements.js?v=3"></script>
 
