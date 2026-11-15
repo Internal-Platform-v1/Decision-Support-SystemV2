@@ -15,7 +15,11 @@
   <link rel="stylesheet" href="admin-user-management.css">
 </head>
 
-<body data-admin-page="users" data-admin-title="User Management">
+<body
+  data-admin-page="users"
+  data-admin-title="User Management"
+  data-admin-description="Add new employees, update roles, activate or deactivate accounts, and remove users."
+>
 
   <!-- PAGE LOADER -->
   <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading user management">
@@ -32,25 +36,6 @@
   <div id="adminHeader"></div>
 
   <main class="um-main">
-
-    <!-- Page head -->
-    <header class="um-page-head">
-      <div class="um-page-title">
-        <span class="um-eyebrow">ADMIN CONSOLE</span>
-        <h1>User Management</h1>
-        <p>Add new employees, update roles, activate or deactivate accounts, and remove users.</p>
-      </div>
-      <div class="um-head-actions">
-        <button type="button" class="um-btn um-btn-ghost" id="umExportBtn">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
-          <span>Export CSV</span>
-        </button>
-        <button type="button" class="um-btn um-btn-primary" id="umAddUserBtn">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          <span>Add User</span>
-        </button>
-      </div>
-    </header>
 
     <!-- Stat cards -->
     <section class="um-stats" aria-label="User overview">
@@ -131,6 +116,17 @@
           <option value="name">Name A–Z</option>
           <option value="role">Role</option>
         </select>
+
+        <div class="um-toolbar-actions">
+          <button type="button" class="um-btn um-btn-ghost" id="umExportBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+            <span>Export CSV</span>
+          </button>
+          <button type="button" class="um-btn um-btn-primary" id="umAddUserBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Add User</span>
+          </button>
+        </div>
       </div>
 
       <!-- Bulk action bar -->
