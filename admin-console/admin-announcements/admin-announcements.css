@@ -4,6 +4,10 @@
 
 #adminHeader, #adminHeader * { box-sizing: border-box; }
 
+/* Everything in the main area respects border-box so inputs with
+   width:100% + padding never overflow their flex parents. */
+.at-main, .at-main * { box-sizing: border-box; }
+
 body[data-admin-page="announcements"] .admin-hero { display: none !important; }
 body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; padding-top: 0 !important; }
 
@@ -45,7 +49,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-header-area h1 {
   margin: 0 0 6px;
-  font-size: 22px; /* Matched page header */
+  font-size: 22px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -94,16 +98,19 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 }
 
 .at-search {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   position: relative;
 }
 
 .at-search i {
   position: absolute;
   left: 12px;
-  top: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #9ca3af;
   font-size: 12px;
+  pointer-events: none;
 }
 
 .at-search input {
@@ -114,9 +121,14 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   outline: none;
   font-size: 11px;
   background: #fff;
+  box-sizing: border-box;
 }
 
+/* The category dropdown is sized to its content and prevented from
+   being squashed or overlapped by the flexing search box. */
 .at-select {
+  flex: 0 0 auto;
+  max-width: 170px;
   padding: 10px 12px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -124,6 +136,12 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   background: #fff;
   outline: none;
   cursor: pointer;
+  box-sizing: border-box;
+}
+
+#atAddNew {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .at-list-meta {
@@ -171,14 +189,14 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-post-item strong {
   display: block;
-  font-size: 12px; /* Matched to feedback card name */
+  font-size: 12px;
   margin-bottom: 4px;
   color: #111827;
 }
 
 .at-post-item small {
   display: block;
-  font-size: 10px; /* Matched to feedback card meta */
+  font-size: 10px;
   color: #6b7280;
   margin-bottom: 12px;
   line-height: 1.4;
@@ -186,7 +204,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 
 .at-post-tag {
   display: inline-block;
-  font-size: 9px; /* Matched to feedback badges */
+  font-size: 9px;
   font-weight: 600;
   padding: 4px 8px;
   border-radius: 12px;
@@ -425,6 +443,8 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
 @media (max-width: 720px) {
   .at-main { margin-left: 70px; padding: 68px 14px 24px; }
   .at-filters { flex-direction: column; align-items: stretch; }
+  .at-select { max-width: 100%; }
+  #atAddNew { justify-content: center; }
 }
 
 /* --- RICH TEXT EDITOR & TOOLBAR --- */
@@ -492,6 +512,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   outline: none;
   cursor: pointer;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .at-datepicker:focus {
@@ -513,6 +534,7 @@ body[data-admin-page="announcements"] .admin-main { min-height: 0 !important; pa
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .priority-pill {
