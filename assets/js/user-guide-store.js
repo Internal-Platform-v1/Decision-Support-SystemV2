@@ -64,13 +64,11 @@
     ready: false,
     _promise: null,
 
-    /* ---- init ---- */
     init() {
       this.empId = getEmpId();
       return this.load();
     },
 
-    /* ---- full reload (used after user switches) ---- */
     reset() {
       this._promise = null;
       this.ready = false;
@@ -78,7 +76,6 @@
       return this.init();
     },
 
-    /* ---- promise resolves when data is ready ---- */
     load() {
       if (this._promise) return this._promise;
 
@@ -133,7 +130,6 @@
       return this._promise;
     },
 
-    /* ---- persist whole doc (fire-and-forget) ---- */
     _saveAll() {
       if (!this.empId) return Promise.resolve();
       const db = firestore();
@@ -151,21 +147,13 @@
         .catch((err) => console.warn("[UserGuideStore] write failed:", err.code || err.message));
     },
 
-    /* ---- track a guide open ---- */
-    async trackOpen(title, url) {
+    /* ---- pushHistory: history only ---- */
+    async pushHistory(title, url) {
       if (!url) return;
       await this.load();
 
-      const t   = title || "Untitled Guide";
-      const now = Date.now();
-
-      const u = this.data.usage[url] || { title: t, count: 0 };
-      u.title    = t;
-      u.count    = (Number(u.count) || 0) + 1;
-      u.lastUsed = now;
-      this.data.usage[url] = u;
-
-      this.data.history.push({ title: t, url, timestamp: now });
+      const t = title || "Untitled Guide";
+      this.data.history.push({ title: t, url, timestamp: Date.now() });
       if (this.data.history.length > MAX_HISTORY) {
         this.data.history.splice(0, this.data.history.length - MAX_HISTORY);
       }
@@ -174,7 +162,45 @@
       return this._saveAll();
     },
 
-    /* ---- toggle favorite ---- */
+    /* ---- bumpUsage: usage only ---- */
+    async bumpUsage(title, url) {
+      if (!url) return;
+      await this.load();
+
+      const t   = title || "Untitled Guide";
+      const u   = this.data.usage[url] || { title: t, count: 0 };
+      u.title    = t;
+      u.count    = (Number(u.count) || 0) + 1;
+      u.lastUsed = Date.now();
+      this.data.usage[url] = u;
+
+      writeLocal(this.data);
+      return this._saveAll();
+    },
+
+    /* ---- trackOpen: history + usage in one shot ---- */
+    async trackOpen(title, url) {
+      if (!url) return;
+      await this.load();
+
+      const t   = title || "Untitled Guide";
+      const now = Date.now();
+
+      this.data.history.push({ title: t, url, timestamp: now });
+      if (this.data.history.length > MAX_HISTORY) {
+        this.data.history.splice(0, this.data.history.length - MAX_HISTORY);
+      }
+
+      const u = this.data.usage[url] || { title: t, count: 0 };
+      u.title    = t;
+      u.count    = (Number(u.count) || 0) + 1;
+      u.lastUsed = now;
+      this.data.usage[url] = u;
+
+      writeLocal(this.data);
+      return this._saveAll();
+    },
+
     async toggleFavorite(title, url) {
       if (!url) return false;
       await this.load();
@@ -195,7 +221,6 @@
       return added;
     },
 
-    /* ---- read helpers ---- */
     getMostUsed() {
       return Object.keys(this.data.usage).map((url) => ({
         url,
