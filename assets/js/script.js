@@ -15,7 +15,7 @@ function updateDashboardUserName(profile) {
   if (firstName) {
     const commaSpan = document.createElement("span");
     commaSpan.style.color = "#10134f";
-    commaSpan.textContent = ", ";
+    commaSpan.textContent = "";
     nameElement.appendChild(commaSpan);
     nameElement.appendChild(document.createTextNode(firstName));
   }
