@@ -80,6 +80,24 @@
     return null;
   }
 
+  /* ---------- Page loader ---------- */
+  let loaderHidden = false;
+  function hideLoader() {
+    if (loaderHidden) return;
+    loaderHidden = true;
+
+    const el = document.getElementById("pageLoader");
+    if (el) {
+      el.style.transition = "opacity .35s ease";
+      el.style.opacity = "0";
+      setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 380);
+    }
+    document.documentElement.classList.remove("page-loading");
+    document.documentElement.removeAttribute("aria-busy");
+  }
+
   // FIXED: Fetch the script as text, then evaluate it in a sandbox.
   // This avoids global pollution and makes every guide reload perfectly.
   async function loadGuideFlow(guide) {
@@ -1389,6 +1407,13 @@
         closeFullscreenNodePreview();
       }
     });
+
+    /* Hide page loader once the workspace is ready.
+       Everything above is synchronous, so just wait a beat for a smooth
+       paint, then fade out. The 5s safety net guards against any future
+       async step being added to init() later. */
+    setTimeout(hideLoader, 200);
+    setTimeout(hideLoader, 5000);
   }
 
   if (document.readyState === "loading") {
