@@ -12,47 +12,10 @@ body[data-admin-page="users"] .admin-shell .admin-main {
 .um-main {
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   margin-left: var(--admin-sidebar-width, 270px);
-  padding: 92px 28px 48px;
+  padding: 26px 28px 48px;
   color: var(--admin-text, #17174b);
   background: #f7f7fc;
   min-height: 100vh;
-}
-
-/* ---------- Page head ---------- */
-.um-page-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.um-eyebrow {
-  display: block;
-  color: #6235ce;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  margin-bottom: 6px;
-}
-.um-page-title h1 {
-  margin: 0 0 6px;
-  font-size: 22px;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
-  color: #17195d;
-}
-.um-page-title p {
-  margin: 0;
-  color: #6d6e94;
-  font-size: 11px;
-  line-height: 1.5;
-  max-width: 520px;
-}
-.um-head-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
 }
 
 /* ---------- Buttons ---------- */
@@ -166,6 +129,18 @@ body[data-admin-page="users"] .admin-shell .admin-main {
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 14px;
+}
+
+.um-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.um-toolbar-actions .um-btn {
+  height: 36px;
+  padding: 0 14px;
 }
 
 .um-search {
@@ -736,16 +711,14 @@ body[data-admin-page="users"] .admin-shell .admin-main {
   .um-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
-  .um-main { padding: 88px 20px 40px; }
+  .um-main { padding: 24px 20px 40px; }
   .um-toolbar { flex-direction: column; align-items: stretch; }
   .um-select { width: 100%; }
+  .um-toolbar-actions { margin-left: 0; width: 100%; }
+  .um-toolbar-actions .um-btn { flex: 1; }
   .um-form-row { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
-  .um-page-head { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .um-head-actions { width: 100%; }
-  .um-head-actions .um-btn { flex: 1; }
-  .um-page-title h1 { font-size: 20px; }
   .um-modal-card { border-radius: 12px; }
   .um-bulk-bar { flex-direction: column; align-items: stretch; }
   .um-bulk-actions { justify-content: stretch; }
