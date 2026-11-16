@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 "use strict";
 
-const Store = window.UserGuideStore;
+const Store = window.GuideStore;
 
 const TOTAL_GUIDE_COUNT = 75;
 const TOTAL_TOOLS_COUNT = 6;
@@ -159,12 +159,12 @@ function guideIconFromUrl(url) {
 
 function categoryFromUrl(url) {
   const u = String(url || "");
-  if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",  color: "purple" };
-  if (/Pricing/i.test(u))                             return { tag: "Pricing",          color: "orange" };
-  if (/Surcharge/i.test(u))                           return { tag: "Surcharges",       color: "blue"   };
-  if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling", color: "green"  };
-  if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",       color: "indigo" };
-  if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink"  };
+  if (/Billing%20Dispute|Billing Dispute/i.test(u))   return { tag: "Billing Dispute",   color: "purple" };
+  if (/Pricing/i.test(u))                             return { tag: "Pricing",           color: "orange" };
+  if (/Surcharge/i.test(u))                           return { tag: "Surcharges",        color: "blue"   };
+  if (/Account%20Handling|Account Handling/i.test(u)) return { tag: "Account Handling",  color: "green"  };
+  if (/PAUD/i.test(u))                                return { tag: "PAUD Queue",        color: "indigo" };
+  if (/Other%20Guides|Other Guides/i.test(u))         return { tag: "Other Operational", color: "pink"   };
   return { tag: "Guide", color: "purple" };
 }
 
@@ -195,7 +195,7 @@ function escapeAttr(value) {
 
 
 /* ---------------------------------------------------------
-   Data reads
+   Data reads (via GuideStore — synchronous)
    --------------------------------------------------------- */
 
 function getMostUsedList(limit) {
@@ -279,7 +279,6 @@ const favoritesList = document.getElementById("favoritesList");
 
 function renderLists() {
 
-  /* ---- Most Used ---- */
   if (mostUsedList) {
     const items = getMostUsedList();
     if (!items.length) {
@@ -300,7 +299,6 @@ function renderLists() {
     }
   }
 
-  /* ---- Recent ---- */
   if (recentList) {
     const items = getRecentList();
     if (!items.length) {
@@ -321,7 +319,6 @@ function renderLists() {
     }
   }
 
-  /* ---- Favorites ---- */
   if (favoritesList) {
     const items = getFavoriteList();
     if (!items.length) {
@@ -345,84 +342,39 @@ function renderLists() {
   updateStats();
 }
 
+renderLists();
 
-/* ---------------------------------------------------------
-   Init / re-init on user switch
-   --------------------------------------------------------- */
-
-function bootUserStore() {
-  if (Store && typeof Store.init === "function") {
-    Store.init()
-      .then(function () { renderLists(); })
-      .catch(function () { renderLists(); });
-  } else {
-    renderLists();
-  }
-}
-
-bootUserStore();
-
-document.addEventListener("bdtools:user-changed", function () {
-  if (Store && typeof Store.reset === "function") {
-    Store.reset()
-      .then(function () { renderLists(); })
-      .catch(function () { renderLists(); });
-  } else {
-    renderLists();
-  }
-});
+window.addEventListener("guidestore:ready", renderLists);
 
 
 /* ---------------------------------------------------------
    Track + open
    --------------------------------------------------------- */
 
-async function trackAndOpen(url, title) {
+function trackAndOpen(url, title) {
   if (!url) return;
-
   if (Store && typeof Store.trackOpen === "function") {
-    try {
-      await Promise.race([
-        Promise.resolve(Store.trackOpen(title, url)),
-        new Promise(function (r) { setTimeout(r, 800); })
-      ]);
-    } catch (_) { /* navigation shouldn't be blocked by a write failure */ }
-  } else {
-    const h = readJSONFallback(LS_HISTORY, []);
-    h.push({ title: title || "Untitled Guide", url: url, timestamp: Date.now() });
-    if (h.length > 100) h.splice(0, h.length - 100);
-    writeJSONFallback(LS_HISTORY, h);
-
-    const u = readJSONFallback(LS_USAGE, {});
-    if (!u[url]) u[url] = { title: title || "Untitled Guide", count: 0 };
-    u[url].count = (Number(u[url].count) || 0) + 1;
-    writeJSONFallback(LS_USAGE, u);
+    try { Store.trackOpen(title, url); } catch (_) {}
   }
-
   window.location.href = url;
 }
 
 function toggleFavorite(url, title) {
   if (!url) return;
-
   if (Store && typeof Store.toggleFavorite === "function") {
-    Promise.resolve(Store.toggleFavorite(title, url))
-      .then(function (added) {
-        showToast(added ? "Added to Favorites" : "Removed from Favorites");
-        renderLists();
-      })
-      .catch(function () {
-        showToast("Could not update favorites", true);
-      });
-  } else {
-    const favs = readJSONFallback(LS_FAVS, {});
-    let added;
-    if (favs[url]) { delete favs[url]; added = false; }
-    else { favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() }; added = true; }
-    writeJSONFallback(LS_FAVS, favs);
+    let added = false;
+    try { added = Store.toggleFavorite(title, url); } catch (_) {}
     showToast(added ? "Added to Favorites" : "Removed from Favorites");
     renderLists();
+    return;
   }
+  const favs = readJSONFallback(LS_FAVS, {});
+  let added;
+  if (favs[url]) { delete favs[url]; added = false; }
+  else { favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() }; added = true; }
+  writeJSONFallback(LS_FAVS, favs);
+  showToast(added ? "Added to Favorites" : "Removed from Favorites");
+  renderLists();
 }
 
 
