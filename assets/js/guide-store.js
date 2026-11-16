@@ -351,7 +351,8 @@ function trackOpen(title, rawUrl) {
     getUsage:          getUsage,
     getMostUsed:       getMostUsed,
     getFavoriteList:   getFavoriteList,
-    hydrate:           hydrate           // ← exposed for dashboard use
+    hydrate:           hydrate,           // ← exposed for dashboard use
+   flushSync:         flushSync 
   };
 
   /* ---------- auto-hydrate on load + on user switch ---------- */
