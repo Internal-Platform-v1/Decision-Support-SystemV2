@@ -4,21 +4,168 @@
 (() => {
   "use strict";
 
-  /* Guard reads from window.name */
+  /* ----------------------------------------------------------
+     Admin guard + password modal
+     The console stays locked behind a modal until the correct
+     password is entered. Unlock state is stored in window.name
+     so it survives navigation between admin pages in the same tab.
+     Change ADMIN_PASSWORD below to update the gate.
+     ---------------------------------------------------------- */
   (function adminGuard() {
-    const HOME_URL = "/Decision-Support-SystemV2/index.html";
+    const HOME_URL       = "/Decision-Support-SystemV2/index.html";
+    const ADMIN_PASSWORD = "fedex-admin-2027"; // ← change me later
+    const SESSION_HOURS  = 8;
+    const MAX_ATTEMPTS   = 5;
 
-    function isUnlocked() {
+    function readSession() {
       try {
-        if (!window.name) return false;
+        if (!window.name) return null;
         const s = JSON.parse(window.name);
-        return Boolean(s.token && typeof s.exp === "number" && s.exp > Date.now());
-      } catch (e) { return false; }
+        if (!s || typeof s !== "object") return null;
+        if (!s.token || typeof s.exp !== "number") return null;
+        if (s.exp <= Date.now()) return null;
+        return s;
+      } catch (e) { return null; }
     }
 
-    if (!isUnlocked()) {
-      window.location.replace(HOME_URL);
-      return;
+    function isUnlocked() { return Boolean(readSession()); }
+
+    function writeSession() {
+      try {
+        window.name = JSON.stringify({
+          token: "admin-" + Date.now() + "-" + Math.random().toString(36).slice(2),
+          exp:   Date.now() + SESSION_HOURS * 60 * 60 * 1000
+        });
+      } catch (e) {}
+    }
+
+    function clearSession() {
+      try { window.name = ""; } catch (e) {}
+    }
+
+    function goHome() { window.location.replace(HOME_URL); }
+
+    /* Already unlocked for this tab? Let the page through. */
+    if (isUnlocked()) return;
+
+    /* Hide page content while the modal is up (avoids flash of
+       dashboard behind the backdrop). */
+    document.documentElement.classList.add("admin-locked");
+
+    let attempts = 0;
+
+    function buildModal() {
+      const wrap = document.createElement("div");
+      wrap.className = "admin-auth-overlay";
+      wrap.id = "adminAuthOverlay";
+      wrap.setAttribute("role", "dialog");
+      wrap.setAttribute("aria-modal", "true");
+      wrap.setAttribute("aria-labelledby", "adminAuthTitle");
+      wrap.innerHTML =
+        '<div class="admin-auth-modal">' +
+          '<div class="admin-auth-icon" aria-hidden="true">🔒</div>' +
+          '<h2 id="adminAuthTitle">Admin Access</h2>' +
+          '<p>Enter the admin password to unlock the admin console.</p>' +
+          '<form novalidate>' +
+            '<div class="admin-auth-field">' +
+              '<label for="adminAuthPassword">Password</label>' +
+              '<input type="password" id="adminAuthPassword" ' +
+                     'autocomplete="current-password" autocapitalize="off" ' +
+                     'spellcheck="false" placeholder="Enter admin password" />' +
+            '</div>' +
+            '<div class="admin-auth-error" role="alert" hidden></div>' +
+            '<div class="admin-auth-actions">' +
+              '<button type="button" class="admin-auth-cancel">Cancel</button>' +
+              '<button type="submit" class="admin-auth-submit">Unlock</button>' +
+            '</div>' +
+          '</form>' +
+        '</div>';
+      return wrap;
+    }
+
+    function init() {
+      if (document.getElementById("adminAuthOverlay")) return;
+
+      const overlay   = buildModal();
+      document.body.appendChild(overlay);
+
+      const input     = overlay.querySelector("#adminAuthPassword");
+      const form      = overlay.querySelector("form");
+      const errorEl   = overlay.querySelector(".admin-auth-error");
+      const cancelBtn = overlay.querySelector(".admin-auth-cancel");
+
+      setTimeout(function () { try { input.focus(); } catch (e) {} }, 60);
+
+      function showError(message) {
+        errorEl.textContent = message;
+        errorEl.hidden = false;
+      }
+      function hideError() {
+        errorEl.textContent = "";
+        errorEl.hidden = true;
+      }
+
+      input.addEventListener("input", hideError);
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (input.value === ADMIN_PASSWORD) {
+          writeSession();
+          document.documentElement.classList.remove("admin-locked");
+          overlay.remove();
+          document.dispatchEvent(new CustomEvent("adminUnlocked"));
+          return;
+        }
+
+        attempts += 1;
+        input.value = "";
+        input.focus();
+
+        if (attempts >= MAX_ATTEMPTS) {
+          showError("Too many attempts. Redirecting to home…");
+          setTimeout(goHome, 1000);
+          return;
+        }
+
+        const left = MAX_ATTEMPTS - attempts;
+        showError(
+          "Incorrect password. " + left +
+          " attempt" + (left === 1 ? "" : "s") + " left."
+        );
+      });
+
+      cancelBtn.addEventListener("click", function () {
+        clearSession();
+        goHome();
+      });
+
+      /* Keep keyboard focus inside the modal */
+      overlay.addEventListener("keydown", function (event) {
+        if (event.key !== "Tab") return;
+        const focusables = overlay.querySelectorAll("input, button");
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last  = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first.focus();
+        }
+      });
+    }
+
+    /* Small public API for debugging / other pages */
+    window.AdminGuard = {
+      isUnlocked: isUnlocked,
+      lock:       clearSession,
+      unlock:     function () { writeSession(); }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
     }
   })();
 
