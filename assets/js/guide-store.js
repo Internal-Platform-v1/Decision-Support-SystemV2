@@ -202,10 +202,11 @@
     scheduleSync();
   }
 
-  function trackOpen(title, rawUrl) {
-    pushHistory(title, rawUrl);
-    bumpUsage(title, rawUrl);
-  }
+function trackOpen(title, rawUrl) {
+  pushHistory(title, rawUrl);
+  bumpUsage(title, rawUrl);
+  return flushSync();
+}
 
   /* ---------- favorites ---------- */
 
