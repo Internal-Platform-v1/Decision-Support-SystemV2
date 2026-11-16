@@ -86,7 +86,32 @@
         });
     }, SYNC_DEBOUNCE);
   }
+   
+  /* ---------- force-immediate Firestore write ---------- */
+  function flushSync() {
+    if (syncTimer) {
+      clearTimeout(syncTimer);
+      syncTimer = null;
+    }
+    const empId = getEmpId();
+    if (!empId) return Promise.resolve();
+    const db = firestore();
+    if (!db) return Promise.resolve();
 
+    const payload = {
+      usage:     readJSON(LS_USAGE, {}),
+      history:   readJSON(LS_HISTORY, []),
+      favorites: readJSON(LS_FAVS, {}),
+      modifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    return db.collection(COLLECTION).doc(empId)
+      .set(payload, { merge: true })
+      .catch(function (err) {
+        console.warn("[GuideStore] flushSync failed:", err.code || err.message);
+      });
+  }
+   
   /* ---------- hydrate from Firestore ---------- */
   let hydratePromise = null;
 
