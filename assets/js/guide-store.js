@@ -2,6 +2,7 @@
    GUIDE STORE — single source of truth for guide URLs
    - localStorage = live runtime cache (synchronous, same as before)
    - Firestore    = background sync (hydrate on load, flush on nav)
+   - auto-tracks guide page opens
    ============================================================ */
 (function () {
   "use strict";
@@ -63,10 +64,7 @@
   let queuedWrites = [];
 
   function scheduleSync() {
-    if (hydrating) {
-      pendingSync = true;
-      return;
-    }
+    if (hydrating) { pendingSync = true; return; }
     const empId = getEmpId();
     if (!empId) return;
     const db = firestore();
@@ -99,12 +97,8 @@
       });
   }
 
-  /* ---------- force-immediate Firestore write (called before navigation) ---------- */
   function flushSync() {
-    if (syncTimer) {
-      clearTimeout(syncTimer);
-      syncTimer = null;
-    }
+    if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
     return doWrite();
   }
 
@@ -115,10 +109,7 @@
     if (hydratePromise) return hydratePromise;
 
     const empId = getEmpId();
-    if (!empId) {
-      hydratePromise = Promise.resolve();
-      return hydratePromise;
-    }
+    if (!empId) { hydratePromise = Promise.resolve(); return hydratePromise; }
 
     let owner = "";
     try { owner = localStorage.getItem(LS_OWNER) || ""; } catch (_) {}
@@ -132,10 +123,7 @@
     try { localStorage.setItem(LS_OWNER, empId); } catch (_) {}
 
     const db = firestore();
-    if (!db) {
-      hydratePromise = Promise.resolve();
-      return hydratePromise;
-    }
+    if (!db) { hydratePromise = Promise.resolve(); return hydratePromise; }
 
     hydrating = true;
     let firestoreExisted = false;
@@ -168,9 +156,7 @@
           (readJSON(LS_HISTORY, []) || []).length > 0 ||
           Object.keys(readJSON(LS_FAVS, {})).length > 0;
 
-        if (!firestoreExisted && localHasData) {
-          scheduleSync();
-        }
+        if (!firestoreExisted && localHasData) scheduleSync();
         if (replay.length > 0 || pendingSync) {
           pendingSync = false;
           scheduleSync();
@@ -225,15 +211,11 @@
     return flushSync();
   }
 
-  /* ---------- favorites ---------- */
-
   function readFavorites() {
     const favs = readJSON(LS_FAVS, {});
     return favs && typeof favs === "object" && !Array.isArray(favs) ? favs : {};
   }
-  function writeFavorites(favs) {
-    return writeJSON(LS_FAVS, favs || {});
-  }
+  function writeFavorites(favs) { return writeJSON(LS_FAVS, favs || {}); }
 
   function isFavorite(rawUrl) {
     const url = canonicalGuideUrl(rawUrl);
@@ -347,6 +329,59 @@
     flushSync:         flushSync
   };
 
+  /* ---------- auto-track guide page opens ---------- */
+  (function autoTrackGuidePage() {
+    // Only fire on actual guide pages, not category landings or the dashboard
+    function isGuidePage() {
+      var p = location.pathname.toLowerCase();
+      return /\/guides\/[^\/]+\/[^\/]+\/[^\/]+\.html$/.test(p);
+    }
+
+    function extractTitle() {
+      var t = (document.title || "").trim();
+      t = t.replace(/\s*[\|·–—-]\s*(Decision Support System|DSS V2?|BD Tools|FedEx.*)$/i, "").trim();
+      if (t) return t;
+      var h1 = document.querySelector("h1");
+      if (h1 && h1.textContent.trim()) return h1.textContent.trim();
+      var slug = location.pathname.split("/").pop().replace(/\.html$/i, "");
+      return slug.replace(/[-_]+/g, " ").replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    }
+
+    function alreadyTrackedRecently(canon) {
+      try {
+        var hist = getHistory();
+        if (!hist.length) return false;
+        var top = hist[0];
+        return top.url === canon && (Date.now() - top.timestamp) < 30000;
+      } catch (_) { return false; }
+    }
+
+    var fired = false;
+    function fire() {
+      if (fired) return;
+      if (!isGuidePage()) return;
+      fired = true;
+
+      hydrate().then(function () {
+        try {
+          var canon = canonicalGuideUrl(location.href);
+          if (alreadyTrackedRecently(canon)) return;
+          trackOpen(extractTitle(), location.href);
+        } catch (_) {}
+      });
+    }
+
+    function schedule() {
+      setTimeout(fire, 250);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", schedule, { once: true });
+    } else {
+      schedule();
+    }
+  })();
+
   /* ---------- auto-hydrate on load + on user switch ---------- */
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", hydrate, { once: true });
@@ -359,7 +394,6 @@
     hydrate();
   });
 
-  /* ---------- flush before unload (catches in-flight debounced writes) ---------- */
   window.addEventListener("pagehide", function () {
     try { flushSync(); } catch (_) {}
   });
