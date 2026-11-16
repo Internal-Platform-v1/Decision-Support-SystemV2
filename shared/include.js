@@ -140,37 +140,10 @@
 })();
 
 (function () {
-    // 1) Load UserGuideStore first — it's the Firestore-backed store.
-    if (!window.__userGuideStoreInjected) {
-        window.__userGuideStoreInjected = true;
-        document.write('<script src="assets/js/user-guide-store.js"><\/script>');
-    }
-    // 2) Then load GuideStore — it's now a thin shim over UserGuideStore.
     if (!window.__guideStoreInjected) {
         window.__guideStoreInjected = true;
         document.write('<script src="assets/js/guide-store.js"><\/script>');
     }
-})();
-
-// 3) Initialize UserGuideStore once the DOM is ready.
-(function () {
-    function initUserStore() {
-        if (window.UserGuideStore && typeof window.UserGuideStore.init === "function") {
-            window.UserGuideStore.init().catch(function () { /* offline */ });
-        }
-    }
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initUserStore, { once: true });
-    } else {
-        initUserStore();
-    }
-
-    // 4) Re-sync when the header signals a user switch.
-    document.addEventListener("bdtools:user-changed", function () {
-        if (window.UserGuideStore && typeof window.UserGuideStore.reset === "function") {
-            window.UserGuideStore.reset().catch(function () { /* offline */ });
-        }
-    });
 })();
 
 (function ensureThemePersistsAcrossHistory() {
