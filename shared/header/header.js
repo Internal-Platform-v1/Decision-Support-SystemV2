@@ -494,33 +494,53 @@
         });
     }
 
-    function setupNavigation() {
+function setupNavigation() {
+    const NAV_DEST = {
+        home:  "index.html",
+        ebs:   "ebs-response-template.html",
+        fbc:   "fbc-comments-guide.html",
+        links: "links.html"
+    };
+
+    const currentPage = window.location.pathname.split("/").pop().toLowerCase();
+    const caseDirectoryPages = ["legacy-case-directory.html", "shine-case-directory.html"];
+
+    function syncActiveState() {
         const navItems = document.querySelectorAll(".brand-nav .nav-item");
-        const currentPage = window.location.pathname.split("/").pop().toLowerCase();
-        const caseDirectoryPages = ["legacy-case-directory.html", "shine-case-directory.html"];
-        const caseDirectoryButton = document.getElementById("caseDirectoryBtn");
+        navItems.forEach(n => n.classList.remove("active"));
 
-        navItems.forEach(nav => nav.classList.remove("active"));
-
-        if (caseDirectoryButton && caseDirectoryPages.includes(currentPage)) {
-            caseDirectoryButton.classList.add("active");
-        } else {
-            navItems.forEach(item => {
-                const dest = { home: "index.html", ebs: "ebs-response-template.html", fbc: "fbc-comments-guide.html", links: "links.html" }[item.dataset.nav];
-                if (dest && currentPage === dest.toLowerCase()) item.classList.add("active");
-            });
+        const caseBtn = document.getElementById("caseDirectoryBtn");
+        if (caseBtn && caseDirectoryPages.includes(currentPage)) {
+            caseBtn.classList.add("active");
+            return;
         }
 
         navItems.forEach(item => {
-            if (item.id === "caseDirectoryBtn") return;
-            item.addEventListener("click", function () {
-                navItems.forEach(nav => nav.classList.remove("active"));
-                this.classList.add("active");
-                const dest = { home: "index.html", ebs: "ebs-response-template.html", fbc: "fbc-comments-guide.html", links: "links.html" }[this.dataset.nav];
-                if (dest) window.location.href = dest;
-            });
+            const dest = NAV_DEST[item.dataset.nav];
+            if (dest && currentPage === dest.toLowerCase()) item.classList.add("active");
         });
     }
+    syncActiveState();
+
+    if (setupNavigation._delegated) return;
+    setupNavigation._delegated = true;
+
+    // Single delegated listener on document — survives header injection,
+    // re-render, duplicate headers, and SPA routing on every page.
+    document.addEventListener("click", function (e) {
+        const item = e.target.closest(".brand-nav .nav-item");
+        if (!item) return;
+        if (item.id === "caseDirectoryBtn") return;   // dropdown handled in setupCaseDirectory
+
+        const dest = NAV_DEST[item.dataset.nav];
+        if (!dest) return;
+
+        document.querySelectorAll(".brand-nav .nav-item")
+            .forEach(n => n.classList.remove("active"));
+        item.classList.add("active");
+        window.location.href = dest;
+    });
+}
 
     /* ------------------------------------------------------------
        6. Notification System
@@ -811,6 +831,9 @@
        8. Initialize
        ------------------------------------------------------------ */
     function start() {
+        if (start._done) return;
+        start._done = true;
+
         setupUserLogin();
         setupTheme();
         setupSettings();
@@ -820,5 +843,20 @@
         setupSharedNotifications();
     }
 
-    start();
+    // Wait until the shared header markup is actually in the DOM,
+    // then initialize. Covers pages that inject the header late.
+    function whenHeaderReady(fn, tries) {
+        tries = tries || 0;
+        const ready =
+            document.querySelector(".brand-nav .nav-item") &&
+            document.getElementById("caseDirectoryBtn") &&
+            document.getElementById("settingsBtn") &&
+            document.getElementById("sharedNotificationBtn");
+
+        if (ready) return fn();
+        if (tries > 100) return;                      // give up after ~10s
+        setTimeout(function () { whenHeaderReady(fn, tries + 1); }, 100);
+    }
+
+    whenHeaderReady(start);
 })();
