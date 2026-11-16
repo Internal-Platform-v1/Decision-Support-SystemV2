@@ -669,3 +669,157 @@
     display: none;
   }
 }
+
+/* ============================================================
+   ADMIN PASSWORD MODAL  (injected by shared admin guard)
+   ============================================================ */
+
+/* Hide everything on the page until the modal is dismissed.
+   The overlay itself is excluded so it stays visible. */
+html.admin-locked body > *:not(#adminAuthOverlay) {
+  visibility: hidden !important;
+}
+
+#adminAuthOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(16, 16, 51, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  color: #17174b;
+}
+
+#adminAuthOverlay .admin-auth-modal {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 26px 24px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e7e5f1;
+  box-shadow: 0 25px 60px rgba(16, 16, 51, 0.35);
+  text-align: center;
+  animation: adminAuthPop .22s ease;
+}
+
+@keyframes adminAuthPop {
+  from { transform: translateY(8px) scale(.98); opacity: 0; }
+  to   { transform: none;                         opacity: 1; }
+}
+
+#adminAuthOverlay .admin-auth-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #791eff, #4d148c);
+  color: #fff;
+  font-size: 24px;
+  box-shadow: 0 8px 22px rgba(77, 20, 140, 0.35);
+}
+
+#adminAuthOverlay h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #17174b;
+  letter-spacing: -0.3px;
+}
+
+#adminAuthOverlay p {
+  margin: 0 0 20px;
+  font-size: 12px;
+  color: #777798;
+  line-height: 1.5;
+}
+
+#adminAuthOverlay .admin-auth-field {
+  text-align: left;
+  margin-bottom: 14px;
+}
+
+#adminAuthOverlay .admin-auth-field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #343565;
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#adminAuthOverlay .admin-auth-field input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #e1e0ec;
+  border-radius: 9px;
+  background: #faf9ff;
+  color: #17174b;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+#adminAuthOverlay .admin-auth-field input:focus {
+  border-color: #6c28d9;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(108, 40, 217, 0.12);
+}
+
+#adminAuthOverlay .admin-auth-error {
+  display: block;
+  min-height: 14px;
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #d92745;
+  text-align: left;
+}
+#adminAuthOverlay .admin-auth-error[hidden] { display: none; }
+
+#adminAuthOverlay .admin-auth-actions {
+  display: flex;
+  gap: 10px;
+}
+
+#adminAuthOverlay .admin-auth-actions button {
+  flex: 1;
+  height: 40px;
+  border: 0;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+#adminAuthOverlay .admin-auth-cancel {
+  background: #f3f2fa;
+  color: #56578a;
+}
+#adminAuthOverlay .admin-auth-cancel:hover { background: #e9e7f5; }
+
+#adminAuthOverlay .admin-auth-submit {
+  background: linear-gradient(135deg, #6c28d9, #4d148c);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(77, 20, 140, 0.3);
+}
+#adminAuthOverlay .admin-auth-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(77, 20, 140, 0.38);
+}
+#adminAuthOverlay .admin-auth-submit:active { transform: translateY(0); }
+
+@media (max-width: 480px) {
+  #adminAuthOverlay .admin-auth-modal { padding: 22px 18px 20px; }
+  #adminAuthOverlay h2 { font-size: 18px; }
+}
