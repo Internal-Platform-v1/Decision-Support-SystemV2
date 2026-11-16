@@ -348,14 +348,21 @@ window.addEventListener("guidestore:ready", renderLists);
 
 
 /* ---------------------------------------------------------
-   Track + open
+   Track + open — waits for Firestore write before navigating
    --------------------------------------------------------- */
 
-function trackAndOpen(url, title) {
+async function trackAndOpen(url, title) {
   if (!url) return;
+
   if (Store && typeof Store.trackOpen === "function") {
-    try { Store.trackOpen(title, url); } catch (_) {}
+    try {
+      await Promise.race([
+        Promise.resolve(Store.trackOpen(title, url)),
+        new Promise(function (r) { setTimeout(r, 500); })  // cap wait
+      ]);
+    } catch (_) {}
   }
+
   window.location.href = url;
 }
 
