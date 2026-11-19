@@ -674,18 +674,28 @@
    ADMIN PASSWORD MODAL  (injected by shared admin guard)
    ============================================================ */
 
-/* Hide everything on the page until the modal is dismissed.
-   The overlay itself is excluded so it stays visible. */
+/* Hide the page behind the modal until it's dismissed. */
 html.admin-locked body > *:not(#adminAuthOverlay) {
   visibility: hidden !important;
+}
+
+/* Critical: the modal lives on document.body — NOT inside
+   #adminHeader — so it doesn't inherit box-sizing: border-box.
+   Without this, inputs with width:100% + padding overflow. */
+#adminAuthOverlay,
+#adminAuthOverlay *,
+#adminAuthOverlay *::before,
+#adminAuthOverlay *::after {
+  box-sizing: border-box;
 }
 
 #adminAuthOverlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
   background: rgba(16, 16, 51, 0.72);
   backdrop-filter: blur(6px);
@@ -697,30 +707,33 @@ html.admin-locked body > *:not(#adminAuthOverlay) {
 #adminAuthOverlay .admin-auth-modal {
   width: 100%;
   max-width: 380px;
+  margin: 0 auto;
   padding: 28px 26px 24px;
   background: #fff;
   border-radius: 14px;
   border: 1px solid #e7e5f1;
   box-shadow: 0 25px 60px rgba(16, 16, 51, 0.35);
   text-align: center;
-  animation: adminAuthPop .22s ease;
+  animation: adminAuthPop 0.22s ease;
 }
 
 @keyframes adminAuthPop {
   from { transform: translateY(8px) scale(.98); opacity: 0; }
-  to   { transform: none;                         opacity: 1; }
+  to   { transform: none;                        opacity: 1; }
 }
 
 #adminAuthOverlay .admin-auth-icon {
   width: 56px;
   height: 56px;
   margin: 0 auto 16px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background: linear-gradient(135deg, #791eff, #4d148c);
   color: #fff;
   font-size: 24px;
+  line-height: 1;
   box-shadow: 0 8px 22px rgba(77, 20, 140, 0.35);
 }
 
@@ -730,6 +743,7 @@ html.admin-locked body > *:not(#adminAuthOverlay) {
   font-weight: 800;
   color: #17174b;
   letter-spacing: -0.3px;
+  text-align: center;
 }
 
 #adminAuthOverlay p {
@@ -737,35 +751,51 @@ html.admin-locked body > *:not(#adminAuthOverlay) {
   font-size: 12px;
   color: #777798;
   line-height: 1.5;
+  text-align: center;
+}
+
+#adminAuthOverlay form {
+  margin: 0;
+  width: 100%;
 }
 
 #adminAuthOverlay .admin-auth-field {
+  margin: 0 0 14px;
   text-align: left;
-  margin-bottom: 14px;
+  width: 100%;
 }
 
 #adminAuthOverlay .admin-auth-field label {
   display: block;
+  width: 100%;
   font-size: 10px;
   font-weight: 700;
   color: #343565;
-  margin-bottom: 6px;
+  margin: 0 0 6px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 #adminAuthOverlay .admin-auth-field input {
+  display: block;
   width: 100%;
   height: 42px;
+  margin: 0;
   padding: 0 14px;
   border: 1px solid #e1e0ec;
   border-radius: 9px;
   background: #faf9ff;
   color: #17174b;
   font-size: 13px;
-  outline: none;
   font-family: inherit;
+  line-height: 42px;
+  outline: none;
   transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+#adminAuthOverlay .admin-auth-field input::placeholder {
+  color: #a9a8c1;
+  opacity: 1;
 }
 
 #adminAuthOverlay .admin-auth-field input:focus {
@@ -776,6 +806,7 @@ html.admin-locked body > *:not(#adminAuthOverlay) {
 
 #adminAuthOverlay .admin-auth-error {
   display: block;
+  width: 100%;
   min-height: 14px;
   margin: 0 0 12px;
   font-size: 11px;
@@ -788,11 +819,13 @@ html.admin-locked body > *:not(#adminAuthOverlay) {
 #adminAuthOverlay .admin-auth-actions {
   display: flex;
   gap: 10px;
+  width: 100%;
 }
 
 #adminAuthOverlay .admin-auth-actions button {
-  flex: 1;
+  flex: 1 1 0;
   height: 40px;
+  margin: 0;
   border: 0;
   border-radius: 9px;
   font-family: inherit;
