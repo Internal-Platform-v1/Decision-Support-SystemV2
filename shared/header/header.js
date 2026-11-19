@@ -6,6 +6,7 @@
 
     const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
+    const DIRECTORY_URL = "employee-directory.html";
 
     const ANNOUNCEMENTS_COLLECTION = "announcements";
     const HELP_COLLECTION = "help_requests";
@@ -136,7 +137,9 @@
     }
 
     /* ------------------------------------------------------------
-       2. Apply Role to UI (drives the Admin Dashboard button)
+       2. Apply Role to UI
+          - Admin Dashboard button: admin only
+          - Employee Directory button: any signed-in user
        ------------------------------------------------------------ */
     function applyRole(role) {
         document.documentElement.setAttribute("data-role", role);
@@ -146,6 +149,11 @@
             opt.classList.toggle("active", active);
             opt.setAttribute("aria-checked", String(active));
         });
+
+        const isSignedIn = !!getStoredUser();
+
+        const directoryBtn = document.getElementById("employeeDirectoryBtn");
+        if (directoryBtn) directoryBtn.hidden = !isSignedIn;
 
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
@@ -262,7 +270,7 @@
             try { if (firstName) localStorage.setItem(DISPLAY_NAME_KEY, firstName); } catch (e) {}
         }
 
-        /* Role is derived from session — updates Admin Dashboard button */
+        /* Role is derived from session — updates buttons + fires event */
         applyRole(getUserRoleFromSession());
 
         /* Always notify listeners (index page, footer, other scripts) */
@@ -336,7 +344,6 @@
         }
         function close() { gate.hidden = true; }
 
-        /* ---------- Sign out — attach ALWAYS (before any early return) ---------- */
         if (signOut) {
             signOut.hidden = false;
             signOut.addEventListener("click", function (e) {
@@ -356,7 +363,6 @@
             });
         }
 
-        /* ---------- Form submit — attach ALWAYS ---------- */
         form.addEventListener("submit", async function (e) {
             e.preventDefault();
             if (error) error.textContent = "";
@@ -402,7 +408,6 @@
             }
         });
 
-        /* ---------- Existing session — restore and bail early ---------- */
         const existing = getStoredUser();
         if (existing && (existing.empId || existing.name || existing.firstName)) {
             applyLoggedInUser(existing);
@@ -413,7 +418,6 @@
             return;
         }
 
-        /* ---------- Fresh visit — block until logged in ---------- */
         open();
     }
 
@@ -424,16 +428,15 @@
         const button = document.getElementById("settingsBtn");
         const menu = document.getElementById("settingsMenu");
         const adminBtn = document.getElementById("adminDashboardBtn");
+        const directoryBtn = document.getElementById("employeeDirectoryBtn");
         if (!button || !menu) return;
 
-        /* Remove the manual View Mode toggle — role is now login-driven */
         const roleLabelEl = document.getElementById("roleLabel");
         if (roleLabelEl) {
             const roleGroup = roleLabelEl.closest(".settings-group");
             if (roleGroup) roleGroup.remove();
         }
 
-        /* Apply the initial role from the login session */
         applyRole(getUserRoleFromSession());
 
         function close() {
@@ -448,6 +451,18 @@
             button.setAttribute("aria-expanded", String(open));
         });
 
+        /* Employee Directory — available to any signed-in user */
+        if (directoryBtn) {
+            directoryBtn.addEventListener("click", e => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!getStoredUser()) return;      // safety guard
+                close();
+                window.location.href = DIRECTORY_URL;
+            });
+        }
+
+        /* Admin Dashboard — admin only */
         if (adminBtn) {
             adminBtn.addEventListener("click", e => {
                 e.preventDefault();
@@ -458,8 +473,6 @@
                 const user = getStoredUser();
                 if (!user) return;
 
-                /* Write the same auth state the old password flow used to write,
-                   so the admin dashboard page authorizes this navigation. */
                 setAdminSession(user);
 
                 close();
@@ -535,12 +548,10 @@
         if (setupNavigation._delegated) return;
         setupNavigation._delegated = true;
 
-        // Single delegated listener on document — survives header injection,
-        // re-render, duplicate headers, and SPA routing on every page.
         document.addEventListener("click", function (e) {
             const item = e.target.closest(".brand-nav .nav-item");
             if (!item) return;
-            if (item.id === "caseDirectoryBtn") return;   // dropdown handled in setupCaseDirectory
+            if (item.id === "caseDirectoryBtn") return;
 
             const dest = NAV_DEST[item.dataset.nav];
             if (!dest) return;
@@ -638,7 +649,6 @@
                 const type = this.dataset.type;
                 const id = this.dataset.id;
 
-                // Mark Read
                 if (type === "announcement") {
                     const seen = getSeenAnnouncements();
                     seen[id] = Date.now();
@@ -655,7 +665,6 @@
 
                 document.getElementById("notificationDropdown").classList.remove("open");
 
-                // Route
                 if (type === "help") {
                     const helpBtn = document.getElementById("footerHelpBtn");
                     if (helpBtn) {
@@ -668,7 +677,6 @@
                         window.location.href = "index.html";
                     }
                 } else {
-                    // Announcement - Open Preview Modal
                     if (window.BDNotificationModal && obj.originalData) {
                         window.BDNotificationModal.open(obj.originalData);
                     } else {
@@ -733,7 +741,6 @@
                     });
                 });
 
-                // SORT AND CACHE FOR THE FULL UPDATE MODAL
                 allPublished.sort((a, b) => {
                     const tA = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
                     const tB = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
@@ -755,7 +762,7 @@
                     };
                 });
 
-                window.BDUpdateData = formattedSlides; // Save for the shared modal
+                window.BDUpdateData = formattedSlides;
 
                 currentNotifications = currentNotifications.filter(n => n.type !== "announcement").concat(newAnns);
                 renderNotifications();
@@ -834,26 +841,11 @@
     function setupSearch() {
         const input = document.getElementById("globalSearch"); if (!input || input.dataset.v2SearchInitialized === "true") return;
         input.dataset.v2SearchInitialized = "true";
-        // Search logic omitted for brevity, assuming you have it
     }
 
     /* ------------------------------------------------------------
-       8. User Profile Modal (self-service profile editor)
+       8. User Profile Modal
        ------------------------------------------------------------ */
-
-    /* Derive firstName/lastName from the flat `name` field.
-       Rule: LAST whitespace-separated token = last name;
-             everything before it (1, 2, 3… names) = first name.
-
-         "John Smith"          → "John"        / "Smith"
-         "Julan Ryan Guinto"   → "Julan Ryan"  / "Guinto"
-         "Maria Cruz Santos"   → "Maria Cruz"  / "Santos"
-
-       The flat `name` field is treated as the source of truth because
-       it's what a human typed. Stored firstName/lastName are only used
-       as a fallback when `name` is missing. This self-heals docs that
-       were previously saved with the wrong split — the modal will show
-       the correct split and the next save will overwrite the bad values. */
     function deriveFirstLast(user) {
         if (!user) return { firstName: "", lastName: "" };
 
@@ -870,7 +862,6 @@
             };
         }
 
-        // No flat name — fall back to whatever was stored.
         return {
             firstName: (user.firstName || "").trim(),
             lastName:  (user.lastName  || "").trim()
@@ -946,7 +937,7 @@
         if (!modal) return;
 
         const user = getStoredUser();
-        if (!user) return;                            // signed-out guard
+        if (!user) return;
 
         populateProfileForm(user);
         modal.hidden = false;
@@ -1013,8 +1004,6 @@
         const updates = {
             firstName,
             lastName,
-            // Keep the flat `name` field in sync so the header, footer,
-            // and future Employee Directory all read the same truth.
             name: [firstName, lastName].filter(Boolean).join(" "),
             preferredName,
             email,
@@ -1040,7 +1029,7 @@
 
             const merged = Object.assign({}, user, updates);
             persistUser(merged);
-            applyLoggedInUser(merged);                // refresh header UI + fire bdtools:user-changed
+            applyLoggedInUser(merged);
 
             setStatus("Profile saved successfully.", false);
 
@@ -1057,33 +1046,27 @@
         const modal = document.getElementById("profileModal");
         if (!modal) return;
 
-        // Close buttons + backdrop
         modal.querySelectorAll("[data-profile-close]").forEach(el => {
             el.addEventListener("click", closeProfileModal);
         });
 
-        // Escape key
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape" && !modal.hidden) closeProfileModal();
         });
 
-        // Form submit
         const form = document.getElementById("profileForm");
         if (form) form.addEventListener("submit", saveProfile);
 
-        // Live avatar preview as first/last name changes
         ["profileFirstName", "profileLastName"].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener("input", updateProfileAvatarPreview);
         });
 
-        // Trigger: click on the user identity block in the settings dropdown
         const userBlock = document.getElementById("settingsUserBlock");
         if (userBlock) {
             userBlock.addEventListener("click", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Close settings menu first
                 const menu = document.getElementById("settingsMenu");
                 if (menu) menu.classList.remove("open");
                 const btn = document.getElementById("settingsBtn");
@@ -1098,7 +1081,6 @@
             });
         }
 
-        // Public API — handy for future pages (Employee Directory, etc.)
         window.BDProfileModal = {
             open: openProfileModal,
             close: closeProfileModal
@@ -1122,8 +1104,6 @@
         setupProfileModal();
     }
 
-    // Wait until the shared header markup is actually in the DOM,
-    // then initialize. Covers pages that inject the header late.
     function whenHeaderReady(fn, tries) {
         tries = tries || 0;
         const ready =
@@ -1133,7 +1113,7 @@
             document.getElementById("sharedNotificationBtn");
 
         if (ready) return fn();
-        if (tries > 100) return;                      // give up after ~10s
+        if (tries > 100) return;
         setTimeout(function () { whenHeaderReady(fn, tries + 1); }, 100);
     }
 
