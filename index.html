@@ -298,16 +298,34 @@
 
 <script>
     (function () {
+        /* Derive the "first name" for display.
+           Rule: LAST whitespace-separated token = last name;
+                 everything before it (1, 2, 3… names) = first name.
+           Always derived from the flat `name` field so a stale
+           `firstName` field can't poison the greeting. */
+        function firstNameFromFullName(full) {
+            var trimmed = String(full || "").trim();
+            if (!trimmed) return "";
+            var parts = trimmed.split(/\s+/);
+            if (parts.length <= 1) return parts[0] || "";
+            return parts.slice(0, -1).join(" ");
+        }
+
+        function firstNameForUser(u) {
+            if (!u) return "";
+            var full = (u.name || u.displayName || u.fullName || "").trim();
+            if (full) return firstNameFromFullName(full);
+            return (u.firstName || "").trim();
+        }
+
         function getStoredFirstName() {
             try {
                 var raw = localStorage.getItem('bd_logged_in_user');
                 if (raw) {
                     var u = JSON.parse(raw);
                     if (u) {
-                        var fn = (u.firstName || '').trim();
+                        var fn = firstNameForUser(u);
                         if (fn) return fn;
-                        var full = (u.name || u.displayName || '').trim();
-                        if (full) return full.split(/\s+/)[0];
                     }
                 }
                 return (localStorage.getItem('bd_display_name') || '').trim();
@@ -334,11 +352,7 @@
         // React to login / sign-out / user switch from the shared header
         document.addEventListener('bdtools:user-changed', function (e) {
             var user = (e && e.detail && e.detail.user) || null;
-            var name = '';
-            if (user) {
-                name = (user.firstName || '').trim();
-                if (!name && user.name) name = user.name.trim().split(/\s+/)[0];
-            }
+            var name = firstNameForUser(user);
             updateGreetingName(name);
         });
 
