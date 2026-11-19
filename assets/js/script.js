@@ -1,24 +1,56 @@
 /* ============================================================
    CURRENT USER NAME
+   Derives the greeting from the flat `name` field so multi-word
+   first names like "Julan Ryan" survive. Stale `firstName`
+   fields (from an old save) are ignored in favor of `name`.
+
+   Rule: LAST whitespace-separated token = last name;
+         everything before it = first name.
    ============================================================ */
+
+function firstNameFromFullName(full) {
+  const trimmed = String(full || "").trim();
+  if (!trimmed) return "";
+  const parts = trimmed.split(/\s+/);
+  if (parts.length <= 1) return parts[0] || "";
+  return parts.slice(0, -1).join(" ");
+}
+
+function firstNameForGreeting(source) {
+  if (!source) return "";
+  const full = String(source.name || source.displayName || source.fullName || "").trim();
+  if (full) return firstNameFromFullName(full);
+  return String(source.firstName || "").trim();
+}
 
 function updateDashboardUserName(profile) {
   const nameElement = document.getElementById("currentUserName");
   if (!nameElement) return;
 
-  const displayName = profile?.displayName || window.currentUserProfile?.displayName;
-  if (!displayName) return;
+  // 1st choice: the live session (already correct from header.js)
+  let firstName = "";
+  try {
+    const raw = localStorage.getItem("bd_logged_in_user");
+    if (raw) {
+      const u = JSON.parse(raw);
+      if (u) firstName = firstNameForGreeting(u);
+    }
+  } catch (_) {}
 
-  const firstName = displayName.trim().split(/\s+/)[0];
+  // 2nd choice: the profile object passed in
+  if (!firstName) firstName = firstNameForGreeting(profile);
+
+  // 3rd choice: whatever `window.currentUserProfile` was set to
+  if (!firstName) firstName = firstNameForGreeting(window.currentUserProfile);
+
+  if (!firstName) return;
 
   nameElement.textContent = "";
-  if (firstName) {
-    const spaceSpan = document.createElement("span");
-    spaceSpan.style.color = "#10134f";
-    spaceSpan.textContent = " ";
-    nameElement.appendChild(spaceSpan);
-    nameElement.appendChild(document.createTextNode(firstName));
-  }
+  const spaceSpan = document.createElement("span");
+  spaceSpan.style.color = "#10134f";
+  spaceSpan.textContent = " ";
+  nameElement.appendChild(spaceSpan);
+  nameElement.appendChild(document.createTextNode(firstName));
 
   if (typeof window.bdToolsUserReady === "function") {
     window.bdToolsUserReady();
