@@ -30,6 +30,10 @@
        Case-insensitive match. Add more if needed. */
     const ADMIN_ROLES = ["admin", "manager", "administrator"];
 
+    /* Collection written by the profile modal — must match
+       USER_LOOKUP_COLLECTIONS[0].name so sign-in and profile share one doc. */
+    const PROFILE_COLLECTION = "employees";
+
     const SLIDES = [
         { key: "general",   icon: "fa-solid fa-bullhorn",              label: "📢 Announcements" },
         { key: "whats_new", icon: "fa-solid fa-wand-magic-sparkles",   label: "✨ What's New?" },
@@ -261,7 +265,7 @@
         /* Role is derived from session — updates Admin Dashboard button */
         applyRole(getUserRoleFromSession());
 
-        /* Always notify listeners (index page, other scripts) */
+        /* Always notify listeners (index page, footer, other scripts) */
         document.dispatchEvent(new CustomEvent("bdtools:user-changed", { detail: { user: user || null } }));
     }
 
@@ -292,13 +296,19 @@
                         const doc  = snap.docs[0];
                         const data = doc.data() || {};
                         return {
-                            id:        doc.id,
-                            empId:     empId,
-                            firstName: data.firstName || "",
-                            lastName:  data.lastName  || "",
-                            name:      data.name || data.displayName || data.fullName || "",
-                            email:     data.email || "",
-                            role:      data.role  || "User"
+                            id:            doc.id,
+                            empId:         empId,
+                            firstName:     data.firstName || "",
+                            lastName:      data.lastName  || "",
+                            name:          data.name || data.displayName || data.fullName || "",
+                            preferredName: data.preferredName || "",
+                            email:         data.email || "",
+                            role:          data.role  || "User",
+                            queue:         data.queue || "",
+                            phone:         data.phone || "",
+                            title:         data.title || "",
+                            department:    data.department || "",
+                            location:      data.location || ""
                         };
                     }
                 } catch (err) {
@@ -494,53 +504,53 @@
         });
     }
 
-function setupNavigation() {
-    const NAV_DEST = {
-        home:  "index.html",
-        ebs:   "ebs-response-template.html",
-        fbc:   "fbc-comments-guide.html",
-        links: "links.html"
-    };
+    function setupNavigation() {
+        const NAV_DEST = {
+            home:  "index.html",
+            ebs:   "ebs-response-template.html",
+            fbc:   "fbc-comments-guide.html",
+            links: "links.html"
+        };
 
-    const currentPage = window.location.pathname.split("/").pop().toLowerCase();
-    const caseDirectoryPages = ["legacy-case-directory.html", "shine-case-directory.html"];
+        const currentPage = window.location.pathname.split("/").pop().toLowerCase();
+        const caseDirectoryPages = ["legacy-case-directory.html", "shine-case-directory.html"];
 
-    function syncActiveState() {
-        const navItems = document.querySelectorAll(".brand-nav .nav-item");
-        navItems.forEach(n => n.classList.remove("active"));
+        function syncActiveState() {
+            const navItems = document.querySelectorAll(".brand-nav .nav-item");
+            navItems.forEach(n => n.classList.remove("active"));
 
-        const caseBtn = document.getElementById("caseDirectoryBtn");
-        if (caseBtn && caseDirectoryPages.includes(currentPage)) {
-            caseBtn.classList.add("active");
-            return;
+            const caseBtn = document.getElementById("caseDirectoryBtn");
+            if (caseBtn && caseDirectoryPages.includes(currentPage)) {
+                caseBtn.classList.add("active");
+                return;
+            }
+
+            navItems.forEach(item => {
+                const dest = NAV_DEST[item.dataset.nav];
+                if (dest && currentPage === dest.toLowerCase()) item.classList.add("active");
+            });
         }
+        syncActiveState();
 
-        navItems.forEach(item => {
+        if (setupNavigation._delegated) return;
+        setupNavigation._delegated = true;
+
+        // Single delegated listener on document — survives header injection,
+        // re-render, duplicate headers, and SPA routing on every page.
+        document.addEventListener("click", function (e) {
+            const item = e.target.closest(".brand-nav .nav-item");
+            if (!item) return;
+            if (item.id === "caseDirectoryBtn") return;   // dropdown handled in setupCaseDirectory
+
             const dest = NAV_DEST[item.dataset.nav];
-            if (dest && currentPage === dest.toLowerCase()) item.classList.add("active");
+            if (!dest) return;
+
+            document.querySelectorAll(".brand-nav .nav-item")
+                .forEach(n => n.classList.remove("active"));
+            item.classList.add("active");
+            window.location.href = dest;
         });
     }
-    syncActiveState();
-
-    if (setupNavigation._delegated) return;
-    setupNavigation._delegated = true;
-
-    // Single delegated listener on document — survives header injection,
-    // re-render, duplicate headers, and SPA routing on every page.
-    document.addEventListener("click", function (e) {
-        const item = e.target.closest(".brand-nav .nav-item");
-        if (!item) return;
-        if (item.id === "caseDirectoryBtn") return;   // dropdown handled in setupCaseDirectory
-
-        const dest = NAV_DEST[item.dataset.nav];
-        if (!dest) return;
-
-        document.querySelectorAll(".brand-nav .nav-item")
-            .forEach(n => n.classList.remove("active"));
-        item.classList.add("active");
-        window.location.href = dest;
-    });
-}
 
     /* ------------------------------------------------------------
        6. Notification System
@@ -818,10 +828,39 @@ function setupNavigation() {
         });
     }
 
-       /* ------------------------------------------------------------
-       9. Profile Modal (self-service profile editor)
+    /* ------------------------------------------------------------
+       7. Global Search
        ------------------------------------------------------------ */
-    const PROFILE_COLLECTION = "employees";    // must match USER_LOOKUP_COLLECTIONS[0]
+    function setupSearch() {
+        const input = document.getElementById("globalSearch"); if (!input || input.dataset.v2SearchInitialized === "true") return;
+        input.dataset.v2SearchInitialized = "true";
+        // Search logic omitted for brevity, assuming you have it
+    }
+
+    /* ------------------------------------------------------------
+       8. User Profile Modal (self-service profile editor)
+       ------------------------------------------------------------ */
+    function deriveFirstLast(user) {
+        if (!user) return { firstName: "", lastName: "" };
+
+        let firstName = (user.firstName || "").trim();
+        let lastName  = (user.lastName  || "").trim();
+
+        if (!firstName || !lastName) {
+            const full = (user.name || user.displayName || user.fullName || "").trim();
+            if (full) {
+                const parts = full.split(/\s+/);
+                if (parts.length === 1) {
+                    if (!firstName) firstName = parts[0];
+                } else {
+                    if (!firstName) firstName = parts[0];
+                    if (!lastName)  lastName  = parts.slice(1).join(" ");
+                }
+            }
+        }
+
+        return { firstName, lastName };
+    }
 
     function updateProfileAvatarPreview() {
         const first = (document.getElementById("profileFirstName")?.value || "").trim();
@@ -834,8 +873,10 @@ function setupNavigation() {
     function populateProfileForm(user) {
         const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
 
-        setVal("profileFirstName",     user.firstName || "");
-        setVal("profileLastName",      user.lastName || "");
+        const { firstName, lastName } = deriveFirstLast(user);
+
+        setVal("profileFirstName",     firstName);
+        setVal("profileLastName",      lastName);
         setVal("profilePreferredName", user.preferredName || "");
         setVal("profileEmail",         user.email || "");
         setVal("profileQueue",         user.queue || "");
@@ -844,7 +885,9 @@ function setupNavigation() {
         setVal("profileDepartment",    user.department || "");
         setVal("profileLocation",      user.location || "");
 
-        const fullName = displayNameOf(user) || "User";
+        const fullName = [firstName, lastName].filter(Boolean).join(" ")
+                       || displayNameOf(user)
+                       || "User";
         const initials = getInitials(fullName);
 
         const avatar = document.getElementById("profileModalAvatar");
@@ -955,6 +998,9 @@ function setupNavigation() {
         const updates = {
             firstName,
             lastName,
+            // Keep the flat `name` field in sync so the header, footer,
+            // and future Employee Directory all read the same truth.
+            name: [firstName, lastName].filter(Boolean).join(" "),
             preferredName,
             email,
             queue,
@@ -1045,16 +1091,7 @@ function setupNavigation() {
     }
 
     /* ------------------------------------------------------------
-       7. Global Search
-       ------------------------------------------------------------ */
-    function setupSearch() {
-        const input = document.getElementById("globalSearch"); if (!input || input.dataset.v2SearchInitialized === "true") return;
-        input.dataset.v2SearchInitialized = "true";
-        // Search logic omitted for brevity, assuming you have it
-    }
-
-    /* ------------------------------------------------------------
-       8. Initialize
+       9. Initialize
        ------------------------------------------------------------ */
     function start() {
         if (start._done) return;
@@ -1067,7 +1104,7 @@ function setupNavigation() {
         setupNavigation();
         setupSearch();
         setupSharedNotifications();
-        setupProfileModal();          // ← new
+        setupProfileModal();
     }
 
     // Wait until the shared header markup is actually in the DOM,
