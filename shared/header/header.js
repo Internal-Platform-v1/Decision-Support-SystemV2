@@ -19,20 +19,13 @@
     const LOGGED_USER_KEY  = "bd_logged_in_user";
     const DISPLAY_NAME_KEY = "bd_display_name";
 
-    /* Firestore collections to search when resolving an EMP ID.
-       Edit this list if your employee directory lives elsewhere. */
     const USER_LOOKUP_COLLECTIONS = [
         { name: "employees",      idFields: ["empId", "employeeId", "emp_id"] },
         { name: "users",          idFields: ["empId", "employeeId", "emp_id"] },
         { name: "approved_users", idFields: ["empId", "employeeId", "emp_id"] }
     ];
 
-    /* Roles from Firestore that unlock the Admin Dashboard button.
-       Case-insensitive match. Add more if needed. */
     const ADMIN_ROLES = ["admin", "manager", "administrator"];
-
-    /* Collection written by the profile modal — must match
-       USER_LOOKUP_COLLECTIONS[0].name so sign-in and profile share one doc. */
     const PROFILE_COLLECTION = "employees";
 
     const SLIDES = [
@@ -92,7 +85,6 @@
         } catch (e) {}
     }
 
-    /* Role is derived entirely from the logged-in user's Firestore record. */
     function getUserRoleFromSession() {
         const user = getStoredUser();
         if (!user) return "user";
@@ -105,8 +97,6 @@
         return getUserRoleFromSession();
     }
 
-    /* Writes the same admin session state the old password flow used to set.
-       The admin dashboard page reads this to authorize access. */
     function setAdminSession(user) {
         try {
             window.name = JSON.stringify({
@@ -138,8 +128,6 @@
 
     /* ------------------------------------------------------------
        2. Apply Role to UI
-          - Admin Dashboard button: admin only
-          - Employee Directory button: any signed-in user
        ------------------------------------------------------------ */
     function applyRole(role) {
         document.documentElement.setAttribute("data-role", role);
@@ -211,7 +199,7 @@
     }
 
     /* ------------------------------------------------------------
-       4. User Login Gate (FXF Employee ID)
+       4. User Login Gate
        ------------------------------------------------------------ */
     function getInitials(name) {
         const n = String(name || "").trim();
@@ -225,6 +213,23 @@
         if (!user) return "";
         const composed = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
         return user.name || user.displayName || user.fullName || composed || "";
+    }
+
+    /* Derive the greeting name.
+       Preferred name wins; otherwise use "all but last token" of the
+       flat `name` field (same rule as the profile modal). */
+    function greetingNameOf(user) {
+        if (!user) return "";
+        const preferred = String(user.preferredName || "").trim();
+        if (preferred) return preferred;
+
+        const full = (user.name || user.displayName || user.fullName || "").trim();
+        if (full) {
+            const parts = full.split(/\s+/);
+            if (parts.length <= 1) return parts[0] || "";
+            return parts.slice(0, -1).join(" ");
+        }
+        return (user.firstName || "").trim();
     }
 
     function applyLoggedInUser(user) {
@@ -249,31 +254,30 @@
             try { localStorage.removeItem(DISPLAY_NAME_KEY); } catch (e) {}
         } else {
             const fullName  = displayNameOf(user);
-            const firstName = user.firstName || fullName.split(/\s+/)[0] || "";
-            const initials  = getInitials(fullName || firstName || user.empId || "");
+            const initials  = getInitials(fullName || user.empId || "");
 
             if (gearEl) gearEl.hidden = true;
             if (initialsEl) {
                 initialsEl.textContent = initials || "?";
                 initialsEl.hidden = false;
-                initialsEl.title = fullName || firstName || "Signed in";
+                initialsEl.title = fullName || "Signed in";
             }
             if (userBlock) userBlock.hidden = false;
             if (userAvatar) userAvatar.textContent = initials || "?";
-            if (userName) userName.textContent = fullName || firstName || "Signed in";
+            if (userName) userName.textContent = fullName || "Signed in";
             if (userEmpEl) userEmpEl.textContent = user.empId ? `EMP ${user.empId}` : "";
             if (signOutBtn) signOutBtn.hidden = false;
             if (settingsBtn) {
                 settingsBtn.setAttribute("aria-label", `Account menu for ${fullName || "user"}`);
                 settingsBtn.title = fullName || "Account";
             }
-            try { if (firstName) localStorage.setItem(DISPLAY_NAME_KEY, firstName); } catch (e) {}
+            try {
+                const cacheName = greetingNameOf(user);
+                if (cacheName) localStorage.setItem(DISPLAY_NAME_KEY, cacheName);
+            } catch (e) {}
         }
 
-        /* Role is derived from session — updates buttons + fires event */
         applyRole(getUserRoleFromSession());
-
-        /* Always notify listeners (index page, footer, other scripts) */
         document.dispatchEvent(new CustomEvent("bdtools:user-changed", { detail: { user: user || null } }));
     }
 
@@ -319,10 +323,31 @@
                             location:      data.location || ""
                         };
                     }
-                } catch (err) {
-                    /* collection or field may not exist — keep trying */
-                }
+                } catch (err) { /* keep trying */ }
             }
+
+            /* Fallback — some docs use the EMP ID as the document ID */
+            try {
+                const docSnap = await db.collection(col.name).doc(empId).get();
+                if (docSnap.exists) {
+                    const data = docSnap.data() || {};
+                    return {
+                        id:            docSnap.id,
+                        empId:         empId,
+                        firstName:     data.firstName || "",
+                        lastName:      data.lastName  || "",
+                        name:          data.name || data.displayName || data.fullName || "",
+                        preferredName: data.preferredName || "",
+                        email:         data.email || "",
+                        role:          data.role  || "User",
+                        queue:         data.queue || "",
+                        phone:         data.phone || "",
+                        title:         data.title || "",
+                        department:    data.department || "",
+                        location:      data.location || ""
+                    };
+                }
+            } catch (err) { /* ignore */ }
         }
         return null;
     }
@@ -409,7 +434,7 @@
         });
 
         const existing = getStoredUser();
-        if (existing && (existing.empId || existing.name || existing.firstName)) {
+        if (existing && (existing.empId || existing.name || existing.firstName || existing.preferredName)) {
             applyLoggedInUser(existing);
             close();
             setTimeout(() => {
@@ -451,18 +476,16 @@
             button.setAttribute("aria-expanded", String(open));
         });
 
-        /* Employee Directory — available to any signed-in user */
         if (directoryBtn) {
             directoryBtn.addEventListener("click", e => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (!getStoredUser()) return;      // safety guard
+                if (!getStoredUser()) return;
                 close();
                 window.location.href = DIRECTORY_URL;
             });
         }
 
-        /* Admin Dashboard — admin only */
         if (adminBtn) {
             adminBtn.addEventListener("click", e => {
                 e.preventDefault();
@@ -891,10 +914,16 @@
         setVal("profileDepartment",    user.department || "");
         setVal("profileLocation",      user.location || "");
 
-        const fullName = [firstName, lastName].filter(Boolean).join(" ")
-                       || displayNameOf(user)
-                       || "User";
-        const initials = getInitials(fullName);
+        // JS backstop — keep name fields locked even if DevTools removed the attribute
+        ["profileFirstName", "profileLastName"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.readOnly = true;
+        });
+
+        const displayName = [firstName, lastName].filter(Boolean).join(" ")
+                          || displayNameOf(user)
+                          || "User";
+        const initials = getInitials(displayName);
 
         const avatar = document.getElementById("profileModalAvatar");
         if (avatar) avatar.textContent = initials;
@@ -950,8 +979,8 @@
         if (submit) { submit.disabled = false; submit.classList.remove("loading"); }
 
         setTimeout(() => {
-            const first = document.getElementById("profileFirstName");
-            if (first) first.focus();
+            const pref = document.getElementById("profilePreferredName");
+            if (pref) pref.focus();
         }, 80);
 
         refreshProfileFromFirestore(user);
@@ -985,8 +1014,7 @@
 
         const getVal = (id) => (document.getElementById(id)?.value || "").trim();
 
-        const firstName     = getVal("profileFirstName");
-        const lastName      = getVal("profileLastName");
+        // First/last name are NOT read from the form — they're locked.
         const preferredName = getVal("profilePreferredName");
         const email         = getVal("profileEmail");
         const queue         = getVal("profileQueue");
@@ -995,16 +1023,14 @@
         const department    = getVal("profileDepartment");
         const location      = getVal("profileLocation");
 
-        if (!firstName) return setStatus("Please enter your first name.", true);
-        if (!lastName)  return setStatus("Please enter your last name.", true);
         if (!email)     return setStatus("Please enter your email.", true);
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setStatus("Please enter a valid email address.", true);
         if (!queue)     return setStatus("Please select or enter your queue.", true);
 
+        // Only these fields are ever written by the profile modal.
+        // firstName / lastName / name / empId / role are never touched here —
+        // tampering with the readonly inputs has no effect on Firestore.
         const updates = {
-            firstName,
-            lastName,
-            name: [firstName, lastName].filter(Boolean).join(" "),
             preferredName,
             email,
             queue,
@@ -1013,6 +1039,15 @@
             department,
             location
         };
+
+        // Safety net: if the doc has no name at all, seed `name` from the
+        // preferred name so the directory + greeting have something to show.
+        const existingName  = String(user.name || "").trim();
+        const existingFirst = String(user.firstName || "").trim();
+        const existingLast  = String(user.lastName || "").trim();
+        if (!existingName && !existingFirst && !existingLast && preferredName) {
+            updates.name = preferredName;
+        }
 
         if (submit) { submit.disabled = true; submit.classList.add("loading"); }
 
@@ -1056,11 +1091,6 @@
 
         const form = document.getElementById("profileForm");
         if (form) form.addEventListener("submit", saveProfile);
-
-        ["profileFirstName", "profileLastName"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener("input", updateProfileAvatarPreview);
-        });
 
         const userBlock = document.getElementById("settingsUserBlock");
         if (userBlock) {
