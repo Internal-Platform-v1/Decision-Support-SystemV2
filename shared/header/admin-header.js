@@ -6,9 +6,22 @@
 
   /* ----------------------------------------------------------
      Admin guard + password modal
-     The console stays locked behind a modal until the correct
-     password is entered. Unlock state is stored in window.name
-     so it survives navigation between admin pages in the same tab.
+
+     Two layers:
+
+     1) Index-level auth (unchanged):
+        window.name must contain a valid token (set by the index
+        login). If not, redirect to home.
+
+     2) Admin password gate (new):
+        A separate sessionStorage flag. If missing/expired, a
+        blocking modal is shown and page content stays hidden
+        until the correct password is entered.
+
+     Unlock state lives in sessionStorage, so it survives
+     navigation/reload inside the same tab but resets when the
+     tab is closed — and it is cleared on Sign Out.
+
      Change ADMIN_PASSWORD below to update the gate.
      ---------------------------------------------------------- */
   (function adminGuard() {
@@ -16,40 +29,52 @@
     const ADMIN_PASSWORD = "fedex-admin-2027"; // ← change me later
     const SESSION_HOURS  = 8;
     const MAX_ATTEMPTS   = 5;
+    const GATE_KEY       = "bd_admin_gate_unlocked";
 
-    function readSession() {
+    /* ---- Layer 1: index-level auth (unchanged behavior) ---- */
+    function isIndexUnlocked() {
       try {
-        if (!window.name) return null;
+        if (!window.name) return false;
         const s = JSON.parse(window.name);
-        if (!s || typeof s !== "object") return null;
-        if (!s.token || typeof s.exp !== "number") return null;
-        if (s.exp <= Date.now()) return null;
-        return s;
-      } catch (e) { return null; }
+        return Boolean(s && s.token && typeof s.exp === "number" && s.exp > Date.now());
+      } catch (e) { return false; }
     }
 
-    function isUnlocked() { return Boolean(readSession()); }
+    if (!isIndexUnlocked()) {
+      window.location.replace(HOME_URL);
+      return;
+    }
 
-    function writeSession() {
+    /* ---- Layer 2: admin password gate ---- */
+    function isGateUnlocked() {
       try {
-        window.name = JSON.stringify({
-          token: "admin-" + Date.now() + "-" + Math.random().toString(36).slice(2),
+        const raw = sessionStorage.getItem(GATE_KEY);
+        if (!raw) return false;
+        const s = JSON.parse(raw);
+        return Boolean(s && typeof s.exp === "number" && s.exp > Date.now());
+      } catch (e) { return false; }
+    }
+
+    function writeGate() {
+      try {
+        sessionStorage.setItem(GATE_KEY, JSON.stringify({
+          token: "gate-" + Date.now() + "-" + Math.random().toString(36).slice(2),
           exp:   Date.now() + SESSION_HOURS * 60 * 60 * 1000
-        });
+        }));
       } catch (e) {}
     }
 
-    function clearSession() {
-      try { window.name = ""; } catch (e) {}
+    function clearGate() {
+      try { sessionStorage.removeItem(GATE_KEY); } catch (e) {}
     }
 
     function goHome() { window.location.replace(HOME_URL); }
 
-    /* Already unlocked for this tab? Let the page through. */
-    if (isUnlocked()) return;
+    /* Gate already unlocked for this tab? Let the page through. */
+    if (isGateUnlocked()) return;
 
-    /* Hide page content while the modal is up (avoids flash of
-       dashboard behind the backdrop). */
+    /* Hide page content while the modal is up so the dashboard
+       never flashes behind the backdrop. */
     document.documentElement.classList.add("admin-locked");
 
     let attempts = 0;
@@ -111,7 +136,7 @@
         event.preventDefault();
 
         if (input.value === ADMIN_PASSWORD) {
-          writeSession();
+          writeGate();
           document.documentElement.classList.remove("admin-locked");
           overlay.remove();
           document.dispatchEvent(new CustomEvent("adminUnlocked"));
@@ -136,7 +161,7 @@
       });
 
       cancelBtn.addEventListener("click", function () {
-        clearSession();
+        clearGate();
         goHome();
       });
 
@@ -157,9 +182,9 @@
 
     /* Small public API for debugging / other pages */
     window.AdminGuard = {
-      isUnlocked: isUnlocked,
-      lock:       clearSession,
-      unlock:     function () { writeSession(); }
+      isUnlocked: isGateUnlocked,
+      lock:       clearGate,
+      unlock:     function () { writeGate(); }
     };
 
     if (document.readyState === "loading") {
@@ -339,6 +364,7 @@
 
         if (action === "logout") {
           try { window.name = ""; } catch (e) {}
+          try { sessionStorage.removeItem("bd_admin_gate_unlocked"); } catch (e) {}
           try {
             localStorage.removeItem("bd_role");
             localStorage.removeItem("adminUser");
