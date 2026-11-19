@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Directory | BD Tools</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/page-loader.css" />
+
+  <script>
+    document.documentElement.classList.add("page-loading");
+    document.documentElement.setAttribute("aria-busy", "true");
+  </script>
+</head>
+
+<body data-view="directory" data-waits-for-user="true">
+  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
+    <div class="page-loader-inner">
+      <div class="page-loader-mark" aria-hidden="true">
+        <span class="page-loader-ring"></span>
+        <span class="page-loader-dot"></span>
+      </div>
+      <p class="page-loader-text">Loading BD Tools…</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <div id="header-placeholder"></div>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>Employee <span>Directory</span></h1>
+          <p>Find and connect with your teammates.<br class="desktop-only" /> Browse by name, queue, or department.</p>
+
+          <div class="hero-search">
+            <span class="search-icon"></span>
+            <input id="directorySearch" type="search" autocomplete="off" placeholder="Search name, EMP, or queue..." />
+            <button id="directorySearchBtn" type="button">Search</button>
+          </div>
+        </div>
+
+        <div class="hero-art" aria-hidden="true"></div>
+
+        <section class="stats-row" aria-label="Directory stats" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="stat-card">
+            <div class="stat-icon purple">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/>
+                <circle cx="17" cy="9" r="2.3"/>
+                <path d="M14.5 19.5c0-2.2 1.8-3.7 4-3.7"/>
+              </svg>
+            </div>
+            <div><strong id="statTotal">0</strong><small>Total Employees</small></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="4" width="16" height="4" rx="1"/>
+                <rect x="4" y="10" width="16" height="4" rx="1"/>
+                <rect x="4" y="16" width="10" height="4" rx="1"/>
+              </svg>
+            </div>
+            <div><strong id="statQueues">0</strong><small>Active Queues</small></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 20 6v5c0 5-3.3 8.2-8 10-4.7-1.8-8-5-8-10V6l8-3Z"/>
+                <path d="m8.5 12 2.2 2.2 4.8-5"/>
+              </svg>
+            </div>
+            <div><strong id="statAdmins">0</strong><small>Admins</small></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="section my-guides-section">
+        <div class="section-heading">
+          <h2><span class="heading-bar"></span><span id="directoryTitle">All Employees</span></h2>
+          <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
+        </div>
+
+        <div id="queueFilters" class="queue-filters"></div>
+
+        <p id="resultsText" class="library-results">Loading employees...</p>
+
+        <div id="employeeGrid" class="employee-grid"></div>
+
+        <div id="noEmployees" class="directory-empty" hidden>
+          <div class="directory-empty-icon">⌕</div>
+          <strong>Nothing to show</strong>
+          <p>Try a different search or filter.</p>
+        </div>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
+
+  <script src="shared/include.js"></script>
+  <script src="assets/js/employee-directory.js"></script>
+  <script src="assets/js/page-loader.js"></script>
+
+  <script>
+    window.bdToolsUserReady = function () {
+      window.dispatchEvent(new Event("bdtools:user-ready"));
+    };
+  </script>
+</body>
+</html>
