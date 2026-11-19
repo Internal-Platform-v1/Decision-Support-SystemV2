@@ -840,26 +840,41 @@
     /* ------------------------------------------------------------
        8. User Profile Modal (self-service profile editor)
        ------------------------------------------------------------ */
+
+    /* Derive firstName/lastName from the flat `name` field.
+       Rule: LAST whitespace-separated token = last name;
+             everything before it (1, 2, 3… names) = first name.
+
+         "John Smith"          → "John"        / "Smith"
+         "Julan Ryan Guinto"   → "Julan Ryan"  / "Guinto"
+         "Maria Cruz Santos"   → "Maria Cruz"  / "Santos"
+
+       The flat `name` field is treated as the source of truth because
+       it's what a human typed. Stored firstName/lastName are only used
+       as a fallback when `name` is missing. This self-heals docs that
+       were previously saved with the wrong split — the modal will show
+       the correct split and the next save will overwrite the bad values. */
     function deriveFirstLast(user) {
         if (!user) return { firstName: "", lastName: "" };
 
-        let firstName = (user.firstName || "").trim();
-        let lastName  = (user.lastName  || "").trim();
+        const full = (user.name || user.displayName || user.fullName || "").trim();
 
-        if (!firstName || !lastName) {
-            const full = (user.name || user.displayName || user.fullName || "").trim();
-            if (full) {
-                const parts = full.split(/\s+/);
-                if (parts.length === 1) {
-                    if (!firstName) firstName = parts[0];
-                } else {
-                    if (!firstName) firstName = parts[0];
-                    if (!lastName)  lastName  = parts.slice(1).join(" ");
-                }
+        if (full) {
+            const parts = full.split(/\s+/);
+            if (parts.length === 1) {
+                return { firstName: parts[0], lastName: "" };
             }
+            return {
+                firstName: parts.slice(0, -1).join(" "),
+                lastName:  parts[parts.length - 1]
+            };
         }
 
-        return { firstName, lastName };
+        // No flat name — fall back to whatever was stored.
+        return {
+            firstName: (user.firstName || "").trim(),
+            lastName:  (user.lastName  || "").trim()
+        };
     }
 
     function updateProfileAvatarPreview() {
