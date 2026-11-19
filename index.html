@@ -298,11 +298,10 @@
 
 <script>
     (function () {
-        /* Derive the "first name" for display.
-           Rule: LAST whitespace-separated token = last name;
-                 everything before it (1, 2, 3… names) = first name.
-           Always derived from the flat `name` field so a stale
-           `firstName` field can't poison the greeting. */
+        /* Derive the greeting name:
+           1) preferredName if set
+           2) all-but-last token of `name` (so "Julan Ryan Guinto" → "Julan Ryan")
+           3) firstName as final fallback */
         function firstNameFromFullName(full) {
             var trimmed = String(full || "").trim();
             if (!trimmed) return "";
@@ -313,6 +312,8 @@
 
         function firstNameForUser(u) {
             if (!u) return "";
+            var preferred = String(u.preferredName || "").trim();
+            if (preferred) return preferred;
             var full = (u.name || u.displayName || u.fullName || "").trim();
             if (full) return firstNameFromFullName(full);
             return (u.firstName || "").trim();
@@ -346,10 +347,8 @@
             }
         }
 
-        // Initial pass (in case user is already stored)
         updateGreetingName(getStoredFirstName());
 
-        // React to login / sign-out / user switch from the shared header
         document.addEventListener('bdtools:user-changed', function (e) {
             var user = (e && e.detail && e.detail.user) || null;
             var name = firstNameForUser(user);
