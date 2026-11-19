@@ -818,6 +818,232 @@ function setupNavigation() {
         });
     }
 
+       /* ------------------------------------------------------------
+       9. Profile Modal (self-service profile editor)
+       ------------------------------------------------------------ */
+    const PROFILE_COLLECTION = "employees";    // must match USER_LOOKUP_COLLECTIONS[0]
+
+    function updateProfileAvatarPreview() {
+        const first = (document.getElementById("profileFirstName")?.value || "").trim();
+        const last  = (document.getElementById("profileLastName")?.value || "").trim();
+        const initials = getInitials((first + " " + last).trim() || "User");
+        const avatar = document.getElementById("profileModalAvatar");
+        if (avatar) avatar.textContent = initials;
+    }
+
+    function populateProfileForm(user) {
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
+
+        setVal("profileFirstName",     user.firstName || "");
+        setVal("profileLastName",      user.lastName || "");
+        setVal("profilePreferredName", user.preferredName || "");
+        setVal("profileEmail",         user.email || "");
+        setVal("profileQueue",         user.queue || "");
+        setVal("profilePhone",         user.phone || "");
+        setVal("profileTitle",         user.title || "");
+        setVal("profileDepartment",    user.department || "");
+        setVal("profileLocation",      user.location || "");
+
+        const fullName = displayNameOf(user) || "User";
+        const initials = getInitials(fullName);
+
+        const avatar = document.getElementById("profileModalAvatar");
+        if (avatar) avatar.textContent = initials;
+
+        const empBadge = document.getElementById("profileModalEmpId");
+        if (empBadge) empBadge.textContent = user.empId ? `EMP ${user.empId}` : "EMP --";
+
+        const roleBadge = document.getElementById("profileModalRole");
+        if (roleBadge) {
+            const role = (user.role || "User").toString();
+            roleBadge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            roleBadge.classList.toggle("is-admin", ADMIN_ROLES.includes(role.toLowerCase()));
+        }
+    }
+
+    async function refreshProfileFromFirestore(user) {
+        if (!user || !user.id) return;
+        const db = await waitForFirestore();
+        if (!db) return;
+
+        try {
+            const snap = await db.collection(PROFILE_COLLECTION).doc(user.id).get();
+            if (!snap.exists) return;
+
+            const data = snap.data() || {};
+            const merged = Object.assign({}, user, data, {
+                id: user.id,
+                empId: user.empId || data.empId || data.employeeId || data.emp_id || ""
+            });
+
+            persistUser(merged);
+            populateProfileForm(merged);
+        } catch (err) {
+            console.warn("[header.js] profile fetch failed:", err);
+        }
+    }
+
+    function openProfileModal() {
+        const modal = document.getElementById("profileModal");
+        if (!modal) return;
+
+        const user = getStoredUser();
+        if (!user) return;                            // signed-out guard
+
+        populateProfileForm(user);
+        modal.hidden = false;
+        document.body.classList.add("profile-modal-open");
+
+        const status = document.getElementById("profileModalStatus");
+        if (status) { status.hidden = true; status.textContent = ""; }
+
+        const submit = document.getElementById("profileSubmitBtn");
+        if (submit) { submit.disabled = false; submit.classList.remove("loading"); }
+
+        setTimeout(() => {
+            const first = document.getElementById("profileFirstName");
+            if (first) first.focus();
+        }, 80);
+
+        refreshProfileFromFirestore(user);
+    }
+
+    function closeProfileModal() {
+        const modal = document.getElementById("profileModal");
+        if (!modal) return;
+        modal.hidden = true;
+        document.body.classList.remove("profile-modal-open");
+    }
+
+    async function saveProfile(event) {
+        event.preventDefault();
+
+        const status = document.getElementById("profileModalStatus");
+        const submit = document.getElementById("profileSubmitBtn");
+        const setStatus = (msg, isError) => {
+            if (!status) return;
+            status.hidden = !msg;
+            status.textContent = msg || "";
+            status.className = "profile-modal-status" + (isError ? " error" : " success");
+        };
+        setStatus("", false);
+
+        const user = getStoredUser();
+        if (!user || !user.id) {
+            setStatus("You need to be signed in to update your profile.", true);
+            return;
+        }
+
+        const getVal = (id) => (document.getElementById(id)?.value || "").trim();
+
+        const firstName     = getVal("profileFirstName");
+        const lastName      = getVal("profileLastName");
+        const preferredName = getVal("profilePreferredName");
+        const email         = getVal("profileEmail");
+        const queue         = getVal("profileQueue");
+        const phone         = getVal("profilePhone");
+        const title         = getVal("profileTitle");
+        const department    = getVal("profileDepartment");
+        const location      = getVal("profileLocation");
+
+        if (!firstName) return setStatus("Please enter your first name.", true);
+        if (!lastName)  return setStatus("Please enter your last name.", true);
+        if (!email)     return setStatus("Please enter your email.", true);
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setStatus("Please enter a valid email address.", true);
+        if (!queue)     return setStatus("Please select or enter your queue.", true);
+
+        const updates = {
+            firstName,
+            lastName,
+            preferredName,
+            email,
+            queue,
+            phone,
+            title,
+            department,
+            location
+        };
+
+        if (submit) { submit.disabled = true; submit.classList.add("loading"); }
+
+        try {
+            const db = await waitForFirestore();
+            if (!db) throw new Error("Firestore unavailable");
+
+            await db.collection(PROFILE_COLLECTION).doc(user.id).set(
+                Object.assign({}, updates, {
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }),
+                { merge: true }
+            );
+
+            const merged = Object.assign({}, user, updates);
+            persistUser(merged);
+            applyLoggedInUser(merged);                // refresh header UI + fire bdtools:user-changed
+
+            setStatus("Profile saved successfully.", false);
+
+            setTimeout(() => { closeProfileModal(); }, 800);
+        } catch (err) {
+            console.error("[header.js] profile save failed:", err);
+            setStatus("Could not save your profile. Please try again.", true);
+        } finally {
+            if (submit) { submit.disabled = false; submit.classList.remove("loading"); }
+        }
+    }
+
+    function setupProfileModal() {
+        const modal = document.getElementById("profileModal");
+        if (!modal) return;
+
+        // Close buttons + backdrop
+        modal.querySelectorAll("[data-profile-close]").forEach(el => {
+            el.addEventListener("click", closeProfileModal);
+        });
+
+        // Escape key
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && !modal.hidden) closeProfileModal();
+        });
+
+        // Form submit
+        const form = document.getElementById("profileForm");
+        if (form) form.addEventListener("submit", saveProfile);
+
+        // Live avatar preview as first/last name changes
+        ["profileFirstName", "profileLastName"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener("input", updateProfileAvatarPreview);
+        });
+
+        // Trigger: click on the user identity block in the settings dropdown
+        const userBlock = document.getElementById("settingsUserBlock");
+        if (userBlock) {
+            userBlock.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Close settings menu first
+                const menu = document.getElementById("settingsMenu");
+                if (menu) menu.classList.remove("open");
+                const btn = document.getElementById("settingsBtn");
+                if (btn) btn.setAttribute("aria-expanded", "false");
+                openProfileModal();
+            });
+            userBlock.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openProfileModal();
+                }
+            });
+        }
+
+        // Public API — handy for future pages (Employee Directory, etc.)
+        window.BDProfileModal = {
+            open: openProfileModal,
+            close: closeProfileModal
+        };
+    }
+
     /* ------------------------------------------------------------
        7. Global Search
        ------------------------------------------------------------ */
@@ -841,6 +1067,7 @@ function setupNavigation() {
         setupNavigation();
         setupSearch();
         setupSharedNotifications();
+        setupProfileModal();          // ← new
     }
 
     // Wait until the shared header markup is actually in the DOM,
