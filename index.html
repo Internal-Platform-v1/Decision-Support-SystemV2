@@ -307,8 +307,11 @@
                         var fn = (u.firstName || '').trim();
                         if (fn) return fn;
                         var full = (u.name || u.displayName || '').trim();
-                        if (full) return full.split(/\s+/)[0];
-                    }
+                    if (full) {
+                            var parts = full.split(/\s+/);
+                            if (parts.length > 1) return parts.slice(0, -1).join(" ");
+                            return parts[0];
+                        }
                 }
                 return (localStorage.getItem('bd_display_name') || '').trim();
             } catch (e) { return ''; }
@@ -337,8 +340,10 @@
             var name = '';
             if (user) {
                 name = (user.firstName || '').trim();
-                if (!name && user.name) name = user.name.trim().split(/\s+/)[0];
-            }
+            if (!name && user.name) {
+                    var parts = user.name.trim().split(/\s+/);
+                    name = parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0];
+                }
             updateGreetingName(name);
         });
 
