@@ -23,6 +23,7 @@
 
   const STORAGE_IDS = "dss_help_ids";
   const STORAGE_SEEN = "dss_help_seen";
+  const LOGGED_USER_KEY = "bd_logged_in_user";   // shared with header.js
 
   const ratingLabels = {
     1: "Poor",
@@ -126,6 +127,64 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
+  }
+
+  /* ============================================================
+     Logged-in user helpers (shared session with header.js)
+     ============================================================ */
+  function getLoggedInUser() {
+    try {
+      const raw = localStorage.getItem(LOGGED_USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function getSessionDisplayName(user) {
+    if (!user) return "";
+    const composed = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+    return user.name || user.displayName || user.fullName || composed || "";
+  }
+
+  function getSessionEmpId(user) {
+    if (!user) return "";
+    return String(user.empId || user.employeeId || user.id || "").trim();
+  }
+
+  /* Prefill + lock a name input from the session (or unlock if signed out). */
+  function applyUserToNameField(inputId, hintId) {
+    const input = document.getElementById(inputId);
+    const hint  = document.getElementById(hintId);
+    if (!input) return;
+
+    const user  = getLoggedInUser();
+    const name  = getSessionDisplayName(user);
+    const empId = getSessionEmpId(user);
+
+    if (user) {
+      // Signed in (even if name is missing) → lock the field so it can't be spoofed
+      input.value = name || (empId ? "EMP " + empId : "Signed in");
+      input.readOnly = true;
+      input.classList.add("is-locked");
+      if (hint) {
+        hint.textContent = "Signed in";
+        hint.classList.add("signed-in-hint");
+      }
+    } else {
+      input.value = "";
+      input.readOnly = false;
+      input.classList.remove("is-locked");
+      if (hint) {
+        hint.textContent = "Optional";
+        hint.classList.remove("signed-in-hint");
+      }
+    }
+  }
+
+  function applyUserToForms() {
+    applyUserToNameField("feedbackName", "feedbackNameHint");
+    applyUserToNameField("helpName", "helpNameHint");
   }
 
   /* ---------- localStorage helpers ---------- */
@@ -271,6 +330,7 @@
     if (count) count.textContent = "0/1000";
 
     setStatus("feedbackStatus", "", "");
+    applyUserToForms();        // ← re-fill name from session (form.reset wipes it)
   }
 
   function resetHelpForm() {
@@ -281,6 +341,7 @@
     if (count) count.textContent = "0/1500";
 
     setStatus("helpStatus", "", "");
+    applyUserToForms();        // ← re-fill name from session (form.reset wipes it)
   }
 
   /* ---------- Rating ---------- */
@@ -348,7 +409,15 @@
     const statusId = "feedbackStatus";
     const button = document.getElementById("sendFeedbackBtn");
     const comment = document.getElementById("feedbackText")?.value.trim() || "";
-    const name = document.getElementById("feedbackName")?.value.trim() || "";
+
+    const sessionUser   = getLoggedInUser();
+    const isSignedIn    = !!sessionUser;
+    const sessionName   = getSessionDisplayName(sessionUser);
+    const sessionEmpId  = getSessionEmpId(sessionUser);
+
+    // Signed in → trust the session. Otherwise fall back to the typed value.
+    const name  = isSignedIn ? (sessionName || "") : (document.getElementById("feedbackName")?.value.trim() || "");
+    const empId = sessionEmpId;
 
     if (!selectedRating) {
       setStatus(statusId, "Please select a rating first.", "error");
@@ -368,6 +437,7 @@
 
       await fb.firestore().collection("feedback").add({
         name: name,
+        empId: empId,                 // ← new field
         rating: selectedRating,
         comment: comment,
         page: page.page,
@@ -394,10 +464,17 @@
 
     const statusId = "helpStatus";
     const button = document.getElementById("sendHelpBtn");
-    const name = document.getElementById("helpName")?.value.trim() || "";
     const category = document.getElementById("helpCategory")?.value.trim() || "";
     const subject = document.getElementById("helpSubject")?.value.trim() || "";
     const message = document.getElementById("helpMessage")?.value.trim() || "";
+
+    const sessionUser  = getLoggedInUser();
+    const isSignedIn   = !!sessionUser;
+    const sessionName  = getSessionDisplayName(sessionUser);
+    const sessionEmpId = getSessionEmpId(sessionUser);
+
+    const name  = isSignedIn ? (sessionName || "") : (document.getElementById("helpName")?.value.trim() || "");
+    const empId = sessionEmpId;
 
     if (!category) {
       setStatus(statusId, "Please select a help category.", "error");
@@ -423,6 +500,7 @@
 
       const ref = await fb.firestore().collection("help_requests").add({
         name: name,
+        empId: empId,                 // ← new field
         category: category,
         subject: subject,
         message: message,
@@ -697,6 +775,12 @@
     setupRating();
     setupCharacterCounter("feedbackText", "feedbackCharCount", 1000);
     setupCharacterCounter("helpMessage", "helpCharCount", 1500);
+
+    // Bind the "Your name" fields to the current session
+    applyUserToForms();
+    document.addEventListener("bdtools:user-changed", function () {
+      applyUserToForms();
+    });
 
     // Background check for unread admin replies
     updateHelpBadge();
