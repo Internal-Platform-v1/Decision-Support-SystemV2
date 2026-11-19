@@ -6,6 +6,11 @@
    Session sync: reads `bd_logged_in_user` (written by header.js)
    and pre-fills + locks the "Your name" fields, submitting the
    signed-in user's name and EMP ID with every request.
+
+   Anonymous feedback: a toggle in the Feedback form that
+   overrides name/empId with "Anonymous" / "" and adds an
+   `anonymous: true` flag for admin filtering. Help requests
+   stay identified — the DSS team must be able to reply.
    ============================================================ */
 
 (function () {
@@ -166,7 +171,6 @@
     const input = document.getElementById(inputId);
     if (!input) return;
 
-    // Find the label hint within the same .form-field wrapper
     const field = input.closest(".form-field");
     const hint  = field ? field.querySelector(".field-label-row .optional-label") : null;
 
@@ -175,7 +179,6 @@
     const empId = getSessionEmpId(user);
 
     if (user) {
-      // Signed in → lock the field so the name can't be spoofed
       input.value = name || (empId ? "EMP " + empId : "Signed in");
       input.readOnly = true;
       input.style.background = "#f7f5ff";
@@ -191,7 +194,6 @@
         hint.style.fontWeight = "700";
       }
     } else {
-      // Signed out → restore editable empty field
       input.value = "";
       input.readOnly = false;
       input.style.background = "";
@@ -209,9 +211,47 @@
     }
   }
 
+  /**
+   * Overlay the anonymous state on top of the base name field.
+   * Runs AFTER applyUserToNameField, so it can override the
+   * "Signed in" hint and locked styling when the toggle is on.
+   */
+  function applyAnonymousToFeedbackName() {
+    const toggle = document.getElementById("feedbackAnonymous");
+    const input  = document.getElementById("feedbackName");
+    if (!toggle || !input) return;
+
+    const field = input.closest(".form-field");
+    const hint  = field ? field.querySelector(".field-label-row .optional-label") : null;
+
+    if (toggle.checked) {
+      input.value = "Anonymous";
+      input.readOnly = true;
+      input.classList.add("is-anonymous");
+      input.style.background = "#f7f5ff";
+      input.style.borderColor = "#e3e0f0";
+      input.style.color = "#6d6e91";
+      input.style.fontStyle = "italic";
+      input.style.fontWeight = "600";
+      input.style.cursor = "not-allowed";
+      input.style.caretColor = "transparent";
+
+      if (hint) {
+        hint.textContent = "Anonymous";
+        hint.style.color = "#ff6600";
+        hint.style.fontWeight = "700";
+      }
+    } else {
+      input.classList.remove("is-anonymous");
+      input.style.fontStyle = "";
+      applyUserToNameField("feedbackName");
+    }
+  }
+
   function applyUserToForms() {
     applyUserToNameField("feedbackName");
     applyUserToNameField("helpName");
+    applyAnonymousToFeedbackName();   // must run AFTER the base fill
   }
 
   /* ---------- localStorage helpers ---------- */
@@ -336,6 +376,11 @@
     const form = document.getElementById("feedbackForm");
     if (form) form.reset();
 
+    // Explicit toggle reset — form.reset() handles it, but keep it
+    // explicit in case the input's default checked state ever changes.
+    const toggle = document.getElementById("feedbackAnonymous");
+    if (toggle) toggle.checked = false;
+
     selectedRating = 0;
 
     document.querySelectorAll(".rating-star").forEach(function (star) {
@@ -350,7 +395,7 @@
     if (count) count.textContent = "0/1000";
 
     setStatus("feedbackStatus", "", "");
-    applyUserToForms();        // ← re-fill name from session after form.reset()
+    applyUserToForms();        // re-fills name from session + resets anon state
   }
 
   function resetHelpForm() {
@@ -361,7 +406,7 @@
     if (count) count.textContent = "0/1500";
 
     setStatus("helpStatus", "", "");
-    applyUserToForms();        // ← re-fill name from session after form.reset()
+    applyUserToForms();        // re-fills name from session
   }
 
   /* ---------- Rating ---------- */
@@ -430,14 +475,22 @@
     const button = document.getElementById("sendFeedbackBtn");
     const comment = document.getElementById("feedbackText")?.value.trim() || "";
 
+    const anonymousToggle = document.getElementById("feedbackAnonymous");
+    const isAnonymous = !!(anonymousToggle && anonymousToggle.checked);
+
     const sessionUser   = getLoggedInUser();
     const isSignedIn    = !!sessionUser;
     const sessionName   = getSessionDisplayName(sessionUser);
     const sessionEmpId  = getSessionEmpId(sessionUser);
 
-    // Signed in → trust the session. Otherwise fall back to typed value.
-    const name  = isSignedIn ? (sessionName || "") : (document.getElementById("feedbackName")?.value.trim() || "");
-    const empId = sessionEmpId;
+    let name, empId;
+    if (isAnonymous) {
+      name  = "Anonymous";
+      empId = "";                       // do not correlate anonymously
+    } else {
+      name  = isSignedIn ? (sessionName || "") : (document.getElementById("feedbackName")?.value.trim() || "");
+      empId = sessionEmpId;
+    }
 
     if (!selectedRating) {
       setStatus(statusId, "Please select a rating first.", "error");
@@ -457,7 +510,8 @@
 
       await fb.firestore().collection("feedback").add({
         name: name,
-        empId: empId,                 // ← new field
+        empId: empId,
+        anonymous: isAnonymous,         // ← new field for admin filtering
         rating: selectedRating,
         comment: comment,
         page: page.page,
@@ -465,7 +519,13 @@
         createdAt: fb.firestore.FieldValue.serverTimestamp()
       });
 
-      setStatus(statusId, "Thank you. Your feedback was sent successfully.", "success");
+      setStatus(
+        statusId,
+        isAnonymous
+          ? "Thank you. Your anonymous feedback was sent."
+          : "Thank you. Your feedback was sent successfully.",
+        "success"
+      );
       setButtonLoading(button, false);
 
       setTimeout(function () {
@@ -520,7 +580,7 @@
 
       const ref = await fb.firestore().collection("help_requests").add({
         name: name,
-        empId: empId,                 // ← new field
+        empId: empId,
         category: category,
         subject: subject,
         message: message,
@@ -782,6 +842,12 @@
     const helpForm = document.getElementById("helpForm");
     if (helpForm) helpForm.addEventListener("submit", sendHelpRequest);
 
+    // Anonymous toggle — swap the name field appearance live
+    const anonymousToggle = document.getElementById("feedbackAnonymous");
+    if (anonymousToggle) {
+      anonymousToggle.addEventListener("change", applyAnonymousToFeedbackName);
+    }
+
     document.addEventListener("keydown", handleKeydown);
   }
 
@@ -794,8 +860,6 @@
     setupCharacterCounter("feedbackText", "feedbackCharCount", 1000);
     setupCharacterCounter("helpMessage", "helpCharCount", 1500);
 
-    // Bind "Your name" fields to the current session.
-    // Inline styles are used so this works without any CSS changes.
     applyUserToForms();
     document.addEventListener("bdtools:user-changed", function () {
       applyUserToForms();
