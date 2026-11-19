@@ -2,6 +2,10 @@
    DSS V2 — SHARED FOOTER BEHAVIOR
    Feedback + Get Help (New Request / My Requests)
    No auth — Firestore rules allow public read/write.
+
+   Session sync: reads `bd_logged_in_user` (written by header.js)
+   and pre-fills + locks the "Your name" fields, submitting the
+   signed-in user's name and EMP ID with every request.
    ============================================================ */
 
 (function () {
@@ -152,39 +156,62 @@
     return String(user.empId || user.employeeId || user.id || "").trim();
   }
 
-  /* Prefill + lock a name input from the session (or unlock if signed out). */
-  function applyUserToNameField(inputId, hintId) {
+  /**
+   * Pre-fill + lock a name input from the session.
+   * Works WITHOUT any HTML id hints or CSS additions —
+   * the "Optional" label is found via the input's closest .form-field,
+   * and locked styling is applied via inline styles.
+   */
+  function applyUserToNameField(inputId) {
     const input = document.getElementById(inputId);
-    const hint  = document.getElementById(hintId);
     if (!input) return;
+
+    // Find the label hint within the same .form-field wrapper
+    const field = input.closest(".form-field");
+    const hint  = field ? field.querySelector(".field-label-row .optional-label") : null;
 
     const user  = getLoggedInUser();
     const name  = getSessionDisplayName(user);
     const empId = getSessionEmpId(user);
 
     if (user) {
-      // Signed in (even if name is missing) → lock the field so it can't be spoofed
+      // Signed in → lock the field so the name can't be spoofed
       input.value = name || (empId ? "EMP " + empId : "Signed in");
       input.readOnly = true;
-      input.classList.add("is-locked");
+      input.style.background = "#f7f5ff";
+      input.style.borderColor = "#e3e0f0";
+      input.style.color = "#4b4d6b";
+      input.style.fontWeight = "600";
+      input.style.cursor = "not-allowed";
+      input.style.caretColor = "transparent";
+
       if (hint) {
         hint.textContent = "Signed in";
-        hint.classList.add("signed-in-hint");
+        hint.style.color = "#6b25df";
+        hint.style.fontWeight = "700";
       }
     } else {
+      // Signed out → restore editable empty field
       input.value = "";
       input.readOnly = false;
-      input.classList.remove("is-locked");
+      input.style.background = "";
+      input.style.borderColor = "";
+      input.style.color = "";
+      input.style.fontWeight = "";
+      input.style.cursor = "";
+      input.style.caretColor = "";
+
       if (hint) {
         hint.textContent = "Optional";
-        hint.classList.remove("signed-in-hint");
+        hint.style.color = "";
+        hint.style.fontWeight = "";
       }
     }
   }
 
   function applyUserToForms() {
-    applyUserToNameField("feedbackName", "feedbackNameHint");
-    applyUserToNameField("helpName", "helpNameHint");
+    applyUserToNameField("feedbackName");
+    applyUserToNameField("helpName");
   }
 
   /* ---------- localStorage helpers ---------- */
@@ -226,13 +253,6 @@
     try {
       localStorage.setItem(STORAGE_SEEN, JSON.stringify(seen));
     } catch (_) { /* ignore */ }
-  }
-
-  function isUnread(doc) {
-    if (!doc.adminReply) return false;
-    const seenAt = getSeenMap()[doc.id] || 0;
-    const repliedAt = doc.adminReplyAt ? doc.adminReplyAt.getTime() : 0;
-    return repliedAt > seenAt;
   }
 
   /* ---------- UI helpers ---------- */
@@ -330,7 +350,7 @@
     if (count) count.textContent = "0/1000";
 
     setStatus("feedbackStatus", "", "");
-    applyUserToForms();        // ← re-fill name from session (form.reset wipes it)
+    applyUserToForms();        // ← re-fill name from session after form.reset()
   }
 
   function resetHelpForm() {
@@ -341,7 +361,7 @@
     if (count) count.textContent = "0/1500";
 
     setStatus("helpStatus", "", "");
-    applyUserToForms();        // ← re-fill name from session (form.reset wipes it)
+    applyUserToForms();        // ← re-fill name from session after form.reset()
   }
 
   /* ---------- Rating ---------- */
@@ -415,7 +435,7 @@
     const sessionName   = getSessionDisplayName(sessionUser);
     const sessionEmpId  = getSessionEmpId(sessionUser);
 
-    // Signed in → trust the session. Otherwise fall back to the typed value.
+    // Signed in → trust the session. Otherwise fall back to typed value.
     const name  = isSignedIn ? (sessionName || "") : (document.getElementById("feedbackName")?.value.trim() || "");
     const empId = sessionEmpId;
 
@@ -594,7 +614,6 @@
 
       list.innerHTML = items.map(renderMyRequestCard).join("");
 
-      // Mark visible replies as read now that they've been shown
       markAsSeen(items.map(function (i) { return i.id; }));
       updateHelpBadge();
     } catch (error) {
@@ -751,7 +770,6 @@
       });
     });
 
-    // Tabs
     document.querySelectorAll(".help-tab").forEach(function (btn) {
       btn.addEventListener("click", function () {
         openHelpTab(btn.dataset.helpTab);
@@ -776,13 +794,13 @@
     setupCharacterCounter("feedbackText", "feedbackCharCount", 1000);
     setupCharacterCounter("helpMessage", "helpCharCount", 1500);
 
-    // Bind the "Your name" fields to the current session
+    // Bind "Your name" fields to the current session.
+    // Inline styles are used so this works without any CSS changes.
     applyUserToForms();
     document.addEventListener("bdtools:user-changed", function () {
       applyUserToForms();
     });
 
-    // Background check for unread admin replies
     updateHelpBadge();
   }
 
