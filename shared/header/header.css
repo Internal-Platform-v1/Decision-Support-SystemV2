@@ -958,3 +958,33 @@
     box-shadow: inset 2px 0 0 #6b25df;
 }
 #employeeDirectoryBtn[hidden] { display: none !important; }
+
+/* ============================================================
+   PROFILE MODAL — LOCKED FIRST/LAST NAME
+   ============================================================ */
+.profile-field input[readonly] {
+    background: #f3f2f8;
+    color: #6d6e91;
+    cursor: not-allowed;
+}
+.profile-field input[readonly]:hover { border-color: #e3e0f0; }
+.profile-field input[readonly]:focus {
+    border-color: #e3e0f0;
+    box-shadow: none;
+    background: #f3f2f8;
+}
+
+.profile-field-lock {
+    color: #9ea0b8;
+    font-style: italic;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+.profile-field-note {
+    margin: -6px 0 2px;
+    font-size: 9px;
+    color: #9ea0b8;
+    font-style: italic;
+    line-height: 1.4;
+}
