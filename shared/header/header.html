@@ -78,7 +78,6 @@
             </button>
 
             <div class="settings-menu" id="settingsMenu" role="menu">
-                <!-- Signed-in user identity (clickable → opens profile modal) -->
                 <div class="settings-user" id="settingsUserBlock" hidden
                      role="button" tabindex="0"
                      aria-label="Open my profile"
@@ -119,12 +118,10 @@
                     </div>
                 </div>
 
-                <!-- Employee Directory — visible to any signed-in user -->
                 <button id="employeeDirectoryBtn" type="button" role="menuitem" hidden>
                     <span aria-hidden="true">👥</span> Employee Directory
                 </button>
 
-                <!-- Admin Dashboard — admin only -->
                 <button id="adminDashboardBtn" type="button" role="menuitem" hidden>
                     <span aria-hidden="true">🛡️</span> Admin Dashboard
                 </button>
@@ -274,18 +271,19 @@
         <form class="profile-modal-form" id="profileForm" novalidate>
             <div class="profile-field-row">
                 <label class="profile-field">
-                    <span class="profile-field-label">First Name <em>*</em></span>
-                    <input type="text" id="profileFirstName" maxlength="60" autocomplete="given-name" required>
+                    <span class="profile-field-label">First Name <small class="profile-field-lock">Locked</small></span>
+                    <input type="text" id="profileFirstName" maxlength="60" autocomplete="off" readonly>
                 </label>
                 <label class="profile-field">
-                    <span class="profile-field-label">Last Name <em>*</em></span>
-                    <input type="text" id="profileLastName" maxlength="60" autocomplete="family-name" required>
+                    <span class="profile-field-label">Last Name <small class="profile-field-lock">Locked</small></span>
+                    <input type="text" id="profileLastName" maxlength="60" autocomplete="off" readonly>
                 </label>
             </div>
+            <p class="profile-field-note">First and last name are managed by HR. Contact an admin to request a change.</p>
 
             <label class="profile-field">
                 <span class="profile-field-label">Preferred Name <small>optional</small></span>
-                <input type="text" id="profilePreferredName" maxlength="60" placeholder="How you'd like to be addressed">
+                <input type="text" id="profilePreferredName" maxlength="60" placeholder="How you'd like to be greeted — e.g. Juls">
             </label>
 
             <label class="profile-field">
