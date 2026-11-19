@@ -1,11 +1,12 @@
 /* ============================================================
    CURRENT USER NAME
-   Derives the greeting from the flat `name` field so multi-word
-   first names like "Julan Ryan" survive. Stale `firstName`
-   fields (from an old save) are ignored in favor of `name`.
+   Greeting logic:
+     1) preferredName if set
+     2) all-but-last token of `name` (so "Julan Ryan Guinto" → "Julan Ryan")
+     3) firstName as final fallback
 
-   Rule: LAST whitespace-separated token = last name;
-         everything before it = first name.
+   Reads from the live session first so a stale `window.currentUserProfile`
+   (or a stale `firstName` field) can't poison the greeting.
    ============================================================ */
 
 function firstNameFromFullName(full) {
@@ -18,8 +19,13 @@ function firstNameFromFullName(full) {
 
 function firstNameForGreeting(source) {
   if (!source) return "";
+
+  const preferred = String(source.preferredName || "").trim();
+  if (preferred) return preferred;
+
   const full = String(source.name || source.displayName || source.fullName || "").trim();
   if (full) return firstNameFromFullName(full);
+
   return String(source.firstName || "").trim();
 }
 
