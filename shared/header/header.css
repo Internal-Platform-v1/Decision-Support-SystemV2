@@ -933,3 +933,28 @@
         transition: none !important;
     }
 }
+
+/* ============================================================
+   EMPLOYEE DIRECTORY BUTTON (settings menu)
+   Mirrors #adminDashboardBtn styling exactly.
+   ============================================================ */
+#employeeDirectoryBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    padding: 8px 14px;
+    font-size: 9px;
+    color: #343565;
+    cursor: pointer;
+    transition: 0.2s;
+}
+#employeeDirectoryBtn:hover {
+    background: #f5f1ff;
+    color: #5620bd;
+    box-shadow: inset 2px 0 0 #6b25df;
+}
+#employeeDirectoryBtn[hidden] { display: none !important; }
