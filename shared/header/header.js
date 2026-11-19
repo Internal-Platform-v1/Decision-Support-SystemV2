@@ -15,7 +15,6 @@
     const HELP_IDS_KEY = "dss_help_ids";
     const HELP_SEEN_KEY = "dss_help_seen";
 
-    /* ---- User login ---- */
     const LOGGED_USER_KEY  = "bd_logged_in_user";
     const DISPLAY_NAME_KEY = "bd_display_name";
 
@@ -39,8 +38,6 @@
     let announcementsUnsubscribe = null;
     let helpUnsubscribe = null;
     let currentNotifications = [];
-    let globalGuideSearchIndex = [];
-    let globalGuideSearchReady = false;
 
     function esc(v) {
         return String(v ?? "").replace(/[&<>"']/g, ch => ({
@@ -91,10 +88,6 @@
         const role = String(user.role || "").trim().toLowerCase();
         if (ADMIN_ROLES.includes(role)) return "admin";
         return "user";
-    }
-
-    function getRole() {
-        return getUserRoleFromSession();
     }
 
     function setAdminSession(user) {
@@ -320,7 +313,8 @@
                             phone:         data.phone || "",
                             title:         data.title || "",
                             department:    data.department || "",
-                            location:      data.location || ""
+                            location:      data.location || "",
+                            _source:       col.name
                         };
                     }
                 } catch (err) { /* keep trying */ }
@@ -344,7 +338,8 @@
                         phone:         data.phone || "",
                         title:         data.title || "",
                         department:    data.department || "",
-                        location:      data.location || ""
+                        location:      data.location || "",
+                        _source:       col.name
                     };
                 }
             } catch (err) { /* ignore */ }
@@ -914,7 +909,6 @@
         setVal("profileDepartment",    user.department || "");
         setVal("profileLocation",      user.location || "");
 
-        // JS backstop — keep name fields locked even if DevTools removed the attribute
         ["profileFirstName", "profileLastName"].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.readOnly = true;
@@ -944,14 +938,17 @@
         const db = await waitForFirestore();
         if (!db) return;
 
+        const collectionName = user._source || PROFILE_COLLECTION;
+
         try {
-            const snap = await db.collection(PROFILE_COLLECTION).doc(user.id).get();
+            const snap = await db.collection(collectionName).doc(user.id).get();
             if (!snap.exists) return;
 
             const data = snap.data() || {};
             const merged = Object.assign({}, user, data, {
                 id: user.id,
-                empId: user.empId || data.empId || data.employeeId || data.emp_id || ""
+                empId: user.empId || data.empId || data.employeeId || data.emp_id || "",
+                _source: collectionName
             });
 
             persistUser(merged);
@@ -1014,7 +1011,6 @@
 
         const getVal = (id) => (document.getElementById(id)?.value || "").trim();
 
-        // First/last name are NOT read from the form — they're locked.
         const preferredName = getVal("profilePreferredName");
         const email         = getVal("profileEmail");
         const queue         = getVal("profileQueue");
@@ -1028,9 +1024,11 @@
         if (!queue)     return setStatus("Please select or enter your queue.", true);
 
         // Only these fields are ever written by the profile modal.
-        // firstName / lastName / name / empId / role are never touched here —
-        // tampering with the readonly inputs has no effect on Firestore.
+        // firstName / lastName / name / role are never touched here.
+        // `empId` is included so the doc stays queryable by field, even
+        // if it was created by the modal (doc-ID-only approved_users docs).
         const updates = {
+            empId:          String(user.empId || "").trim(),
             preferredName,
             email,
             queue,
@@ -1040,8 +1038,6 @@
             location
         };
 
-        // Safety net: if the doc has no name at all, seed `name` from the
-        // preferred name so the directory + greeting have something to show.
         const existingName  = String(user.name || "").trim();
         const existingFirst = String(user.firstName || "").trim();
         const existingLast  = String(user.lastName || "").trim();
@@ -1055,14 +1051,16 @@
             const db = await waitForFirestore();
             if (!db) throw new Error("Firestore unavailable");
 
-            await db.collection(PROFILE_COLLECTION).doc(user.id).set(
+            const collectionName = user._source || PROFILE_COLLECTION;
+
+            await db.collection(collectionName).doc(user.id).set(
                 Object.assign({}, updates, {
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }),
                 { merge: true }
             );
 
-            const merged = Object.assign({}, user, updates);
+            const merged = Object.assign({}, user, updates, { _source: collectionName });
             persistUser(merged);
             applyLoggedInUser(merged);
 
