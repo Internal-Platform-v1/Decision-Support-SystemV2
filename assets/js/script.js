@@ -33,7 +33,6 @@ function updateDashboardUserName(profile) {
   const nameElement = document.getElementById("currentUserName");
   if (!nameElement) return;
 
-  // 1st choice: the live session (already correct from header.js)
   let firstName = "";
   try {
     const raw = localStorage.getItem("bd_logged_in_user");
@@ -43,12 +42,8 @@ function updateDashboardUserName(profile) {
     }
   } catch (_) {}
 
-  // 2nd choice: the profile object passed in
   if (!firstName) firstName = firstNameForGreeting(profile);
-
-  // 3rd choice: whatever `window.currentUserProfile` was set to
   if (!firstName) firstName = firstNameForGreeting(window.currentUserProfile);
-
   if (!firstName) return;
 
   nameElement.textContent = "";
@@ -86,6 +81,10 @@ const TOTAL_TOOLS_COUNT = 6;
 const LS_USAGE   = "guideUsageCounts";
 const LS_HISTORY = "guideHistory";
 const LS_FAVS    = "guideFavorites";
+
+// NEW — max rows rendered inside each dashboard panel.
+// Stats and storage caps are handled in guide-store.js.
+const PANEL_LIMIT = 10;
 
 
 /* ---------------------------------------------------------
@@ -233,7 +232,7 @@ function escapeAttr(value) {
 
 
 /* ---------------------------------------------------------
-   Data reads (via GuideStore — synchronous)
+   Data reads (via GuideStore — synchronous, localStorage only)
    --------------------------------------------------------- */
 
 function getMostUsedList(limit) {
@@ -318,7 +317,7 @@ const favoritesList = document.getElementById("favoritesList");
 function renderLists() {
 
   if (mostUsedList) {
-    const items = getMostUsedList();
+    const items = getMostUsedList(PANEL_LIMIT);              // CHANGED
     if (!items.length) {
       mostUsedList.innerHTML = '<div class="list-row"><span class="row-name">No usage yet — open a guide to start tracking.</span></div>';
     } else {
@@ -338,7 +337,7 @@ function renderLists() {
   }
 
   if (recentList) {
-    const items = getRecentList();
+    const items = getRecentList(PANEL_LIMIT);                // CHANGED
     if (!items.length) {
       recentList.innerHTML = '<div class="list-row"><span class="row-name">Nothing here yet — your recently opened guides will appear here.</span></div>';
     } else {
@@ -358,7 +357,7 @@ function renderLists() {
   }
 
   if (favoritesList) {
-    const items = getFavoriteList();
+    const items = getFavoriteList(PANEL_LIMIT);              // CHANGED
     if (!items.length) {
       favoritesList.innerHTML = '<div class="list-row"><span class="row-name">No favorites yet — click the ☆ on any guide to save it.</span></div>';
     } else {
