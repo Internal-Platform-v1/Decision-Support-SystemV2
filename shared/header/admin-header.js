@@ -7,22 +7,15 @@
   /* ----------------------------------------------------------
      Admin guard + password modal
 
-     Two layers:
+     Layers:
+       1) window.name token (per-tab, set by index login)
+       2) localStorage live-user check (CROSS-TAB)
+       3) sessionStorage password gate (per-tab)
+       4) cross-tab signout watcher (storage + BroadcastChannel
+          + polling fallback)
 
-     1) Index-level auth (unchanged):
-        window.name must contain a valid token (set by the index
-        login). If not, redirect to home.
-
-     2) Admin password gate (new):
-        A separate sessionStorage flag. If missing/expired, a
-        blocking modal is shown and page content stays hidden
-        until the correct password is entered.
-
-     Unlock state lives in sessionStorage, so it survives
-     navigation/reload inside the same tab but resets when the
-     tab is closed — and it is cleared on Sign Out.
-
-     Change ADMIN_PASSWORD below to update the gate.
+     Signing out anywhere (index tab, another admin tab, or
+     storage.clear()) will now tear down every other open tab.
      ---------------------------------------------------------- */
   (function adminGuard() {
     const HOME_URL       = "/Decision-Support-SystemV2/index.html";
@@ -30,8 +23,11 @@
     const SESSION_HOURS  = 8;
     const MAX_ATTEMPTS   = 5;
     const GATE_KEY       = "bd_admin_gate_unlocked";
+    const USER_KEYS      = ["bd_logged_in_user", "currentUser", "adminUser", "loggedInUser"];
 
-    /* ---- Layer 1: index-level auth (unchanged behavior) ---- */
+    let signedOut = false;
+
+    /* ---- Layer 1: index-level auth (window.name token) ---- */
     function isIndexUnlocked() {
       try {
         if (!window.name) return false;
@@ -40,12 +36,13 @@
       } catch (e) { return false; }
     }
 
-    if (!isIndexUnlocked()) {
-      window.location.replace(HOME_URL);
-      return;
+    /* ---- Layer 2: live user must exist in localStorage ---- */
+    function hasLiveUser() {
+      try {
+        return USER_KEYS.some(k => !!localStorage.getItem(k));
+      } catch (_) { return false; }
     }
 
-    /* ---- Layer 2: admin password gate ---- */
     function isGateUnlocked() {
       try {
         const raw = sessionStorage.getItem(GATE_KEY);
@@ -68,15 +65,102 @@
       try { sessionStorage.removeItem(GATE_KEY); } catch (e) {}
     }
 
-    function goHome() { window.location.replace(HOME_URL); }
+    /* ---- Central sign-out used everywhere ---- */
+    function performSignOut(opts) {
+      if (signedOut) return;
+      signedOut = true;
 
-    /* Gate already unlocked for this tab? Let the page through. */
+      const broadcast = !opts || opts.broadcast !== false;
+      if (broadcast) {
+        try { localStorage.setItem("bd_signout_broadcast", String(Date.now())); } catch (_) {}
+        try {
+          const bc = new BroadcastChannel("bdtools:auth");
+          bc.postMessage({ type: "signout" });
+          bc.close();
+        } catch (_) {}
+      }
+
+      // Wipe every auth artifact
+      try { window.name = ""; } catch (_) {}
+      try { sessionStorage.removeItem(GATE_KEY); } catch (_) {}
+      try {
+        localStorage.removeItem("bd_role");
+        localStorage.removeItem("adminUser");
+        localStorage.removeItem("bd_admin_unlocked");
+        localStorage.removeItem("bd_logged_in_user");
+        localStorage.removeItem("bd_display_name");
+        localStorage.removeItem("bd_signout_broadcast");
+      } catch (_) {}
+
+      window.location.replace(HOME_URL);
+    }
+
+    /* ---- Cross-tab signout watcher ---- */
+    function watchSignOut() {
+      const AUTH_KEYS = ["bd_logged_in_user", "bd_role", "bd_display_name", "adminUser"];
+
+      // 1) storage events (fire in OTHER tabs)
+      window.addEventListener("storage", function (event) {
+        // storage.clear() → key is null
+        if (event.key === null) {
+          if (!hasLiveUser()) performSignOut({ broadcast: false });
+          return;
+        }
+        // Any auth key removed / blanked
+        if (AUTH_KEYS.indexOf(event.key) !== -1 && !hasLiveUser()) {
+          performSignOut({ broadcast: false });
+          return;
+        }
+        // Explicit broadcast marker from a sibling tab
+        if (event.key === "bd_signout_broadcast" && event.newValue) {
+          performSignOut({ broadcast: false });
+        }
+      });
+
+      // 2) BroadcastChannel — instant, works even if storage events are throttled
+      try {
+        const bc = new BroadcastChannel("bdtools:auth");
+        bc.addEventListener("message", function (e) {
+          if (e && e.data && e.data.type === "signout") {
+            performSignOut({ broadcast: false });
+          }
+        });
+      } catch (_) {}
+
+      // 3) Polling fallback (every 4s) — catches any edge case
+      setInterval(function () {
+        if (!hasLiveUser()) performSignOut({ broadcast: false });
+      }, 4000);
+    }
+
+    /* ---- Gate 1: token must exist in this tab ---- */
+    if (!isIndexUnlocked()) {
+      window.location.replace(HOME_URL);
+      return;
+    }
+
+    /* ---- Gate 1.5: live user must still exist in localStorage ---- */
+    if (!hasLiveUser()) {
+      window.location.replace(HOME_URL);
+      return;
+    }
+
+    /* ---- Install cross-tab watcher NOW, before showing the modal ---- */
+    watchSignOut();
+
+    /* ---- Public API for other pages + the Sign Out button ---- */
+    window.AdminGuard = {
+      isUnlocked:  isGateUnlocked,
+      lock:        clearGate,
+      unlock:      function () { writeGate(); },
+      hasLiveUser: hasLiveUser,
+      signOut:     performSignOut
+    };
+
+    /* ---- Gate 2: admin password modal ---- */
     if (isGateUnlocked()) return;
 
-    /* Hide page content while the modal is up so the dashboard
-       never flashes behind the backdrop. */
     document.documentElement.classList.add("admin-locked");
-
     let attempts = 0;
 
     function buildModal() {
@@ -108,7 +192,7 @@
       return wrap;
     }
 
-    function init() {
+    function initModal() {
       if (document.getElementById("adminAuthOverlay")) return;
 
       const overlay   = buildModal();
@@ -135,6 +219,11 @@
       form.addEventListener("submit", function (event) {
         event.preventDefault();
 
+        if (!hasLiveUser()) {
+          performSignOut({ broadcast: false });
+          return;
+        }
+
         if (input.value === ADMIN_PASSWORD) {
           writeGate();
           document.documentElement.classList.remove("admin-locked");
@@ -149,23 +238,18 @@
 
         if (attempts >= MAX_ATTEMPTS) {
           showError("Too many attempts. Redirecting to home…");
-          setTimeout(goHome, 1000);
+          setTimeout(function () { performSignOut({ broadcast: false }); }, 1000);
           return;
         }
 
         const left = MAX_ATTEMPTS - attempts;
-        showError(
-          "Incorrect password. " + left +
-          " attempt" + (left === 1 ? "" : "s") + " left."
-        );
+        showError("Incorrect password. " + left + " attempt" + (left === 1 ? "" : "s") + " left.");
       });
 
       cancelBtn.addEventListener("click", function () {
-        clearGate();
-        goHome();
+        performSignOut();
       });
 
-      /* Keep keyboard focus inside the modal */
       overlay.addEventListener("keydown", function (event) {
         if (event.key !== "Tab") return;
         const focusables = overlay.querySelectorAll("input, button");
@@ -180,25 +264,18 @@
       });
     }
 
-    /* Small public API for debugging / other pages */
-    window.AdminGuard = {
-      isUnlocked: isGateUnlocked,
-      lock:       clearGate,
-      unlock:     function () { writeGate(); }
-    };
-
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", init);
+      document.addEventListener("DOMContentLoaded", initModal);
     } else {
-      init();
+      initModal();
     }
   })();
 
   const CONFIG = {
     htmlPath: "../../shared/header/admin-header.html",
     timeZone: "Asia/Manila",
-    homeUrl: "/Decision-Support-SystemV2/index.html",
-    defaultUser: { name: "Admin User", role: "System Administrator", email: "admin@example.com", empId: "" }
+    homeUrl: "/Decision-Support-SystemV2/index.html"
+    // NOTE: defaultUser intentionally removed — no silent fallback
   };
 
   const pageMap = {
@@ -221,8 +298,9 @@
     return (parts[0][0] + parts.at(-1)[0]).toUpperCase();
   }
 
+  /* Returns null if there is no real user — never falls back to "Admin User" */
   function getCurrentUser() {
-    const keys = ["bd_logged_in_user", "currentUser", "adminUser", "user", "loggedInUser"];
+    const keys = ["bd_logged_in_user", "currentUser", "adminUser", "loggedInUser"];
     for (const key of keys) {
       try {
         const raw = localStorage.getItem(key);
@@ -231,16 +309,21 @@
         if (!user || typeof user !== "object") continue;
 
         const composed = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+        const name = user.name || user.displayName || user.employeeName ||
+                     user.fullName || composed;
+
+        // Reject empty placeholder objects
+        if (!name && !user.empId && !user.employeeId && !user.email) continue;
 
         return {
-          name: user.name || user.displayName || user.employeeName || user.fullName || composed || CONFIG.defaultUser.name,
-          role: user.role || user.userRole || CONFIG.defaultUser.role,
-          email: user.email || user.userEmail || CONFIG.defaultUser.email,
+          name: name || "Administrator",
+          role: user.role || user.userRole || "System Administrator",
+          email: user.email || user.userEmail || "",
           empId: user.empId || user.employeeId || user.emp_id || ""
         };
       } catch (_) {}
     }
-    return { ...CONFIG.defaultUser };
+    return null;
   }
 
   function setText(id, value) {
@@ -250,6 +333,16 @@
 
   function applyUser() {
     const user = getCurrentUser();
+
+    if (!user) {
+      if (window.AdminGuard && typeof window.AdminGuard.signOut === "function") {
+        window.AdminGuard.signOut({ broadcast: false });
+      } else {
+        window.location.replace(CONFIG.homeUrl);
+      }
+      return;
+    }
+
     const initials = getInitials(user.name);
 
     setText("sidebarUserName", user.name);
@@ -277,14 +370,11 @@
 
   function setActiveNavigation() {
     const key = getPageKey();
-
     document.querySelectorAll(".admin-nav-item").forEach(item => {
       item.classList.toggle("active", item.dataset.adminPage === key);
     });
-
     const title = document.body.dataset.adminTitle || "Decision Support System";
     const description = document.body.dataset.adminDescription || "Admin Console";
-
     setText("adminPageTitle", title);
     setText("adminPageDescription", description);
   }
@@ -363,16 +453,11 @@
         const action = button.dataset.adminAction;
 
         if (action === "logout") {
-          try { window.name = ""; } catch (e) {}
-          try { sessionStorage.removeItem("bd_admin_gate_unlocked"); } catch (e) {}
-          try {
-            localStorage.removeItem("bd_role");
-            localStorage.removeItem("adminUser");
-            localStorage.removeItem("bd_admin_unlocked");
-            localStorage.removeItem("bd_logged_in_user");
-            localStorage.removeItem("bd_display_name");
-          } catch (e) {}
-          window.location.href = CONFIG.homeUrl;
+          if (window.AdminGuard && typeof window.AdminGuard.signOut === "function") {
+            window.AdminGuard.signOut();
+          } else {
+            window.location.href = CONFIG.homeUrl;
+          }
         }
 
         if (action === "settings") navigate("settings");
@@ -387,6 +472,11 @@
   async function load() {
     const mount = document.getElementById("adminHeader");
     if (!mount) return;
+
+    if (window.AdminGuard && !window.AdminGuard.hasLiveUser()) {
+      window.AdminGuard.signOut({ broadcast: false });
+      return;
+    }
 
     try {
       const response = await fetch(CONFIG.htmlPath, { cache: "no-cache" });
