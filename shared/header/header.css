@@ -1075,3 +1075,30 @@
     font-style: italic;
     line-height: 1.4;
 }
+
+/* ============================================================
+   PROFILE MODAL — VIEW MODE
+   Used by Employee Directory cards (window.BDProfileModal.view).
+   ============================================================ */
+.profile-modal-btn[hidden] {
+    display: none !important;
+}
+
+/* Read-only fields in view mode feel like text, not form inputs */
+.profile-modal--view .profile-field input[readonly] {
+    cursor: default;
+    color: #3d3f65;
+    background: #f7f6fb;
+    border-color: #ececf3;
+}
+.profile-modal--view .profile-field input[readonly]:hover,
+.profile-modal--view .profile-field input[readonly]:focus {
+    border-color: #ececf3;
+    box-shadow: none;
+    background: #f7f6fb;
+}
+
+/* "Locked" pill on First/Last is redundant when everything is locked */
+.profile-modal--view .profile-field-lock {
+    display: none;
+}
