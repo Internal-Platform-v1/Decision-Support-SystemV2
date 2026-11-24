@@ -18,6 +18,10 @@
     const LOGGED_USER_KEY  = "bd_logged_in_user";
     const DISPLAY_NAME_KEY = "bd_display_name";
 
+    // NEW — cross-tab sign-out channel
+    const SIGNOUT_BROADCAST_KEY = "bd_signout_broadcast";
+    const AUTH_CHANNEL_NAME     = "bdtools:auth";
+
     const USER_LOOKUP_COLLECTIONS = [
         { name: "employees",      idFields: ["empId", "employeeId", "emp_id"] },
         { name: "users",          idFields: ["empId", "employeeId", "emp_id"] },
@@ -117,6 +121,67 @@
         }
         try { localStorage.removeItem("bd_admin_unlocked"); } catch (e) {}
         try { localStorage.removeItem("adminUser"); } catch (e) {}
+    }
+
+    /* ------------------------------------------------------------
+       Cross-tab sign-out — index ↔ index ↔ admin
+       ------------------------------------------------------------ */
+    function broadcastSignOut() {
+        try {
+            localStorage.setItem(
+                SIGNOUT_BROADCAST_KEY,
+                Date.now() + ":" + Math.random().toString(36).slice(2)
+            );
+        } catch (e) {}
+        try {
+            const bc = new BroadcastChannel(AUTH_CHANNEL_NAME);
+            bc.postMessage({ type: "signout" });
+            bc.close();
+        } catch (e) {}
+    }
+
+    function setupCrossTabSignOut() {
+        function handleRemoteSignOut() {
+            // Idempotent — safe to call if already signed out
+            applyLoggedInUser(null);
+
+            const menu = document.getElementById("settingsMenu");
+            if (menu) menu.classList.remove("open");
+            const btn = document.getElementById("settingsBtn");
+            if (btn) btn.setAttribute("aria-expanded", "false");
+            const caseDropdown = document.getElementById("caseDropdown");
+            if (caseDropdown) caseDropdown.classList.remove("open");
+
+            if (window.bdUserLoginGate && typeof window.bdUserLoginGate.open === "function") {
+                window.bdUserLoginGate.open();
+            }
+        }
+
+        window.addEventListener("storage", function (event) {
+            // Explicit broadcast key from another tab
+            if (event.key === SIGNOUT_BROADCAST_KEY && event.newValue) {
+                handleRemoteSignOut();
+                return;
+            }
+            // Someone called localStorage.clear()
+            if (event.key === null) {
+                handleRemoteSignOut();
+                return;
+            }
+            // The main auth key was removed by another tab
+            if (event.key === LOGGED_USER_KEY && !event.newValue) {
+                handleRemoteSignOut();
+            }
+        });
+
+        try {
+            const bc = new BroadcastChannel(AUTH_CHANNEL_NAME);
+            bc.addEventListener("message", function (e) {
+                if (e && e.data && e.data.type === "signout") {
+                    handleRemoteSignOut();
+                }
+            });
+        } catch (e) {}
     }
 
     /* ------------------------------------------------------------
@@ -364,11 +429,16 @@
         }
         function close() { gate.hidden = true; }
 
+        // NEW — exposed so cross-tab sign-out can re-open the gate
+        window.bdUserLoginGate = { open, close };
+
         if (signOut) {
             signOut.hidden = false;
             signOut.addEventListener("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                broadcastSignOut();   // NEW — tell every other tab first
 
                 clearStoredUser();
                 clearAdminSession();
@@ -1130,6 +1200,7 @@
         setupSearch();
         setupSharedNotifications();
         setupProfileModal();
+        setupCrossTabSignOut();   // NEW — must run after setupUserLogin
     }
 
     function whenHeaderReady(fn, tries) {
