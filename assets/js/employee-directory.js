@@ -2,6 +2,9 @@
    BD Tools — Employee Directory
    Reads from `employees`, `users`, `approved_users` (deduped
    by empId, preferring `employees` as the source of truth).
+
+   Card click → opens the shared profile modal in view mode via
+   window.BDProfileModal.view(employee).
    ============================================================ */
 (function () {
   "use strict";
@@ -11,7 +14,7 @@
   const ADMIN_ROLES = ["admin", "manager", "administrator"];
 
   let allEmployees = [];
-  let activeQueue = null;   // null = all queues
+  let activeQueue = null;
   let searchQuery = "";
   let initialized = false;
 
@@ -170,7 +173,7 @@
     });
   }
 
-  /* ---- Rendering ---- */
+  /* ---- Card ---- */
   function renderEmployeeCard(e) {
     const name       = getDisplayName(e);
     const initials   = getInitials(name);
@@ -215,7 +218,9 @@
     }
 
     return (
-      '<article class="employee-card">' +
+      '<article class="employee-card" role="button" tabindex="0" ' +
+        'data-emp-id="' + esc(e.empId || "") + '" ' +
+        'aria-label="View profile for ' + esc(name) + '">' +
         '<div class="employee-card-head">' +
           '<div class="employee-avatar">' + esc(initials) + "</div>" +
           '<div class="employee-identity">' +
@@ -272,12 +277,53 @@
     grid.innerHTML = filtered.map(renderEmployeeCard).join("");
   }
 
+  /* ---- Card click → open shared profile modal in view mode ---- */
+  function openEmployeeProfile(employee) {
+    if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
+      window.BDProfileModal.view(employee);
+      return;
+    }
+    // Header (and therefore BDProfileModal) may still be loading — retry once.
+    setTimeout(function () {
+      if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
+        window.BDProfileModal.view(employee);
+      } else {
+        console.warn("[directory] profile modal not available");
+      }
+    }, 500);
+  }
+
+  function handleCardClick(e) {
+    const card = e.target.closest(".employee-card");
+    if (!card) return;
+    const empId = card.dataset.empId;
+    if (!empId) return;
+    const employee = allEmployees.find(x => String(x.empId) === empId);
+    if (!employee) return;
+    openEmployeeProfile(employee);
+  }
+
+  function handleCardKeydown(e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const card = e.target.closest(".employee-card");
+    if (!card) return;
+    e.preventDefault();
+    handleCardClick(e);
+  }
+
   /* ---- Init ---- */
   async function init() {
     if (initialized) return;
     initialized = true;
 
     const resultsEl = document.getElementById("resultsText");
+    const grid      = document.getElementById("employeeGrid");
+
+    if (grid && !grid._directoryClickBound) {
+      grid._directoryClickBound = true;
+      grid.addEventListener("click", handleCardClick);
+      grid.addEventListener("keydown", handleCardKeydown);
+    }
 
     try {
       if (resultsEl) resultsEl.textContent = "Loading employees...";
