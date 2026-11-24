@@ -3,6 +3,11 @@
    - localStorage = live runtime cache (synchronous, same as before)
    - Firestore    = background sync (hydrate on load, flush on nav)
    - auto-tracks guide page opens
+
+   READ-BUDGET GUARDS (NEW):
+     • HYDRATE_TTL_MS  — skip Firestore re-read if hydrated recently
+     • MAX_HISTORY / MAX_FAVORITES / MAX_USAGE — bound the doc size
+     • dirty flag — skip no-op writes on pagehide / flushSync
    ============================================================ */
 (function () {
   "use strict";
@@ -11,9 +16,14 @@
   const LS_USAGE       = "guideUsageCounts";
   const LS_FAVS        = "guideFavorites";
   const LS_OWNER       = "guideDataOwner";
+  const LS_HYDRATED_AT = "guideDataHydratedAt";   // NEW
   const COLLECTION     = "user_guide_data";
+
   const MAX_HISTORY    = 100;
+  const MAX_FAVORITES  = 100;                     // NEW
+  const MAX_USAGE      = 200;                     // NEW
   const SYNC_DEBOUNCE  = 250;
+  const HYDRATE_TTL_MS = 5 * 60 * 1000;           // NEW: 5 minutes
 
   /* ---------- canonicalizer ---------- */
   function canonicalGuideUrl(rawUrl, baseUrl) {
@@ -42,6 +52,37 @@
     catch (e) { return false; }
   }
 
+  /* ---------- bounded-payload helpers (NEW) ---------- */
+  function trimHistory(arr) {
+    if (!Array.isArray(arr)) return [];
+    if (arr.length <= MAX_HISTORY) return arr;
+    return arr.slice(arr.length - MAX_HISTORY);
+  }
+  function trimFavorites(obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
+    const keys = Object.keys(obj);
+    if (keys.length <= MAX_FAVORITES) return obj;
+    const sorted = keys
+      .map(function (k) { return { k: k, ts: Number(obj[k] && obj[k].timestamp) || 0 }; })
+      .sort(function (a, b) { return b.ts - a.ts; })
+      .slice(0, MAX_FAVORITES);
+    const out = {};
+    sorted.forEach(function (x) { out[x.k] = obj[x.k]; });
+    return out;
+  }
+  function trimUsage(obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
+    const keys = Object.keys(obj);
+    if (keys.length <= MAX_USAGE) return obj;
+    const sorted = keys
+      .map(function (k) { return { k: k, c: Number(obj[k] && obj[k].count) || 0 }; })
+      .sort(function (a, b) { return b.c - a.c; })
+      .slice(0, MAX_USAGE);
+    const out = {};
+    sorted.forEach(function (x) { out[x.k] = obj[x.k]; });
+    return out;
+  }
+
   /* ---------- firestore plumbing ---------- */
   function getEmpId() {
     try {
@@ -58,10 +99,11 @@
     return null;
   }
 
-  let hydrating = false;
-  let pendingSync = false;
-  let syncTimer = null;
+  let hydrating    = false;
+  let pendingSync  = false;
+  let syncTimer    = null;
   let queuedWrites = [];
+  let dirty        = false;   // NEW: skip no-op writes
 
   function scheduleSync() {
     if (hydrating) { pendingSync = true; return; }
@@ -78,21 +120,25 @@
   }
 
   function doWrite() {
+    if (!dirty) return Promise.resolve();           // NEW: no-op if nothing changed
     const empId = getEmpId();
     if (!empId) return Promise.resolve();
     const db = firestore();
     if (!db) return Promise.resolve();
 
+    dirty = false;
+
     const payload = {
-      usage:     readJSON(LS_USAGE, {}),
-      history:   readJSON(LS_HISTORY, []),
-      favorites: readJSON(LS_FAVS, {}),
+      usage:      trimUsage(readJSON(LS_USAGE, {})),
+      history:    trimHistory(readJSON(LS_HISTORY, [])),
+      favorites:  trimFavorites(readJSON(LS_FAVS, {})),
       modifiedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     return db.collection(COLLECTION).doc(empId)
       .set(payload, { merge: true })
       .catch(function (err) {
+        dirty = true;                                // NEW: allow retry
         console.warn("[GuideStore] write failed:", err.code || err.message);
       });
   }
@@ -105,12 +151,14 @@
   /* ---------- hydrate from Firestore ---------- */
   let hydratePromise = null;
 
-  function hydrate() {
-    if (hydratePromise) return hydratePromise;
+  function hydrate(force) {
+    // If a hydrate is in flight or already done, reuse it (unless forced)
+    if (hydratePromise && !force) return hydratePromise;
 
     const empId = getEmpId();
     if (!empId) { hydratePromise = Promise.resolve(); return hydratePromise; }
 
+    // Owner switch → wipe local data
     let owner = "";
     try { owner = localStorage.getItem(LS_OWNER) || ""; } catch (_) {}
     if (owner && owner !== empId) {
@@ -118,12 +166,27 @@
         localStorage.removeItem(LS_USAGE);
         localStorage.removeItem(LS_HISTORY);
         localStorage.removeItem(LS_FAVS);
+        localStorage.removeItem(LS_HYDRATED_AT);
       } catch (_) {}
     }
     try { localStorage.setItem(LS_OWNER, empId); } catch (_) {}
 
     const db = firestore();
     if (!db) { hydratePromise = Promise.resolve(); return hydratePromise; }
+
+    // ---- NEW: TTL guard — skip Firestore read if we hydrated recently ----
+    if (!force) {
+      try {
+        const last = Number(localStorage.getItem(LS_HYDRATED_AT)) || 0;
+        const sameOwner = (localStorage.getItem(LS_OWNER) || "") === empId;
+        if (sameOwner && last && (Date.now() - last) < HYDRATE_TTL_MS) {
+          hydratePromise = Promise.resolve();
+          // Fire ready so renderers re-run against the local cache
+          window.dispatchEvent(new CustomEvent("guidestore:ready"));
+          return hydratePromise;
+        }
+      } catch (_) {}
+    }
 
     hydrating = true;
     let firestoreExisted = false;
@@ -133,9 +196,10 @@
         if (!snap.exists) return;
         firestoreExisted = true;
         const d = snap.data() || {};
-        writeJSON(LS_USAGE,   d.usage     || {});
-        writeJSON(LS_HISTORY, d.history   || []);
-        writeJSON(LS_FAVS,    d.favorites || {});
+        writeJSON(LS_USAGE,   trimUsage(d.usage       || {}));
+        writeJSON(LS_HISTORY, trimHistory(d.history   || []));
+        writeJSON(LS_FAVS,    trimFavorites(d.favorites || {}));
+        try { localStorage.setItem(LS_HYDRATED_AT, String(Date.now())); } catch (_) {}
       })
       .catch(function (err) {
         console.warn("[GuideStore] hydrate failed:", err.code || err.message);
@@ -177,12 +241,13 @@
     let history = readJSON(LS_HISTORY, []);
     if (!Array.isArray(history)) history = [];
     history.push({ title: title || "Untitled Guide", url: url, timestamp: Date.now() });
-    if (history.length > MAX_HISTORY) history.splice(0, history.length - MAX_HISTORY);
+    history = trimHistory(history);
     writeJSON(LS_HISTORY, history);
 
     if (hydrating && !replaying) {
       queuedWrites.push({ type: "history", title: title || "Untitled Guide", url: url });
     } else if (!hydrating) {
+      dirty = true;                            // NEW
       scheduleSync();
     }
   }
@@ -196,11 +261,12 @@
     if (!safe[url]) safe[url] = { title: title || "Untitled Guide", count: 0 };
     safe[url].title = title || safe[url].title || "Untitled Guide";
     safe[url].count = (Number(safe[url].count) || 0) + 1;
-    writeJSON(LS_USAGE, safe);
+    writeJSON(LS_USAGE, trimUsage(safe));
 
     if (hydrating && !replaying) {
       queuedWrites.push({ type: "usage", title: title || "Untitled Guide", url: url });
     } else if (!hydrating) {
+      dirty = true;                            // NEW
       scheduleSync();
     }
   }
@@ -227,15 +293,20 @@
     const url = canonicalGuideUrl(rawUrl);
     if (!url) return false;
 
-    const favs = readFavorites();
+    let favs = readFavorites();
     let added;
     if (favs[url]) { delete favs[url]; added = false; }
-    else { favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() }; added = true; }
+    else {
+      favs[url] = { title: title || "Untitled Guide", url: url, timestamp: Date.now() };
+      added = true;
+      favs = trimFavorites(favs);              // NEW: cap favorites count
+    }
     writeFavorites(favs);
 
     if (hydrating && !replaying) {
       queuedWrites.push({ type: "fav", title: title || "Untitled Guide", url: url });
     } else if (!hydrating) {
+      dirty = true;                            // NEW
       flushSync();
     }
     return added;
@@ -326,12 +397,12 @@
     getMostUsed:       getMostUsed,
     getFavoriteList:   getFavoriteList,
     hydrate:           hydrate,
+    refresh:           function () { return hydrate(true); },   // NEW: force re-read
     flushSync:         flushSync
   };
 
   /* ---------- auto-track guide page opens ---------- */
   (function autoTrackGuidePage() {
-    // Only fire on actual guide pages, not category landings or the dashboard
     function isGuidePage() {
       var p = location.pathname.toLowerCase();
       return /\/guides\/[^\/]+\/[^\/]+\/[^\/]+\.html$/.test(p);
@@ -371,9 +442,7 @@
       });
     }
 
-    function schedule() {
-      setTimeout(fire, 250);
-    }
+    function schedule() { setTimeout(fire, 250); }
 
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", schedule, { once: true });
@@ -384,14 +453,14 @@
 
   /* ---------- auto-hydrate on load + on user switch ---------- */
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", hydrate, { once: true });
+    document.addEventListener("DOMContentLoaded", function () { hydrate(); }, { once: true });
   } else {
     hydrate();
   }
 
   document.addEventListener("bdtools:user-changed", function () {
     hydratePromise = null;
-    hydrate();
+    hydrate(true);   // NEW: force re-read on user switch
   });
 
   window.addEventListener("pagehide", function () {
