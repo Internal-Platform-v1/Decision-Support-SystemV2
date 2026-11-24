@@ -18,7 +18,7 @@
     const LOGGED_USER_KEY  = "bd_logged_in_user";
     const DISPLAY_NAME_KEY = "bd_display_name";
 
-    // NEW — cross-tab sign-out channel
+    // Cross-tab sign-out channel
     const SIGNOUT_BROADCAST_KEY = "bd_signout_broadcast";
     const AUTH_CHANNEL_NAME     = "bdtools:auth";
 
@@ -429,7 +429,7 @@
         }
         function close() { gate.hidden = true; }
 
-        // NEW — exposed so cross-tab sign-out can re-open the gate
+        // Exposed so cross-tab sign-out can re-open the gate
         window.bdUserLoginGate = { open, close };
 
         if (signOut) {
@@ -438,7 +438,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                broadcastSignOut();   // NEW — tell every other tab first
+                broadcastSignOut();   // tell every other tab first
 
                 clearStoredUser();
                 clearAdminSession();
@@ -956,15 +956,15 @@
         };
     }
 
-function updateProfileAvatarPreview() {
-    const first = (document.getElementById("profileFirstName")?.value || "").trim();
-    const last  = (document.getElementById("profileLastName")?.value || "").trim();
-    const display = (first + " " + last).trim() || "User";
-    const nameEl = document.getElementById("profileModalName");
-    if (nameEl) nameEl.textContent = display;
-}
+    function updateProfileAvatarPreview() {
+        const first = (document.getElementById("profileFirstName")?.value || "").trim();
+        const last  = (document.getElementById("profileLastName")?.value || "").trim();
+        const display = (first + " " + last).trim() || "User";
+        const nameEl = document.getElementById("profileModalName");
+        if (nameEl) nameEl.textContent = display;
+    }
 
-    function populateProfileForm(user) {
+    function populateProfileForm(user, readOnly) {
         const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
 
         const { firstName, lastName } = deriveFirstLast(user);
@@ -979,16 +979,25 @@ function updateProfileAvatarPreview() {
         setVal("profileDepartment",    user.department || "");
         setVal("profileLocation",      user.location || "");
 
+        // First / last name are always locked.
         ["profileFirstName", "profileLastName"].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.readOnly = true;
         });
 
-                const displayName = [firstName, lastName].filter(Boolean).join(" ")
+        // In view mode every other field is locked too.
+        // Explicitly set both true and false so switching back to edit mode restores them.
+        ["profilePreferredName", "profileEmail", "profileQueue", "profilePhone",
+         "profileTitle", "profileDepartment", "profileLocation"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.readOnly = !!readOnly;
+        });
+
+        const displayName = [firstName, lastName].filter(Boolean).join(" ")
                           || displayNameOf(user)
                           || "User";
 
-        // The avatar is now a static SVG icon — only the name text updates.
+        // The avatar is a static SVG icon — only the name text updates.
         const nameEl = document.getElementById("profileModalName");
         if (nameEl) nameEl.textContent = displayName;
 
@@ -1022,20 +1031,35 @@ function updateProfileAvatarPreview() {
             });
 
             persistUser(merged);
-            populateProfileForm(merged);
+            populateProfileForm(merged, false);
         } catch (err) {
             console.warn("[header.js] profile fetch failed:", err);
         }
     }
 
-    function openProfileModal() {
+    function openProfileModal(user, mode) {
         const modal = document.getElementById("profileModal");
         if (!modal) return;
 
-        const user = getStoredUser();
-        if (!user) return;
+        const targetUser = user || getStoredUser();
+        if (!targetUser) return;
 
-        populateProfileForm(user);
+        const isView = mode === "view";
+
+        modal.classList.toggle("profile-modal--view", isView);
+        modal.dataset.mode = isView ? "view" : "edit";
+
+        // Swap the right-column heading
+        const headingH3 = modal.querySelector(".profile-modal-heading h3");
+        const headingP  = modal.querySelector(".profile-modal-heading p");
+        if (headingH3) headingH3.textContent = isView ? "Employee Details" : "Profile Information";
+        if (headingP) {
+            headingP.textContent = isView
+                ? "Viewing directory profile."
+                : "Keep your directory information up to date.";
+        }
+
+        populateProfileForm(targetUser, isView);
         modal.hidden = false;
         document.body.classList.add("profile-modal-open");
 
@@ -1043,14 +1067,29 @@ function updateProfileAvatarPreview() {
         if (status) { status.hidden = true; status.textContent = ""; }
 
         const submit = document.getElementById("profileSubmitBtn");
-        if (submit) { submit.disabled = false; submit.classList.remove("loading"); }
+        if (submit) {
+            submit.hidden = isView;
+            submit.disabled = false;
+            submit.classList.remove("loading");
+        }
+
+        const cancelBtn = modal.querySelector(".profile-modal-actions button.ghost");
+        if (cancelBtn) cancelBtn.textContent = isView ? "Close" : "Cancel";
 
         setTimeout(() => {
-            const pref = document.getElementById("profilePreferredName");
-            if (pref) pref.focus();
+            if (isView) {
+                const closeBtn = modal.querySelector(".profile-modal-close");
+                if (closeBtn) closeBtn.focus();
+            } else {
+                const pref = document.getElementById("profilePreferredName");
+                if (pref) pref.focus();
+            }
         }, 80);
 
-        refreshProfileFromFirestore(user);
+        // Only re-fetch from Firestore when editing your own profile.
+        if (!isView) {
+            refreshProfileFromFirestore(targetUser);
+        }
     }
 
     function closeProfileModal() {
@@ -1062,6 +1101,10 @@ function updateProfileAvatarPreview() {
 
     async function saveProfile(event) {
         event.preventDefault();
+
+        // Guard: never save from view mode
+        const modal = document.getElementById("profileModal");
+        if (modal && modal.dataset.mode === "view") return;
 
         const status = document.getElementById("profileModalStatus");
         const submit = document.getElementById("profileSubmitBtn");
@@ -1169,19 +1212,20 @@ function updateProfileAvatarPreview() {
                 if (menu) menu.classList.remove("open");
                 const btn = document.getElementById("settingsBtn");
                 if (btn) btn.setAttribute("aria-expanded", "false");
-                openProfileModal();
+                openProfileModal();          // edit mode
             });
             userBlock.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    openProfileModal();
+                    openProfileModal();      // edit mode
                 }
             });
         }
 
         window.BDProfileModal = {
             open: openProfileModal,
-            close: closeProfileModal
+            close: closeProfileModal,
+            view: function (user) { openProfileModal(user, "view"); }
         };
     }
 
@@ -1200,7 +1244,7 @@ function updateProfileAvatarPreview() {
         setupSearch();
         setupSharedNotifications();
         setupProfileModal();
-        setupCrossTabSignOut();   // NEW — must run after setupUserLogin
+        setupCrossTabSignOut();   // must run after setupUserLogin
     }
 
     function whenHeaderReady(fn, tries) {
