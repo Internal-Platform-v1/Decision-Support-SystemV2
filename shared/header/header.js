@@ -956,13 +956,13 @@
         };
     }
 
-    function updateProfileAvatarPreview() {
-        const first = (document.getElementById("profileFirstName")?.value || "").trim();
-        const last  = (document.getElementById("profileLastName")?.value || "").trim();
-        const initials = getInitials((first + " " + last).trim() || "User");
-        const avatar = document.getElementById("profileModalAvatar");
-        if (avatar) avatar.textContent = initials;
-    }
+function updateProfileAvatarPreview() {
+    const first = (document.getElementById("profileFirstName")?.value || "").trim();
+    const last  = (document.getElementById("profileLastName")?.value || "").trim();
+    const display = (first + " " + last).trim() || "User";
+    const nameEl = document.getElementById("profileModalName");
+    if (nameEl) nameEl.textContent = display;
+}
 
     function populateProfileForm(user) {
         const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
@@ -984,13 +984,13 @@
             if (el) el.readOnly = true;
         });
 
-        const displayName = [firstName, lastName].filter(Boolean).join(" ")
+                const displayName = [firstName, lastName].filter(Boolean).join(" ")
                           || displayNameOf(user)
                           || "User";
-        const initials = getInitials(displayName);
 
-        const avatar = document.getElementById("profileModalAvatar");
-        if (avatar) avatar.textContent = initials;
+        // The avatar is now a static SVG icon — only the name text updates.
+        const nameEl = document.getElementById("profileModalName");
+        if (nameEl) nameEl.textContent = displayName;
 
         const empBadge = document.getElementById("profileModalEmpId");
         if (empBadge) empBadge.textContent = user.empId ? `EMP ${user.empId}` : "EMP --";
