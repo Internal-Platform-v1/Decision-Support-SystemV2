@@ -80,7 +80,7 @@
             <div class="settings-menu" id="settingsMenu" role="menu">
                 <div class="settings-user" id="settingsUserBlock" hidden
                      role="button" tabindex="0"
-                     aria-label="Open my profile"
+                     aria-label="View my profile"
                      aria-haspopup="dialog"
                      aria-controls="profileModal">
                     <div class="settings-user-avatar" id="settingsUserAvatar">--</div>
@@ -88,10 +88,6 @@
                         <strong id="settingsUserName">User</strong>
                         <small id="settingsUserEmpId">EMP ID</small>
                     </div>
-                    <svg class="settings-user-edit" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 20h9"/>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-                    </svg>
                 </div>
 
                 <div class="settings-heading">Settings</div>
@@ -245,7 +241,7 @@
 </div>
 
 <!-- =============================================
-     USER PROFILE MODAL  (two-column layout)
+     USER PROFILE MODAL  (view only)
      ============================================= -->
 <div class="profile-modal" id="profileModal" hidden>
     <div class="profile-modal-backdrop" data-profile-close></div>
@@ -276,120 +272,72 @@
                 </div>
             </aside>
 
-            <!-- RIGHT: form / details -->
+            <!-- RIGHT: read-only details -->
             <div class="profile-modal-main">
                 <div class="profile-modal-heading">
-                    <h3>Profile Information</h3>
-                    <p>Keep your directory information up to date.</p>
+                    <h3>Employee Details</h3>
+                    <p>Directory information — view only.</p>
                 </div>
 
-                <form class="profile-modal-form" id="profileForm" novalidate>
+                <div class="profile-view">
                     <div class="profile-field-row">
-                        <label class="profile-field">
-                            <span class="profile-field-label">First Name <small class="profile-field-lock">Locked</small></span>
-                            <input type="text" id="profileFirstName" maxlength="60" autocomplete="off" readonly>
-                        </label>
-                        <label class="profile-field">
-                            <span class="profile-field-label">Last Name <small class="profile-field-lock">Locked</small></span>
-                            <input type="text" id="profileLastName" maxlength="60" autocomplete="off" readonly>
-                        </label>
+                        <div class="profile-field">
+                            <span class="profile-field-label">First Name</span>
+                            <div class="profile-field-static" id="profileFirstName">—</div>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-field-label">Last Name</span>
+                            <div class="profile-field-static" id="profileLastName">—</div>
+                        </div>
                     </div>
-                    <p class="profile-field-note">First and last name are managed by Training Team. Contact an admin to request a change.</p>
 
-                    <label class="profile-field">
-                        <span class="profile-field-label">Preferred Name <small>optional</small></span>
-                        <input type="text" id="profilePreferredName" maxlength="60" placeholder="How you'd like to be greeted?">
-                    </label>
-
-                    <label class="profile-field">
-                        <span class="profile-field-label">Email <em>*</em></span>
-                        <input type="email" id="profileEmail" maxlength="120" autocomplete="email" required>
-                    </label>
-
-                    <label class="profile-field">
-                        <span class="profile-field-label">Queue <em>*</em></span>
-                        <input type="text" id="profileQueue" maxlength="40" list="profileQueueOptions"
-                               placeholder="e.g. PAUD, HOT, EHOT" required>
-                        <datalist id="profileQueueOptions">
-                            <option value="PAUD"></option>
-                            <option value="HOT"></option>
-                            <option value="EHOT"></option>
-                            <option value="TPLO"></option>
-                            <option value="TPHI"></option>
-                            <option value="CRAU"></option>
-                            <option value="FPAY"></option>
-                            <option value="COD"></option>
-                            <option value="ISPD"></option>
-                            <option value="LMPB"></option>
-                            <option value="IRT"></option>
-                            <option value="SAF"></option>
-                            <option value="BLOA"></option>
-                            <option value="PAT8"></option>
-                            <option value="PAT7"></option>
-                            <option value="PARS"></option>
-                            <option value="CORT"></option>
-                            <option value="OVC"></option>
-                            <option value="REWEIGH"></option>
-                            <option value="CORRECTION"></option>
-                            <option value="CLASS-UPDATE"></option>
-                            <option value="RATE-VOLUME"></option>
-                            <option value="SHAVE-A-DAY"></option>
-                            <option value="INFO-VALIDATION"></option>
-                            <option value="MISSING-DOCS"></option>
-                            <option value="KEEP-OR-REMOVE"></option>
-                            <option value="DEMAND-INVOICE"></option>
-                            <option value="RECYCLED-PRO"></option>
-                            <option value="EMPLOYEE-DISCOUNT"></option>
-                            <option value="VOID-WO"></option>
-                            <option value="VOLUME-APP"></option>
-                            <option value="PRIORITY-PLUS"></option>
-                            <option value="RERATE"></option>
-                            <option value="INBOND"></option>
-                            <option value="HANDLING"></option>
-                            <option value="ISPI"></option>
-                            <option value="ALL-SHORTS"></option>
-                            <option value="SALES-WRITE-OFF"></option>
-                            <option value="WO-PROCESS-CAPS"></option>
-                            <option value="Billing Dispute"></option>
-                            <option value="Pricing"></option>
-                            <option value="Account Handling"></option>
-                            <option value="Surcharges"></option>
-                            <option value="Other"></option>
-                        </datalist>
-                    </label>
-
-                    <div class="profile-field-row">
-                        <label class="profile-field">
-                            <span class="profile-field-label">Phone <small>optional</small></span>
-                            <input type="tel" id="profilePhone" maxlength="30" autocomplete="tel">
-                        </label>
-                        <label class="profile-field">
-                            <span class="profile-field-label">Job Title <small>optional</small></span>
-                            <input type="text" id="profileTitle" maxlength="80" autocomplete="organization-title">
-                        </label>
+                    <div class="profile-field">
+                        <span class="profile-field-label">Email</span>
+                        <div class="profile-field-static" id="profileEmail">—</div>
                     </div>
 
                     <div class="profile-field-row">
-                        <label class="profile-field">
-                            <span class="profile-field-label">Department <small>optional</small></span>
-                            <input type="text" id="profileDepartment" maxlength="80">
-                        </label>
-                        <label class="profile-field">
-                            <span class="profile-field-label">Location <small>optional</small></span>
-                            <input type="text" id="profileLocation" maxlength="80">
-                        </label>
+                        <div class="profile-field">
+                            <span class="profile-field-label">Phone</span>
+                            <div class="profile-field-static" id="profilePhone">—</div>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-field-label">Job Title</span>
+                            <div class="profile-field-static" id="profileTitle">—</div>
+                        </div>
                     </div>
 
-                    <div class="profile-modal-status" id="profileModalStatus" role="alert" aria-live="polite" hidden></div>
-
-                    <div class="profile-modal-actions">
-                        <button type="button" class="profile-modal-btn ghost" data-profile-close>Cancel</button>
-                        <button type="submit" class="profile-modal-btn primary" id="profileSubmitBtn">
-                            <span class="profile-modal-btn-label">Save Changes</span>
-                            <span class="profile-modal-btn-spinner" aria-hidden="true"></span>
-                        </button>
+                    <div class="profile-field-row">
+                        <div class="profile-field">
+                            <span class="profile-field-label">Department</span>
+                            <div class="profile-field-static" id="profileDepartment">—</div>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-field-label">Location</span>
+                            <div class="profile-field-static" id="profileLocation">—</div>
+                        </div>
                     </div>
-                </form>
+
+                    <div class="profile-queues">
+                        <div class="profile-queues-heading">Queue Assignments</div>
+                        <div class="profile-queue-row current">
+                            <span class="profile-queue-label">Current</span>
+                            <span class="profile-queue-value" id="profileCurrentQueue">—</span>
+                        </div>
+                        <div class="profile-queue-row">
+                            <span class="profile-queue-label">Primary</span>
+                            <span class="profile-queue-value" id="profilePrimaryQueue">—</span>
+                        </div>
+                        <div class="profile-queue-row">
+                            <span class="profile-queue-label">Secondary</span>
+                            <span class="profile-queue-value" id="profileSecondaryQueue">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-modal-actions">
+                    <button type="button" class="profile-modal-btn primary" data-profile-close>Close</button>
+                </div>
             </div>
         </div>
     </div>
