@@ -1,32 +1,26 @@
 /* ============================================================
    CURRENT USER NAME
    Greeting logic:
-     1) preferredName if set
-     2) all-but-last token of `name` (so "Julan Ryan Guinto" → "Julan Ryan")
-     3) firstName as final fallback
+     1) `firstName` field from Firestore (primary)
+     2) first token of `name` as fallback
+     3) ""
 
    Reads from the live session first so a stale `window.currentUserProfile`
-   (or a stale `firstName` field) can't poison the greeting.
+   or a stale `firstName` field can't poison the greeting.
    ============================================================ */
-
-function firstNameFromFullName(full) {
-  const trimmed = String(full || "").trim();
-  if (!trimmed) return "";
-  const parts = trimmed.split(/\s+/);
-  if (parts.length <= 1) return parts[0] || "";
-  return parts.slice(0, -1).join(" ");
-}
 
 function firstNameForGreeting(source) {
   if (!source) return "";
 
-  const preferred = String(source.preferredName || "").trim();
-  if (preferred) return preferred;
+  const fn = String(source.firstName || "").trim();
+  if (fn) return fn;
 
   const full = String(source.name || source.displayName || source.fullName || "").trim();
-  if (full) return firstNameFromFullName(full);
-
-  return String(source.firstName || "").trim();
+  if (full) {
+    const parts = full.split(/\s+/);
+    return parts[0] || "";
+  }
+  return "";
 }
 
 function updateDashboardUserName(profile) {
