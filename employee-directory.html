@@ -81,22 +81,35 @@
         </section>
       </section>
 
-      <section class="section my-guides-section">
-        <div class="section-heading">
-          <h2><span class="heading-bar"></span><span id="directoryTitle">All Employees</span></h2>
-          <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
+      <section class="section my-guides-section directory-main" id="directoryWorkspace">
+        <div class="directory-heading">
+          <div class="directory-heading-left">
+            <h2 class="directory-title">
+              <span class="heading-bar"></span>
+              <span id="directoryTitle">All Employees</span>
+            </h2>
+            <p id="resultsText" class="directory-results">Loading employees...</p>
+          </div>
+          <div class="directory-heading-actions">
+            <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
+            <button id="fullscreenBtn" class="directory-icon-btn" type="button" title="View Full Screen" aria-label="Toggle full screen">
+              <i class="fa-solid fa-expand"></i>
+            </button>
+          </div>
         </div>
 
-        <div id="queueFilters" class="queue-filters"></div>
+        <div class="directory-toolbar">
+          <div id="queueFilters" class="queue-filters"></div>
+        </div>
 
-        <p id="resultsText" class="library-results">Loading employees...</p>
+        <div class="directory-scroll" id="directoryScroll">
+          <div id="employeeGrid" class="employee-grid"></div>
 
-        <div id="employeeGrid" class="employee-grid"></div>
-
-        <div id="noEmployees" class="directory-empty" hidden>
-          <div class="directory-empty-icon">⌕</div>
-          <strong>Nothing to show</strong>
-          <p>Try a different search or filter.</p>
+          <div id="noEmployees" class="directory-empty" hidden>
+            <div class="directory-empty-icon">⌕</div>
+            <strong>Nothing to show</strong>
+            <p>Try a different search or filter.</p>
+          </div>
         </div>
       </section>
     </main>
