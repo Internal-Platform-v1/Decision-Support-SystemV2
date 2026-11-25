@@ -29,7 +29,6 @@
     ];
 
     const ADMIN_ROLES = ["admin", "manager", "administrator"];
-    const PROFILE_COLLECTION = "employees";
 
     const SLIDES = [
         { key: "general",   icon: "fa-solid fa-bullhorn",              label: "📢 Announcements" },
@@ -124,7 +123,7 @@
     }
 
     /* ------------------------------------------------------------
-       Cross-tab sign-out — index ↔ index ↔ admin
+       Cross-tab sign-out
        ------------------------------------------------------------ */
     function broadcastSignOut() {
         try {
@@ -142,7 +141,6 @@
 
     function setupCrossTabSignOut() {
         function handleRemoteSignOut() {
-            // Idempotent — safe to call if already signed out
             applyLoggedInUser(null);
 
             const menu = document.getElementById("settingsMenu");
@@ -158,17 +156,14 @@
         }
 
         window.addEventListener("storage", function (event) {
-            // Explicit broadcast key from another tab
             if (event.key === SIGNOUT_BROADCAST_KEY && event.newValue) {
                 handleRemoteSignOut();
                 return;
             }
-            // Someone called localStorage.clear()
             if (event.key === null) {
                 handleRemoteSignOut();
                 return;
             }
-            // The main auth key was removed by another tab
             if (event.key === LOGGED_USER_KEY && !event.newValue) {
                 handleRemoteSignOut();
             }
@@ -273,14 +268,8 @@
         return user.name || user.displayName || user.fullName || composed || "";
     }
 
-    /* Derive the greeting name.
-       Preferred name wins; otherwise use "all but last token" of the
-       flat `name` field (same rule as the profile modal). */
     function greetingNameOf(user) {
         if (!user) return "";
-        const preferred = String(user.preferredName || "").trim();
-        if (preferred) return preferred;
-
         const full = (user.name || user.displayName || user.fullName || "").trim();
         if (full) {
             const parts = full.split(/\s+/);
@@ -351,6 +340,28 @@
         });
     }
 
+    function buildUserFromDoc(docId, empId, data, source) {
+        return {
+            id:            docId,
+            empId:         empId,
+            firstName:     data.firstName || "",
+            lastName:      data.lastName  || "",
+            name:          data.name || data.displayName || data.fullName || "",
+            email:         data.email || "",
+            role:          data.role  || "User",
+            queue:         data.queue || "",
+            currentQueue:  data.currentQueue  || "",
+            primaryQueue:  data.primaryQueue  || "",
+            secondaryQueue:data.secondaryQueue || "",
+            supervisor:    data.supervisor || "",
+            phone:         data.phone || "",
+            title:         data.title || "",
+            department:    data.department || "",
+            location:      data.location || data.region || "",
+            _source:       source
+        };
+    }
+
     async function findEmployeeById(empId) {
         const db = await waitForFirestore();
         if (!db) return null;
@@ -363,49 +374,16 @@
                         .limit(1)
                         .get();
                     if (!snap.empty) {
-                        const doc  = snap.docs[0];
-                        const data = doc.data() || {};
-                        return {
-                            id:            doc.id,
-                            empId:         empId,
-                            firstName:     data.firstName || "",
-                            lastName:      data.lastName  || "",
-                            name:          data.name || data.displayName || data.fullName || "",
-                            preferredName: data.preferredName || "",
-                            email:         data.email || "",
-                            role:          data.role  || "User",
-                            queue:         data.queue || "",
-                            phone:         data.phone || "",
-                            title:         data.title || "",
-                            department:    data.department || "",
-                            location:      data.location || "",
-                            _source:       col.name
-                        };
+                        const doc = snap.docs[0];
+                        return buildUserFromDoc(doc.id, empId, doc.data() || {}, col.name);
                     }
                 } catch (err) { /* keep trying */ }
             }
 
-            /* Fallback — some docs use the EMP ID as the document ID */
             try {
                 const docSnap = await db.collection(col.name).doc(empId).get();
                 if (docSnap.exists) {
-                    const data = docSnap.data() || {};
-                    return {
-                        id:            docSnap.id,
-                        empId:         empId,
-                        firstName:     data.firstName || "",
-                        lastName:      data.lastName  || "",
-                        name:          data.name || data.displayName || data.fullName || "",
-                        preferredName: data.preferredName || "",
-                        email:         data.email || "",
-                        role:          data.role  || "User",
-                        queue:         data.queue || "",
-                        phone:         data.phone || "",
-                        title:         data.title || "",
-                        department:    data.department || "",
-                        location:      data.location || "",
-                        _source:       col.name
-                    };
+                    return buildUserFromDoc(docSnap.id, empId, docSnap.data() || {}, col.name);
                 }
             } catch (err) { /* ignore */ }
         }
@@ -429,7 +407,6 @@
         }
         function close() { gate.hidden = true; }
 
-        // Exposed so cross-tab sign-out can re-open the gate
         window.bdUserLoginGate = { open, close };
 
         if (signOut) {
@@ -438,7 +415,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                broadcastSignOut();   // tell every other tab first
+                broadcastSignOut();
 
                 clearStoredUser();
                 clearAdminSession();
@@ -499,7 +476,7 @@
         });
 
         const existing = getStoredUser();
-        if (existing && (existing.empId || existing.name || existing.firstName || existing.preferredName)) {
+        if (existing && (existing.empId || existing.name || existing.firstName)) {
             applyLoggedInUser(existing);
             close();
             setTimeout(() => {
@@ -927,12 +904,13 @@
        7. Global Search
        ------------------------------------------------------------ */
     function setupSearch() {
-        const input = document.getElementById("globalSearch"); if (!input || input.dataset.v2SearchInitialized === "true") return;
+        const input = document.getElementById("globalSearch");
+        if (!input || input.dataset.v2SearchInitialized === "true") return;
         input.dataset.v2SearchInitialized = "true";
     }
 
     /* ------------------------------------------------------------
-       8. User Profile Modal
+       8. User Profile Modal — VIEW ONLY
        ------------------------------------------------------------ */
     function deriveFirstLast(user) {
         if (!user) return { firstName: "", lastName: "" };
@@ -956,48 +934,43 @@
         };
     }
 
-    function updateProfileAvatarPreview() {
-        const first = (document.getElementById("profileFirstName")?.value || "").trim();
-        const last  = (document.getElementById("profileLastName")?.value || "").trim();
-        const display = (first + " " + last).trim() || "User";
-        const nameEl = document.getElementById("profileModalName");
-        if (nameEl) nameEl.textContent = display;
+    function setStaticText(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const v = String(value || "").trim();
+        if (v) {
+            el.textContent = v;
+            el.classList.remove("is-empty");
+        } else {
+            el.textContent = "—";
+            el.classList.add("is-empty");
+        }
     }
 
-    function populateProfileForm(user, readOnly) {
-        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ""; };
-
+    function populateProfileView(user) {
         const { firstName, lastName } = deriveFirstLast(user);
 
-        setVal("profileFirstName",     firstName);
-        setVal("profileLastName",      lastName);
-        setVal("profilePreferredName", user.preferredName || "");
-        setVal("profileEmail",         user.email || "");
-        setVal("profileQueue",         user.queue || "");
-        setVal("profilePhone",         user.phone || "");
-        setVal("profileTitle",         user.title || "");
-        setVal("profileDepartment",    user.department || "");
-        setVal("profileLocation",      user.location || "");
+        setStaticText("profileFirstName", firstName);
+        setStaticText("profileLastName",  lastName);
+        setStaticText("profileEmail",     user.email);
+        setStaticText("profilePhone",     user.phone);
+        setStaticText("profileTitle",     user.title);
+        setStaticText("profileDepartment",user.department);
+        setStaticText("profileLocation",  user.location || user.region);
 
-        // First / last name are always locked.
-        ["profileFirstName", "profileLastName"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.readOnly = true;
-        });
+        // Queue assignments
+        const currentQueue   = user.currentQueue   || user.queue || "";
+        const primaryQueue   = user.primaryQueue   || "";
+        const secondaryQueue = user.secondaryQueue || "";
 
-        // In view mode every other field is locked too.
-        // Explicitly set both true and false so switching back to edit mode restores them.
-        ["profilePreferredName", "profileEmail", "profileQueue", "profilePhone",
-         "profileTitle", "profileDepartment", "profileLocation"].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.readOnly = !!readOnly;
-        });
+        setStaticText("profileCurrentQueue",   currentQueue);
+        setStaticText("profilePrimaryQueue",   primaryQueue);
+        setStaticText("profileSecondaryQueue", secondaryQueue);
 
         const displayName = [firstName, lastName].filter(Boolean).join(" ")
                           || displayNameOf(user)
                           || "User";
 
-        // The avatar is a static SVG icon — only the name text updates.
         const nameEl = document.getElementById("profileModalName");
         if (nameEl) nameEl.textContent = displayName;
 
@@ -1012,84 +985,22 @@
         }
     }
 
-    async function refreshProfileFromFirestore(user) {
-        if (!user || !user.id) return;
-        const db = await waitForFirestore();
-        if (!db) return;
-
-        const collectionName = user._source || PROFILE_COLLECTION;
-
-        try {
-            const snap = await db.collection(collectionName).doc(user.id).get();
-            if (!snap.exists) return;
-
-            const data = snap.data() || {};
-            const merged = Object.assign({}, user, data, {
-                id: user.id,
-                empId: user.empId || data.empId || data.employeeId || data.emp_id || "",
-                _source: collectionName
-            });
-
-            persistUser(merged);
-            populateProfileForm(merged, false);
-        } catch (err) {
-            console.warn("[header.js] profile fetch failed:", err);
-        }
-    }
-
-    function openProfileModal(user, mode) {
+    function openProfileModal(user) {
         const modal = document.getElementById("profileModal");
         if (!modal) return;
 
         const targetUser = user || getStoredUser();
         if (!targetUser) return;
 
-        const isView = mode === "view";
+        populateProfileView(targetUser);
 
-        modal.classList.toggle("profile-modal--view", isView);
-        modal.dataset.mode = isView ? "view" : "edit";
-
-        // Swap the right-column heading
-        const headingH3 = modal.querySelector(".profile-modal-heading h3");
-        const headingP  = modal.querySelector(".profile-modal-heading p");
-        if (headingH3) headingH3.textContent = isView ? "Employee Details" : "Profile Information";
-        if (headingP) {
-            headingP.textContent = isView
-                ? "Viewing directory profile."
-                : "Keep your directory information up to date.";
-        }
-
-        populateProfileForm(targetUser, isView);
         modal.hidden = false;
         document.body.classList.add("profile-modal-open");
 
-        const status = document.getElementById("profileModalStatus");
-        if (status) { status.hidden = true; status.textContent = ""; }
-
-        const submit = document.getElementById("profileSubmitBtn");
-        if (submit) {
-            submit.hidden = isView;
-            submit.disabled = false;
-            submit.classList.remove("loading");
-        }
-
-        const cancelBtn = modal.querySelector(".profile-modal-actions button.ghost");
-        if (cancelBtn) cancelBtn.textContent = isView ? "Close" : "Cancel";
-
         setTimeout(() => {
-            if (isView) {
-                const closeBtn = modal.querySelector(".profile-modal-close");
-                if (closeBtn) closeBtn.focus();
-            } else {
-                const pref = document.getElementById("profilePreferredName");
-                if (pref) pref.focus();
-            }
+            const closeBtn = modal.querySelector(".profile-modal-close");
+            if (closeBtn) closeBtn.focus();
         }, 80);
-
-        // Only re-fetch from Firestore when editing your own profile.
-        if (!isView) {
-            refreshProfileFromFirestore(targetUser);
-        }
     }
 
     function closeProfileModal() {
@@ -1097,95 +1008,6 @@
         if (!modal) return;
         modal.hidden = true;
         document.body.classList.remove("profile-modal-open");
-    }
-
-    async function saveProfile(event) {
-        event.preventDefault();
-
-        // Guard: never save from view mode
-        const modal = document.getElementById("profileModal");
-        if (modal && modal.dataset.mode === "view") return;
-
-        const status = document.getElementById("profileModalStatus");
-        const submit = document.getElementById("profileSubmitBtn");
-        const setStatus = (msg, isError) => {
-            if (!status) return;
-            status.hidden = !msg;
-            status.textContent = msg || "";
-            status.className = "profile-modal-status" + (isError ? " error" : " success");
-        };
-        setStatus("", false);
-
-        const user = getStoredUser();
-        if (!user || !user.id) {
-            setStatus("You need to be signed in to update your profile.", true);
-            return;
-        }
-
-        const getVal = (id) => (document.getElementById(id)?.value || "").trim();
-
-        const preferredName = getVal("profilePreferredName");
-        const email         = getVal("profileEmail");
-        const queue         = getVal("profileQueue");
-        const phone         = getVal("profilePhone");
-        const title         = getVal("profileTitle");
-        const department    = getVal("profileDepartment");
-        const location      = getVal("profileLocation");
-
-        if (!email)     return setStatus("Please enter your email.", true);
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setStatus("Please enter a valid email address.", true);
-        if (!queue)     return setStatus("Please select or enter your queue.", true);
-
-        // Only these fields are ever written by the profile modal.
-        // firstName / lastName / name / role are never touched here.
-        // `empId` is included so the doc stays queryable by field, even
-        // if it was created by the modal (doc-ID-only approved_users docs).
-        const updates = {
-            empId:          String(user.empId || "").trim(),
-            preferredName,
-            email,
-            queue,
-            phone,
-            title,
-            department,
-            location
-        };
-
-        const existingName  = String(user.name || "").trim();
-        const existingFirst = String(user.firstName || "").trim();
-        const existingLast  = String(user.lastName || "").trim();
-        if (!existingName && !existingFirst && !existingLast && preferredName) {
-            updates.name = preferredName;
-        }
-
-        if (submit) { submit.disabled = true; submit.classList.add("loading"); }
-
-        try {
-            const db = await waitForFirestore();
-            if (!db) throw new Error("Firestore unavailable");
-
-            const collectionName = user._source || PROFILE_COLLECTION;
-
-            await db.collection(collectionName).doc(user.id).set(
-                Object.assign({}, updates, {
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }),
-                { merge: true }
-            );
-
-            const merged = Object.assign({}, user, updates, { _source: collectionName });
-            persistUser(merged);
-            applyLoggedInUser(merged);
-
-            setStatus("Profile saved successfully.", false);
-
-            setTimeout(() => { closeProfileModal(); }, 800);
-        } catch (err) {
-            console.error("[header.js] profile save failed:", err);
-            setStatus("Could not save your profile. Please try again.", true);
-        } finally {
-            if (submit) { submit.disabled = false; submit.classList.remove("loading"); }
-        }
     }
 
     function setupProfileModal() {
@@ -1200,9 +1022,6 @@
             if (e.key === "Escape" && !modal.hidden) closeProfileModal();
         });
 
-        const form = document.getElementById("profileForm");
-        if (form) form.addEventListener("submit", saveProfile);
-
         const userBlock = document.getElementById("settingsUserBlock");
         if (userBlock) {
             userBlock.addEventListener("click", (e) => {
@@ -1212,12 +1031,12 @@
                 if (menu) menu.classList.remove("open");
                 const btn = document.getElementById("settingsBtn");
                 if (btn) btn.setAttribute("aria-expanded", "false");
-                openProfileModal();          // edit mode
+                openProfileModal();
             });
             userBlock.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    openProfileModal();      // edit mode
+                    openProfileModal();
                 }
             });
         }
@@ -1225,7 +1044,7 @@
         window.BDProfileModal = {
             open: openProfileModal,
             close: closeProfileModal,
-            view: function (user) { openProfileModal(user, "view"); }
+            view: function (user) { openProfileModal(user); }
         };
     }
 
@@ -1244,7 +1063,7 @@
         setupSearch();
         setupSharedNotifications();
         setupProfileModal();
-        setupCrossTabSignOut();   // must run after setupUserLogin
+        setupCrossTabSignOut();
     }
 
     function whenHeaderReady(fn, tries) {
