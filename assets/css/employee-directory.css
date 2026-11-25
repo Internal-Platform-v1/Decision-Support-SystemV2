@@ -1,8 +1,6 @@
 /* ============================================================
    BD Tools — Employee Directory
    Page-scoped styles for employee-directory.html
-   Requires assets/css/styles.css for shared base (hero, section,
-   stat cards, buttons, etc.).
    ============================================================ */
 
 /* ---- Grid ---- */
@@ -143,26 +141,12 @@
   text-overflow: ellipsis;
 }
 
-/* Current queue gets emphasis */
-.employee-queue-line.current .q-label {
-  color: #6c24cf;
-}
-.employee-queue-line.current .q-value {
-  color: #4d148c;
-  font-weight: 800;
-}
+.employee-queue-line.current .q-label { color: #6c24cf; }
+.employee-queue-line.current .q-value { color: #4d148c; font-weight: 800; }
 
-/* Filter match highlight */
-.employee-queue-line.q-match {
-  background: #ede3ff;
-}
-.employee-queue-line.q-match .q-label {
-  color: #6c24cf;
-}
-.employee-queue-line.q-match .q-value {
-  color: #4d148c;
-  font-weight: 800;
-}
+.employee-queue-line.q-match { background: #ede3ff; }
+.employee-queue-line.q-match .q-label { color: #6c24cf; }
+.employee-queue-line.q-match .q-value { color: #4d148c; font-weight: 800; }
 
 .employee-queue-empty {
   padding: 3px 6px;
@@ -241,14 +225,8 @@
   box-shadow: 0 3px 10px rgba(77, 20, 140, .18);
 }
 
-.queue-pill .queue-count {
-  font-size: 8px;
-  opacity: 0.7;
-}
-
-.queue-pill.active .queue-count {
-  opacity: 0.9;
-}
+.queue-pill .queue-count { font-size: 8px; opacity: 0.7; }
+.queue-pill.active .queue-count { opacity: 0.9; }
 
 /* ---- Empty state ---- */
 .directory-empty {
@@ -262,9 +240,7 @@
   margin-top: 4px;
 }
 
-.directory-empty[hidden] {
-  display: none !important;
-}
+.directory-empty[hidden] { display: none !important; }
 
 .directory-empty-icon {
   font-size: 28px;
@@ -283,9 +259,7 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 700px) {
-  .employee-grid {
-    grid-template-columns: 1fr;
-  }
+  .employee-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -293,4 +267,169 @@
   .queue-pill {
     transition: none !important;
   }
+}
+
+/* ============================================================
+   FIXED-VIEWPORT DIRECTORY LAYOUT
+   Header pinned at top, footer pinned at bottom, hero fixed,
+   directory workspace fills remaining space with internal scroll.
+   ============================================================ */
+
+body[data-view="directory"] {
+  height: 100vh;
+  overflow: hidden;
+}
+
+body[data-view="directory"] .app-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body[data-view="directory"] #header-placeholder {
+  flex: 0 0 auto;
+}
+
+body[data-view="directory"] #footer-placeholder {
+  flex: 0 0 auto;
+  margin-top: 8px;
+}
+
+body[data-view="directory"] main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body[data-view="directory"] main > .hero {
+  flex: 0 0 auto;
+}
+
+/* Directory workspace */
+body[data-view="directory"] .directory-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
+}
+
+.directory-heading {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8e9f1;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.directory-heading-left {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.directory-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #10134f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.directory-results {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #6d6e91;
+}
+
+.directory-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.directory-icon-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #e3e0f0;
+  border-radius: 9px;
+  background: #fff;
+  color: #55577c;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: 0.15s ease;
+}
+
+.directory-icon-btn:hover {
+  border-color: #c9bdf0;
+  color: #4d148c;
+  background: #faf7ff;
+}
+
+.directory-icon-btn i { font-size: 13px; }
+
+.directory-toolbar {
+  flex: 0 0 auto;
+  margin-bottom: 4px;
+}
+
+.directory-toolbar .queue-filters {
+  margin: 0 0 10px;
+}
+
+.directory-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 6px 4px 0;
+  margin-right: -6px;
+}
+
+.directory-scroll::-webkit-scrollbar { width: 6px; }
+.directory-scroll::-webkit-scrollbar-thumb {
+  background: #d9d5e6;
+  border-radius: 999px;
+}
+.directory-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b8b2c9;
+}
+
+/* ============================================================
+   FULLSCREEN MODE
+   ============================================================ */
+
+.directory-main:fullscreen {
+  background: #f4f1f8;
+  padding: 20px 24px !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.directory-main:fullscreen .directory-scroll {
+  padding: 4px 8px 4px 0;
+}
+
+/* Safari fallback */
+.directory-main:-webkit-full-screen {
+  background: #f4f1f8;
+  padding: 20px 24px !important;
+  border-radius: 0 !important;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
