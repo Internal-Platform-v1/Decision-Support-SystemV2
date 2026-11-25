@@ -1,7 +1,7 @@
 /* ============================================================
    BD Tools — Employee Directory
-   Reads from `employees`, `users`, `approved_users` (deduped
-   by empId, preferring `employees` as the source of truth).
+   Reads from assets/references/approved_users.xlsx (Excel export
+   of the approved_users collection). No Firestore dependency.
 
    Card click → opens the shared profile modal in view mode via
    window.BDProfileModal.view(employee).
@@ -9,14 +9,14 @@
 (function () {
   "use strict";
 
-  const COLLECTIONS = ["employees", "users", "approved_users"];
-  const SOURCE_RANK = { employees: 3, users: 2, approved_users: 1 };
-  const ADMIN_ROLES = ["admin", "manager", "administrator"];
+  const XLSX_URL     = "assets/references/approved_users.xlsx";
+  const XLSX_LIB_URL = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+  const ADMIN_ROLES  = ["admin", "manager", "administrator"];
 
   let allEmployees = [];
-  let activeQueue = null;
-  let searchQuery = "";
-  let initialized = false;
+  let activeQueue  = null;
+  let searchQuery  = "";
+  let initialized  = false;
 
   /* ---- Helpers ---- */
   function esc(v) {
@@ -25,12 +25,22 @@
     }[ch]));
   }
 
+  function pickString(row, ...keys) {
+    for (const k of keys) {
+      if (row[k] !== undefined && row[k] !== null) {
+        const s = String(row[k]).trim();
+        if (s) return s;
+      }
+    }
+    return "";
+  }
+
   function getDisplayName(e) {
     if (e.name && String(e.name).trim()) return String(e.name).trim();
     const first = (e.firstName || "").trim();
     const last  = (e.lastName  || "").trim();
     if (first || last) return [first, last].filter(Boolean).join(" ");
-    return e.empId || "Unknown";
+    return e.empId || e.id || "Unknown";
   }
 
   function getInitials(name) {
@@ -51,42 +61,83 @@
     return role.charAt(0).toUpperCase() + role.slice(1);
   }
 
-  /* ---- Data loading ---- */
-  async function loadAllEmployees() {
-    if (typeof firebase === "undefined" || !firebase.firestore) {
-      throw new Error("Firebase not available");
-    }
-    const db = firebase.firestore();
-    const byEmpId = new Map();
+  // Effective queue: prefer `queue`, fall back to current / primary.
+  function getQueue(e) {
+    return String(e.queue        || "").trim()
+        || String(e.currentQueue || "").trim()
+        || String(e.primaryQueue || "").trim();
+  }
 
-    for (const col of COLLECTIONS) {
-      try {
-        const snap = await db.collection(col).get();
-        snap.forEach(doc => {
-          const data = doc.data() || {};
-          const empId = String(
-            data.empId || data.employeeId || data.emp_id || ""
-          ).trim();
-          if (!empId) return;
-
-          const existing     = byEmpId.get(empId);
-          const existingRank = existing ? SOURCE_RANK[existing._source] : -1;
-          const newRank      = SOURCE_RANK[col];
-
-          if (newRank > existingRank) {
-            byEmpId.set(empId, Object.assign({}, data, {
-              id: doc.id,
-              empId: empId,
-              _source: col
-            }));
-          }
-        });
-      } catch (err) {
-        console.warn("[directory] failed to read " + col + ":", err);
+  /* ---- XLSX library loader ---- */
+  function loadXLSXLibrary() {
+    return new Promise((resolve, reject) => {
+      if (window.XLSX) return resolve(window.XLSX);
+      const existing = document.querySelector('script[src="' + XLSX_LIB_URL + '"]');
+      if (existing) {
+        existing.addEventListener("load",  () => resolve(window.XLSX));
+        existing.addEventListener("error", () => reject(new Error("XLSX library failed to load")));
+        return;
       }
+      const s = document.createElement("script");
+      s.src = XLSX_LIB_URL;
+      s.onload  = () => resolve(window.XLSX);
+      s.onerror = () => reject(new Error("XLSX library failed to load"));
+      document.head.appendChild(s);
+    });
+  }
+
+  /* ---- Data loading from XLSX ---- */
+  async function loadAllEmployees() {
+    const XLSX = await loadXLSXLibrary();
+
+    const res = await fetch(XLSX_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("Could not load " + XLSX_URL + " (HTTP " + res.status + ")");
+
+    const buffer    = await res.arrayBuffer();
+    const workbook  = XLSX.read(buffer, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet     = workbook.Sheets[sheetName];
+    const rows      = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+    const byKey = new Map();
+
+    for (const row of rows) {
+      const empId = pickString(row, "employeeId", "empId", "Emp ID", "emp_id");
+      const docId = pickString(row, "__docId");
+      const email = pickString(row, "email", "Email").toLowerCase();
+      const key   = empId || docId || email;
+      if (!key) continue;
+      if (byKey.has(key)) continue;                // first occurrence wins
+
+      const firstName = pickString(row, "firstName");
+      const lastName  = pickString(row, "lastName");
+      const displayName = pickString(row, "name", "Name")
+        || [firstName, lastName].filter(Boolean).join(" ");
+
+      const employee = Object.assign({}, row, {
+        id:             key,
+        empId:          empId,
+        name:           displayName,
+        firstName:      firstName,
+        lastName:       lastName,
+        email:          pickString(row, "email", "Email"),
+        role:           pickString(row, "role", "Role"),
+        queue:          pickString(row, "queue"),
+        currentQueue:   pickString(row, "currentQueue",   "Cur Queue"),
+        primaryQueue:   pickString(row, "primaryQueue",   "Pri Queue"),
+        secondaryQueue: pickString(row, "secondaryQueue", "Sec Queue"),
+        supervisor:     pickString(row, "supervisor",     "Team Leader"),
+        department:     pickString(row, "department"),
+        title:          pickString(row, "title"),
+        location:       pickString(row, "location") || pickString(row, "region"),
+        phone:          pickString(row, "phone"),
+        _source:        "excel"
+      });
+
+      byKey.set(key, employee);
     }
 
-    return Array.from(byEmpId.values());
+    return Array.from(byKey.values());
   }
 
   /* ---- Stats ---- */
@@ -96,10 +147,8 @@
     const adminsEl = document.getElementById("statAdmins");
 
     const total        = allEmployees.length;
-    const uniqueQueues = new Set(
-      allEmployees.map(e => (e.queue || "").trim()).filter(Boolean)
-    ).size;
-    const admins = allEmployees.filter(isAdmin).length;
+    const uniqueQueues = new Set(allEmployees.map(getQueue).filter(Boolean)).size;
+    const admins       = allEmployees.filter(isAdmin).length;
 
     if (totalEl)  totalEl.textContent  = total;
     if (queuesEl) queuesEl.textContent = uniqueQueues;
@@ -113,7 +162,7 @@
 
     const counts = new Map();
     allEmployees.forEach(e => {
-      const q = (e.queue || "").trim();
+      const q = getQueue(e);
       if (!q) return;
       counts.set(q, (counts.get(q) || 0) + 1);
     });
@@ -124,8 +173,7 @@
       '<button type="button" class="queue-pill' +
       (activeQueue === null ? " active" : "") +
       '" data-queue="">All <span class="queue-count">' +
-      allEmployees.length +
-      "</span></button>";
+      allEmployees.length + "</span></button>";
 
     queues.forEach(q => {
       const isActive = activeQueue === q;
@@ -133,8 +181,7 @@
         '<button type="button" class="queue-pill' +
         (isActive ? " active" : "") +
         '" data-queue="' + esc(q) + '">' +
-        esc(q) +
-        ' <span class="queue-count">' + counts.get(q) + "</span></button>";
+        esc(q) + ' <span class="queue-count">' + counts.get(q) + "</span></button>";
     });
 
     container.innerHTML = html;
@@ -155,12 +202,13 @@
     const haystack = [
       getDisplayName(e),
       e.empId,
-      e.queue,
+      getQueue(e),
       e.email,
       e.department,
       e.title,
       e.location,
-      e.role
+      e.role,
+      e.supervisor
     ].filter(Boolean).join(" ").toLowerCase();
     return haystack.includes(q);
   }
@@ -168,7 +216,7 @@
   function getFiltered() {
     const q = searchQuery.trim().toLowerCase();
     return allEmployees.filter(e => {
-      if (activeQueue && (e.queue || "").trim() !== activeQueue) return false;
+      if (activeQueue && getQueue(e) !== activeQueue) return false;
       return matchesSearch(e, q);
     });
   }
@@ -177,7 +225,7 @@
   function renderEmployeeCard(e) {
     const name       = getDisplayName(e);
     const initials   = getInitials(name);
-    const queue      = (e.queue      || "").trim();
+    const queue      = getQueue(e);
     const role       = getRoleLabel(e);
     const admin      = isAdmin(e);
     const email      = (e.email      || "").trim();
@@ -219,7 +267,7 @@
 
     return (
       '<article class="employee-card" role="button" tabindex="0" ' +
-        'data-emp-id="' + esc(e.empId || "") + '" ' +
+        'data-employee-key="' + esc(e.id || "") + '" ' +
         'aria-label="View profile for ' + esc(name) + '">' +
         '<div class="employee-card-head">' +
           '<div class="employee-avatar">' + esc(initials) + "</div>" +
@@ -244,18 +292,13 @@
     const filtered = getFiltered();
 
     if (titleEl) {
-      titleEl.textContent = activeQueue
-        ? activeQueue + " Employees"
-        : "All Employees";
+      titleEl.textContent = activeQueue ? activeQueue + " Employees" : "All Employees";
     }
 
     if (resultsEl) {
-      if (allEmployees.length === 0) {
-        resultsEl.textContent = "No employees found in the directory.";
-      } else {
-        resultsEl.textContent =
-          "Showing " + filtered.length + " of " + allEmployees.length + " employees";
-      }
+      resultsEl.textContent = allEmployees.length === 0
+        ? "No employees found in the directory."
+        : "Showing " + filtered.length + " of " + allEmployees.length + " employees";
     }
 
     if (filtered.length === 0) {
@@ -264,10 +307,9 @@
         emptyEl.hidden = false;
         const copyEl = emptyEl.querySelector("p");
         if (copyEl) {
-          copyEl.textContent =
-            allEmployees.length === 0
-              ? "No employees have signed in yet. Once users save their profile, they'll appear here."
-              : "Try a different search or filter.";
+          copyEl.textContent = allEmployees.length === 0
+            ? "The directory file could not be loaded or is empty. Make sure assets/references/approved_users.xlsx exists."
+            : "Try a different search or filter.";
         }
       }
       return;
@@ -277,13 +319,12 @@
     grid.innerHTML = filtered.map(renderEmployeeCard).join("");
   }
 
-  /* ---- Card click → open shared profile modal in view mode ---- */
+  /* ---- Card click → profile modal ---- */
   function openEmployeeProfile(employee) {
     if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
       window.BDProfileModal.view(employee);
       return;
     }
-    // Header (and therefore BDProfileModal) may still be loading — retry once.
     setTimeout(function () {
       if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
         window.BDProfileModal.view(employee);
@@ -296,9 +337,9 @@
   function handleCardClick(e) {
     const card = e.target.closest(".employee-card");
     if (!card) return;
-    const empId = card.dataset.empId;
-    if (!empId) return;
-    const employee = allEmployees.find(x => String(x.empId) === empId);
+    const key = card.dataset.employeeKey;
+    if (!key) return;
+    const employee = allEmployees.find(x => String(x.id) === key);
     if (!employee) return;
     openEmployeeProfile(employee);
   }
@@ -321,7 +362,7 @@
 
     if (grid && !grid._directoryClickBound) {
       grid._directoryClickBound = true;
-      grid.addEventListener("click", handleCardClick);
+      grid.addEventListener("click",   handleCardClick);
       grid.addEventListener("keydown", handleCardKeydown);
     }
 
@@ -331,9 +372,7 @@
       allEmployees = await loadAllEmployees();
 
       allEmployees.sort((a, b) =>
-        getDisplayName(a).localeCompare(getDisplayName(b), undefined, {
-          sensitivity: "base"
-        })
+        getDisplayName(a).localeCompare(getDisplayName(b), undefined, { sensitivity: "base" })
       );
 
       updateStats();
@@ -351,25 +390,22 @@
       if (search) {
         search.addEventListener("input", runSearch);
         search.addEventListener("keydown", e => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            runSearch();
-          }
+          if (e.key === "Enter") { e.preventDefault(); runSearch(); }
         });
       }
-      if (searchBtn) {
-        searchBtn.addEventListener("click", runSearch);
-      }
+      if (searchBtn) searchBtn.addEventListener("click", runSearch);
     } catch (err) {
       console.error("[directory] init failed:", err);
       if (resultsEl) {
-        resultsEl.textContent = "Could not load employees. Please refresh and try again.";
+        resultsEl.textContent = "Could not load employees: " +
+          (err && err.message ? err.message : "unknown error");
       }
       const emptyEl = document.getElementById("noEmployees");
       if (emptyEl) {
         emptyEl.hidden = false;
         const copyEl = emptyEl.querySelector("p");
-        if (copyEl) copyEl.textContent = "There was a problem connecting to Firestore.";
+        if (copyEl) copyEl.textContent =
+          "Make sure assets/references/approved_users.xlsx exists and is reachable.";
       }
     }
   }
