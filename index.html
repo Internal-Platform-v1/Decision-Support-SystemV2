@@ -298,25 +298,17 @@
 
 <script>
     (function () {
-        /* Derive the greeting name:
-           1) preferredName if set
-           2) all-but-last token of `name` (so "Julan Ryan Guinto" → "Julan Ryan")
-           3) firstName as final fallback */
-        function firstNameFromFullName(full) {
-            var trimmed = String(full || "").trim();
-            if (!trimmed) return "";
-            var parts = trimmed.split(/\s+/);
-            if (parts.length <= 1) return parts[0] || "";
-            return parts.slice(0, -1).join(" ");
-        }
-
+        /* Greeting name:
+           1) `firstName` field from Firestore (primary)
+           2) first token of `name` as fallback (for legacy docs with no firstName)
+           3) "" */
         function firstNameForUser(u) {
             if (!u) return "";
-            var preferred = String(u.preferredName || "").trim();
-            if (preferred) return preferred;
+            var fn = String(u.firstName || "").trim();
+            if (fn) return fn;
             var full = (u.name || u.displayName || u.fullName || "").trim();
-            if (full) return firstNameFromFullName(full);
-            return (u.firstName || "").trim();
+            if (full) return full.split(/\s+/)[0] || "";
+            return "";
         }
 
         function getStoredFirstName() {
@@ -351,8 +343,7 @@
 
         document.addEventListener('bdtools:user-changed', function (e) {
             var user = (e && e.detail && e.detail.user) || null;
-            var name = firstNameForUser(user);
-            updateGreetingName(name);
+            updateGreetingName(firstNameForUser(user));
         });
 
         window.bdToolsUserReady = function () {
