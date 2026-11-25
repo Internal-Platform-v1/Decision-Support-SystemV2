@@ -3,6 +3,10 @@
    Reads from assets/references/approved_users.xlsx (Excel export
    of the approved_users collection). No Firestore dependency.
 
+   Card shows the agent's Current / Primary / Secondary queue.
+   Filter pills cover every queue an agent handles in any role;
+   matching rows highlight so it's obvious why they matched.
+
    Card click → opens the shared profile modal in view mode via
    window.BDProfileModal.view(employee).
    ============================================================ */
@@ -61,11 +65,65 @@
     return role.charAt(0).toUpperCase() + role.slice(1);
   }
 
-  // Effective queue: prefer `queue`, fall back to current / primary.
-  function getQueue(e) {
-    return String(e.queue        || "").trim()
-        || String(e.currentQueue || "").trim()
-        || String(e.primaryQueue || "").trim();
+  /* ---- Queue helpers ----
+     current  = currentQueue → legacy queue
+     primary  = primaryQueue
+     secondary = secondaryQueue (may be a comma-separated list) */
+  function isRealQueue(v) {
+    const s = String(v || "").trim();
+    if (!s) return false;
+    const lc = s.toLowerCase();
+    return lc !== "n/a" && lc !== "na" && lc !== "none";
+  }
+
+  function splitSecondary(v) {
+    return String(v || "")
+      .split(",")
+      .map(p => p.trim())
+      .filter(isRealQueue);
+  }
+
+  // The rows we show on the card: only what's set, de-duplicated.
+  function getQueueRoles(e) {
+    const cur = String(e.currentQueue || e.queue || "").trim();
+    const pri = String(e.primaryQueue || "").trim();
+    const sec = String(e.secondaryQueue || "").trim();
+
+    const lines = [];
+    const seen = new Set();
+
+    if (isRealQueue(cur)) {
+      lines.push({ label: "Current", value: cur, current: true });
+      seen.add(cur);
+    }
+    if (isRealQueue(pri) && !seen.has(pri)) {
+      lines.push({ label: "Primary", value: pri });
+      seen.add(pri);
+    }
+    if (isRealQueue(sec) && !seen.has(sec)) {
+      lines.push({ label: "Secondary", value: sec });
+    }
+    return lines;
+  }
+
+  // Every atomic queue name an agent handles — used for filter pills
+  // and for the filter match test.
+  function atomicQueueNames(e) {
+    const set = new Set();
+    const cur = String(e.currentQueue || e.queue || "").trim();
+    const pri = String(e.primaryQueue || "").trim();
+    const sec = String(e.secondaryQueue || "").trim();
+
+    if (isRealQueue(cur)) set.add(cur);
+    if (isRealQueue(pri)) set.add(pri);
+    splitSecondary(sec).forEach(p => set.add(p));
+    return set;
+  }
+
+  function lineMatchesQueue(value, q) {
+    if (!q) return false;
+    if (value === q) return true;
+    return splitSecondary(value).includes(q);
   }
 
   /* ---- XLSX library loader ---- */
@@ -107,7 +165,7 @@
       const email = pickString(row, "email", "Email").toLowerCase();
       const key   = empId || docId || email;
       if (!key) continue;
-      if (byKey.has(key)) continue;                // first occurrence wins
+      if (byKey.has(key)) continue;
 
       const firstName = pickString(row, "firstName");
       const lastName  = pickString(row, "lastName");
@@ -146,12 +204,15 @@
     const queuesEl = document.getElementById("statQueues");
     const adminsEl = document.getElementById("statAdmins");
 
-    const total        = allEmployees.length;
-    const uniqueQueues = new Set(allEmployees.map(getQueue).filter(Boolean)).size;
-    const admins       = allEmployees.filter(isAdmin).length;
+    const total = allEmployees.length;
+
+    const uniqueQueues = new Set();
+    allEmployees.forEach(e => atomicQueueNames(e).forEach(n => uniqueQueues.add(n)));
+
+    const admins = allEmployees.filter(isAdmin).length;
 
     if (totalEl)  totalEl.textContent  = total;
-    if (queuesEl) queuesEl.textContent = uniqueQueues;
+    if (queuesEl) queuesEl.textContent = uniqueQueues.size;
     if (adminsEl) adminsEl.textContent = admins;
   }
 
@@ -162,9 +223,9 @@
 
     const counts = new Map();
     allEmployees.forEach(e => {
-      const q = getQueue(e);
-      if (!q) return;
-      counts.set(q, (counts.get(q) || 0) + 1);
+      atomicQueueNames(e).forEach(name => {
+        counts.set(name, (counts.get(name) || 0) + 1);
+      });
     });
 
     const queues = Array.from(counts.keys()).sort();
@@ -202,7 +263,10 @@
     const haystack = [
       getDisplayName(e),
       e.empId,
-      getQueue(e),
+      e.currentQueue,
+      e.queue,
+      e.primaryQueue,
+      e.secondaryQueue,
       e.email,
       e.department,
       e.title,
@@ -216,16 +280,36 @@
   function getFiltered() {
     const q = searchQuery.trim().toLowerCase();
     return allEmployees.filter(e => {
-      if (activeQueue && getQueue(e) !== activeQueue) return false;
+      if (activeQueue && !atomicQueueNames(e).has(activeQueue)) return false;
       return matchesSearch(e, q);
     });
   }
 
   /* ---- Card ---- */
+  function renderQueueBlock(e) {
+    const lines = getQueueRoles(e);
+    if (lines.length === 0) {
+      return '<div class="employee-queues">' +
+        '<div class="employee-queue-empty">No queue assigned</div>' +
+      '</div>';
+    }
+    return '<div class="employee-queues">' +
+      lines.map(line => {
+        const isMatch = activeQueue && lineMatchesQueue(line.value, activeQueue);
+        const cls = "employee-queue-line"
+          + (line.current ? " current" : "")
+          + (isMatch ? " q-match" : "");
+        return '<div class="' + cls + '">' +
+          '<span class="q-label">' + esc(line.label) + '</span>' +
+          '<span class="q-value" title="' + esc(line.value) + '">' + esc(line.value) + '</span>' +
+        '</div>';
+      }).join("") +
+    '</div>';
+  }
+
   function renderEmployeeCard(e) {
     const name       = getDisplayName(e);
     const initials   = getInitials(name);
-    const queue      = getQueue(e);
     const role       = getRoleLabel(e);
     const admin      = isAdmin(e);
     const email      = (e.email      || "").trim();
@@ -235,11 +319,10 @@
     const phone      = (e.phone      || "").trim();
 
     let tagsHtml = "";
-    tagsHtml += queue
-      ? '<span class="employee-tag queue">' + esc(queue) + "</span>"
-      : '<span class="employee-tag no-queue">No queue</span>';
     if (admin) {
-      tagsHtml += '<span class="employee-tag admin">' + esc(role || "Admin") + "</span>";
+      tagsHtml = '<div class="employee-tags">' +
+        '<span class="employee-tag admin">' + esc(role || "Admin") + '</span>' +
+      '</div>';
     }
 
     let rowsHtml = "";
@@ -276,7 +359,8 @@
             '<div class="employee-emp">' + (e.empId ? "EMP " + esc(e.empId) : "") + "</div>" +
           "</div>" +
         "</div>" +
-        '<div class="employee-tags">' + tagsHtml + "</div>" +
+        tagsHtml +
+        renderQueueBlock(e) +
         '<div class="employee-body">' + rowsHtml + "</div>" +
       "</article>"
     );
