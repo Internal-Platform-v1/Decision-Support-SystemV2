@@ -1,14 +1,8 @@
 /* ============================================================
    BD Tools — Employee Directory
-   Reads from assets/references/approved_users.xlsx (Excel export
-   of the approved_users collection). No Firestore dependency.
-
-   Card shows the agent's Current / Primary / Secondary queue.
-   Filter pills cover every queue an agent handles in any role;
-   matching rows highlight so it's obvious why they matched.
-
-   Card click → opens the shared profile modal in view mode via
-   window.BDProfileModal.view(employee).
+   Reads from assets/references/approved_users.xlsx
+   Card click → opens the shared profile modal in view mode.
+   Fullscreen toggle uses the native Fullscreen API.
    ============================================================ */
 (function () {
   "use strict";
@@ -65,10 +59,7 @@
     return role.charAt(0).toUpperCase() + role.slice(1);
   }
 
-  /* ---- Queue helpers ----
-     current  = currentQueue → legacy queue
-     primary  = primaryQueue
-     secondary = secondaryQueue (may be a comma-separated list) */
+  /* ---- Queue helpers ---- */
   function isRealQueue(v) {
     const s = String(v || "").trim();
     if (!s) return false;
@@ -83,7 +74,6 @@
       .filter(isRealQueue);
   }
 
-  // The rows we show on the card: only what's set, de-duplicated.
   function getQueueRoles(e) {
     const cur = String(e.currentQueue || e.queue || "").trim();
     const pri = String(e.primaryQueue || "").trim();
@@ -106,8 +96,6 @@
     return lines;
   }
 
-  // Every atomic queue name an agent handles — used for filter pills
-  // and for the filter match test.
   function atomicQueueNames(e) {
     const set = new Set();
     const cur = String(e.currentQueue || e.queue || "").trim();
@@ -126,7 +114,7 @@
     return splitSecondary(value).includes(q);
   }
 
-  /* ---- XLSX library loader ---- */
+  /* ---- XLSX loader ---- */
   function loadXLSXLibrary() {
     return new Promise((resolve, reject) => {
       if (window.XLSX) return resolve(window.XLSX);
@@ -253,6 +241,9 @@
         activeQueue = q ? q : null;
         renderQueueFilters();
         renderGrid();
+        // Scroll list back to top when filter changes
+        const scroll = document.getElementById("directoryScroll");
+        if (scroll) scroll.scrollTop = 0;
       });
     });
   }
@@ -436,10 +427,77 @@
     handleCardClick(e);
   }
 
+  /* ------------------------------------------------------------
+     Fullscreen toggle
+     ------------------------------------------------------------ */
+  function setupFullscreen() {
+    const btn    = document.getElementById("fullscreenBtn");
+    const target = document.getElementById("directoryWorkspace");
+    if (!btn || !target) return;
+
+    const icon = btn.querySelector("i");
+
+    let savedModal  = null;
+    let savedParent = null;
+
+    btn.addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) {
+          // Move the shared profile modal into the fullscreen container
+          // so it remains visible while the workspace is fullscreen.
+          savedModal  = document.getElementById("profileModal");
+          savedParent = savedModal ? savedModal.parentNode : null;
+          if (savedModal) target.appendChild(savedModal);
+
+          await target.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        console.error("[directory] fullscreen error:", err);
+        // Restore modal if we moved it and never fullscreened
+        if (savedModal && savedParent && savedParent.isConnected) {
+          savedParent.appendChild(savedModal);
+        }
+        savedModal = null;
+        savedParent = null;
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      if (document.fullscreenElement) {
+        if (icon) icon.className = "fa-solid fa-compress";
+        btn.title = "Exit Full Screen";
+        btn.setAttribute("aria-label", "Exit full screen");
+      } else {
+        if (icon) icon.className = "fa-solid fa-expand";
+        btn.title = "View Full Screen";
+        btn.setAttribute("aria-label", "Toggle full screen");
+
+        // Restore the profile modal back to its original parent
+        if (savedModal && savedParent && savedParent.isConnected) {
+          savedParent.appendChild(savedModal);
+        }
+        savedModal  = null;
+        savedParent = null;
+      }
+    });
+
+    // Also handle ESC exiting fullscreen
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && document.fullscreenElement) {
+        // Browser handles the exit; fullscreenchange fires afterwards.
+      }
+    });
+  }
+
   /* ---- Init ---- */
   async function init() {
     if (initialized) return;
     initialized = true;
+
+    // Fullscreen wiring is independent of data loading
+    setupFullscreen();
 
     const resultsEl = document.getElementById("resultsText");
     const grid      = document.getElementById("employeeGrid");
@@ -469,6 +527,8 @@
       function runSearch() {
         searchQuery = search ? search.value : "";
         renderGrid();
+        const scroll = document.getElementById("directoryScroll");
+        if (scroll) scroll.scrollTop = 0;
       }
 
       if (search) {
