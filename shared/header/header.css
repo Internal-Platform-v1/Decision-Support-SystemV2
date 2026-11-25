@@ -12,7 +12,7 @@
     border-bottom: 1px solid #e9e9f2;
     background: #fff;
     position: relative;
-    z-index: 9999; /* Keeps header above all page content */
+    z-index: 9999;
     width: 100%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
@@ -90,7 +90,6 @@
 .nav-item:hover::before, .nav-item.active::before { opacity: 1; transform: scale(1); }
 .nav-item:hover, .nav-item.active { box-shadow: 0 3px 12px rgba(107, 37, 223, 0.06); }
 
-/* Retired underline */
 .nav-underline { display: none !important; }
 
 .nav-item.has-dropdown .dropdown-chevron {
@@ -194,7 +193,6 @@
 .global-search:focus-within .search-icon { border-color: #6b25df; }
 .global-search:focus-within .search-icon::after { background: #6b25df; }
 
-/* Search Results Dropdown */
 .global-search-results {
     position: absolute; top: calc(100% + 8px); right: 0; width: 330px;
     background: rgba(255, 255, 255, .985); border: 1px solid #e5e3ef; border-radius: 11px;
@@ -215,7 +213,6 @@
 .icon-btn { border: 0; background: transparent; padding: 3px; position: relative; cursor: pointer; transition: transform 0.25s ease, filter .25s ease; }
 .icon-btn:hover { transform: scale(1.08); filter: drop-shadow(0 3px 7px rgba(86,32,189,.16)); }
 
-/* Bell Icon */
 .bell-icon {
     display: block; width: 16px; height: 17px; border: 1.8px solid #55577c;
     border-radius: 9px 9px 4px 4px; position: relative; transition: 0.25s;
@@ -223,7 +220,6 @@
 .bell-icon::after { content: ""; position: absolute; width: 5px; height: 2px; background: #55577c; left: 4px; bottom: -4px; border-radius: 2px; }
 .icon-btn:hover .bell-icon, .icon-btn:hover .bell-icon::after { border-color: #5620bd; background: #5620bd; }
 
-/* Badge */
 .notification-dot {
     position: absolute; top: -2px; right: -3px; background: #ff4c20; color: #fff;
     border-radius: 10px; min-width: 12px; height: 12px; font-size: 7px;
@@ -399,7 +395,10 @@
     padding: 10px 14px;
     border-bottom: 1px solid #f0f0f5;
     margin-bottom: 6px;
+    cursor: pointer;
+    transition: background .15s ease;
 }
+.settings-user:hover { background: #f5f1ff; }
 .settings-user[hidden] { display: none !important; }
 
 .settings-user-avatar {
@@ -470,7 +469,7 @@
 .user-login-gate {
     position: fixed;
     inset: 0;
-    z-index: 2147483645;           /* above page-loader, above admin gate */
+    z-index: 2147483645;
     display: grid;
     place-items: center;
     padding: 20px;
@@ -640,10 +639,8 @@
 @keyframes userGateRise { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes userGateSpin { to { transform: rotate(360deg); } }
 
-
-
 /* ============================================================
-   USER PROFILE MODAL  (two-column: identity | form)
+   USER PROFILE MODAL  (view only)
    ============================================================ */
 .profile-modal {
     position: fixed;
@@ -793,7 +790,7 @@
     border-color: #ffd6b3;
 }
 
-/* ---- RIGHT: form ---- */
+/* ---- RIGHT: read-only details ---- */
 .profile-modal-main {
     padding: 28px 30px 22px;
     overflow-y: auto;
@@ -822,8 +819,8 @@
     color: #6d6e91;
 }
 
-/* ---- form fields (unchanged) ---- */
-.profile-modal-form {
+/* ---- view layout ---- */
+.profile-view {
     display: flex;
     flex-direction: column;
     gap: 13px;
@@ -853,69 +850,91 @@
     color: #4b4d6b;
     letter-spacing: 0.01em;
 }
-.profile-field-label em {
-    color: #ff6600;
-    font-style: normal;
-    font-weight: 800;
-}
-.profile-field-label small {
-    margin-left: auto;
-    color: #9ea0b8;
-    font-size: 9px;
-    font-weight: 500;
-}
 
-.profile-field input {
-    width: 100%;
-    box-sizing: border-box;
-    height: 38px;
-    padding: 0 11px;
-    border: 1px solid #e3e0f0;
+.profile-field-static {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 8px 11px;
+    border: 1px solid #ececf3;
     border-radius: 9px;
-    background: #faf9ff;
+    background: #f7f6fb;
     color: #17174b;
     font-size: 12px;
     font-weight: 500;
-    outline: none;
-    transition: 0.2s;
+    line-height: 1.35;
+    word-break: break-word;
 }
-.profile-field input::placeholder { color: #b7b8c8; }
-.profile-field input:hover { border-color: #d3cce8; }
-.profile-field input:focus {
-    border-color: #6b25df;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(107, 37, 223, .1);
+.profile-field-static.is-empty {
+    color: #b7b8c8;
+    font-style: italic;
 }
 
-.profile-modal-status {
-    padding: 9px 11px;
-    border-radius: 9px;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1.4;
+/* ---- queue assignments ---- */
+.profile-queues {
+    margin-top: 4px;
+    padding: 12px;
+    border: 1px solid #ece8f8;
+    border-radius: 12px;
+    background: #f9f7fd;
 }
-.profile-modal-status[hidden] { display: none !important; }
-.profile-modal-status.error {
-    color: #b42318;
-    background: #fff0ee;
-    border: 1px solid #ffc9c3;
+.profile-queues-heading {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #8a86a8;
+    margin-bottom: 8px;
 }
-.profile-modal-status.success {
-    color: #177245;
-    background: #eaf8ef;
-    border: 1px solid #c7ead4;
+.profile-queue-row {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 6px 8px;
+    border-radius: 7px;
+}
+.profile-queue-row + .profile-queue-row { margin-top: 2px; }
+.profile-queue-row.current { background: #ede3ff; }
+
+.profile-queue-label {
+    flex: 0 0 68px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #a09bc0;
+}
+.profile-queue-row.current .profile-queue-label { color: #6c24cf; }
+
+.profile-queue-value {
+    flex: 1 1 auto;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #4a4468;
+    word-break: break-word;
+}
+.profile-queue-row.current .profile-queue-value {
+    color: #4d148c;
+    font-weight: 800;
+}
+.profile-queue-value.is-empty {
+    color: #b7b8c8;
+    font-style: italic;
+    font-weight: 500;
 }
 
+/* ---- actions ---- */
 .profile-modal-actions {
     display: flex;
+    justify-content: flex-end;
     gap: 9px;
     margin-top: 6px;
     padding-top: 14px;
     border-top: 1px solid #f0f0f5;
 }
 .profile-modal-btn {
-    flex: 1;
     height: 42px;
+    padding: 0 22px;
     border-radius: 10px;
     font-size: 12px;
     font-weight: 700;
@@ -927,58 +946,18 @@
     border: 0;
     transition: 0.18s ease;
 }
-.profile-modal-btn.ghost {
-    background: #f3f2fa;
-    color: #4b4d6b;
-}
-.profile-modal-btn.ghost:hover { background: #ebe9f5; }
 .profile-modal-btn.primary {
     background: linear-gradient(135deg, #6b25df, #4d148c);
     color: #fff;
     box-shadow: 0 8px 20px rgba(77, 20, 140, .24);
 }
-.profile-modal-btn.primary:hover:not(:disabled) {
+.profile-modal-btn.primary:hover {
     transform: translateY(-1px);
     box-shadow: 0 12px 26px rgba(77, 20, 140, .32);
 }
-.profile-modal-btn.primary:disabled {
-    opacity: .72;
-    cursor: wait;
-}
-.profile-modal-btn-spinner {
-    display: none;
-    width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,.35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: profileModalSpin .7s linear infinite;
-}
-.profile-modal-btn.loading .profile-modal-btn-label { opacity: .8; }
-.profile-modal-btn.loading .profile-modal-btn-spinner { display: inline-block; }
-
-/* Settings-user click affordance (unchanged) */
-.settings-user {
-    cursor: pointer;
-    transition: background .15s ease;
-}
-.settings-user:hover { background: #f5f1ff; }
-.settings-user-edit {
-    width: 13px;
-    height: 13px;
-    margin-left: auto;
-    fill: none;
-    stroke: #9ea0b8;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    flex: 0 0 auto;
-    transition: stroke .15s ease;
-}
-.settings-user:hover .settings-user-edit { stroke: #5620bd; }
 
 @keyframes profileModalFade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes profileModalRise { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes profileModalSpin { to { transform: rotate(360deg); } }
 
 /* ---- RESPONSIVE: stack on narrow screens ---- */
 @media (max-width: 720px) {
@@ -1023,7 +1002,6 @@
 
 /* ============================================================
    EMPLOYEE DIRECTORY BUTTON (settings menu)
-   Mirrors #adminDashboardBtn styling exactly.
    ============================================================ */
 #employeeDirectoryBtn {
     width: 100%;
@@ -1045,60 +1023,3 @@
     box-shadow: inset 2px 0 0 #6b25df;
 }
 #employeeDirectoryBtn[hidden] { display: none !important; }
-
-/* ============================================================
-   PROFILE MODAL — LOCKED FIRST/LAST NAME
-   ============================================================ */
-.profile-field input[readonly] {
-    background: #f3f2f8;
-    color: #6d6e91;
-    cursor: not-allowed;
-}
-.profile-field input[readonly]:hover { border-color: #e3e0f0; }
-.profile-field input[readonly]:focus {
-    border-color: #e3e0f0;
-    box-shadow: none;
-    background: #f3f2f8;
-}
-
-.profile-field-lock {
-    color: #9ea0b8;
-    font-style: italic;
-    font-weight: 500;
-    margin-left: auto;
-}
-
-.profile-field-note {
-    margin: -6px 0 2px;
-    font-size: 9px;
-    color: #9ea0b8;
-    font-style: italic;
-    line-height: 1.4;
-}
-
-/* ============================================================
-   PROFILE MODAL — VIEW MODE
-   Used by Employee Directory cards (window.BDProfileModal.view).
-   ============================================================ */
-.profile-modal-btn[hidden] {
-    display: none !important;
-}
-
-/* Read-only fields in view mode feel like text, not form inputs */
-.profile-modal--view .profile-field input[readonly] {
-    cursor: default;
-    color: #3d3f65;
-    background: #f7f6fb;
-    border-color: #ececf3;
-}
-.profile-modal--view .profile-field input[readonly]:hover,
-.profile-modal--view .profile-field input[readonly]:focus {
-    border-color: #ececf3;
-    box-shadow: none;
-    background: #f7f6fb;
-}
-
-/* "Locked" pill on First/Last is redundant when everything is locked */
-.profile-modal--view .profile-field-lock {
-    display: none;
-}
