@@ -77,7 +77,7 @@
   letter-spacing: 0.02em;
 }
 
-/* ---- Tags ---- */
+/* ---- Admin tag row ---- */
 .employee-tags {
   display: flex;
   gap: 5px;
@@ -96,19 +96,79 @@
   letter-spacing: 0.02em;
 }
 
-.employee-tag.queue {
-  background: #f1eaff;
-  color: #6c24cf;
-}
-
 .employee-tag.admin {
   background: #fff0e5;
   color: #b35400;
 }
 
-.employee-tag.no-queue {
-  background: #f2f2f5;
-  color: #8c8da7;
+/* ---- Queue block ---- */
+.employee-queues {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  background: #f9f7fd;
+  border: 1px solid #eee8f8;
+  border-radius: 7px;
+}
+
+.employee-queue-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  min-width: 0;
+}
+
+.employee-queue-line .q-label {
+  flex: 0 0 auto;
+  min-width: 52px;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a09bc0;
+}
+
+.employee-queue-line .q-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: #4a4468;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Current queue gets emphasis */
+.employee-queue-line.current .q-label {
+  color: #6c24cf;
+}
+.employee-queue-line.current .q-value {
+  color: #4d148c;
+  font-weight: 800;
+}
+
+/* Filter match highlight */
+.employee-queue-line.q-match {
+  background: #ede3ff;
+}
+.employee-queue-line.q-match .q-label {
+  color: #6c24cf;
+}
+.employee-queue-line.q-match .q-value {
+  color: #4d148c;
+  font-weight: 800;
+}
+
+.employee-queue-empty {
+  padding: 3px 6px;
+  font-size: 10px;
+  font-style: italic;
+  color: #a09bc0;
 }
 
 /* ---- Detail rows ---- */
