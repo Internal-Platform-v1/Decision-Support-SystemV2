@@ -30,8 +30,8 @@
   <div class="app-shell">
     <div id="header-placeholder"></div>
 
-    <main>
-      <!-- ===== HERO (Matched to Legacy) ===== -->
+    <main class="case-page">
+      <!-- ===== HERO ===== -->
       <section class="case-hero">
         <div class="hero-copy">
           <div class="eyebrow"><i class="fa-solid fa-address-book"></i> Team Directory</div>
@@ -44,7 +44,7 @@
         </div>
       </section>
 
-      <!-- ===== STATS ROW (Matched to Legacy) ===== -->
+      <!-- ===== STATS ROW ===== -->
       <section class="stats-row">
         <div class="stat-card">
           <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
@@ -64,7 +64,7 @@
         </div>
       </section>
 
-      <!-- ===== DIRECTORY WORKSPACE (Matched to Legacy) ===== -->
+      <!-- ===== DIRECTORY WORKSPACE ===== -->
       <section class="directory-main" id="directoryWorkspace">
         <div class="directory-heading">
           <div>
@@ -73,14 +73,13 @@
             <p>Browse employee profiles, queue assignments, and contact details. Click any card to view the full profile.</p>
           </div>
           <div class="directory-heading-actions">
-            <a href="index.html" class="view-all my-guides-back" style="font-size: 10px; color: #4d148c; text-decoration: none; font-weight: 700;">← Back to Dashboard</a>
+            <a href="index.html" class="directory-back-link">← Back to Dashboard</a>
             <button id="fullscreenBtn" class="icon-action" type="button" title="View Full Screen">
               <i class="fa-solid fa-expand"></i>
             </button>
           </div>
         </div>
 
-        <!-- ===== UPDATED TOOLBAR WITH DROPDOWNS ===== -->
         <div class="directory-toolbar">
           <div class="toolbar-left">
             <div class="directory-search">
@@ -90,11 +89,9 @@
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
-            
-            <!-- WRAP BOTH DROPDOWNS IN THIS DIV -->
+
             <div class="toolbar-filters">
-              <!-- Queue Dropdown -->
-              <div class="filter-dropdown" id="queueFilterWrapper">
+              <div class="filter-dropdown">
                 <button class="filter-btn" id="queueFilterBtn" type="button">
                   <i class="fa-solid fa-filter"></i>
                   <span id="queueFilterLabel">All Queues</span>
@@ -103,8 +100,7 @@
                 <div class="filter-menu" id="queueFilters"></div>
               </div>
 
-              <!-- Team Leader Dropdown -->
-              <div class="filter-dropdown" id="tlFilterWrapper">
+              <div class="filter-dropdown">
                 <button class="filter-btn" id="tlFilterBtn" type="button">
                   <i class="fa-solid fa-user-tie"></i>
                   <span id="tlFilterLabel">All Team Leaders</span>
@@ -113,7 +109,6 @@
                 <div class="filter-menu" id="tlFilters"></div>
               </div>
             </div>
-            
           </div>
 
           <div class="toolbar-meta">
@@ -125,7 +120,6 @@
 
         <div class="directory-scroll" id="directoryScroll">
           <div id="employeeGrid" class="employee-grid"></div>
-
           <div id="noEmployees" class="directory-empty" hidden>
             <div class="directory-empty-icon">⌕</div>
             <strong>Nothing to show</strong>
