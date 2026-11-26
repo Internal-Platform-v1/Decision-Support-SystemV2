@@ -1,163 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="page-protected">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Employee Directory | BD Tools</title>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
-  <link rel="stylesheet" href="assets/css/page-loader.css" />
-  <link rel="stylesheet" href="assets/css/employee-directory.css" />
-
-  <script>
-    document.documentElement.classList.add("page-loading");
-    document.documentElement.setAttribute("aria-busy", "true");
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BD Tools — Employee Directory</title>
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/page-loader.css">
+<link rel="stylesheet" href="assets/css/employee-directory.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
+<body data-waits-for-user="true" data-page="employee-directory">
 
-<body data-view="directory" data-waits-for-user="true">
-  <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading page">
-    <div class="page-loader-inner">
-      <div class="page-loader-mark" aria-hidden="true">
-        <span class="page-loader-ring"></span>
-        <span class="page-loader-dot"></span>
-      </div>
-      <p class="page-loader-text">Loading BD Tools…</p>
+<div class="page-loader" id="pageLoader" role="status" aria-live="polite">
+  <div class="page-loader-inner">
+    <div class="page-loader-mark">
+      <span class="page-loader-ring"></span>
+      <span class="page-loader-dot"></span>
     </div>
+    <p class="page-loader-text">Loading BD Tools…</p>
   </div>
+</div>
 
-  <div class="app-shell">
-    <div id="header-placeholder"></div>
+<div class="app-shell">
+  <div id="header-placeholder"></div>
 
-    <main class="case-page">
-      <!-- ===== HERO ===== -->
-      <section class="case-hero">
-        <div class="hero-copy">
-          <div class="eyebrow"><i class="fa-solid fa-address-book"></i> Team Directory</div>
-          <h1>Employee <span>Directory</span></h1>
-          <p>Find and connect with your teammates. Browse by name, EMP ID, queue, or department to identify the right contact.</p>
-          <div class="hero-actions">
-            <button class="primary-btn" type="button" onclick="scrollToDirectory()">Explore Employees <i class="fa-solid fa-arrow-down"></i></button>
-            <button class="secondary-btn" type="button" onclick="focusDirectorySearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
-          </div>
-        </div>
-      </section>
+  <main class="case-page">
 
-      <!-- ===== STATS ROW ===== -->
-      <section class="stats-row">
-        <div class="stat-card">
-          <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
-          <div><strong id="heroEmployeeCount">—</strong><small>Total employees</small></div>
+    <!-- ===== Hero ===== -->
+    <section class="case-hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><i class="fa-solid fa-users"></i> Employee Directory</div>
+        <h1>Employee <span>Directory</span></h1>
+        <p>Browse the roster of employees, filter by queue or team leader, and search by name, email, role, department, or any assigned queue.</p>
+        <div class="hero-actions">
+          <button class="primary-btn" type="button" onclick="scrollToDirectory()">
+            Explore Directory <i class="fa-solid fa-arrow-down"></i>
+          </button>
+          <button class="secondary-btn" type="button" onclick="focusDirectorySearch()">
+            Search now <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon orange"><i class="fa-solid fa-layer-group"></i></div>
-          <div><strong id="heroQueueCount">—</strong><small>Active queues</small></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon blue"><i class="fa-solid fa-filter"></i></div>
-          <div><strong id="heroMatchCount">—</strong><small>Matching results</small></div>
-        </div>
-        <div class="stat-card status-stat">
-          <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
-          <div><strong id="statusPill">Loading</strong><small>Directory status</small></div>
-        </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ===== DIRECTORY WORKSPACE ===== -->
-      <section class="directory-main" id="directoryWorkspace">
-        <div class="directory-heading">
-          <div>
-            <div class="section-kicker"><i class="fa-solid fa-address-book"></i> Team directory</div>
-            <h2>Employee Directory</h2>
-            <p>Browse employee profiles, queue assignments, and contact details. Click any card to view the full profile.</p>
-          </div>
-          <div class="directory-heading-actions">
-            <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
-            <button id="fullscreenBtn" class="icon-action" type="button" title="View Full Screen">
-              <i class="fa-solid fa-expand"></i>
+    <!-- ===== Stats ===== -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
+        <div>
+          <strong id="heroEmployeeCount">—</strong>
+          <small>Employees</small>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-layer-group"></i></div>
+        <div>
+          <strong id="heroQueueCount">—</strong>
+          <small>Unique queues</small>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-filter"></i></div>
+        <div>
+          <strong id="heroMatchCount">—</strong>
+          <small>Matching results</small>
+        </div>
+      </div>
+      <div class="stat-card status-stat">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div>
+          <strong id="statusPill">Loading</strong>
+          <small>Directory status</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Directory workspace ===== -->
+    <section class="directory-main" id="directoryWorkspace">
+
+      <div class="directory-heading">
+        <div>
+          <div class="section-kicker"><i class="fa-solid fa-address-book"></i> Employee roster</div>
+          <h2>Employee Directory</h2>
+          <p>Filter by queue or team leader, or search to quickly locate an employee.</p>
+        </div>
+        <button id="fullscreenBtn" class="icon-action" type="button" title="View Full Screen">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+
+      <div class="directory-toolbar">
+
+        <div class="directory-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="directorySearch" type="search"
+                 placeholder="Search name, email, role, department, queue…"
+                 autocomplete="off">
+          <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()" aria-label="Clear search">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="filter-dropdowns">
+          <div class="filter-dropdown">
+            <button id="queueFilterBtn" class="filter-btn" type="button">
+              <i class="fa-solid fa-layer-group"></i>
+              <span id="queueFilterLabel">All Queues</span>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
+            <div class="filter-menu" id="queueFilters"></div>
+          </div>
+
+          <div class="filter-dropdown">
+            <button id="tlFilterBtn" class="filter-btn" type="button">
+              <i class="fa-solid fa-user-tie"></i>
+              <span id="tlFilterLabel">All Team Leaders</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="filter-menu" id="tlFilters"></div>
           </div>
         </div>
 
-        <div class="directory-toolbar">
-          <div class="toolbar-left">
-            <div class="directory-search">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input id="directorySearch" type="search" placeholder="Search name, EMP, queue…" autocomplete="off" />
-              <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()" aria-label="Clear search">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </div>
-            
-            <div class="toolbar-filters">
-              <!-- Queue Dropdown -->
-              <div class="filter-dropdown" id="queueFilterWrapper">
-                <button class="filter-btn" id="queueFilterBtn" type="button">
-                  <i class="fa-solid fa-filter"></i>
-                  <span id="queueFilterLabel">All Queues</span>
-                  <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="filter-menu" id="queueFilters"></div>
-              </div>
-
-              <!-- Team Leader Dropdown -->
-              <div class="filter-dropdown" id="tlFilterWrapper">
-                <button class="filter-btn" id="tlFilterBtn" type="button">
-                  <i class="fa-solid fa-user-tie"></i>
-                  <span id="tlFilterLabel">All Team Leaders</span>
-                  <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="filter-menu" id="tlFilters"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="toolbar-meta">
-            <span><strong id="totalRowsValue">—</strong> employees</span>
-            <span><strong id="uniqueQueuesValue">—</strong> queues</span>
-            <span><strong id="visibleResultsValue">—</strong> shown</span>
-          </div>
+        <div class="toolbar-meta">
+          <span><strong id="totalRowsValue">—</strong> employees</span>
+          <span><strong id="uniqueQueuesValue">—</strong> queues</span>
+          <span><strong id="visibleResultsValue">—</strong> shown</span>
         </div>
 
-        <div class="directory-scroll" id="directoryScroll">
-          <div id="employeeGrid" class="employee-grid"></div>
+      </div>
 
-          <div id="noEmployees" class="directory-empty" hidden>
-            <div class="directory-empty-icon">⌕</div>
-            <strong>Nothing to show</strong>
-            <p>Try a different search or filter.</p>
-          </div>
+      <div class="directory-scroll" id="directoryScroll">
+        <div class="employee-grid" id="employeeGrid"></div>
+        <div class="empty-state" id="noEmployees" hidden>
+          <i class="fa-solid fa-user-slash"></i>
+          <strong>No employees found</strong>
+          <p>Try a different search or filter.</p>
         </div>
-      </section>
-    </main>
+      </div>
 
-    <div id="footer-placeholder"></div>
-  </div>
+    </section>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  </main>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    };
-    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-  </script>
+  <div id="footer-placeholder"></div>
+</div>
 
-  <script src="shared/include.js"></script>
-  <script src="assets/js/employee-directory.js"></script>
-  <script src="assets/js/page-loader.js"></script>
+<!-- ===== Firebase + shared scripts ===== -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+</script>
+<script src="shared/include.js"></script>
+<script src="assets/js/employee-directory.js"></script>
+<script src="assets/js/page-loader.js"></script>
 
-  <script>
-    window.bdToolsUserReady = function () {
-      window.dispatchEvent(new Event("bdtools:user-ready"));
-    };
-  </script>
 </body>
 </html>
