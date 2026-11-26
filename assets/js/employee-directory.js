@@ -68,10 +68,7 @@
   }
 
   function splitSecondary(v) {
-    return String(v || "")
-      .split(",")
-      .map(p => p.trim())
-      .filter(isRealQueue);
+    return String(v || "").split(",").map(p => p.trim()).filter(isRealQueue);
   }
 
   function getQueueRoles(e) {
@@ -186,22 +183,44 @@
     return Array.from(byKey.values());
   }
 
-  /* ---- Stats ---- */
+  /* ---- Stats + status ---- */
+  function setStatus(label, icon) {
+    const pill = document.getElementById("statusPill");
+    if (pill) pill.innerHTML = '<i class="fa-solid ' + (icon || "fa-bolt") + '"></i> ' + label;
+  }
+
   function updateStats() {
-    const totalEl  = document.getElementById("statTotal");
-    const queuesEl = document.getElementById("statQueues");
-    const adminsEl = document.getElementById("statAdmins");
+    const heroEmp    = document.getElementById("heroEmployeeCount");
+    const heroQ      = document.getElementById("heroQueueCount");
+    const totalEl    = document.getElementById("totalRowsValue");
+    const queuesEl   = document.getElementById("uniqueQueuesValue");
 
     const total = allEmployees.length;
 
     const uniqueQueues = new Set();
     allEmployees.forEach(e => atomicQueueNames(e).forEach(n => uniqueQueues.add(n)));
 
-    const admins = allEmployees.filter(isAdmin).length;
-
+    if (heroEmp)  heroEmp.textContent  = total;
+    if (heroQ)    heroQ.textContent    = uniqueQueues.size;
     if (totalEl)  totalEl.textContent  = total;
     if (queuesEl) queuesEl.textContent = uniqueQueues.size;
-    if (adminsEl) adminsEl.textContent = admins;
+  }
+
+  function updateFilterStats(shownCount) {
+    const matchEl = document.getElementById("heroMatchCount");
+    const shownEl = document.getElementById("visibleResultsValue");
+    if (matchEl) matchEl.textContent = shownCount;
+    if (shownEl) shownEl.textContent = shownCount;
+
+    if (!allEmployees.length) {
+      setStatus("Waiting for Data", "fa-database");
+    } else if (!shownCount) {
+      setStatus("No Match Found", "fa-circle-exclamation");
+    } else if (searchQuery.trim() || activeQueue) {
+      setStatus("Filtered Results", "fa-filter");
+    } else {
+      setStatus("Directory Ready", "fa-circle-check");
+    }
   }
 
   /* ---- Queue filter pills ---- */
@@ -241,7 +260,6 @@
         activeQueue = q ? q : null;
         renderQueueFilters();
         renderGrid();
-        // Scroll list back to top when filter changes
         const scroll = document.getElementById("directoryScroll");
         if (scroll) scroll.scrollTop = 0;
       });
@@ -360,21 +378,19 @@
   function renderGrid() {
     const grid      = document.getElementById("employeeGrid");
     const resultsEl = document.getElementById("resultsText");
-    const titleEl   = document.getElementById("directoryTitle");
     const emptyEl   = document.getElementById("noEmployees");
     if (!grid) return;
 
     const filtered = getFiltered();
 
-    if (titleEl) {
-      titleEl.textContent = activeQueue ? activeQueue + " Employees" : "All Employees";
-    }
-
     if (resultsEl) {
+      const base = "Showing " + filtered.length + " of " + allEmployees.length + " employees";
       resultsEl.textContent = allEmployees.length === 0
         ? "No employees found in the directory."
-        : "Showing " + filtered.length + " of " + allEmployees.length + " employees";
+        : (activeQueue ? base + " in " + activeQueue : base);
     }
+
+    updateFilterStats(filtered.length);
 
     if (filtered.length === 0) {
       grid.innerHTML = "";
@@ -428,6 +444,39 @@
   }
 
   /* ------------------------------------------------------------
+     Global hero-button handlers
+     ------------------------------------------------------------ */
+  window.scrollToDirectory = function () {
+    searchQuery = "";
+    activeQueue = null;
+    const searchEl = document.getElementById("directorySearch");
+    if (searchEl) searchEl.value = "";
+    const clearBtn = document.getElementById("clearSearchBtn");
+    if (clearBtn) clearBtn.style.display = "none";
+    renderQueueFilters();
+    renderGrid();
+    const scrollEl = document.getElementById("directoryScroll");
+    if (scrollEl) scrollEl.scrollTop = 0;
+  };
+
+  window.focusDirectorySearch = function () {
+    const input = document.getElementById("directorySearch");
+    if (input) input.focus();
+  };
+
+  window.clearDirectorySearch = function () {
+    searchQuery = "";
+    const input = document.getElementById("directorySearch");
+    if (input) input.value = "";
+    const clearBtn = document.getElementById("clearSearchBtn");
+    if (clearBtn) clearBtn.style.display = "none";
+    renderGrid();
+    const scrollEl = document.getElementById("directoryScroll");
+    if (scrollEl) scrollEl.scrollTop = 0;
+    if (input) input.focus();
+  };
+
+  /* ------------------------------------------------------------
      Fullscreen toggle
      ------------------------------------------------------------ */
   function setupFullscreen() {
@@ -443,19 +492,15 @@
     btn.addEventListener("click", async () => {
       try {
         if (!document.fullscreenElement) {
-          // Move the shared profile modal into the fullscreen container
-          // so it remains visible while the workspace is fullscreen.
           savedModal  = document.getElementById("profileModal");
           savedParent = savedModal ? savedModal.parentNode : null;
           if (savedModal) target.appendChild(savedModal);
-
           await target.requestFullscreen();
         } else {
           await document.exitFullscreen();
         }
       } catch (err) {
         console.error("[directory] fullscreen error:", err);
-        // Restore modal if we moved it and never fullscreened
         if (savedModal && savedParent && savedParent.isConnected) {
           savedParent.appendChild(savedModal);
         }
@@ -473,20 +518,11 @@
         if (icon) icon.className = "fa-solid fa-expand";
         btn.title = "View Full Screen";
         btn.setAttribute("aria-label", "Toggle full screen");
-
-        // Restore the profile modal back to its original parent
         if (savedModal && savedParent && savedParent.isConnected) {
           savedParent.appendChild(savedModal);
         }
         savedModal  = null;
         savedParent = null;
-      }
-    });
-
-    // Also handle ESC exiting fullscreen
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && document.fullscreenElement) {
-        // Browser handles the exit; fullscreenchange fires afterwards.
       }
     });
   }
@@ -496,7 +532,6 @@
     if (initialized) return;
     initialized = true;
 
-    // Fullscreen wiring is independent of data loading
     setupFullscreen();
 
     const resultsEl = document.getElementById("resultsText");
@@ -512,7 +547,6 @@
       if (resultsEl) resultsEl.textContent = "Loading employees...";
 
       allEmployees = await loadAllEmployees();
-
       allEmployees.sort((a, b) =>
         getDisplayName(a).localeCompare(getDisplayName(b), undefined, { sensitivity: "base" })
       );
@@ -522,10 +556,11 @@
       renderGrid();
 
       const search    = document.getElementById("directorySearch");
-      const searchBtn = document.getElementById("directorySearchBtn");
+      const clearBtn  = document.getElementById("clearSearchBtn");
 
       function runSearch() {
         searchQuery = search ? search.value : "";
+        if (clearBtn) clearBtn.style.display = searchQuery ? "block" : "none";
         renderGrid();
         const scroll = document.getElementById("directoryScroll");
         if (scroll) scroll.scrollTop = 0;
@@ -537,7 +572,6 @@
           if (e.key === "Enter") { e.preventDefault(); runSearch(); }
         });
       }
-      if (searchBtn) searchBtn.addEventListener("click", runSearch);
     } catch (err) {
       console.error("[directory] init failed:", err);
       if (resultsEl) {
@@ -551,6 +585,7 @@
         if (copyEl) copyEl.textContent =
           "Make sure assets/references/approved_users.xlsx exists and is reachable.";
       }
+      updateFilterStats(0);
     }
   }
 
