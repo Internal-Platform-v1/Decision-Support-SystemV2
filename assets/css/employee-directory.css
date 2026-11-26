@@ -1,314 +1,359 @@
 /* ============================================================
    BD Tools — Employee Directory
-   Page-scoped styles for employee-directory.html
-   Upper section (hero + stats + directory shell) aligned to
-   legacy-case-directory layout.
+   Matched to Legacy Directory Layout
    ============================================================ */
 
 /* ============================================================
-   HERO (legacy-aligned)
+   1. FIXED-VIEWPORT LAYOUT (Matched to Legacy)
    ============================================================ */
-.case-hero {
-  flex: 0 0 auto;
-  height: 300px;
-  position: relative;
-  overflow: hidden;
-  padding: 25px 7.2%;
-  background: #f8f7ff url("../images/hero-background-1.png") center 90% / cover no-repeat;
-  display: flex;
-  justify-content: space-between;
-}
-
-.hero-copy {
-  position: relative;
-  z-index: 2;
-  max-width: 620px;
-}
-
-.eyebrow,
-.section-kicker {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: #6b20d0;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: #fff;
-  border: 1px solid #e7ddff;
-  border-radius: 20px;
-  padding: 7px 11px;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.case-hero h1 {
-  margin: 13px 0 8px;
-  color: #10134f;
-  font-size: 31px;
-  line-height: 1.08;
-  letter-spacing: -1px;
-  font-weight: 800;
-}
-
-.case-hero h1 span { color: #ff6600; }
-
-.case-hero p {
+body[data-view="directory"],
+html {
+  height: 100%;
   margin: 0;
-  max-width: 540px;
-  color: #45466e;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.primary-btn,
-.secondary-btn {
-  height: 32px;
-  padding: 0 14px;
-  border-radius: 6px;
-  border: 1px solid #5b17c5;
-  font-size: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.primary-btn { background: #5b17c5; color: #fff; }
-.secondary-btn { background: #fff; color: #4d148c; border-color: #e1d9f4; }
-
-/* ============================================================
-   STATS ROW (legacy-aligned)
-   ============================================================ */
-.stats-row {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-  width: 85.6%;
-  margin: -50px auto 0;
-  padding: 0;
-}
-
-.stat-card {
-  width: 100%;
-  min-width: 0;
-  height: 58px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 0 13px;
-  background: #fff;
-  border: 1px solid #e8e9f2;
-  border-radius: 7px;
-  box-shadow: 0 5px 20px #30266f12;
   overflow: hidden;
 }
 
-.stat-icon {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 9px;
-  font-size: 17px;
-}
-
-.stat-icon.purple { background: #f0e9ff; color: #6d2ce0; }
-.stat-icon.orange { background: #fff0e4; color: #ff7218; }
-.stat-icon.blue   { background: #edf2ff; color: #3564e5; }
-.stat-icon.green  { background: #e8f7e7; color: #3e9346; }
-
-.stat-card > div:last-child {
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-}
-
-.stat-card strong {
-  display: block;
-  color: #10134f;
-  font-size: 16px;
-  line-height: 17px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.stat-card small {
-  display: block;
-  margin-top: 3px;
-  color: #777a99;
-  font-size: 9px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.status-stat strong { font-size: 11px; }
-
-/* ============================================================
-   DIRECTORY WORKSPACE SHELL
-   ============================================================ */
-.directory-main {
-  flex: 1 1 auto;
-  min-height: 250px;
-  width: 85.6%;
-  margin: 14px auto 0;
-  padding: 0;
+body[data-view="directory"] .app-shell {
+  height: calc(100vh - 20px);
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid #e4e5ef;
-  border-radius: 9px;
-  box-shadow: 0 5px 20px #30266f0d;
   overflow: hidden;
 }
 
-.directory-heading {
+body[data-view="directory"] #header-placeholder { flex: 0 0 auto; }
+
+body[data-view="directory"] #footer-placeholder {
   flex: 0 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 17px 20px 12px;
-  border-bottom: 1px solid #f0f0f5;
-  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
-.directory-heading h2 {
-  margin: 5px 0;
-  color: #10134f;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.directory-heading p {
-  margin: 0;
-  color: #777a99;
-  font-size: 10px;
-}
-
-.directory-heading-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-}
-
-.icon-action,
-.close-action {
-  width: 31px;
-  height: 31px;
-  border: 1px solid #e3def2;
-  border-radius: 6px;
-  background: #fff;
-  color: #777a99;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: 0.15s ease;
-}
-
-.icon-action:hover {
-  border-color: #c9bdf0;
-  color: #4d148c;
-  background: #faf7ff;
-}
-
-.icon-action i { font-size: 12px; }
-
-.directory-toolbar {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 11px 20px;
-  border-bottom: 1px solid #f0f0f5;
-}
-
-.directory-search {
-  width: min(560px, 65%);
-  height: 34px;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  border: 1px solid #dedfeb;
-  border-radius: 6px;
-  color: #8a8da8;
-  background: #fff;
-}
-
-.directory-search input {
-  flex: 1;
-  min-width: 0;
-  padding: 0 8px;
-  border: 0;
-  outline: 0;
-  color: #10134f;
-  font-size: 10px;
-  font-family: inherit;
-  background: transparent;
-}
-
-.directory-search button {
-  display: none;
-  border: 0;
-  background: transparent;
-  color: #9b9db4;
-  cursor: pointer;
-}
-
-.toolbar-meta {
-  display: flex;
-  gap: 14px;
-  color: #777a99;
-  font-size: 9px;
-}
-
-.toolbar-meta strong { color: #4d148c; }
-
-.directory-filters {
-  flex: 0 0 auto;
-  padding: 10px 20px 6px;
-  border-bottom: 1px solid #f0f0f5;
-}
-
-.directory-filters .queue-filters { margin: 0; }
-
-.directory-scroll {
+body[data-view="directory"] main {
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 14px 20px 8px;
-}
-
-.directory-scroll::-webkit-scrollbar { width: 6px; }
-.directory-scroll::-webkit-scrollbar-thumb {
-  background: #d9d5e6;
-  border-radius: 999px;
-}
-.directory-scroll::-webkit-scrollbar-thumb:hover {
-  background: #b8b2c9;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
 }
 
 /* ============================================================
-   EMPLOYEE GRID
+   2. HERO SECTION (Matched exactly to Legacy)
+   ============================================================ */
+body[data-view="directory"] .case-hero {
+  height: 300px !important;
+  flex: 0 0 auto !important;
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 25px 7.2% !important;
+  background: #f8f7ff url("../images/hero-background-1.png") center 90% / cover no-repeat !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+body[data-view="directory"] .hero-copy {
+  position: relative !important;
+  z-index: 2 !important;
+  max-width: 620px !important;
+}
+
+body[data-view="directory"] .eyebrow,
+body[data-view="directory"] .section-kicker {
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  color: #6b20d0 !important;
+}
+
+body[data-view="directory"] .eyebrow {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: #ffffff !important;
+  border: 1px solid #e7ddff !important;
+  border-radius: 20px !important;
+  padding: 7px 11px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+body[data-view="directory"] .case-hero h1 {
+  margin: 13px 0 8px !important;
+  color: #10134f !important;
+  font-size: 31px !important;
+  line-height: 1.08 !important;
+  letter-spacing: -1px !important;
+  font-weight: 800 !important;
+}
+
+body[data-view="directory"] .case-hero h1 span { color: #ff6600 !important; }
+
+body[data-view="directory"] .case-hero p {
+  margin: 0 !important;
+  max-width: 540px !important;
+  color: #45466e !important;
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+
+body[data-view="directory"] .hero-actions {
+  display: flex !important;
+  gap: 8px !important;
+  margin-top: 16px !important;
+}
+
+body[data-view="directory"] .primary-btn,
+body[data-view="directory"] .secondary-btn {
+  height: 32px !important;
+  padding: 0 14px !important;
+  border-radius: 6px !important;
+  border: 1px solid #5b17c5 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+body[data-view="directory"] .primary-btn { background: #5b17c5 !important; color: #ffffff !important; }
+body[data-view="directory"] .secondary-btn { background: #ffffff !important; color: #4d148c !important; border-color: #e1d9f4 !important; }
+
+/* ============================================================
+   3. STATS ROW (Matched exactly to Legacy)
+   ============================================================ */
+body[data-view="directory"] .stats-row {
+  position: relative !important;
+  z-index: 3 !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 85.6% !important;
+  max-width: none !important;
+  margin: -50px auto 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+body[data-view="directory"] .stat-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 58px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  padding: 0 13px !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #e8e9f2 !important;
+  border-radius: 7px !important;
+  box-shadow: 0 5px 20px #30266f12 !important;
+  overflow: hidden !important;
+}
+
+body[data-view="directory"] .stat-icon {
+  width: 34px !important;
+  height: 34px !important;
+  flex: 0 0 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 9px !important;
+  font-size: 17px !important;
+}
+
+body[data-view="directory"] .stat-icon.purple { background: #f0e9ff !important; color: #6d2ce0 !important; }
+body[data-view="directory"] .stat-icon.orange { background: #fff0e4 !important; color: #ff7218 !important; }
+body[data-view="directory"] .stat-icon.blue   { background: #edf2ff !important; color: #3564e5 !important; }
+body[data-view="directory"] .stat-icon.green  { background: #e8f7e7 !important; color: #3e9346 !important; }
+
+body[data-view="directory"] .stat-card > div:last-child {
+  min-width: 0 !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+}
+
+body[data-view="directory"] .stat-card strong {
+  display: block !important;
+  color: #10134f !important;
+  font-size: 16px !important;
+  line-height: 17px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body[data-view="directory"] .stat-card small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: #777a99 !important;
+  font-size: 9px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body[data-view="directory"] .status-stat strong { font-size: 11px !important; }
+
+/* ============================================================
+   4. DIRECTORY WORKSPACE SHELL (Matched exactly to Legacy)
+   ============================================================ */
+body[data-view="directory"] .directory-main {
+  height: calc(100vh - 470px) !important;
+  min-height: 250px !important;
+  margin: 14px auto 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #ffffff !important;
+  border: 1px solid #e4e5ef !important;
+  border-radius: 9px !important;
+  box-shadow: 0 5px 20px #30266f0d !important;
+  overflow: hidden !important;
+  width: 85.6% !important;
+  max-width: none !important;
+  padding: 0 !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+body[data-view="directory"] .directory-heading {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  padding: 17px 20px 12px !important;
+  border-bottom: 1px solid #f0f0f5 !important;
+  flex: 0 0 auto !important;
+}
+
+body[data-view="directory"] .directory-heading h2 {
+  margin: 5px 0 !important;
+  color: #10134f !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+
+body[data-view="directory"] .directory-heading p {
+  margin: 0 !important;
+  color: #777a99 !important;
+  font-size: 10px !important;
+}
+
+body[data-view="directory"] .directory-heading-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex: 0 0 auto !important;
+}
+
+body[data-view="directory"] .icon-action,
+body[data-view="directory"] .close-action {
+  width: 31px !important;
+  height: 31px !important;
+  border: 1px solid #e3def2 !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  color: #777a99 !important;
+  cursor: pointer !important;
+  display: grid !important;
+  place-items: center !important;
+  transition: 0.15s ease !important;
+}
+
+body[data-view="directory"] .icon-action:hover {
+  border-color: #c9bdf0 !important;
+  color: #4d148c !important;
+  background: #faf7ff !important;
+}
+
+body[data-view="directory"] .icon-action i { font-size: 12px !important; }
+
+/* ============================================================
+   5. TOOLBAR & SEARCH (Matched exactly to Legacy)
+   ============================================================ */
+body[data-view="directory"] .directory-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
+  padding: 11px 20px !important;
+  border-bottom: 1px solid #f0f0f5 !important;
+  flex: 0 0 auto !important;
+}
+
+body[data-view="directory"] .directory-search {
+  width: min(560px, 65%) !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 10px !important;
+  border: 1px solid #dedfeb !important;
+  border-radius: 6px !important;
+  color: #8a8da8 !important;
+  background: #ffffff !important;
+}
+
+body[data-view="directory"] .directory-search input {
+  flex: 1 !important;
+  min-width: 0 !important;
+  padding: 0 8px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #10134f !important;
+  font-size: 10px !important;
+  font-family: inherit !important;
+  background: transparent !important;
+}
+
+body[data-view="directory"] .directory-search button {
+  display: none;
+  border: 0 !important;
+  background: transparent !important;
+  color: #9b9db4 !important;
+  cursor: pointer !important;
+}
+
+body[data-view="directory"] .toolbar-meta {
+  display: flex !important;
+  gap: 14px !important;
+  color: #777a99 !important;
+  font-size: 9px !important;
+}
+
+body[data-view="directory"] .toolbar-meta strong { color: #4d148c !important; }
+
+/* ============================================================
+   6. FILTERS & SCROLL CONTAINER
+   ============================================================ */
+body[data-view="directory"] .directory-filters {
+  flex: 0 0 auto !important;
+  padding: 10px 20px 6px !important;
+  border-bottom: 1px solid #f0f0f5 !important;
+}
+
+body[data-view="directory"] .directory-filters .queue-filters { margin: 0 !important; }
+
+body[data-view="directory"] .directory-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 14px 20px 8px !important;
+}
+
+body[data-view="directory"] .directory-scroll::-webkit-scrollbar { width: 6px !important; }
+body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb {
+  background: #d9d5e6 !important;
+  border-radius: 999px !important;
+}
+body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b8b2c9 !important;
+}
+
+/* ============================================================
+   7. EMPLOYEE GRID & CARDS (Content area)
    ============================================================ */
 .employee-grid {
   display: grid;
@@ -317,9 +362,6 @@
   margin-top: 4px;
 }
 
-/* ============================================================
-   EMPLOYEE CARD
-   ============================================================ */
 .employee-card {
   background: #fff;
   border: 1px solid #e8e9f1;
@@ -339,106 +381,51 @@
   border-color: #d8d5ef;
 }
 
-.employee-card-head {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-width: 0;
-}
+.employee-card-head { display: flex; align-items: center; gap: 11px; min-width: 0; }
 
 .employee-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #6b25df, #4d148c);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  flex: 0 0 auto;
+  width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(135deg, #6b25df, #4d148c); color: #fff;
+  font-size: 13px; font-weight: 800; letter-spacing: 0.03em; flex: 0 0 auto;
   box-shadow: 0 2px 6px rgba(77, 20, 140, 0.25);
 }
 
-.employee-identity {
-  min-width: 0;
-  flex: 1 1 auto;
-}
+.employee-identity { min-width: 0; flex: 1 1 auto; }
 
 .employee-name {
-  font-size: 12px;
-  font-weight: 800;
-  color: #10134f;
-  line-height: 1.25;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 12px; font-weight: 800; color: #10134f; line-height: 1.25;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .employee-emp {
-  font-size: 9px;
-  color: #8c8da7;
-  margin-top: 2px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 9px; color: #8c8da7; margin-top: 2px; font-weight: 600; letter-spacing: 0.02em;
 }
 
 .employee-tags { display: flex; gap: 5px; flex-wrap: wrap; }
 
 .employee-tag {
-  display: inline-flex;
-  align-items: center;
-  height: 20px;
-  padding: 0 8px;
-  border-radius: 10px;
-  font-size: 8px;
-  font-weight: 800;
-  white-space: nowrap;
-  letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; height: 20px; padding: 0 8px;
+  border-radius: 10px; font-size: 8px; font-weight: 800; white-space: nowrap; letter-spacing: 0.02em;
 }
-
 .employee-tag.admin { background: #fff0e5; color: #b35400; }
 
 .employee-queues {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 4px;
-  background: #f9f7fd;
-  border: 1px solid #eee8f8;
-  border-radius: 7px;
+  display: flex; flex-direction: column; gap: 2px; padding: 4px;
+  background: #f9f7fd; border: 1px solid #eee8f8; border-radius: 7px;
 }
 
 .employee-queue-line {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 3px 6px;
-  border-radius: 5px;
-  min-width: 0;
+  display: flex; align-items: baseline; gap: 6px; padding: 3px 6px; border-radius: 5px; min-width: 0;
 }
 
 .employee-queue-line .q-label {
-  flex: 0 0 auto;
-  min-width: 52px;
-  font-size: 8px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #a09bc0;
+  flex: 0 0 auto; min-width: 52px; font-size: 8px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.05em; color: #a09bc0;
 }
 
 .employee-queue-line .q-value {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 10px;
-  font-weight: 600;
-  color: #4a4468;
-  line-height: 1.35;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex: 1 1 auto; min-width: 0; font-size: 10px; font-weight: 600; color: #4a4468;
+  line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .employee-queue-line.current .q-label { color: #6c24cf; }
@@ -448,187 +435,58 @@
 .employee-queue-line.q-match .q-label { color: #6c24cf; }
 .employee-queue-line.q-match .q-value { color: #4d148c; font-weight: 800; }
 
-.employee-queue-empty {
-  padding: 3px 6px;
-  font-size: 10px;
-  font-style: italic;
-  color: #a09bc0;
-}
+.employee-queue-empty { padding: 3px 6px; font-size: 10px; font-style: italic; color: #a09bc0; }
 
-.employee-body {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
+.employee-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 
 .employee-row {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 10px;
-  color: #55567a;
-  min-width: 0;
-  line-height: 1.3;
+  display: flex; align-items: center; gap: 7px; font-size: 10px; color: #55567a;
+  min-width: 0; line-height: 1.3;
 }
 
-.employee-row i {
-  width: 11px;
-  flex: 0 0 auto;
-  color: #a0a1b8;
-  font-size: 10px;
-}
-
-.employee-row span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
+.employee-row i { width: 11px; flex: 0 0 auto; color: #a0a1b8; font-size: 10px; }
+.employee-row span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 /* ============================================================
-   QUEUE FILTER PILLS
+   8. QUEUE PILLS & EMPTY STATE
    ============================================================ */
-.queue-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.queue-filters { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .queue-pill {
-  height: 26px;
-  padding: 0 11px;
-  border: 1px solid #e3e0f0;
-  border-radius: 13px;
-  background: #fff;
-  color: #55567a;
-  font-size: 9px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  font-family: inherit;
+  height: 26px; padding: 0 11px; border: 1px solid #e3e0f0; border-radius: 13px;
+  background: #fff; color: #55567a; font-size: 9px; font-weight: 700; cursor: pointer;
+  transition: 0.15s ease; display: inline-flex; align-items: center; gap: 6px;
+  white-space: nowrap; font-family: inherit;
 }
 
 .queue-pill:hover { border-color: #c9bdf0; color: #4d148c; }
 
 .queue-pill.active {
-  background: linear-gradient(135deg, #6b25df, #4d148c);
-  border-color: #5a12bd;
-  color: #fff;
-  box-shadow: 0 3px 10px rgba(77, 20, 140, .18);
+  background: linear-gradient(135deg, #6b25df, #4d148c); border-color: #5a12bd;
+  color: #fff; box-shadow: 0 3px 10px rgba(77, 20, 140, .18);
 }
 
 .queue-pill .queue-count { font-size: 8px; opacity: 0.7; }
 .queue-pill.active .queue-count { opacity: 0.9; }
 
-/* ============================================================
-   EMPTY STATE
-   ============================================================ */
 .directory-empty {
-  padding: 40px 20px;
-  text-align: center;
-  border: 1px dashed #e1dfee;
-  border-radius: 10px;
-  color: #8c8da7;
-  font-size: 11px;
-  line-height: 1.5;
-  margin-top: 4px;
+  padding: 40px 20px; text-align: center; border: 1px dashed #e1dfee;
+  border-radius: 10px; color: #8c8da7; font-size: 11px; line-height: 1.5; margin-top: 4px;
 }
-
 .directory-empty[hidden] { display: none !important; }
-
-.directory-empty-icon {
-  font-size: 28px;
-  color: #c5c7d5;
-  margin-bottom: 8px;
-  line-height: 1;
-}
-
-.directory-empty strong {
-  display: block;
-  color: #10134f;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
+.directory-empty-icon { font-size: 28px; color: #c5c7d5; margin-bottom: 8px; line-height: 1; }
+.directory-empty strong { display: block; color: #10134f; font-size: 12px; font-weight: 800; margin-bottom: 4px; }
 
 /* ============================================================
-   FIXED-VIEWPORT LAYOUT
-   ============================================================ */
-body[data-view="directory"] {
-  height: 100vh;
-  overflow: hidden;
-}
-
-body[data-view="directory"] .app-shell {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-body[data-view="directory"] #header-placeholder { flex: 0 0 auto; }
-
-body[data-view="directory"] #footer-placeholder {
-  flex: 0 0 auto;
-  margin-top: 8px;
-}
-
-body[data-view="directory"] main {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ============================================================
-   FULLSCREEN MODE
-   ============================================================ */
-.directory-main:fullscreen {
-  background: #f4f1f8;
-  padding: 20px 24px !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.directory-main:fullscreen .directory-scroll {
-  padding: 4px 8px 4px 0;
-}
-
-.directory-main:-webkit-full-screen {
-  background: #f4f1f8;
-  padding: 20px 24px !important;
-  border-radius: 0 !important;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ============================================================
-   RESPONSIVE
+   9. RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
-  .case-hero {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-
-  .stats-row,
-  .directory-main { width: 90%; }
-
-  .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-
-  .directory-search { width: 100%; }
-
-  .toolbar-meta { display: none; }
+  body[data-view="directory"] .case-hero { padding-left: 5% !important; padding-right: 5% !important; }
+  body[data-view="directory"] .stats-row,
+  body[data-view="directory"] .directory-main { width: 90% !important; }
+  body[data-view="directory"] .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  body[data-view="directory"] .directory-search { width: 100% !important; }
+  body[data-view="directory"] .toolbar-meta { display: none !important; }
 }
 
 @media (max-width: 700px) {
@@ -636,25 +494,28 @@ body[data-view="directory"] main {
 }
 
 @media (max-width: 520px) {
-  .case-hero {
-    height: 240px;
-    padding-left: 4%;
-    padding-right: 4%;
-  }
-
-  .case-hero h1 { font-size: 26px; }
-
-  .stats-row,
-  .directory-main { width: 92%; }
-
-  .stats-row { grid-template-columns: 1fr; }
-
-  .directory-toolbar { display: block; }
-
-  .directory-toolbar .directory-search { width: 100%; margin-bottom: 8px; }
+  body[data-view="directory"] .case-hero { height: 240px !important; padding-left: 4% !important; padding-right: 4% !important; }
+  body[data-view="directory"] .case-hero h1 { font-size: 26px !important; }
+  body[data-view="directory"] .stats-row,
+  body[data-view="directory"] .directory-main { width: 92% !important; }
+  body[data-view="directory"] .stats-row { grid-template-columns: 1fr !important; }
+  body[data-view="directory"] .directory-toolbar { display: block !important; }
+  body[data-view="directory"] .directory-toolbar .directory-search { width: 100% !important; margin-bottom: 8px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .employee-card,
-  .queue-pill { transition: none !important; }
+  .employee-card, .queue-pill { transition: none !important; }
+}
+
+/* ============================================================
+   10. FULLSCREEN MODE
+   ============================================================ */
+body[data-view="directory"] .directory-main:fullscreen {
+  background: #f4f1f8 !important; padding: 20px 24px !important; border-radius: 0 !important;
+  margin: 0 !important; width: 100vw !important; height: 100vh !important; overflow: hidden !important;
+}
+body[data-view="directory"] .directory-main:fullscreen .directory-scroll { padding: 4px 8px 4px 0 !important; }
+body[data-view="directory"] .directory-main:-webkit-full-screen {
+  background: #f4f1f8 !important; padding: 20px 24px !important; border-radius: 0 !important;
+  width: 100vw !important; height: 100vh !important; overflow: hidden !important;
 }
