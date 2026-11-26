@@ -2486,3 +2486,143 @@ html[data-theme="dark"] .employee-queue-line.q-match .q-value {
 /* Body rows */
 html[data-theme="dark"] .employee-row   { color: #b8b8d4; }
 html[data-theme="dark"] .employee-row i { color: #6a6a88; }
+
+/* ============================================================
+   ABOUT DSS
+   ============================================================ */
+
+/* ----- Hero CTAs ----- */
+html[data-theme="dark"] .about-btn.primary {
+    background: #7c3aed;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, .35);
+}
+html[data-theme="dark"] .about-btn.primary:hover {
+    background: #6d28d9;
+    box-shadow: 0 6px 16px rgba(124, 58, 237, .45);
+}
+html[data-theme="dark"] .about-btn.ghost {
+    background: #1e1e33;
+    color: #c4b5fd;
+    border-color: #2f2f4a;
+}
+html[data-theme="dark"] .about-btn.ghost:hover {
+    background: #26263f;
+    border-color: #3a3a58;
+}
+
+/* ----- What is DSS — split copy (readability fix) ----- */
+html[data-theme="dark"] .about-split-copy p      { color: #b0b0cc; }
+html[data-theme="dark"] .about-split-copy strong { color: #ece9ff; }
+
+/* ----- What is DSS — visual cards ----- */
+html[data-theme="dark"] .about-visual-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="dark"] .about-visual-card:hover {
+    background: #20203a;
+    border-color: #3a3a58;
+    box-shadow: var(--shadow-card-hover);
+}
+html[data-theme="dark"] .about-visual-card strong { color: #ece9ff; }
+html[data-theme="dark"] .about-visual-card small  { color: #9a9ab6; }
+html[data-theme="dark"] .about-visual-icon.purple { background: rgba(167,139,250,.14); color: #c4b5fd; }
+html[data-theme="dark"] .about-visual-icon.orange { background: rgba(255,159,77,.14);  color: #ffb26e; }
+html[data-theme="dark"] .about-visual-icon.blue   { background: rgba(99,155,255,.14);  color: #93b4ff; }
+
+/* ----- Mission / Vision ----- */
+html[data-theme="dark"] .about-mv-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="dark"] .about-mv-card:hover {
+    background: #20203a;
+    border-color: #3a3a58;
+    box-shadow: var(--shadow-card-hover);
+}
+html[data-theme="dark"] .about-mv-card h3 { color: #ece9ff; }
+html[data-theme="dark"] .about-mv-card p  { color: #b0b0cc; }
+/* the mission/vision gradient icons read fine on dark, leave them alone */
+
+/* ----- Values ----- */
+html[data-theme="dark"] .about-value {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="dark"] .about-value:hover {
+    background: #20203a;
+    box-shadow: var(--shadow-card-hover);
+}
+html[data-theme="dark"] .about-value h4 { color: #ece9ff; }
+html[data-theme="dark"] .about-value p  { color: #9a9ab6; }
+
+/* Values icons — inline styles in HTML, so !important is required.
+   Keep the color variety by targeting each card in order. */
+html[data-theme="dark"] .about-values-grid .about-value:nth-child(1) .about-value-icon,
+html[data-theme="dark"] .about-values-grid .about-value:nth-child(5) .about-value-icon {
+    background: rgba(167,139,250,.14) !important;
+    color: #c4b5fd !important;
+}
+html[data-theme="dark"] .about-values-grid .about-value:nth-child(2) .about-value-icon {
+    background: rgba(255,159,77,.14) !important;
+    color: #ffb26e !important;
+}
+html[data-theme="dark"] .about-values-grid .about-value:nth-child(3) .about-value-icon {
+    background: rgba(99,155,255,.14) !important;
+    color: #93b4ff !important;
+}
+html[data-theme="dark"] .about-values-grid .about-value:nth-child(4) .about-value-icon {
+    background: rgba(96,196,110,.14) !important;
+    color: #86d693 !important;
+}
+html[data-theme="dark"] .about-values-grid .about-value:nth-child(6) .about-value-icon {
+    background: rgba(241,169,25,.14) !important;
+    color: #ffcc66 !important;
+}
+
+/* ----- Timeline ----- */
+html[data-theme="dark"] .about-timeline-dot {
+    background: #17172a;
+    border-color: #c4b5fd;
+    box-shadow: 0 0 0 3px rgba(167,139,250,.18);
+}
+html[data-theme="dark"] .about-timeline-date { color: #c4b5fd; }
+html[data-theme="dark"] .about-timeline-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="dark"] .about-timeline-card:hover {
+    background: #20203a;
+    box-shadow: var(--shadow-card-hover);
+}
+html[data-theme="dark"] .about-timeline-card h4 { color: #ece9ff; }
+html[data-theme="dark"] .about-timeline-card p  { color: #b0b0cc; }
+
+/* ----- Team cards ----- */
+html[data-theme="dark"] .about-team-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="dark"] .about-team-card:hover {
+    background: #20203a;
+    box-shadow: var(--shadow-card-hover);
+}
+html[data-theme="dark"] .about-team-card h4 { color: #ece9ff; }
+html[data-theme="dark"] .about-team-card p  { color: #9a9ab6; }
+html[data-theme="dark"] .about-team-role    { color: #c4b5fd; }
+
+/* ----- Testimonials ----- */
+html[data-theme="dark"] .about-testimonial {
+    background: #1c1c30;
+    border-color: #26263f;
+    box-shadow: var(--shadow-card);
+}
+html[data-theme="dark"] .about-testimonial p         { color: #d0d0e4; }
+html[data-theme="dark"] .about-testimonial-author    { color: #c4b5fd; }
+html[data-theme="dark"] .about-testimonial-quote     { color: #c4b5fd; opacity: .22; }
