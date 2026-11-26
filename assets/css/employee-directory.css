@@ -4,7 +4,7 @@
    ============================================================ */
 
 /* ============================================================
-   1. FIXED-VIEWPORT LAYOUT (Matched to Legacy)
+   1. FIXED-VIEWPORT LAYOUT
    ============================================================ */
 body[data-view="directory"],
 html {
@@ -38,7 +38,7 @@ body[data-view="directory"] main {
 }
 
 /* ============================================================
-   2. HERO SECTION (Matched exactly to Legacy)
+   2. HERO SECTION
    ============================================================ */
 body[data-view="directory"] .case-hero {
   height: 300px !important;
@@ -121,7 +121,7 @@ body[data-view="directory"] .primary-btn { background: #5b17c5 !important; color
 body[data-view="directory"] .secondary-btn { background: #ffffff !important; color: #4d148c !important; border-color: #e1d9f4 !important; }
 
 /* ============================================================
-   3. STATS ROW (Matched exactly to Legacy)
+   3. STATS ROW
    ============================================================ */
 body[data-view="directory"] .stats-row {
   position: relative !important;
@@ -198,7 +198,7 @@ body[data-view="directory"] .stat-card small {
 body[data-view="directory"] .status-stat strong { font-size: 11px !important; }
 
 /* ============================================================
-   4. DIRECTORY WORKSPACE SHELL (Matched exactly to Legacy)
+   4. DIRECTORY WORKSPACE SHELL
    ============================================================ */
 body[data-view="directory"] .directory-main {
   height: calc(100vh - 470px) !important;
@@ -271,7 +271,7 @@ body[data-view="directory"] .icon-action:hover {
 body[data-view="directory"] .icon-action i { font-size: 12px !important; }
 
 /* ============================================================
-   5. TOOLBAR & SEARCH (Matched exactly to Legacy)
+   5. TOOLBAR, SEARCH & DROPDOWN FILTERS
    ============================================================ */
 body[data-view="directory"] .directory-toolbar {
   display: flex !important;
@@ -281,10 +281,21 @@ body[data-view="directory"] .directory-toolbar {
   padding: 11px 20px !important;
   border-bottom: 1px solid #f0f0f5 !important;
   flex: 0 0 auto !important;
+  position: relative !important;
+  z-index: 10 !important; /* Ensures dropdown overlaps the grid */
+}
+
+body[data-view="directory"] .toolbar-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex: 1 !important;
+  flex-wrap: wrap !important;
 }
 
 body[data-view="directory"] .directory-search {
-  width: min(560px, 65%) !important;
+  flex: 0 1 350px !important;
+  min-width: 200px !important;
   height: 34px !important;
   display: flex !important;
   align-items: center !important;
@@ -315,6 +326,13 @@ body[data-view="directory"] .directory-search button {
   cursor: pointer !important;
 }
 
+body[data-view="directory"] .toolbar-filters {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex: 0 0 auto !important;
+}
+
 body[data-view="directory"] .toolbar-meta {
   display: flex !important;
   gap: 14px !important;
@@ -324,17 +342,101 @@ body[data-view="directory"] .toolbar-meta {
 
 body[data-view="directory"] .toolbar-meta strong { color: #4d148c !important; }
 
-/* ============================================================
-   6. FILTERS & SCROLL CONTAINER
-   ============================================================ */
-body[data-view="directory"] .directory-filters {
+/* --- Filter Dropdown Styles --- */
+body[data-view="directory"] .filter-dropdown {
+  position: relative !important;
   flex: 0 0 auto !important;
-  padding: 10px 20px 6px !important;
-  border-bottom: 1px solid #f0f0f5 !important;
 }
 
-body[data-view="directory"] .directory-filters .queue-filters { margin: 0 !important; }
+body[data-view="directory"] .filter-btn {
+  height: 34px !important;
+  padding: 0 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: 1px solid #dedfeb !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  color: #4d148c !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: 0.15s ease !important;
+  font-family: inherit !important;
+}
 
+body[data-view="directory"] .filter-btn:hover {
+  border-color: #c9bdf0 !important;
+  background: #faf7ff !important;
+}
+
+body[data-view="directory"] .filter-btn .fa-chevron-down {
+  font-size: 9px !important;
+  margin-left: 4px !important;
+  color: #8a8da8 !important;
+}
+
+body[data-view="directory"] .filter-menu {
+  display: none !important;
+  position: absolute !important;
+  top: calc(100% + 5px) !important;
+  left: 0 !important;
+  width: 240px !important;
+  max-height: 280px !important;
+  overflow-y: auto !important;
+  background: #ffffff !important;
+  border: 1px solid #e4e5ef !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 30px rgba(41, 32, 94, 0.15) !important;
+  z-index: 100 !important;
+  padding: 4px 0 !important;
+}
+
+body[data-view="directory"] .filter-menu.is-open {
+  display: block !important;
+}
+
+body[data-view="directory"] .filter-menu::-webkit-scrollbar { width: 6px !important; }
+body[data-view="directory"] .filter-menu::-webkit-scrollbar-thumb { background: #d9d5e6 !important; border-radius: 999px !important; }
+
+body[data-view="directory"] .filter-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  font-size: 10px !important;
+  color: #55567a !important;
+  cursor: pointer !important;
+  transition: 0.1s ease !important;
+}
+
+body[data-view="directory"] .filter-item:hover {
+  background: #f8f7ff !important;
+  color: #4d148c !important;
+}
+
+body[data-view="directory"] .filter-item.active {
+  background: #f0e9ff !important;
+  color: #4d148c !important;
+  font-weight: 800 !important;
+}
+
+body[data-view="directory"] .filter-count {
+  font-size: 9px !important;
+  background: #eeeef5 !important;
+  color: #777a99 !important;
+  padding: 2px 6px !important;
+  border-radius: 10px !important;
+}
+
+body[data-view="directory"] .filter-item.active .filter-count {
+  background: #d8c5ff !important;
+  color: #4d148c !important;
+}
+
+/* ============================================================
+   6. SCROLL CONTAINER
+   ============================================================ */
 body[data-view="directory"] .directory-scroll {
   flex: 1 1 auto !important;
   min-height: 0 !important;
@@ -353,7 +455,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
 }
 
 /* ============================================================
-   7. EMPLOYEE GRID & CARDS (Content area)
+   7. EMPLOYEE GRID & CARDS
    ============================================================ */
 .employee-grid {
   display: grid;
@@ -448,27 +550,8 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
 .employee-row span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 /* ============================================================
-   8. QUEUE PILLS & EMPTY STATE
+   8. EMPTY STATE
    ============================================================ */
-.queue-filters { display: flex; flex-wrap: wrap; gap: 6px; }
-
-.queue-pill {
-  height: 26px; padding: 0 11px; border: 1px solid #e3e0f0; border-radius: 13px;
-  background: #fff; color: #55567a; font-size: 9px; font-weight: 700; cursor: pointer;
-  transition: 0.15s ease; display: inline-flex; align-items: center; gap: 6px;
-  white-space: nowrap; font-family: inherit;
-}
-
-.queue-pill:hover { border-color: #c9bdf0; color: #4d148c; }
-
-.queue-pill.active {
-  background: linear-gradient(135deg, #6b25df, #4d148c); border-color: #5a12bd;
-  color: #fff; box-shadow: 0 3px 10px rgba(77, 20, 140, .18);
-}
-
-.queue-pill .queue-count { font-size: 8px; opacity: 0.7; }
-.queue-pill.active .queue-count { opacity: 0.9; }
-
 .directory-empty {
   padding: 40px 20px; text-align: center; border: 1px dashed #e1dfee;
   border-radius: 10px; color: #8c8da7; font-size: 11px; line-height: 1.5; margin-top: 4px;
@@ -485,7 +568,10 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
   body[data-view="directory"] .stats-row,
   body[data-view="directory"] .directory-main { width: 90% !important; }
   body[data-view="directory"] .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  body[data-view="directory"] .directory-search { width: 100% !important; }
+  
+  /* Toolbar wraps cleanly */
+  body[data-view="directory"] .directory-search { flex: 1 1 100% !important; max-width: none !important; }
+  body[data-view="directory"] .toolbar-filters { width: 100% !important; margin-top: 5px !important; }
   body[data-view="directory"] .toolbar-meta { display: none !important; }
 }
 
@@ -499,12 +585,17 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
   body[data-view="directory"] .stats-row,
   body[data-view="directory"] .directory-main { width: 92% !important; }
   body[data-view="directory"] .stats-row { grid-template-columns: 1fr !important; }
-  body[data-view="directory"] .directory-toolbar { display: block !important; }
-  body[data-view="directory"] .directory-toolbar .directory-search { width: 100% !important; margin-bottom: 8px !important; }
+  
+  /* Stack search and dropdowns on mobile */
+  body[data-view="directory"] .toolbar-left { display: flex !important; flex-direction: column !important; align-items: stretch !important; width: 100% !important; }
+  body[data-view="directory"] .directory-search { width: 100% !important; margin-bottom: 4px !important; }
+  body[data-view="directory"] .toolbar-filters { display: flex !important; flex-direction: column !important; width: 100% !important; margin-top: 0 !important; }
+  body[data-view="directory"] .filter-dropdown { width: 100% !important; margin-bottom: 6px !important; }
+  body[data-view="directory"] .filter-btn { width: 100% !important; justify-content: space-between !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .employee-card, .queue-pill { transition: none !important; }
+  .employee-card, .filter-btn { transition: none !important; }
 }
 
 /* ============================================================
@@ -518,135 +609,4 @@ body[data-view="directory"] .directory-main:fullscreen .directory-scroll { paddi
 body[data-view="directory"] .directory-main:-webkit-full-screen {
   background: #f4f1f8 !important; padding: 20px 24px !important; border-radius: 0 !important;
   width: 100vw !important; height: 100vh !important; overflow: hidden !important;
-}
-
-/* ============================================================
-   5. TOOLBAR & SEARCH (Updated for Dropdown)
-   ============================================================ */
-body[data-view="directory"] .directory-toolbar {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 15px !important;
-  padding: 11px 20px !important;
-  border-bottom: 1px solid #f0f0f5 !important;
-  flex: 0 0 auto !important;
-  position: relative !important;
-  z-index: 10 !important; /* Ensures dropdown overlaps grid */
-}
-
-/* Replace your current .toolbar-left with this */
-body[data-view="directory"] .toolbar-left {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  flex: 1 !important;
-  flex-wrap: wrap !important;
-}
-
-body[data-view="directory"] .directory-search {
-  flex: 0 1 350px !important; /* <--- FIXED: Stops stretching */
-  min-width: 200px !important;
-  height: 34px !important;
-  display: flex !important;
-  align-items: center !important;
-  padding: 0 10px !important;
-  border: 1px solid #dedfeb !important;
-  border-radius: 6px !important;
-  color: #8a8da8 !important;
-  background: #ffffff !important;
-}
-
-/* ADD THIS NEW RULE */
-body[data-view="directory"] .toolbar-filters {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  flex: 0 0 auto !important;
-}
-
-body[data-view="directory"] .filter-btn {
-  height: 34px !important;
-  padding: 0 12px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  border: 1px solid #dedfeb !important;
-  border-radius: 6px !important;
-  background: #ffffff !important;
-  color: #4d148c !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  transition: 0.15s ease !important;
-  font-family: inherit !important;
-}
-
-body[data-view="directory"] .filter-btn:hover {
-  border-color: #c9bdf0 !important;
-  background: #faf7ff !important;
-}
-
-body[data-view="directory"] .filter-btn .fa-chevron-down {
-  font-size: 9px !important;
-  margin-left: 4px !important;
-  color: #8a8da8 !important;
-}
-
-body[data-view="directory"] .filter-menu {
-  display: none !important;
-  position: absolute !important;
-  top: calc(100% + 5px) !important;
-  left: 0 !important;
-  width: 240px !important;
-  max-height: 280px !important;
-  overflow-y: auto !important;
-  background: #ffffff !important;
-  border: 1px solid #e4e5ef !important;
-  border-radius: 6px !important;
-  box-shadow: 0 10px 30px rgba(41, 32, 94, 0.15) !important;
-  z-index: 100 !important;
-  padding: 4px 0 !important;
-}
-
-body[data-view="directory"] .filter-menu.is-open {
-  display: block !important;
-}
-
-body[data-view="directory"] .filter-menu::-webkit-scrollbar { width: 6px !important; }
-body[data-view="directory"] .filter-menu::-webkit-scrollbar-thumb { background: #d9d5e6 !important; border-radius: 999px !important; }
-
-body[data-view="directory"] .filter-item {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 8px 12px !important;
-  font-size: 10px !important;
-  color: #55567a !important;
-  cursor: pointer !important;
-  transition: 0.1s ease !important;
-}
-
-body[data-view="directory"] .filter-item:hover {
-  background: #f8f7ff !important;
-  color: #4d148c !important;
-}
-
-body[data-view="directory"] .filter-item.active {
-  background: #f0e9ff !important;
-  color: #4d148c !important;
-  font-weight: 800 !important;
-}
-
-body[data-view="directory"] .filter-count {
-  font-size: 9px !important;
-  background: #eeeef5 !important;
-  color: #777a99 !important;
-  padding: 2px 6px !important;
-  border-radius: 10px !important;
-}
-
-body[data-view="directory"] .filter-item.active .filter-count {
-  background: #d8c5ff !important;
-  color: #4d148c !important;
 }
