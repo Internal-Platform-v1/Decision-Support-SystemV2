@@ -522,7 +522,7 @@
   };
 
   /* ------------------------------------------------------------
-     Fullscreen toggle
+     Expanded (page-level "fullscreen") toggle
      ------------------------------------------------------------ */
   function setupFullscreen() {
     const btn    = document.getElementById("fullscreenBtn");
@@ -530,39 +530,36 @@
     if (!btn || !target) return;
 
     const icon = btn.querySelector("i");
-    let savedModal  = null;
-    let savedParent = null;
 
-    btn.addEventListener("click", async () => {
-      try {
-        if (!document.fullscreenElement) {
-          savedModal  = document.getElementById("profileModal");
-          savedParent = savedModal ? savedModal.parentNode : null;
-          if (savedModal) target.appendChild(savedModal);
-          await target.requestFullscreen();
-        } else {
-          await document.exitFullscreen();
-        }
-      } catch (err) {
-        console.error("[directory] fullscreen error:", err);
-        if (savedModal && savedParent && savedParent.isConnected) savedParent.appendChild(savedModal);
-        savedModal = null; savedParent = null;
-      }
-    });
-
-    document.addEventListener("fullscreenchange", () => {
-      if (document.fullscreenElement) {
+    function updateIcon(expanded) {
+      if (expanded) {
         if (icon) icon.className = "fa-solid fa-compress";
-        btn.title = "Exit Full Screen"; btn.setAttribute("aria-label", "Exit full screen");
+        btn.title = "Exit Full Screen";
+        btn.setAttribute("aria-label", "Exit full screen");
       } else {
         if (icon) icon.className = "fa-solid fa-expand";
-        btn.title = "View Full Screen"; btn.setAttribute("aria-label", "Toggle full screen");
-        if (savedModal && savedParent && savedParent.isConnected) savedParent.appendChild(savedModal);
-        savedModal = null; savedParent = null;
+        btn.title = "View Full Screen";
+        btn.setAttribute("aria-label", "Toggle full screen");
+      }
+    }
+
+    btn.addEventListener("click", () => {
+      const isExpanded = document.body.classList.toggle("directory-expanded");
+      updateIcon(isExpanded);
+      // Reset scroll to top so users start at the first row
+      const scroll = document.getElementById("directoryScroll");
+      if (scroll) scroll.scrollTop = 0;
+    });
+
+    // ESC also exits expanded mode
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && document.body.classList.contains("directory-expanded")) {
+        document.body.classList.remove("directory-expanded");
+        updateIcon(false);
       }
     });
   }
-
+   
   /* ---- Init ---- */
   async function init() {
     if (initialized) return;
