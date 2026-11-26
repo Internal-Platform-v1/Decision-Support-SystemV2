@@ -541,15 +541,12 @@ body[data-view="directory"] .toolbar-left {
   align-items: center !important;
   gap: 10px !important;
   flex: 1 !important;
-  max-width: 85% !important;
-  flex-wrap: wrap !important; /* Allows dropdowns to wrap on small screens */
+  flex-wrap: wrap !important;
 }
 
-/* Replace your current .directory-search with this */
 body[data-view="directory"] .directory-search {
-  flex: 1 !important;
+  flex: 0 1 350px !important; /* <--- FIXED: Stops stretching */
   min-width: 200px !important;
-  max-width: 350px !important;
   height: 34px !important;
   display: flex !important;
   align-items: center !important;
@@ -559,9 +556,12 @@ body[data-view="directory"] .directory-search {
   color: #8a8da8 !important;
   background: #ffffff !important;
 }
-/* --- NEW: Filter Dropdown --- */
-body[data-view="directory"] .filter-dropdown {
-  position: relative !important;
+
+/* ADD THIS NEW RULE */
+body[data-view="directory"] .toolbar-filters {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
   flex: 0 0 auto !important;
 }
 
