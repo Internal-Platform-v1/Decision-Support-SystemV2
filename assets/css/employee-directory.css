@@ -535,17 +535,21 @@ body[data-view="directory"] .directory-toolbar {
   z-index: 10 !important; /* Ensures dropdown overlaps grid */
 }
 
+/* Replace your current .toolbar-left with this */
 body[data-view="directory"] .toolbar-left {
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
   flex: 1 !important;
-  max-width: 70% !important;
+  max-width: 85% !important;
+  flex-wrap: wrap !important; /* Allows dropdowns to wrap on small screens */
 }
 
+/* Replace your current .directory-search with this */
 body[data-view="directory"] .directory-search {
-  width: 100% !important;
-  max-width: 400px !important;
+  flex: 1 !important;
+  min-width: 200px !important;
+  max-width: 350px !important;
   height: 34px !important;
   display: flex !important;
   align-items: center !important;
@@ -555,7 +559,6 @@ body[data-view="directory"] .directory-search {
   color: #8a8da8 !important;
   background: #ffffff !important;
 }
-
 /* --- NEW: Filter Dropdown --- */
 body[data-view="directory"] .filter-dropdown {
   position: relative !important;
