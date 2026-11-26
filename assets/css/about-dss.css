@@ -550,3 +550,30 @@
         transform: none !important;
     }
 }
+
+/* ============================================================
+   SCROLL REVEAL
+   Elements start invisible + shifted down; JS adds .is-visible
+   as they cross the viewport threshold.
+   ============================================================ */
+.about-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity .55s cubic-bezier(.22, 1, .36, 1),
+        transform .55s cubic-bezier(.22, 1, .36, 1);
+    will-change: opacity, transform;
+}
+
+.about-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
