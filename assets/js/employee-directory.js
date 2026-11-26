@@ -407,7 +407,7 @@
       rowsHtml += '<div class="employee-row"><i class="fa-regular fa-building"></i><span>' + esc(line) + "</span></div>";
     }
     if (supervisor) {
-      rowsHtml += '<div class="employee-row"><i class="fa-solid fa-user-tie"></i><span>TL: ' + esc(supervisor) + "</span></div>";
+      rowsHtml += '<div class="employee-row"><i class="fa-solid fa-user-tie"></i><span>' + esc(supervisor) + "</span></div>";
     }
     if (location) rowsHtml += '<div class="employee-row"><i class="fa-solid fa-location-dot"></i><span>' + esc(location) + "</span></div>";
     if (phone) rowsHtml += '<div class="employee-row"><i class="fa-solid fa-phone"></i><span>' + esc(phone) + "</span></div>";
