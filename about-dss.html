@@ -32,67 +32,82 @@
 
         <main>
 
-            <!-- ==================== HERO ==================== -->
-            <section class="about-hero">
-                <div class="about-hero-inner">
-                    <span class="about-eyebrow">About DSS</span>
-                    <h1>The Decision Support System for <span>FedEx Freight</span></h1>
+            <!-- ==================== HERO (same pattern as index) ==================== -->
+            <section class="hero">
+                <div class="hero-copy">
+                    <h1>About <span>DSS</span></h1>
                     <p>
-                        One workspace for every billing dispute question, every
-                        case lookup, and every tool the BD team relies on daily —
-                        built by the team, for the team.
+                        One workspace for every question, lookup, and tool.<br class="desktop-only" />
+                        Built by the BD team, for the BD team.
                     </p>
                     <div class="about-hero-actions">
-                        <a href="#what-is-dss" class="about-hero-btn primary">Learn more</a>
-                        <a href="#contact" class="about-hero-btn ghost">Get in touch</a>
+                        <a href="#what-is-dss" class="about-btn primary">Learn more</a>
+                        <a href="#contact" class="about-btn ghost">Get in touch</a>
                     </div>
                 </div>
-                <div class="about-hero-art" aria-hidden="true">
-                    <div class="about-blob blob-1"></div>
-                    <div class="about-blob blob-2"></div>
-                    <div class="about-blob blob-3"></div>
-                </div>
+
+                <section class="stats-row" aria-label="DSS at a glance">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 5.5h9l3 3v10H4z"/>
+                                <path d="M13 5.5v3h3M7 12h6M7 15h4"/>
+                            </svg>
+                        </div>
+                        <div><strong>75+</strong><small>Guides Available</small></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="9" cy="8" r="3.2"/>
+                                <path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/>
+                                <circle cx="17" cy="9" r="2.3"/>
+                                <path d="M14.5 19.5c0-2.2 1.8-3.7 4-3.7"/>
+                            </svg>
+                        </div>
+                        <div><strong>200+</strong><small>Active Users</small></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="4" y="8" width="16" height="11" rx="2"/>
+                                <path d="M8 8V6.2A1.7 1.7 0 0 1 9.7 4.5h4.6A1.7 1.7 0 0 1 16 6.2V8M4 12h16M10 12v2h4v-2"/>
+                            </svg>
+                        </div>
+                        <div><strong>6</strong><small>Tool Categories</small></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <path d="M3 12h18"/>
+                            </svg>
+                        </div>
+                        <div><strong>3</strong><small>Directories</small></div>
+                    </div>
+                </section>
             </section>
 
-            <!-- ==================== STATS BAND ==================== -->
-            <section class="about-stats-band" aria-label="DSS at a glance">
-                <div class="about-stats">
-                    <div class="about-stat">
-                        <strong data-count="75" data-suffix="+">0</strong>
-                        <span>Guides available</span>
-                    </div>
-                    <div class="about-stat">
-                        <strong data-count="200" data-suffix="+">0</strong>
-                        <span>Active users</span>
-                    </div>
-                    <div class="about-stat">
-                        <strong data-count="6" data-suffix="">0</strong>
-                        <span>Tool categories</span>
-                    </div>
-                    <div class="about-stat">
-                        <strong data-count="3" data-suffix="">0</strong>
-                        <span>Directories</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==================== WHAT IS DSS ==================== -->
+            <!-- ==================== WHAT IS DSS (clear summary) ==================== -->
             <section class="about-section" id="what-is-dss">
+                <div class="section-heading">
+                    <h2><span class="heading-bar"></span>What is DSS</h2>
+                </div>
+
                 <div class="about-split">
                     <div class="about-split-copy">
-                        <span class="about-eyebrow">What is DSS</span>
-                        <h2>Everything you need to make the right call — in one place.</h2>
                         <p>
-                            DSS (Decision Support System) is the centralized hub for
-                            Billing Dispute guides, tools, and resources at FedEx
-                            Freight. It brings together every reference a BD analyst
-                            needs — billing dispute scenarios, pricing policies,
-                            surcharge references, account handling procedures, and
-                            PAUD queue routing — into a single, searchable workspace.
+                            <strong>DSS (Decision Support System)</strong> is the
+                            centralized hub for Billing Dispute guides, tools, and
+                            resources at FedEx Freight. It brings together every
+                            reference a BD analyst needs — billing dispute
+                            scenarios, pricing policies, surcharge references,
+                            account handling procedures, and PAUD queue routing —
+                            into a single, searchable workspace.
                         </p>
                         <p>
                             We serve <strong>200+ FedEx Freight employees</strong>
-                            across multiple queues — from PAUD and HOT to CRAU and
+                            across multiple queues, from PAUD and HOT to CRAU and
                             FPAY. Whether you're submitting an EBS response,
                             generating FBC comments, or looking up a rare surcharge
                             code, DSS is designed to get you the right answer
@@ -125,18 +140,17 @@
                             </div>
                             <div>
                                 <strong>Directories</strong>
-                                <small>Legacy, Shine, &amp; Employee</small>
+                                <small>Legacy, Shine &amp; Employee</small>
                             </div>
                         </div>
                     </aside>
                 </div>
             </section>
 
-            <!-- ==================== MISSION / VISION ==================== -->
-            <section class="about-section about-mv-section">
-                <div class="about-section-heading">
-                    <span class="about-eyebrow">Mission &amp; Vision</span>
-                    <h2>Why DSS exists</h2>
+            <!-- ==================== MISSION & VISION ==================== -->
+            <section class="about-section">
+                <div class="section-heading">
+                    <h2><span class="heading-bar"></span>Our Mission &amp; Vision</h2>
                 </div>
 
                 <div class="about-mv-grid">
@@ -146,9 +160,10 @@
                         </div>
                         <h3>Our Mission</h3>
                         <p>
-                            To give every BD analyst the clearest, fastest, and most
-                            consistent path to a correct decision — so customers get
-                            accurate resolutions and the team works smarter together.
+                            To give every BD analyst the clearest, fastest, and
+                            most consistent path to a correct decision — so
+                            customers get accurate resolutions and the team works
+                            smarter together.
                         </p>
                     </div>
 
@@ -158,19 +173,19 @@
                         </div>
                         <h3>Our Vision</h3>
                         <p>
-                            A FedEx Freight where no billing dispute is slowed down
-                            by unclear documentation, scattered knowledge, or tribal
-                            memory — where the answer is always one search away.
+                            A FedEx Freight where no billing dispute is slowed
+                            down by unclear documentation, scattered knowledge, or
+                            tribal memory — where the answer is always one search
+                            away.
                         </p>
                     </div>
                 </div>
             </section>
 
             <!-- ==================== VALUES ==================== -->
-            <section class="about-section about-values-section">
-                <div class="about-section-heading">
-                    <span class="about-eyebrow">Values</span>
-                    <h2>What we stand behind</h2>
+            <section class="about-section">
+                <div class="section-heading">
+                    <h2><span class="heading-bar"></span>Our Values</h2>
                 </div>
 
                 <div class="about-values-grid">
@@ -187,7 +202,7 @@
                             <i class="fa-solid fa-bolt"></i>
                         </div>
                         <h4>Speed</h4>
-                        <p>Less searching, more resolving. Every second saved is a customer served.</p>
+                        <p>Less searching, more resolving. Every second saved serves a customer.</p>
                     </div>
 
                     <div class="about-value">
@@ -225,16 +240,12 @@
             </section>
 
             <!-- ==================== TIMELINE ==================== -->
-            <section class="about-section about-timeline-section">
-                <div class="about-section-heading">
-                    <span class="about-eyebrow">Our Journey</span>
-                    <h2>How DSS came to be</h2>
+            <section class="about-section">
+                <div class="section-heading">
+                    <h2><span class="heading-bar"></span>Our Journey</h2>
                 </div>
 
-                <!--
-                    TODO: Replace dates + milestones with real values.
-                    These are placeholder milestones to give the layout shape.
-                -->
+                <!-- TODO: Replace these milestones with real dates + events. -->
                 <div class="about-timeline">
                     <div class="about-timeline-item">
                         <div class="about-timeline-dot"></div>
@@ -256,8 +267,8 @@
                             <h4>First version shipped</h4>
                             <p>
                                 An MVP with the core billing dispute guides launched
-                                to a small pilot group. Feedback came in weekly —
-                                the version you see today owes a lot to it.
+                                to a small pilot group. Weekly feedback shaped what
+                                came next — the version you see today owes a lot to it.
                             </p>
                         </div>
                     </div>
@@ -281,9 +292,9 @@
                         <div class="about-timeline-card">
                             <h4>Directories &amp; the Employee Directory</h4>
                             <p>
-                                Legacy and Shine Case Directories went live,
-                                followed by the Employee Directory — so the team
-                                could find each other without leaving the tool.
+                                Legacy and Shine Case Directories went live, followed
+                                by the Employee Directory — so the team could find
+                                each other without leaving the tool.
                             </p>
                         </div>
                     </div>
@@ -304,116 +315,65 @@
             </section>
 
             <!-- ==================== TEAM ==================== -->
-            <section class="about-section about-team-section">
-                <div class="about-section-heading">
-                    <span class="about-eyebrow">The Team</span>
-                    <h2>Built by people who use it daily</h2>
+            <section class="about-section">
+                <div class="section-heading">
+                    <h2><span class="heading-bar"></span>The Team</h2>
                 </div>
 
-                <!--
-                    TODO: Replace each team card with real people.
-                    Update the initials, name, role, and bio.
-                    Add a photo by replacing .about-team-avatar with an <img>.
-                -->
+                <!-- TODO: Replace with real people. Photos optional — swap initials for <img>. -->
                 <div class="about-team-grid">
                     <div class="about-team-card">
                         <div class="about-team-avatar">AR</div>
                         <h4>Ava Rodriguez</h4>
-                        <span class="about-team-role">DSS Product Owner</span>
-                        <p>
-                            Leads the vision and roadmap for DSS. Fifteen years
-                            across billing dispute and pricing — knows every edge
-                            case the tool has to handle.
-                        </p>
+                        <span class="about-team-role">Product Owner</span>
+                        <p>Leads the vision and roadmap. Fifteen years across billing dispute and pricing.</p>
                     </div>
 
                     <div class="about-team-card">
                         <div class="about-team-avatar">MC</div>
                         <h4>Marcus Chen</h4>
                         <span class="about-team-role">Lead Guide Author</span>
-                        <p>
-                            Writes and maintains the billing dispute guides. Former
-                            BD analyst — every guide is field-tested against real
-                            cases before it goes live.
-                        </p>
+                        <p>Writes and maintains every billing dispute guide. Former BD analyst.</p>
                     </div>
 
                     <div class="about-team-card">
                         <div class="about-team-avatar">PP</div>
                         <h4>Priya Patel</h4>
                         <span class="about-team-role">Tools Developer</span>
-                        <p>
-                            Builds and maintains the EBS Response Builder, FBC
-                            Comment Generator, and everything under the hood. Ships
-                            small, iterates often.
-                        </p>
+                        <p>Builds and maintains the EBS Response Builder, FBC Generator, and platform.</p>
                     </div>
 
                     <div class="about-team-card">
                         <div class="about-team-avatar">DO</div>
                         <h4>David Okafor</h4>
                         <span class="about-team-role">Queue SME</span>
-                        <p>
-                            The bridge between the queues and the tool. Brings
-                            real-world feedback from PAUD, HOT, and CRAU so the
-                            tool keeps up with how the work actually happens.
-                        </p>
+                        <p>The bridge between the queues and the tool. Brings real-world feedback from PAUD, HOT, and CRAU.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- ==================== PROOF POINTS ==================== -->
-            <section class="about-section about-proof-section">
-                <div class="about-section-heading">
-                    <span class="about-eyebrow">By the numbers</span>
-                    <h2>What we've built together</h2>
-                </div>
-
-                <div class="about-proof-grid">
-                    <div class="about-proof-card">
-                        <strong>75+</strong>
-                        <span>Guides published across 6 categories</span>
-                    </div>
-                    <div class="about-proof-card">
-                        <strong>200+</strong>
-                        <span>Employees onboarded across multiple queues</span>
-                    </div>
-                    <div class="about-proof-card">
-                        <strong>6</strong>
-                        <span>Tool categories with dedicated builders</span>
-                    </div>
-                    <div class="about-proof-card">
-                        <strong>3</strong>
-                        <span>Directories — Legacy, Shine, Employee</span>
-                    </div>
+            <!-- ==================== TESTIMONIALS / PROOF ==================== -->
+            <section class="about-section">
+                <div class="section-heading">
+                    <h2><span class="heading-bar"></span>What People Say</h2>
                 </div>
 
                 <div class="about-testimonials">
                     <div class="about-testimonial">
-                        <div class="about-testimonial-quote">“</div>
-                        <p>
-                            “A game-changer. I used to spend twenty minutes digging
-                            through email for a surcharge code — now it's thirty
-                            seconds.”
-                        </p>
+                        <div class="about-testimonial-quote" aria-hidden="true">“</div>
+                        <p>“A game-changer. I used to spend twenty minutes digging through email for a surcharge code — now it's thirty seconds.”</p>
                         <span class="about-testimonial-author">— BD Analyst, PAUD</span>
                     </div>
 
                     <div class="about-testimonial">
-                        <div class="about-testimonial-quote">“</div>
-                        <p>
-                            “The EBS Response Builder alone saved our team hours
-                            every week. It's the first tab I open in the morning.”
-                        </p>
+                        <div class="about-testimonial-quote" aria-hidden="true">“</div>
+                        <p>“The EBS Response Builder alone saved our team hours every week. It's the first tab I open in the morning.”</p>
                         <span class="about-testimonial-author">— Queue Lead, HOT</span>
                     </div>
 
                     <div class="about-testimonial">
-                        <div class="about-testimonial-quote">“</div>
-                        <p>
-                            “Finally, one place for everything. No more ‘ask Sarah,
-                            she knows’ — the answer is always in DSS.”
-                        </p>
+                        <div class="about-testimonial-quote" aria-hidden="true">“</div>
+                        <p>“Finally, one place for everything. No more ‘ask Sarah, she knows’ — the answer is always in DSS.”</p>
                         <span class="about-testimonial-author">— Case Handler, CRAU</span>
                     </div>
                 </div>
@@ -423,15 +383,13 @@
             <section class="about-section about-cta-section" id="contact">
                 <div class="about-cta">
                     <div class="about-cta-copy">
-                        <span class="about-eyebrow">Get in touch</span>
                         <h2>Help us make DSS better</h2>
                         <p>
-                            Found a broken link, outdated guide, or a feature
-                            that would save you time? Tell us. Every piece of
-                            feedback shapes what we build next.
+                            Found a broken link, outdated guide, or a feature that
+                            would save you time? Tell us — every piece of feedback
+                            shapes what we build next.
                         </p>
                     </div>
-
                     <div class="about-cta-actions">
                         <button type="button" class="about-cta-btn primary" id="aboutFeedbackBtn">
                             <i class="fa-regular fa-comments" aria-hidden="true"></i>
@@ -441,10 +399,6 @@
                             <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
                             <span>Get Help</span>
                         </button>
-                        <a href="employee-directory.html" class="about-cta-btn ghost">
-                            <i class="fa-solid fa-people-group" aria-hidden="true"></i>
-                            <span>Employee Directory</span>
-                        </a>
                     </div>
                 </div>
             </section>
