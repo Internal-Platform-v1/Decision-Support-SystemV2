@@ -11,6 +11,7 @@
 
   let allEmployees = [];
   let activeQueue  = null;
+  let activeTeamLeader = null;
   let searchQuery  = "";
   let initialized  = false;
 
@@ -208,7 +209,7 @@
 
     if (!allEmployees.length) setStatus("Waiting for Data", "fa-database");
     else if (!shownCount) setStatus("No Match Found", "fa-circle-exclamation");
-    else if (searchQuery.trim() || activeQueue) setStatus("Filtered Results", "fa-filter");
+    else if (searchQuery.trim() || activeQueue || activeTeamLeader) setStatus("Filtered Results", "fa-filter");
     else setStatus("Directory Ready", "fa-circle-check");
   }
 
@@ -267,6 +268,54 @@
       });
     });
   }
+
+
+    /* ---- Team Leader filter dropdown ---- */
+  function renderTeamLeaderFilters() {
+    const container = document.getElementById("tlFilters");
+    const label = document.getElementById("tlFilterLabel");
+    if (!container) return;
+
+    const tlCounts = new Map();
+    allEmployees.forEach(e => {
+      const tl = String(e.supervisor || "").trim();
+      if (tl) tlCounts.set(tl, (tlCounts.get(tl) || 0) + 1);
+    });
+
+    const tls = Array.from(tlCounts.keys()).sort();
+
+    let html = `
+      <div class="filter-item ${activeTeamLeader === null ? 'active' : ''}" data-tl="">
+        <span>All Team Leaders</span>
+        <span class="filter-count">${allEmployees.length}</span>
+      </div>
+    `;
+
+    tls.forEach(tl => {
+      const isActive = activeTeamLeader === tl;
+      html += `
+        <div class="filter-item ${isActive ? 'active' : ''}" data-tl="${esc(tl)}">
+          <span>${esc(tl)}</span>
+          <span class="filter-count">${tlCounts.get(tl)}</span>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    if (label) label.textContent = activeTeamLeader ? activeTeamLeader : "All Team Leaders";
+
+    container.querySelectorAll(".filter-item").forEach(item => {
+      item.addEventListener("click", () => {
+        activeTeamLeader = item.dataset.tl ? item.dataset.tl : null;
+        renderTeamLeaderFilters();
+        renderGrid();
+        document.getElementById("tlFilters").classList.remove("is-open");
+        const scroll = document.getElementById("directoryScroll");
+        if (scroll) scroll.scrollTop = 0;
+      });
+    });
+  } 
 
   // Add this logic inside your init() function to toggle the dropdown
   function setupDropdown() {
