@@ -1,9 +1,11 @@
 /* ============================================================
    BD Tools — About DSS page behavior
 
-   1. Animated counter for the stats band
-   2. Scroll-reveal for section content
-   3. CTA buttons — wire to footer's Feedback / Help modals
+   1. Scroll-reveal for section content (fade + slide as it
+      enters the viewport)
+   2. Animated stat counters — parses the number from the
+      visible text so no `data-count` attributes are needed
+   3. CTA buttons → footer Feedback / Help modals
    ============================================================ */
 (function () {
     "use strict";
@@ -11,71 +13,24 @@
     let initialized = false;
 
     /* ---------------------------------------------------------
-       1. Animated stat counters
-       --------------------------------------------------------- */
-    function animateCount(el) {
-        const target = Number(el.dataset.count || 0);
-        const suffix = el.dataset.suffix || "";
-        if (!target || !isFinite(target)) return;
-
-        const duration = 900;
-        const start = performance.now();
-
-        function step(now) {
-            const elapsed = Math.min(now - start, duration);
-            const progress = elapsed / duration;
-            // easeOutCubic
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const value = Math.round(target * eased);
-            el.textContent = value + suffix;
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            } else {
-                el.textContent = target + suffix;
-            }
-        }
-
-        requestAnimationFrame(step);
-    }
-
-    function setupCounters() {
-        const counters = document.querySelectorAll(".about-stat strong[data-count]");
-        if (!counters.length) return;
-
-        // If IntersectionObserver isn't available, just show final values
-        if (typeof IntersectionObserver === "undefined") {
-            counters.forEach(el => {
-                el.textContent = (el.dataset.count || "0") + (el.dataset.suffix || "");
-            });
-            return;
-        }
-
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                const el = entry.target;
-                if (el.dataset.animated === "true") return;
-                el.dataset.animated = "true";
-                animateCount(el);
-                observer.unobserve(el);
-            });
-        }, { threshold: 0.35 });
-
-        counters.forEach(el => observer.observe(el));
-    }
-
-    /* ---------------------------------------------------------
-       2. Scroll reveal — fade sections in as they enter viewport
+       1. Scroll reveal
        --------------------------------------------------------- */
     function setupScrollReveal() {
         if (typeof IntersectionObserver === "undefined") return;
 
-        // Sections we want to fade in as a whole
-        const blocks = document.querySelectorAll(
-            ".about-split, .about-section-heading, .about-mv-card, " +
-            ".about-value, .about-timeline-item, .about-team-card, " +
-            ".about-proof-card, .about-testimonial, .about-cta"
-        );
+        const selectors = [
+            ".about-split-copy",
+            ".about-visual-card",
+            ".about-mv-card",
+            ".about-value",
+            ".about-timeline-item",
+            ".about-team-card",
+            ".about-testimonial",
+            ".about-cta"
+        ].join(",");
+
+        const blocks = document.querySelectorAll(selectors);
+        if (!blocks.length) return;
 
         blocks.forEach(el => el.classList.add("about-reveal"));
 
@@ -91,17 +46,76 @@
     }
 
     /* ---------------------------------------------------------
+       2. Animated stat counters
+       Reads "75+" → target 75, suffix "+"
+       Reads "200+" → target 200, suffix "+"
+       Reads "6"   → target 6,   suffix ""
+       --------------------------------------------------------- */
+    function parseStatValue(el) {
+        const text  = (el.textContent || "").trim();
+        const match = text.match(/^(\d+)(.*)$/);
+        if (!match) return null;
+        return { target: Number(match[1]), suffix: match[2] || "" };
+    }
+
+    function animateCount(el, target, suffix) {
+        if (!target || !isFinite(target)) return;
+
+        const duration = 900;
+        const start = performance.now();
+
+        function step(now) {
+            const elapsed  = Math.min(now - start, duration);
+            const progress = elapsed / duration;
+            const eased    = 1 - Math.pow(1 - progress, 3);   // easeOutCubic
+            const value    = Math.round(target * eased);
+            el.textContent = value + suffix;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                el.textContent = target + suffix;
+            }
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    function setupCounters() {
+        const counters = document.querySelectorAll(".stats-row .stat-card strong");
+        if (!counters.length) return;
+
+        if (typeof IntersectionObserver === "undefined") return;
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+
+                const el = entry.target;
+                if (el.dataset.animated === "true") return;
+                el.dataset.animated = "true";
+
+                const parsed = parseStatValue(el);
+                if (parsed) {
+                    el.textContent = "0" + parsed.suffix;
+                    animateCount(el, parsed.target, parsed.suffix);
+                }
+
+                observer.unobserve(el);
+            });
+        }, { threshold: 0.4 });
+
+        counters.forEach(el => observer.observe(el));
+    }
+
+    /* ---------------------------------------------------------
        3. CTA — wire to footer's Feedback / Help modals
        --------------------------------------------------------- */
-    function clickWhenReady(btnId, tries) {
+    function triggerFooterButton(id, tries) {
         tries = tries || 0;
-        const target = document.getElementById(btnId);
-        if (target) {
-            target.click();
-            return true;
-        }
+        const btn = document.getElementById(id);
+        if (btn) { btn.click(); return true; }
         if (tries > 40) return false;
-        setTimeout(() => clickWhenReady(btnId, tries + 1), 100);
+        setTimeout(() => triggerFooterButton(id, tries + 1), 100);
         return false;
     }
 
@@ -110,17 +124,16 @@
         const helpBtn     = document.getElementById("aboutHelpBtn");
 
         if (feedbackBtn) {
-            feedbackBtn.addEventListener("click", () => {
-                // Try to trigger the footer's Give Feedback modal
-                if (!clickWhenReady("footerFeedbackBtn")) {
+            feedbackBtn.addEventListener("click", function () {
+                if (!triggerFooterButton("footerFeedbackBtn")) {
                     window.location.href = "index.html";
                 }
             });
         }
 
         if (helpBtn) {
-            helpBtn.addEventListener("click", () => {
-                if (!clickWhenReady("footerHelpBtn")) {
+            helpBtn.addEventListener("click", function () {
+                if (!triggerFooterButton("footerHelpBtn")) {
                     window.location.href = "index.html";
                 }
             });
@@ -134,8 +147,8 @@
         if (initialized) return;
         initialized = true;
 
-        setupCounters();
         setupScrollReveal();
+        setupCounters();
         setupCta();
     }
 
