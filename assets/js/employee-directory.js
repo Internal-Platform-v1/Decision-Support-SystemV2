@@ -213,7 +213,7 @@
     else setStatus("Directory Ready", "fa-circle-check");
   }
 
-   /* ---- Queue filter dropdown ---- */
+  /* ---- Queue filter dropdown ---- */
   function renderQueueFilters() {
     const container = document.getElementById("queueFilters");
     const label = document.getElementById("queueFilterLabel");
@@ -247,30 +247,21 @@
 
     container.innerHTML = html;
 
-    // Update label
-    if (label) {
-      label.textContent = activeQueue ? activeQueue : "All Queues";
-    }
+    if (label) label.textContent = activeQueue ? activeQueue : "All Queues";
 
-    // Attach clicks to items
     container.querySelectorAll(".filter-item").forEach(item => {
       item.addEventListener("click", () => {
-        const q = item.dataset.queue;
-        activeQueue = q ? q : null;
+        activeQueue = item.dataset.queue ? item.dataset.queue : null;
         renderQueueFilters();
         renderGrid();
-        
-        // Close dropdown
         document.getElementById("queueFilters").classList.remove("is-open");
-        
         const scroll = document.getElementById("directoryScroll");
         if (scroll) scroll.scrollTop = 0;
       });
     });
   }
 
-
-    /* ---- Team Leader filter dropdown ---- */
+  /* ---- Team Leader filter dropdown ---- */
   function renderTeamLeaderFilters() {
     const container = document.getElementById("tlFilters");
     const label = document.getElementById("tlFilterLabel");
@@ -315,26 +306,36 @@
         if (scroll) scroll.scrollTop = 0;
       });
     });
-  } 
+  }
 
-  // Add this logic inside your init() function to toggle the dropdown
-  function setupDropdown() {
-    const btn = document.getElementById("queueFilterBtn");
-    const menu = document.getElementById("queueFilters");
-    
-    if (btn && menu) {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        menu.classList.toggle("is-open");
-      });
+  /* ---- Setup Dropdowns ---- */
+  function setupDropdowns() {
+    const dropdowns = [
+      { btn: document.getElementById("queueFilterBtn"), menu: document.getElementById("queueFilters") },
+      { btn: document.getElementById("tlFilterBtn"), menu: document.getElementById("tlFilters") }
+    ];
 
-      // Close when clicking outside
-      document.addEventListener("click", (e) => {
-        if (!menu.contains(e.target) && e.target !== btn) {
-          menu.classList.remove("is-open");
+    dropdowns.forEach(d => {
+      if (d.btn && d.menu) {
+        d.btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          // Close other menus
+          dropdowns.forEach(other => {
+            if (other.menu !== d.menu) other.menu.classList.remove("is-open");
+          });
+          d.menu.classList.toggle("is-open");
+        });
+      }
+    });
+
+    // Close all on outside click
+    document.addEventListener("click", (e) => {
+      dropdowns.forEach(d => {
+        if (d.menu && !d.menu.contains(e.target) && e.target !== d.btn) {
+          d.menu.classList.remove("is-open");
         }
       });
-    }
+    });
   }
 
   /* ---- Filtering ---- */
@@ -350,7 +351,16 @@
   function getFiltered() {
     const q = searchQuery.trim().toLowerCase();
     return allEmployees.filter(e => {
+      // 1. Queue Filter
       if (activeQueue && !atomicQueueNames(e).has(activeQueue)) return false;
+      
+      // 2. Team Leader Filter
+      if (activeTeamLeader) {
+        const tl = String(e.supervisor || "").trim();
+        if (tl !== activeTeamLeader) return false;
+      }
+
+      // 3. Search Text
       return matchesSearch(e, q);
     });
   }
@@ -383,6 +393,7 @@
     const department = (e.department || "").trim();
     const location   = (e.location   || "").trim();
     const phone      = (e.phone      || "").trim();
+    const supervisor = (e.supervisor || "").trim();
 
     let tagsHtml = "";
     if (admin) {
@@ -394,6 +405,9 @@
     if (title || department) {
       const line = [title, department].filter(Boolean).join(" · ");
       rowsHtml += '<div class="employee-row"><i class="fa-regular fa-building"></i><span>' + esc(line) + "</span></div>";
+    }
+    if (supervisor) {
+      rowsHtml += '<div class="employee-row"><i class="fa-solid fa-user-tie"></i><span>TL: ' + esc(supervisor) + "</span></div>";
     }
     if (location) rowsHtml += '<div class="employee-row"><i class="fa-solid fa-location-dot"></i><span>' + esc(location) + "</span></div>";
     if (phone) rowsHtml += '<div class="employee-row"><i class="fa-solid fa-phone"></i><span>' + esc(phone) + "</span></div>";
@@ -473,12 +487,19 @@
      Global hero-button handlers
      ------------------------------------------------------------ */
   window.scrollToDirectory = function () {
-    searchQuery = ""; activeQueue = null;
+    searchQuery = ""; 
+    activeQueue = null;
+    activeTeamLeader = null;
+    
     const searchEl = document.getElementById("directorySearch");
     if (searchEl) searchEl.value = "";
     const clearBtn = document.getElementById("clearSearchBtn");
     if (clearBtn) clearBtn.style.display = "none";
-    renderQueueFilters(); renderGrid();
+    
+    renderQueueFilters(); 
+    renderTeamLeaderFilters(); 
+    renderGrid();
+    
     const scrollEl = document.getElementById("directoryScroll");
     if (scrollEl) scrollEl.scrollTop = 0;
   };
@@ -548,7 +569,7 @@
     initialized = true;
 
     setupFullscreen();
-     setupDropdown();
+    setupDropdowns();
 
     const grid = document.getElementById("employeeGrid");
     if (grid && !grid._directoryClickBound) {
@@ -563,6 +584,7 @@
 
       updateStats();
       renderQueueFilters();
+      renderTeamLeaderFilters();
       renderGrid();
 
       const search    = document.getElementById("directorySearch");
