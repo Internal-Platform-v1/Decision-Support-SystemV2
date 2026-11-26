@@ -31,74 +31,71 @@
     <div id="header-placeholder"></div>
 
     <main>
-      <section class="hero">
+      <!-- ===== HERO (legacy-aligned) ===== -->
+      <section class="case-hero">
         <div class="hero-copy">
+          <div class="eyebrow"><i class="fa-solid fa-address-book"></i> Team Directory</div>
           <h1>Employee <span>Directory</span></h1>
-          <p>Find and connect with your teammates.<br class="desktop-only" /> Browse by name, queue, or department.</p>
-
-          <div class="hero-search">
-            <span class="search-icon"></span>
-            <input id="directorySearch" type="search" autocomplete="off" placeholder="Search name, EMP, or queue..." />
-            <button id="directorySearchBtn" type="button">Search</button>
+          <p>Find and connect with your teammates. Browse by name, EMP ID, queue, or department to identify the right contact.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" type="button" onclick="scrollToDirectory()">Explore Employees <i class="fa-solid fa-arrow-down"></i></button>
+            <button class="secondary-btn" type="button" onclick="focusDirectorySearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
           </div>
         </div>
-
-        <div class="hero-art" aria-hidden="true"></div>
-
-        <section class="stats-row" aria-label="Directory stats" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="stat-card">
-            <div class="stat-icon purple">
-              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="9" cy="8" r="3.2"/>
-                <path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/>
-                <circle cx="17" cy="9" r="2.3"/>
-                <path d="M14.5 19.5c0-2.2 1.8-3.7 4-3.7"/>
-              </svg>
-            </div>
-            <div><strong id="statTotal">0</strong><small>Total Employees</small></div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon orange">
-              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="4" y="4" width="16" height="4" rx="1"/>
-                <rect x="4" y="10" width="16" height="4" rx="1"/>
-                <rect x="4" y="16" width="10" height="4" rx="1"/>
-              </svg>
-            </div>
-            <div><strong id="statQueues">0</strong><small>Active Queues</small></div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon blue">
-              <svg class="ui-icon stat-svg" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3 20 6v5c0 5-3.3 8.2-8 10-4.7-1.8-8-5-8-10V6l8-3Z"/>
-                <path d="m8.5 12 2.2 2.2 4.8-5"/>
-              </svg>
-            </div>
-            <div><strong id="statAdmins">0</strong><small>Admins</small></div>
-          </div>
-        </section>
       </section>
 
-      <section class="section my-guides-section directory-main" id="directoryWorkspace">
+      <!-- ===== STATS ROW (legacy-aligned) ===== -->
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon purple"><i class="fa-solid fa-users"></i></div>
+          <div><strong id="heroEmployeeCount">—</strong><small>Total employees</small></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fa-solid fa-layer-group"></i></div>
+          <div><strong id="heroQueueCount">—</strong><small>Active queues</small></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fa-solid fa-filter"></i></div>
+          <div><strong id="heroMatchCount">—</strong><small>Matching results</small></div>
+        </div>
+        <div class="stat-card status-stat">
+          <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+          <div><strong id="statusPill">Loading</strong><small>Directory status</small></div>
+        </div>
+      </section>
+
+      <!-- ===== DIRECTORY WORKSPACE ===== -->
+      <section class="directory-main" id="directoryWorkspace">
         <div class="directory-heading">
-          <div class="directory-heading-left">
-            <h2 class="directory-title">
-              <span class="heading-bar"></span>
-              <span id="directoryTitle">All Employees</span>
-            </h2>
-            <p id="resultsText" class="directory-results">Loading employees...</p>
+          <div>
+            <div class="section-kicker"><i class="fa-solid fa-address-book"></i> Team directory</div>
+            <h2>Employee Directory</h2>
+            <p>Browse employee profiles, queue assignments, and contact details. Click any card to view the full profile.</p>
           </div>
           <div class="directory-heading-actions">
             <a href="index.html" class="view-all my-guides-back">← Back to Dashboard</a>
-            <button id="fullscreenBtn" class="directory-icon-btn" type="button" title="View Full Screen" aria-label="Toggle full screen">
+            <button id="fullscreenBtn" class="icon-action" type="button" title="View Full Screen">
               <i class="fa-solid fa-expand"></i>
             </button>
           </div>
         </div>
 
         <div class="directory-toolbar">
+          <div class="directory-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="directorySearch" type="search" placeholder="Search name, EMP, queue, department…" autocomplete="off" />
+            <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()" aria-label="Clear search">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="toolbar-meta">
+            <span><strong id="totalRowsValue">—</strong> employees</span>
+            <span><strong id="uniqueQueuesValue">—</strong> queues</span>
+            <span><strong id="visibleResultsValue">—</strong> shown</span>
+          </div>
+        </div>
+
+        <div class="directory-filters">
           <div id="queueFilters" class="queue-filters"></div>
         </div>
 
@@ -129,10 +126,7 @@
       messagingSenderId: "43574975434",
       appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
     };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   </script>
 
   <script src="shared/include.js"></script>
