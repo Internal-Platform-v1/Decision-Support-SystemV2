@@ -1,6 +1,7 @@
 /* ============================================================
    BD Tools — Employee Directory
-   Matched to Legacy Directory Layout
+   Top section (hero, stats, directory shell) mirrors
+   legacy-case-directory layout.
    ============================================================ */
 
 /* ============================================================
@@ -28,17 +29,17 @@ body[data-view="directory"] #footer-placeholder {
   margin-top: 8px;
 }
 
-body[data-view="directory"] main {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: #ffffff;
+body[data-view="directory"] .case-page {
+  background: #ffffff !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* ============================================================
-   2. HERO SECTION
+   2. HERO (matches legacy)
    ============================================================ */
 body[data-view="directory"] .case-hero {
   height: 300px !important;
@@ -121,7 +122,7 @@ body[data-view="directory"] .primary-btn { background: #5b17c5 !important; color
 body[data-view="directory"] .secondary-btn { background: #ffffff !important; color: #4d148c !important; border-color: #e1d9f4 !important; }
 
 /* ============================================================
-   3. STATS ROW
+   3. STATS ROW (matches legacy)
    ============================================================ */
 body[data-view="directory"] .stats-row {
   position: relative !important;
@@ -198,7 +199,7 @@ body[data-view="directory"] .stat-card small {
 body[data-view="directory"] .status-stat strong { font-size: 11px !important; }
 
 /* ============================================================
-   4. DIRECTORY WORKSPACE SHELL
+   4. DIRECTORY SHELL (matches legacy)
    ============================================================ */
 body[data-view="directory"] .directory-main {
   height: calc(100vh - 470px) !important;
@@ -248,6 +249,15 @@ body[data-view="directory"] .directory-heading-actions {
   flex: 0 0 auto !important;
 }
 
+body[data-view="directory"] .directory-back-link {
+  font-size: 10px !important;
+  color: #4d148c !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+}
+
+body[data-view="directory"] .directory-back-link:hover { text-decoration: underline !important; }
+
 body[data-view="directory"] .icon-action,
 body[data-view="directory"] .close-action {
   width: 31px !important;
@@ -282,7 +292,7 @@ body[data-view="directory"] .directory-toolbar {
   border-bottom: 1px solid #f0f0f5 !important;
   flex: 0 0 auto !important;
   position: relative !important;
-  z-index: 10 !important; /* Ensures dropdown overlaps the grid */
+  z-index: 10 !important;
 }
 
 body[data-view="directory"] .toolbar-left {
@@ -342,7 +352,7 @@ body[data-view="directory"] .toolbar-meta {
 
 body[data-view="directory"] .toolbar-meta strong { color: #4d148c !important; }
 
-/* --- Filter Dropdown Styles --- */
+/* Filter dropdown */
 body[data-view="directory"] .filter-dropdown {
   position: relative !important;
   flex: 0 0 auto !important;
@@ -392,9 +402,7 @@ body[data-view="directory"] .filter-menu {
   padding: 4px 0 !important;
 }
 
-body[data-view="directory"] .filter-menu.is-open {
-  display: block !important;
-}
+body[data-view="directory"] .filter-menu.is-open { display: block !important; }
 
 body[data-view="directory"] .filter-menu::-webkit-scrollbar { width: 6px !important; }
 body[data-view="directory"] .filter-menu::-webkit-scrollbar-thumb { background: #d9d5e6 !important; border-radius: 999px !important; }
@@ -410,16 +418,8 @@ body[data-view="directory"] .filter-item {
   transition: 0.1s ease !important;
 }
 
-body[data-view="directory"] .filter-item:hover {
-  background: #f8f7ff !important;
-  color: #4d148c !important;
-}
-
-body[data-view="directory"] .filter-item.active {
-  background: #f0e9ff !important;
-  color: #4d148c !important;
-  font-weight: 800 !important;
-}
+body[data-view="directory"] .filter-item:hover { background: #f8f7ff !important; color: #4d148c !important; }
+body[data-view="directory"] .filter-item.active { background: #f0e9ff !important; color: #4d148c !important; font-weight: 800 !important; }
 
 body[data-view="directory"] .filter-count {
   font-size: 9px !important;
@@ -450,9 +450,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb {
   background: #d9d5e6 !important;
   border-radius: 999px !important;
 }
-body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
-  background: #b8b2c9 !important;
-}
+body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover { background: #b8b2c9 !important; }
 
 /* ============================================================
    7. EMPLOYEE GRID & CARDS
@@ -568,8 +566,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
   body[data-view="directory"] .stats-row,
   body[data-view="directory"] .directory-main { width: 90% !important; }
   body[data-view="directory"] .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  
-  /* Toolbar wraps cleanly */
+
   body[data-view="directory"] .directory-search { flex: 1 1 100% !important; max-width: none !important; }
   body[data-view="directory"] .toolbar-filters { width: 100% !important; margin-top: 5px !important; }
   body[data-view="directory"] .toolbar-meta { display: none !important; }
@@ -585,8 +582,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
   body[data-view="directory"] .stats-row,
   body[data-view="directory"] .directory-main { width: 92% !important; }
   body[data-view="directory"] .stats-row { grid-template-columns: 1fr !important; }
-  
-  /* Stack search and dropdowns on mobile */
+
   body[data-view="directory"] .toolbar-left { display: flex !important; flex-direction: column !important; align-items: stretch !important; width: 100% !important; }
   body[data-view="directory"] .directory-search { width: 100% !important; margin-bottom: 4px !important; }
   body[data-view="directory"] .toolbar-filters { display: flex !important; flex-direction: column !important; width: 100% !important; margin-top: 0 !important; }
@@ -599,23 +595,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
 }
 
 /* ============================================================
-   10. FULLSCREEN MODE
-   ============================================================ */
-body[data-view="directory"] .directory-main:fullscreen {
-  background: #f4f1f8 !important; padding: 20px 24px !important; border-radius: 0 !important;
-  margin: 0 !important; width: 100vw !important; height: 100vh !important; overflow: hidden !important;
-}
-body[data-view="directory"] .directory-main:fullscreen .directory-scroll { padding: 4px 8px 4px 0 !important; }
-body[data-view="directory"] .directory-main:-webkit-full-screen {
-  background: #f4f1f8 !important; padding: 20px 24px !important; border-radius: 0 !important;
-  width: 100vw !important; height: 100vh !important; overflow: hidden !important;
-}
-
-
-/* ============================================================
    10. EXPANDED MODE (page-level "fullscreen")
-   Hides hero + stats, lets the directory fill the space
-   between header and footer. Header & footer stay visible.
    ============================================================ */
 body[data-view="directory"].directory-expanded .case-hero,
 body[data-view="directory"].directory-expanded .stats-row {
@@ -634,25 +614,20 @@ body[data-view="directory"].directory-expanded .directory-main {
   box-shadow: none !important;
 }
 
-/* Force 4 columns in expanded mode */
+body[data-view="directory"].directory-expanded #footer-placeholder {
+  margin-top: 0 !important;
+}
+
 body[data-view="directory"].directory-expanded .employee-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 }
 
 @media (max-width: 1200px) {
-  body[data-view="directory"].directory-expanded .employee-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  }
+  body[data-view="directory"].directory-expanded .employee-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 }
-
 @media (max-width: 900px) {
-  body[data-view="directory"].directory-expanded .employee-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
+  body[data-view="directory"].directory-expanded .employee-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
-
 @media (max-width: 700px) {
-  body[data-view="directory"].directory-expanded .employee-grid {
-    grid-template-columns: 1fr !important;
-  }
+  body[data-view="directory"].directory-expanded .employee-grid { grid-template-columns: 1fr !important; }
 }
