@@ -80,23 +80,33 @@
           </div>
         </div>
 
+        <!-- ===== UPDATED TOOLBAR WITH DROPDOWN ===== -->
         <div class="directory-toolbar">
-          <div class="directory-search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input id="directorySearch" type="search" placeholder="Search name, EMP, queue, department…" autocomplete="off" />
-            <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()" aria-label="Clear search">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
+          <div class="toolbar-left">
+            <div class="directory-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input id="directorySearch" type="search" placeholder="Search name, EMP, queue, department…" autocomplete="off" />
+              <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()" aria-label="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            
+            <!-- Queue Dropdown -->
+            <div class="filter-dropdown" id="queueFilterWrapper">
+              <button class="filter-btn" id="queueFilterBtn" type="button">
+                <i class="fa-solid fa-filter"></i>
+                <span id="queueFilterLabel">All Queues</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="filter-menu" id="queueFilters"></div>
+            </div>
           </div>
+
           <div class="toolbar-meta">
             <span><strong id="totalRowsValue">—</strong> employees</span>
             <span><strong id="uniqueQueuesValue">—</strong> queues</span>
             <span><strong id="visibleResultsValue">—</strong> shown</span>
           </div>
-        </div>
-
-        <div class="directory-filters">
-          <div id="queueFilters" class="queue-filters"></div>
         </div>
 
         <div class="directory-scroll" id="directoryScroll">
