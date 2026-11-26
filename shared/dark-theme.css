@@ -2363,3 +2363,126 @@ html[data-theme="dark"] body .notif-icon.help {
 html[data-theme="dark"] body .notification-list::-webkit-scrollbar-thumb {
     background: #3a3a58 !important;
 }
+
+/* ============================================================
+   EMPLOYEE DIRECTORY — cards, filters, queue blocks
+   ============================================================ */
+
+/* ----- Fullscreen / expanded shell ----- */
+html[data-theme="dark"] section.directory-main:fullscreen,
+html[data-theme="dark"] section.directory-main:-webkit-full-screen {
+    background: #17172a;
+}
+html[data-theme="dark"] body.directory-expanded .directory-main {
+    background: #17172a;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .7) !important;
+}
+
+/* ----- Scrollbar ----- */
+html[data-theme="dark"] .directory-scroll::-webkit-scrollbar-thumb {
+    background: #3a3a58;
+}
+html[data-theme="dark"] .directory-scroll::-webkit-scrollbar-thumb:hover {
+    background: #4a4a68;
+}
+
+/* ----- Filter dropdown buttons ----- */
+html[data-theme="dark"] .filter-btn {
+    background: #1e1e33;
+    border-color: #2f2f4a;
+    color: #d0d0e4;
+}
+html[data-theme="dark"] .filter-btn:hover {
+    background: #26263f;
+    border-color: #3a3a58;
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .filter-btn i:first-child { color: #c4b5fd; }
+html[data-theme="dark"] .filter-btn i:last-child  { color: #8b8ba8; }
+
+/* ----- Filter dropdown menu items ----- */
+html[data-theme="dark"] .filter-menu {
+    background: #1c1c30;
+    border-color: #2c2c47;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, .55);
+}
+html[data-theme="dark"] .filter-item { color: #c8c8de; }
+html[data-theme="dark"] .filter-item:hover {
+    background: rgba(167,139,250,.12);
+    color: #d4c5ff;
+}
+html[data-theme="dark"] .filter-item.active {
+    background: rgba(167,139,250,.18);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .filter-count {
+    background: #26263f;
+    color: #8b8ba8;
+}
+html[data-theme="dark"] .filter-item.active .filter-count {
+    background: #1c1c30;
+    color: #c4b5fd;
+}
+
+/* ----- Employee cards ----- */
+html[data-theme="dark"] .employee-card {
+    background: #1c1c30;
+    border-color: #26263f;
+    border-bottom-color: #3a3a58;
+    box-shadow: var(--shadow-card);
+    color: #e7e7f2;
+}
+html[data-theme="dark"] .employee-card:hover {
+    background: #20203a;
+    border-color: #3a3a58;
+    border-bottom-color: #4a4a68;
+    box-shadow: var(--shadow-card-hover);
+}
+html[data-theme="dark"] .employee-card:focus-visible {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167,139,250,.24);
+}
+html[data-theme="dark"] .employee-card::after {
+    background: var(--acc-purple);
+}
+
+/* Avatar + identity */
+html[data-theme="dark"] .employee-avatar {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .employee-name { color: #ece9ff; }
+html[data-theme="dark"] .employee-emp  { color: #8b8ba8; }
+
+/* Tags */
+html[data-theme="dark"] .employee-tag {
+    background: rgba(167,139,250,.16);
+    color: #c4b5fd;
+}
+html[data-theme="dark"] .employee-tag.admin {
+    background: rgba(255,159,77,.16);
+    color: #ffb26e;
+}
+
+/* Queue block */
+html[data-theme="dark"] .employee-queues {
+    background: #20203a;
+    border-color: #2a2a44;
+}
+html[data-theme="dark"] .employee-queue-empty { color: #7a7a94; }
+html[data-theme="dark"] .q-label { color: #8b8ba8; }
+html[data-theme="dark"] .q-value { color: #d0d0e4; }
+html[data-theme="dark"] .employee-queue-line.current .q-value {
+    color: #c4b5fd;
+    font-weight: 700;
+}
+html[data-theme="dark"] .employee-queue-line.q-match {
+    background: rgba(255,159,77,.16);
+}
+html[data-theme="dark"] .employee-queue-line.q-match .q-value {
+    color: #ffd9b8;
+}
+
+/* Body rows */
+html[data-theme="dark"] .employee-row   { color: #b8b8d4; }
+html[data-theme="dark"] .employee-row i { color: #6a6a88; }
