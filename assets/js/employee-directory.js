@@ -1,8 +1,6 @@
 /* ============================================================
    BD Tools — Employee Directory
    Reads from assets/references/approved_users.xlsx
-   Card click → opens the shared profile modal in view mode.
-   Fullscreen toggle uses the native Fullscreen API.
    ============================================================ */
 (function () {
   "use strict";
@@ -132,7 +130,6 @@
   /* ---- Data loading from XLSX ---- */
   async function loadAllEmployees() {
     const XLSX = await loadXLSXLibrary();
-
     const res = await fetch(XLSX_URL, { cache: "no-store" });
     if (!res.ok) throw new Error("Could not load " + XLSX_URL + " (HTTP " + res.status + ")");
 
@@ -154,8 +151,7 @@
 
       const firstName = pickString(row, "firstName");
       const lastName  = pickString(row, "lastName");
-      const displayName = pickString(row, "name", "Name")
-        || [firstName, lastName].filter(Boolean).join(" ");
+      const displayName = pickString(row, "name", "Name") || [firstName, lastName].filter(Boolean).join(" ");
 
       const employee = Object.assign({}, row, {
         id:             key,
@@ -173,8 +169,7 @@
         department:     pickString(row, "department"),
         title:          pickString(row, "title"),
         location:       pickString(row, "location") || pickString(row, "region"),
-        phone:          pickString(row, "phone"),
-        _source:        "excel"
+        phone:          pickString(row, "phone")
       });
 
       byKey.set(key, employee);
@@ -190,13 +185,12 @@
   }
 
   function updateStats() {
-    const heroEmp    = document.getElementById("heroEmployeeCount");
-    const heroQ      = document.getElementById("heroQueueCount");
-    const totalEl    = document.getElementById("totalRowsValue");
-    const queuesEl   = document.getElementById("uniqueQueuesValue");
+    const heroEmp  = document.getElementById("heroEmployeeCount");
+    const heroQ    = document.getElementById("heroQueueCount");
+    const totalEl  = document.getElementById("totalRowsValue");
+    const queuesEl = document.getElementById("uniqueQueuesValue");
 
     const total = allEmployees.length;
-
     const uniqueQueues = new Set();
     allEmployees.forEach(e => atomicQueueNames(e).forEach(n => uniqueQueues.add(n)));
 
@@ -212,15 +206,10 @@
     if (matchEl) matchEl.textContent = shownCount;
     if (shownEl) shownEl.textContent = shownCount;
 
-    if (!allEmployees.length) {
-      setStatus("Waiting for Data", "fa-database");
-    } else if (!shownCount) {
-      setStatus("No Match Found", "fa-circle-exclamation");
-    } else if (searchQuery.trim() || activeQueue) {
-      setStatus("Filtered Results", "fa-filter");
-    } else {
-      setStatus("Directory Ready", "fa-circle-check");
-    }
+    if (!allEmployees.length) setStatus("Waiting for Data", "fa-database");
+    else if (!shownCount) setStatus("No Match Found", "fa-circle-exclamation");
+    else if (searchQuery.trim() || activeQueue) setStatus("Filtered Results", "fa-filter");
+    else setStatus("Directory Ready", "fa-circle-check");
   }
 
   /* ---- Queue filter pills ---- */
@@ -240,8 +229,7 @@
     let html =
       '<button type="button" class="queue-pill' +
       (activeQueue === null ? " active" : "") +
-      '" data-queue="">All <span class="queue-count">' +
-      allEmployees.length + "</span></button>";
+      '" data-queue="">All <span class="queue-count">' + allEmployees.length + "</span></button>";
 
     queues.forEach(q => {
       const isActive = activeQueue === q;
@@ -270,18 +258,8 @@
   function matchesSearch(e, q) {
     if (!q) return true;
     const haystack = [
-      getDisplayName(e),
-      e.empId,
-      e.currentQueue,
-      e.queue,
-      e.primaryQueue,
-      e.secondaryQueue,
-      e.email,
-      e.department,
-      e.title,
-      e.location,
-      e.role,
-      e.supervisor
+      getDisplayName(e), e.empId, e.currentQueue, e.queue, e.primaryQueue,
+      e.secondaryQueue, e.email, e.department, e.title, e.location, e.role, e.supervisor
     ].filter(Boolean).join(" ").toLowerCase();
     return haystack.includes(q);
   }
@@ -298,16 +276,12 @@
   function renderQueueBlock(e) {
     const lines = getQueueRoles(e);
     if (lines.length === 0) {
-      return '<div class="employee-queues">' +
-        '<div class="employee-queue-empty">No queue assigned</div>' +
-      '</div>';
+      return '<div class="employee-queues"><div class="employee-queue-empty">No queue assigned</div></div>';
     }
     return '<div class="employee-queues">' +
       lines.map(line => {
         const isMatch = activeQueue && lineMatchesQueue(line.value, activeQueue);
-        const cls = "employee-queue-line"
-          + (line.current ? " current" : "")
-          + (isMatch ? " q-match" : "");
+        const cls = "employee-queue-line" + (line.current ? " current" : "") + (isMatch ? " q-match" : "");
         return '<div class="' + cls + '">' +
           '<span class="q-label">' + esc(line.label) + '</span>' +
           '<span class="q-value" title="' + esc(line.value) + '">' + esc(line.value) + '</span>' +
@@ -329,38 +303,20 @@
 
     let tagsHtml = "";
     if (admin) {
-      tagsHtml = '<div class="employee-tags">' +
-        '<span class="employee-tag admin">' + esc(role || "Admin") + '</span>' +
-      '</div>';
+      tagsHtml = '<div class="employee-tags"><span class="employee-tag admin">' + esc(role || "Admin") + '</span></div>';
     }
 
     let rowsHtml = "";
-    if (email) {
-      rowsHtml +=
-        '<div class="employee-row"><i class="fa-regular fa-envelope"></i><span>' +
-        esc(email) + "</span></div>";
-    }
+    if (email) rowsHtml += '<div class="employee-row"><i class="fa-regular fa-envelope"></i><span>' + esc(email) + "</span></div>";
     if (title || department) {
       const line = [title, department].filter(Boolean).join(" · ");
-      rowsHtml +=
-        '<div class="employee-row"><i class="fa-regular fa-building"></i><span>' +
-        esc(line) + "</span></div>";
+      rowsHtml += '<div class="employee-row"><i class="fa-regular fa-building"></i><span>' + esc(line) + "</span></div>";
     }
-    if (location) {
-      rowsHtml +=
-        '<div class="employee-row"><i class="fa-solid fa-location-dot"></i><span>' +
-        esc(location) + "</span></div>";
-    }
-    if (phone) {
-      rowsHtml +=
-        '<div class="employee-row"><i class="fa-solid fa-phone"></i><span>' +
-        esc(phone) + "</span></div>";
-    }
+    if (location) rowsHtml += '<div class="employee-row"><i class="fa-solid fa-location-dot"></i><span>' + esc(location) + "</span></div>";
+    if (phone) rowsHtml += '<div class="employee-row"><i class="fa-solid fa-phone"></i><span>' + esc(phone) + "</span></div>";
 
     return (
-      '<article class="employee-card" role="button" tabindex="0" ' +
-        'data-employee-key="' + esc(e.id || "") + '" ' +
-        'aria-label="View profile for ' + esc(name) + '">' +
+      '<article class="employee-card" role="button" tabindex="0" data-employee-key="' + esc(e.id || "") + '" aria-label="View profile for ' + esc(name) + '">' +
         '<div class="employee-card-head">' +
           '<div class="employee-avatar">' + esc(initials) + "</div>" +
           '<div class="employee-identity">' +
@@ -368,8 +324,7 @@
             '<div class="employee-emp">' + (e.empId ? "EMP " + esc(e.empId) : "") + "</div>" +
           "</div>" +
         "</div>" +
-        tagsHtml +
-        renderQueueBlock(e) +
+        tagsHtml + renderQueueBlock(e) +
         '<div class="employee-body">' + rowsHtml + "</div>" +
       "</article>"
     );
@@ -377,19 +332,10 @@
 
   function renderGrid() {
     const grid      = document.getElementById("employeeGrid");
-    const resultsEl = document.getElementById("resultsText");
     const emptyEl   = document.getElementById("noEmployees");
     if (!grid) return;
 
     const filtered = getFiltered();
-
-    if (resultsEl) {
-      const base = "Showing " + filtered.length + " of " + allEmployees.length + " employees";
-      resultsEl.textContent = allEmployees.length === 0
-        ? "No employees found in the directory."
-        : (activeQueue ? base + " in " + activeQueue : base);
-    }
-
     updateFilterStats(filtered.length);
 
     if (filtered.length === 0) {
@@ -399,7 +345,7 @@
         const copyEl = emptyEl.querySelector("p");
         if (copyEl) {
           copyEl.textContent = allEmployees.length === 0
-            ? "The directory file could not be loaded or is empty. Make sure assets/references/approved_users.xlsx exists."
+            ? "The directory file could not be loaded or is empty."
             : "Try a different search or filter.";
         }
       }
@@ -419,8 +365,6 @@
     setTimeout(function () {
       if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
         window.BDProfileModal.view(employee);
-      } else {
-        console.warn("[directory] profile modal not available");
       }
     }, 500);
   }
@@ -431,8 +375,7 @@
     const key = card.dataset.employeeKey;
     if (!key) return;
     const employee = allEmployees.find(x => String(x.id) === key);
-    if (!employee) return;
-    openEmployeeProfile(employee);
+    if (employee) openEmployeeProfile(employee);
   }
 
   function handleCardKeydown(e) {
@@ -447,14 +390,12 @@
      Global hero-button handlers
      ------------------------------------------------------------ */
   window.scrollToDirectory = function () {
-    searchQuery = "";
-    activeQueue = null;
+    searchQuery = ""; activeQueue = null;
     const searchEl = document.getElementById("directorySearch");
     if (searchEl) searchEl.value = "";
     const clearBtn = document.getElementById("clearSearchBtn");
     if (clearBtn) clearBtn.style.display = "none";
-    renderQueueFilters();
-    renderGrid();
+    renderQueueFilters(); renderGrid();
     const scrollEl = document.getElementById("directoryScroll");
     if (scrollEl) scrollEl.scrollTop = 0;
   };
@@ -485,7 +426,6 @@
     if (!btn || !target) return;
 
     const icon = btn.querySelector("i");
-
     let savedModal  = null;
     let savedParent = null;
 
@@ -501,28 +441,20 @@
         }
       } catch (err) {
         console.error("[directory] fullscreen error:", err);
-        if (savedModal && savedParent && savedParent.isConnected) {
-          savedParent.appendChild(savedModal);
-        }
-        savedModal = null;
-        savedParent = null;
+        if (savedModal && savedParent && savedParent.isConnected) savedParent.appendChild(savedModal);
+        savedModal = null; savedParent = null;
       }
     });
 
     document.addEventListener("fullscreenchange", () => {
       if (document.fullscreenElement) {
         if (icon) icon.className = "fa-solid fa-compress";
-        btn.title = "Exit Full Screen";
-        btn.setAttribute("aria-label", "Exit full screen");
+        btn.title = "Exit Full Screen"; btn.setAttribute("aria-label", "Exit full screen");
       } else {
         if (icon) icon.className = "fa-solid fa-expand";
-        btn.title = "View Full Screen";
-        btn.setAttribute("aria-label", "Toggle full screen");
-        if (savedModal && savedParent && savedParent.isConnected) {
-          savedParent.appendChild(savedModal);
-        }
-        savedModal  = null;
-        savedParent = null;
+        btn.title = "View Full Screen"; btn.setAttribute("aria-label", "Toggle full screen");
+        if (savedModal && savedParent && savedParent.isConnected) savedParent.appendChild(savedModal);
+        savedModal = null; savedParent = null;
       }
     });
   }
@@ -534,9 +466,7 @@
 
     setupFullscreen();
 
-    const resultsEl = document.getElementById("resultsText");
-    const grid      = document.getElementById("employeeGrid");
-
+    const grid = document.getElementById("employeeGrid");
     if (grid && !grid._directoryClickBound) {
       grid._directoryClickBound = true;
       grid.addEventListener("click",   handleCardClick);
@@ -544,12 +474,8 @@
     }
 
     try {
-      if (resultsEl) resultsEl.textContent = "Loading employees...";
-
       allEmployees = await loadAllEmployees();
-      allEmployees.sort((a, b) =>
-        getDisplayName(a).localeCompare(getDisplayName(b), undefined, { sensitivity: "base" })
-      );
+      allEmployees.sort((a, b) => getDisplayName(a).localeCompare(getDisplayName(b), undefined, { sensitivity: "base" }));
 
       updateStats();
       renderQueueFilters();
@@ -574,16 +500,11 @@
       }
     } catch (err) {
       console.error("[directory] init failed:", err);
-      if (resultsEl) {
-        resultsEl.textContent = "Could not load employees: " +
-          (err && err.message ? err.message : "unknown error");
-      }
       const emptyEl = document.getElementById("noEmployees");
       if (emptyEl) {
         emptyEl.hidden = false;
         const copyEl = emptyEl.querySelector("p");
-        if (copyEl) copyEl.textContent =
-          "Make sure assets/references/approved_users.xlsx exists and is reachable.";
+        if (copyEl) copyEl.textContent = "Make sure assets/references/approved_users.xlsx exists and is reachable.";
       }
       updateFilterStats(0);
     }
