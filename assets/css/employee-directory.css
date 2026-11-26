@@ -459,7 +459,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
    ============================================================ */
 .employee-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 12px;
   margin-top: 4px;
 }
@@ -609,4 +609,46 @@ body[data-view="directory"] .directory-main:fullscreen .directory-scroll { paddi
 body[data-view="directory"] .directory-main:-webkit-full-screen {
   background: #f4f1f8 !important; padding: 20px 24px !important; border-radius: 0 !important;
   width: 100vw !important; height: 100vh !important; overflow: hidden !important;
+}
+
+
+/* ============================================================
+   10. EXPANDED MODE (page-level "fullscreen")
+   Hides hero + stats, lets the directory fill the space
+   between header and footer. Header & footer stay visible.
+   ============================================================ */
+body[data-view="directory"].directory-expanded .case-hero,
+body[data-view="directory"].directory-expanded .stats-row {
+  display: none !important;
+}
+
+body[data-view="directory"].directory-expanded .directory-main {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  width: 95% !important;
+  margin: 14px auto 8px !important;
+}
+
+/* Force 4 columns in expanded mode */
+body[data-view="directory"].directory-expanded .employee-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1200px) {
+  body[data-view="directory"].directory-expanded .employee-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body[data-view="directory"].directory-expanded .employee-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  body[data-view="directory"].directory-expanded .employee-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
