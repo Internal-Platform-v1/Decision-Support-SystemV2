@@ -6,7 +6,6 @@
 
     const THEME_KEY = "bd_theme";
     const ADMIN_URL = "admin-console/admin-dashboard/admin-dashboard.html";
-    const DIRECTORY_URL = "employee-directory.html";
 
     const ANNOUNCEMENTS_COLLECTION = "announcements";
     const HELP_COLLECTION = "help_requests";
@@ -29,6 +28,22 @@
     ];
 
     const ADMIN_ROLES = ["admin", "manager", "administrator"];
+
+    /* Direct nav destinations (non-dropdown buttons) */
+    const NAV_DEST = {
+        home:  "index.html",
+        links: "links.html",
+        about: "about-dss.html"
+    };
+
+    /* Pages that should light up a dropdown toggle button */
+    const DROPDOWN_PAGES = {
+        "legacy-case-directory.html": "directoryBtn",
+        "shine-case-directory.html":  "directoryBtn",
+        "employee-directory.html":    "directoryBtn",
+        "ebs-response-template.html": "toolsBtn",
+        "fbc-comments-guide.html":    "toolsBtn"
+    };
 
     const SLIDES = [
         { key: "general",   icon: "fa-solid fa-bullhorn",              label: "📢 Announcements" },
@@ -147,8 +162,6 @@
             if (menu) menu.classList.remove("open");
             const btn = document.getElementById("settingsBtn");
             if (btn) btn.setAttribute("aria-expanded", "false");
-            const caseDropdown = document.getElementById("caseDropdown");
-            if (caseDropdown) caseDropdown.classList.remove("open");
 
             if (window.bdUserLoginGate && typeof window.bdUserLoginGate.open === "function") {
                 window.bdUserLoginGate.open();
@@ -190,11 +203,6 @@
             opt.classList.toggle("active", active);
             opt.setAttribute("aria-checked", String(active));
         });
-
-        const isSignedIn = !!getStoredUser();
-
-        const directoryBtn = document.getElementById("employeeDirectoryBtn");
-        if (directoryBtn) directoryBtn.hidden = !isSignedIn;
 
         const adminBtn = document.getElementById("adminDashboardBtn");
         if (adminBtn) adminBtn.hidden = role !== "admin";
@@ -495,7 +503,6 @@
         const button = document.getElementById("settingsBtn");
         const menu = document.getElementById("settingsMenu");
         const adminBtn = document.getElementById("adminDashboardBtn");
-        const directoryBtn = document.getElementById("employeeDirectoryBtn");
         if (!button || !menu) return;
 
         const roleLabelEl = document.getElementById("roleLabel");
@@ -517,16 +524,6 @@
             const open = menu.classList.toggle("open");
             button.setAttribute("aria-expanded", String(open));
         });
-
-        if (directoryBtn) {
-            directoryBtn.addEventListener("click", e => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!getStoredUser()) return;
-                close();
-                window.location.href = DIRECTORY_URL;
-            });
-        }
 
         if (adminBtn) {
             adminBtn.addEventListener("click", e => {
@@ -550,60 +547,80 @@
         });
     }
 
-    function setupCaseDirectory() {
-        const button = document.getElementById("caseDirectoryBtn");
-        const menu = document.getElementById("caseDropdown");
-        const wrapper = document.querySelector(".nav-dropdown-wrapper");
-        if (!button || !menu || !wrapper) return;
+    /* ------------------------------------------------------------
+       5b. Nav dropdowns (Directory + Tools)
+       ------------------------------------------------------------ */
+    function setupNavDropdowns() {
+        const wrappers = Array.from(document.querySelectorAll(".nav-dropdown-wrapper"));
+        if (!wrappers.length) return;
 
-        button.addEventListener("click", e => {
-            e.preventDefault();
-            e.stopPropagation();
-            const settingsMenu = document.getElementById("settingsMenu");
-            if (settingsMenu) settingsMenu.classList.remove("open");
-            const open = menu.classList.toggle("open");
-            button.classList.toggle("open", open);
-            button.setAttribute("aria-expanded", String(open));
-        });
+        function closeAll(exceptWrapper) {
+            wrappers.forEach(w => {
+                if (w === exceptWrapper) return;
+                const btn  = w.querySelector(".nav-item.has-dropdown");
+                const menu = w.querySelector(".dropdown-panel");
+                if (btn)  { btn.classList.remove("open"); btn.setAttribute("aria-expanded", "false"); }
+                if (menu) menu.classList.remove("open");
+            });
+        }
 
-        menu.querySelectorAll("a").forEach(link => {
-            link.addEventListener("click", function (e) {
-                if (this.getAttribute("href") === "#") e.preventDefault();
-                menu.classList.remove("open");
-                button.classList.remove("open");
+        wrappers.forEach(wrapper => {
+            const button = wrapper.querySelector(".nav-item.has-dropdown");
+            const menu   = wrapper.querySelector(".dropdown-panel");
+            if (!button || !menu) return;
+
+            button.addEventListener("click", e => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Close settings menu if it's open
+                const settingsMenu = document.getElementById("settingsMenu");
+                if (settingsMenu) settingsMenu.classList.remove("open");
+
+                // Close the other nav dropdown
+                closeAll(wrapper);
+
+                const open = menu.classList.toggle("open");
+                button.classList.toggle("open", open);
+                button.setAttribute("aria-expanded", String(open));
+            });
+
+            menu.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", () => {
+                    menu.classList.remove("open");
+                    button.classList.remove("open");
+                    button.setAttribute("aria-expanded", "false");
+                });
             });
         });
 
+        // Click anywhere outside a dropdown → close them all
         document.addEventListener("click", e => {
-            if (!wrapper.contains(e.target)) {
-                menu.classList.remove("open");
-                button.classList.remove("open");
+            if (!e.target.closest(".nav-dropdown-wrapper")) {
+                closeAll(null);
             }
         });
     }
 
+    /* ------------------------------------------------------------
+       6. Navigation (direct buttons + active state)
+       ------------------------------------------------------------ */
     function setupNavigation() {
-        const NAV_DEST = {
-            home:  "index.html",
-            ebs:   "ebs-response-template.html",
-            fbc:   "fbc-comments-guide.html",
-            links: "links.html"
-        };
-
         const currentPage = window.location.pathname.split("/").pop().toLowerCase();
-        const caseDirectoryPages = ["legacy-case-directory.html", "shine-case-directory.html"];
 
         function syncActiveState() {
-            const navItems = document.querySelectorAll(".brand-nav .nav-item");
-            navItems.forEach(n => n.classList.remove("active"));
+            document.querySelectorAll(".brand-nav .nav-item").forEach(n => n.classList.remove("active"));
 
-            const caseBtn = document.getElementById("caseDirectoryBtn");
-            if (caseBtn && caseDirectoryPages.includes(currentPage)) {
-                caseBtn.classList.add("active");
+            // Dropdown pages first — light up the owning dropdown button
+            const dropdownOwnerId = DROPDOWN_PAGES[currentPage];
+            if (dropdownOwnerId) {
+                const owner = document.getElementById(dropdownOwnerId);
+                if (owner) owner.classList.add("active");
                 return;
             }
 
-            navItems.forEach(item => {
+            // Direct pages
+            document.querySelectorAll(".brand-nav .nav-item").forEach(item => {
                 const dest = NAV_DEST[item.dataset.nav];
                 if (dest && currentPage === dest.toLowerCase()) item.classList.add("active");
             });
@@ -616,7 +633,7 @@
         document.addEventListener("click", function (e) {
             const item = e.target.closest(".brand-nav .nav-item");
             if (!item) return;
-            if (item.id === "caseDirectoryBtn") return;
+            if (item.classList.contains("has-dropdown")) return;   // dropdowns handled separately
 
             const dest = NAV_DEST[item.dataset.nav];
             if (!dest) return;
@@ -629,7 +646,7 @@
     }
 
     /* ------------------------------------------------------------
-       6. Notification System
+       7. Notification System
        ------------------------------------------------------------ */
     function getSeenAnnouncements() {
         try { return JSON.parse(localStorage.getItem(VIEWED_KEY)) || {}; } catch (e) { return {}; }
@@ -901,7 +918,7 @@
     }
 
     /* ------------------------------------------------------------
-       7. Global Search
+       8. Global Search
        ------------------------------------------------------------ */
     function setupSearch() {
         const input = document.getElementById("globalSearch");
@@ -910,7 +927,7 @@
     }
 
     /* ------------------------------------------------------------
-       8. User Profile Modal — VIEW ONLY
+       9. User Profile Modal — VIEW ONLY
        ------------------------------------------------------------ */
     function deriveFirstLast(user) {
         if (!user) return { firstName: "", lastName: "" };
@@ -958,7 +975,6 @@
         setStaticText("profileDepartment",user.department);
         setStaticText("profileLocation",  user.location || user.region);
 
-        // Queue assignments
         const currentQueue   = user.currentQueue   || user.queue || "";
         const primaryQueue   = user.primaryQueue   || "";
         const secondaryQueue = user.secondaryQueue || "";
@@ -1049,7 +1065,7 @@
     }
 
     /* ------------------------------------------------------------
-       9. Initialize
+       10. Initialize
        ------------------------------------------------------------ */
     function start() {
         if (start._done) return;
@@ -1058,7 +1074,7 @@
         setupUserLogin();
         setupTheme();
         setupSettings();
-        setupCaseDirectory();
+        setupNavDropdowns();
         setupNavigation();
         setupSearch();
         setupSharedNotifications();
@@ -1070,7 +1086,8 @@
         tries = tries || 0;
         const ready =
             document.querySelector(".brand-nav .nav-item") &&
-            document.getElementById("caseDirectoryBtn") &&
+            document.getElementById("directoryBtn") &&
+            document.getElementById("toolsBtn") &&
             document.getElementById("settingsBtn") &&
             document.getElementById("sharedNotificationBtn");
 
