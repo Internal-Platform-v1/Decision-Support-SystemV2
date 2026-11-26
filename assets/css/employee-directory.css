@@ -1,6 +1,6 @@
 /* ============================================================
    BD Tools — Employee Directory
-   Rebuilt directly from Legacy Case Directory CSS
+   Based on Legacy Case Directory CSS
    ============================================================ */
 
 * { box-sizing: border-box; }
@@ -21,7 +21,7 @@ body.modal-open { overflow: hidden; }
 }
 
 /* ============================================================
-   HERO & STATS (From Legacy)
+   HERO & STATS 
    ============================================================ */
 .case-page {
   background: #ffffff;
@@ -110,7 +110,8 @@ body.modal-open { overflow: hidden; }
 .primary-btn { background: #5b17c5; color: #ffffff; }
 .secondary-btn { background: #ffffff; color: #4d148c; border-color: #e1d9f4; }
 
-.stats-row {
+/* --- FIXED: Stats row centering --- */
+body[data-view="directory"] .stats-row {
   position: relative;
   z-index: 3;
   display: grid;
@@ -120,9 +121,13 @@ body.modal-open { overflow: hidden; }
   max-width: none;
   margin: -50px auto 0;
   padding: 0;
+  /* Reset absolute positioning from global styles.css */
+  left: auto;
+  right: auto;
+  bottom: auto;
 }
 
-.stat-card {
+body[data-view="directory"] .stat-card {
   width: 100%;
   min-width: 0;
   height: 58px;
@@ -178,7 +183,7 @@ body.modal-open { overflow: hidden; }
 .status-stat strong { font-size: 11px; }
 
 /* ============================================================
-   DIRECTORY WORKSPACE (From Legacy)
+   DIRECTORY WORKSPACE 
    ============================================================ */
 .directory-main {
   height: calc(100vh - 470px);
@@ -396,7 +401,8 @@ body.modal-open { overflow: hidden; }
 .directory-scroll::-webkit-scrollbar-thumb:hover { background: #b8b2c9; }
 
 /* ============================================================
-   EMPLOYEE GRID & CARDS
+   EMPLOYEE GRID & CARDS 
+   Using index.html .quick-card as reference
    ============================================================ */
 .employee-grid {
   display: grid;
@@ -407,20 +413,23 @@ body.modal-open { overflow: hidden; }
 
 .employee-card {
   background: #fff;
-  border: 1px solid #e8e9f1;
-  border-radius: 10px;
-  padding: 14px;
+  border: 1px solid #e8e9f2;
+  border-bottom: 2px solid #d9d7ef;
+  border-radius: 9px;
+  padding: 14px 12px 10px;
+  position: relative;
+  box-shadow: 0 3px 11px rgba(41,32,94,.045);
+  transition: .18s transform, .18s box-shadow, border-color .18s ease;
+  cursor: pointer;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-width: 0;
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-  cursor: pointer;
 }
+
 .employee-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(41, 32, 94, .08);
-  border-color: #d8d5ef;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(41,32,94,.1);
 }
 
 .employee-card-head { display: flex; align-items: center; gap: 11px; min-width: 0; }
@@ -560,7 +569,6 @@ body.directory-expanded .employee-grid {
 
 /* ============================================================
    DARK MODE
-   Relies on global [data-theme="dark"] or .dark-mode
    ============================================================ */
 [data-theme="dark"] body,
 body.dark-mode {
@@ -675,15 +683,18 @@ body.dark-mode .filter-item.active .filter-count { background: #5b17c5; color: #
 [data-theme="dark"] .directory-scroll::-webkit-scrollbar-thumb,
 body.dark-mode .directory-scroll::-webkit-scrollbar-thumb { background: #4a3b5c; }
 
+/* --- Fixed: Employee Card Dark Mode matches .quick-card --- */
 [data-theme="dark"] .employee-card,
 body.dark-mode .employee-card {
-  background: #2d2438;
-  border-color: #4a3b5c;
+  background: #1e1629;
+  border-color: #332545;
+  border-bottom-color: #4a3b5c;
+  box-shadow: 0 3px 11px rgba(0,0,0,0.2);
 }
 [data-theme="dark"] .employee-card:hover,
 body.dark-mode .employee-card:hover {
-  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
-  border-color: #6c5194;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  border-color: #4a3b5c;
 }
 [data-theme="dark"] .employee-name,
 body.dark-mode .employee-name { color: #ffffff; }
@@ -691,7 +702,7 @@ body.dark-mode .employee-name { color: #ffffff; }
 body.dark-mode .employee-emp { color: #a79bb5; }
 [data-theme="dark"] .employee-queues,
 body.dark-mode .employee-queues {
-  background: #1e1629;
+  background: #2d2438;
   border-color: #332545;
 }
 [data-theme="dark"] .employee-queue-line .q-label,
