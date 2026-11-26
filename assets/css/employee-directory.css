@@ -1,7 +1,6 @@
 /* ============================================================
    BD Tools — Employee Directory
-   Top section (hero, stats, directory shell) mirrors
-   legacy-case-directory layout.
+   Matched to Legacy Directory Layout
    ============================================================ */
 
 /* ============================================================
@@ -30,16 +29,16 @@ body[data-view="directory"] #footer-placeholder {
 }
 
 body[data-view="directory"] .case-page {
-  background: #ffffff !important;
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
+  background: #ffffff;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ============================================================
-   2. HERO (matches legacy)
+   2. HERO SECTION
    ============================================================ */
 body[data-view="directory"] .case-hero {
   height: 300px !important;
@@ -122,7 +121,7 @@ body[data-view="directory"] .primary-btn { background: #5b17c5 !important; color
 body[data-view="directory"] .secondary-btn { background: #ffffff !important; color: #4d148c !important; border-color: #e1d9f4 !important; }
 
 /* ============================================================
-   3. STATS ROW (matches legacy)
+   3. STATS ROW
    ============================================================ */
 body[data-view="directory"] .stats-row {
   position: relative !important;
@@ -199,7 +198,7 @@ body[data-view="directory"] .stat-card small {
 body[data-view="directory"] .status-stat strong { font-size: 11px !important; }
 
 /* ============================================================
-   4. DIRECTORY SHELL (matches legacy)
+   4. DIRECTORY WORKSPACE SHELL
    ============================================================ */
 body[data-view="directory"] .directory-main {
   height: calc(100vh - 470px) !important;
@@ -352,7 +351,7 @@ body[data-view="directory"] .toolbar-meta {
 
 body[data-view="directory"] .toolbar-meta strong { color: #4d148c !important; }
 
-/* Filter dropdown */
+/* --- Filter Dropdown Styles --- */
 body[data-view="directory"] .filter-dropdown {
   position: relative !important;
   flex: 0 0 auto !important;
@@ -402,7 +401,9 @@ body[data-view="directory"] .filter-menu {
   padding: 4px 0 !important;
 }
 
-body[data-view="directory"] .filter-menu.is-open { display: block !important; }
+body[data-view="directory"] .filter-menu.is-open {
+  display: block !important;
+}
 
 body[data-view="directory"] .filter-menu::-webkit-scrollbar { width: 6px !important; }
 body[data-view="directory"] .filter-menu::-webkit-scrollbar-thumb { background: #d9d5e6 !important; border-radius: 999px !important; }
@@ -418,8 +419,16 @@ body[data-view="directory"] .filter-item {
   transition: 0.1s ease !important;
 }
 
-body[data-view="directory"] .filter-item:hover { background: #f8f7ff !important; color: #4d148c !important; }
-body[data-view="directory"] .filter-item.active { background: #f0e9ff !important; color: #4d148c !important; font-weight: 800 !important; }
+body[data-view="directory"] .filter-item:hover {
+  background: #f8f7ff !important;
+  color: #4d148c !important;
+}
+
+body[data-view="directory"] .filter-item.active {
+  background: #f0e9ff !important;
+  color: #4d148c !important;
+  font-weight: 800 !important;
+}
 
 body[data-view="directory"] .filter-count {
   font-size: 9px !important;
@@ -450,7 +459,9 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb {
   background: #d9d5e6 !important;
   border-radius: 999px !important;
 }
-body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover { background: #b8b2c9 !important; }
+body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b8b2c9 !important;
+}
 
 /* ============================================================
    7. EMPLOYEE GRID & CARDS
@@ -566,7 +577,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover { b
   body[data-view="directory"] .stats-row,
   body[data-view="directory"] .directory-main { width: 90% !important; }
   body[data-view="directory"] .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-
+  
   body[data-view="directory"] .directory-search { flex: 1 1 100% !important; max-width: none !important; }
   body[data-view="directory"] .toolbar-filters { width: 100% !important; margin-top: 5px !important; }
   body[data-view="directory"] .toolbar-meta { display: none !important; }
@@ -582,7 +593,7 @@ body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb:hover { b
   body[data-view="directory"] .stats-row,
   body[data-view="directory"] .directory-main { width: 92% !important; }
   body[data-view="directory"] .stats-row { grid-template-columns: 1fr !important; }
-
+  
   body[data-view="directory"] .toolbar-left { display: flex !important; flex-direction: column !important; align-items: stretch !important; width: 100% !important; }
   body[data-view="directory"] .directory-search { width: 100% !important; margin-bottom: 4px !important; }
   body[data-view="directory"] .toolbar-filters { display: flex !important; flex-direction: column !important; width: 100% !important; margin-top: 0 !important; }
@@ -630,4 +641,245 @@ body[data-view="directory"].directory-expanded .employee-grid {
 }
 @media (max-width: 700px) {
   body[data-view="directory"].directory-expanded .employee-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ============================================================
+   11. DARK MODE OVERRIDES
+   Targets common dark mode implementations (.dark-mode on body
+   or html[data-theme="dark"]). Overrides the !important rules
+   to allow the page to switch themes properly.
+   ============================================================ */
+
+/* Base page */
+html[data-theme="dark"] body[data-view="directory"],
+body.dark-mode[data-view="directory"] {
+  background-color: #0d0914 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .case-page,
+body.dark-mode[data-view="directory"] .case-page {
+  background: #0d0914 !important;
+}
+
+/* Hero */
+html[data-theme="dark"] body[data-view="directory"] .case-hero,
+body.dark-mode[data-view="directory"] .case-hero {
+  /* Uses the original background image but applies a dark gradient overlay */
+  background: linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.85)), 
+              url("../images/hero-background-1.png") center 90% / cover no-repeat !important;
+}
+
+html[data-theme="dark"] body[data-view="directory"] .eyebrow,
+body.dark-mode[data-view="directory"] .eyebrow {
+  background: #2d2438 !important;
+  border-color: #4a3b5c !important;
+  color: #d1b3ff !important;
+}
+
+html[data-theme="dark"] body[data-view="directory"] .case-hero h1,
+body.dark-mode[data-view="directory"] .case-hero h1 {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .case-hero h1 span,
+body.dark-mode[data-view="directory"] .case-hero h1 span {
+  color: #ff8c00 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .case-hero p,
+body.dark-mode[data-view="directory"] .case-hero p {
+  color: #b0a8c0 !important;
+}
+
+html[data-theme="dark"] body[data-view="directory"] .primary-btn,
+body.dark-mode[data-view="directory"] .primary-btn {
+  background: #5b17c5 !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .secondary-btn,
+body.dark-mode[data-view="directory"] .secondary-btn {
+  background: transparent !important;
+  color: #d1b3ff !important;
+  border-color: #4a3b5c !important;
+}
+
+/* Stats */
+html[data-theme="dark"] body[data-view="directory"] .stat-card,
+body.dark-mode[data-view="directory"] .stat-card {
+  background: #1e1629 !important;
+  border-color: #332545 !important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3) !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .stat-card strong,
+body.dark-mode[data-view="directory"] .stat-card strong {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .stat-card small,
+body.dark-mode[data-view="directory"] .stat-card small {
+  color: #a79bb5 !important;
+}
+
+/* Directory Shell */
+html[data-theme="dark"] body[data-view="directory"] .directory-main,
+body.dark-mode[data-view="directory"] .directory-main {
+  background: #1e1629 !important;
+  border-color: #332545 !important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3) !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-heading,
+body.dark-mode[data-view="directory"] .directory-heading {
+  border-bottom-color: #332545 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-heading h2,
+body.dark-mode[data-view="directory"] .directory-heading h2 {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-heading p,
+body.dark-mode[data-view="directory"] .directory-heading p {
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-back-link,
+body.dark-mode[data-view="directory"] .directory-back-link {
+  color: #d1b3ff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .icon-action,
+body.dark-mode[data-view="directory"] .icon-action {
+  background: #2d2438 !important;
+  border-color: #4a3b5c !important;
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .icon-action:hover,
+body.dark-mode[data-view="directory"] .icon-action:hover {
+  background: #3e314e !important;
+  color: #ffffff !important;
+}
+
+/* Toolbar & Search */
+html[data-theme="dark"] body[data-view="directory"] .directory-toolbar,
+body.dark-mode[data-view="directory"] .directory-toolbar {
+  border-bottom-color: #332545 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-search,
+body.dark-mode[data-view="directory"] .directory-search {
+  background: #2d2438 !important;
+  border-color: #4a3b5c !important;
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-search input,
+body.dark-mode[data-view="directory"] .directory-search input {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-btn,
+body.dark-mode[data-view="directory"] .filter-btn {
+  background: #2d2438 !important;
+  border-color: #4a3b5c !important;
+  color: #d1b3ff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-btn:hover,
+body.dark-mode[data-view="directory"] .filter-btn:hover {
+  background: #3e314e !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .toolbar-meta,
+body.dark-mode[data-view="directory"] .toolbar-meta {
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .toolbar-meta strong,
+body.dark-mode[data-view="directory"] .toolbar-meta strong {
+  color: #d1b3ff !important;
+}
+
+/* Dropdowns */
+html[data-theme="dark"] body[data-view="directory"] .filter-menu,
+body.dark-mode[data-view="directory"] .filter-menu {
+  background: #1e1629 !important;
+  border-color: #332545 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-item,
+body.dark-mode[data-view="directory"] .filter-item {
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-item:hover,
+body.dark-mode[data-view="directory"] .filter-item:hover {
+  background: #2d2438 !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-item.active,
+body.dark-mode[data-view="directory"] .filter-item.active {
+  background: #332545 !important;
+  color: #d1b3ff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-count,
+body.dark-mode[data-view="directory"] .filter-count {
+  background: #2d2438 !important;
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .filter-item.active .filter-count,
+body.dark-mode[data-view="directory"] .filter-item.active .filter-count {
+  background: #5b17c5 !important;
+  color: #ffffff !important;
+}
+
+/* Scroll */
+html[data-theme="dark"] body[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb,
+body.dark-mode[data-view="directory"] .directory-scroll::-webkit-scrollbar-thumb {
+  background: #4a3b5c !important;
+}
+
+/* Employee Cards */
+html[data-theme="dark"] body[data-view="directory"] .employee-card,
+body.dark-mode[data-view="directory"] .employee-card {
+  background: #2d2438 !important;
+  border-color: #4a3b5c !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-card:hover,
+body.dark-mode[data-view="directory"] .employee-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4) !important;
+  border-color: #6c5194 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-name,
+body.dark-mode[data-view="directory"] .employee-name {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-emp,
+body.dark-mode[data-view="directory"] .employee-emp {
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-queues,
+body.dark-mode[data-view="directory"] .employee-queues {
+  background: #1e1629 !important;
+  border-color: #332545 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-queue-line .q-label,
+body.dark-mode[data-view="directory"] .employee-queue-line .q-label {
+  color: #8c7aa3 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-queue-line .q-value,
+body.dark-mode[data-view="directory"] .employee-queue-line .q-value {
+  color: #d1b3ff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-queue-line.current .q-label,
+body.dark-mode[data-view="directory"] .employee-queue-line.current .q-label {
+  color: #a388ff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-queue-line.current .q-value,
+body.dark-mode[data-view="directory"] .employee-queue-line.current .q-value {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-queue-line.q-match,
+body.dark-mode[data-view="directory"] .employee-queue-line.q-match {
+  background: #3e2b5c !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-row,
+body.dark-mode[data-view="directory"] .employee-row {
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .employee-row i,
+body.dark-mode[data-view="directory"] .employee-row i {
+  color: #6c5194 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-empty,
+body.dark-mode[data-view="directory"] .directory-empty {
+  border-color: #4a3b5c !important;
+  color: #a79bb5 !important;
+}
+html[data-theme="dark"] body[data-view="directory"] .directory-empty strong,
+body.dark-mode[data-view="directory"] .directory-empty strong {
+  color: #ffffff !important;
 }
