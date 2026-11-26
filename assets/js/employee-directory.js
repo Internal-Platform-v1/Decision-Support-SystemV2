@@ -212,9 +212,10 @@
     else setStatus("Directory Ready", "fa-circle-check");
   }
 
-  /* ---- Queue filter pills ---- */
+   /* ---- Queue filter dropdown ---- */
   function renderQueueFilters() {
     const container = document.getElementById("queueFilters");
+    const label = document.getElementById("queueFilterLabel");
     if (!container) return;
 
     const counts = new Map();
@@ -226,32 +227,65 @@
 
     const queues = Array.from(counts.keys()).sort();
 
-    let html =
-      '<button type="button" class="queue-pill' +
-      (activeQueue === null ? " active" : "") +
-      '" data-queue="">All <span class="queue-count">' + allEmployees.length + "</span></button>";
+    let html = `
+      <div class="filter-item ${activeQueue === null ? 'active' : ''}" data-queue="">
+        <span>All Queues</span>
+        <span class="filter-count">${allEmployees.length}</span>
+      </div>
+    `;
 
     queues.forEach(q => {
       const isActive = activeQueue === q;
-      html +=
-        '<button type="button" class="queue-pill' +
-        (isActive ? " active" : "") +
-        '" data-queue="' + esc(q) + '">' +
-        esc(q) + ' <span class="queue-count">' + counts.get(q) + "</span></button>";
+      html += `
+        <div class="filter-item ${isActive ? 'active' : ''}" data-queue="${esc(q)}">
+          <span>${esc(q)}</span>
+          <span class="filter-count">${counts.get(q)}</span>
+        </div>
+      `;
     });
 
     container.innerHTML = html;
 
-    container.querySelectorAll(".queue-pill").forEach(pill => {
-      pill.addEventListener("click", () => {
-        const q = pill.dataset.queue;
+    // Update label
+    if (label) {
+      label.textContent = activeQueue ? activeQueue : "All Queues";
+    }
+
+    // Attach clicks to items
+    container.querySelectorAll(".filter-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const q = item.dataset.queue;
         activeQueue = q ? q : null;
         renderQueueFilters();
         renderGrid();
+        
+        // Close dropdown
+        document.getElementById("queueFilters").classList.remove("is-open");
+        
         const scroll = document.getElementById("directoryScroll");
         if (scroll) scroll.scrollTop = 0;
       });
     });
+  }
+
+  // Add this logic inside your init() function to toggle the dropdown
+  function setupDropdown() {
+    const btn = document.getElementById("queueFilterBtn");
+    const menu = document.getElementById("queueFilters");
+    
+    if (btn && menu) {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.classList.toggle("is-open");
+      });
+
+      // Close when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!menu.contains(e.target) && e.target !== btn) {
+          menu.classList.remove("is-open");
+        }
+      });
+    }
   }
 
   /* ---- Filtering ---- */
@@ -465,6 +499,7 @@
     initialized = true;
 
     setupFullscreen();
+     setupDropdown();
 
     const grid = document.getElementById("employeeGrid");
     if (grid && !grid._directoryClickBound) {
