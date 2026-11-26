@@ -319,7 +319,6 @@
       if (d.btn && d.menu) {
         d.btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          // Close other menus
           dropdowns.forEach(other => {
             if (other.menu !== d.menu) other.menu.classList.remove("is-open");
           });
@@ -328,7 +327,6 @@
       }
     });
 
-    // Close all on outside click
     document.addEventListener("click", (e) => {
       dropdowns.forEach(d => {
         if (d.menu && !d.menu.contains(e.target) && e.target !== d.btn) {
@@ -351,16 +349,11 @@
   function getFiltered() {
     const q = searchQuery.trim().toLowerCase();
     return allEmployees.filter(e => {
-      // 1. Queue Filter
       if (activeQueue && !atomicQueueNames(e).has(activeQueue)) return false;
-      
-      // 2. Team Leader Filter
       if (activeTeamLeader) {
         const tl = String(e.supervisor || "").trim();
         if (tl !== activeTeamLeader) return false;
       }
-
-      // 3. Search Text
       return matchesSearch(e, q);
     });
   }
@@ -546,12 +539,10 @@
     btn.addEventListener("click", () => {
       const isExpanded = document.body.classList.toggle("directory-expanded");
       updateIcon(isExpanded);
-      // Reset scroll to top so users start at the first row
       const scroll = document.getElementById("directoryScroll");
       if (scroll) scroll.scrollTop = 0;
     });
 
-    // ESC also exits expanded mode
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && document.body.classList.contains("directory-expanded")) {
         document.body.classList.remove("directory-expanded");
@@ -559,7 +550,7 @@
       }
     });
   }
-   
+
   /* ---- Init ---- */
   async function init() {
     if (initialized) return;
