@@ -447,17 +447,28 @@
   }
 
   /* ---- Card click → profile modal ---- */
-  function openEmployeeProfile(employee) {
-    if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
-      window.BDProfileModal.view(employee);
-      return;
+function openEmployeeProfile(employee) {
+  const open = () => {
+    if (!window.BDProfileModal || typeof window.BDProfileModal.view !== "function") return false;
+
+    window.BDProfileModal.view(employee);
+
+    // If we're in fullscreen, keep the modal inside the fullscreen container
+    if (document.fullscreenElement) {
+      setTimeout(() => {
+        const fullEl = document.fullscreenElement;
+        if (!fullEl) return;
+        const modal = document.getElementById("profileModal")
+                  || document.getElementById("employeeProfileModal")
+                  || document.querySelector(".bd-profile-modal, .profile-modal");
+        if (modal && !fullEl.contains(modal)) fullEl.appendChild(modal);
+      }, 50);
     }
-    setTimeout(function () {
-      if (window.BDProfileModal && typeof window.BDProfileModal.view === "function") {
-        window.BDProfileModal.view(employee);
-      }
-    }, 500);
-  }
+    return true;
+  };
+
+  if (!open()) setTimeout(open, 500);
+}
 
   function handleCardClick(e) {
     const card = e.target.closest(".employee-card");
@@ -517,39 +528,78 @@
   /* ------------------------------------------------------------
      Expanded (page-level "fullscreen") toggle
      ------------------------------------------------------------ */
-  function setupFullscreen() {
-    const btn    = document.getElementById("fullscreenBtn");
-    const target = document.getElementById("directoryWorkspace");
-    if (!btn || !target) return;
+/* ---- Fullscreen (native API — matches legacy case directory) ---- */
+function setupFullscreen() {
+  const btn    = document.getElementById("fullscreenBtn");
+  const target = document.getElementById("directoryWorkspace");
+  if (!btn || !target) return;
 
-    const icon = btn.querySelector("i");
+  const icon = btn.querySelector("i");
+  let movedModal = null; // { el, parent } when we relocate the profile modal
 
-    function updateIcon(expanded) {
-      if (expanded) {
-        if (icon) icon.className = "fa-solid fa-compress";
-        btn.title = "Exit Full Screen";
-        btn.setAttribute("aria-label", "Exit full screen");
+  function setIcon(expanded) {
+    if (icon) icon.className = expanded ? "fa-solid fa-compress" : "fa-solid fa-expand";
+    btn.title = expanded ? "Exit Full Screen" : "View Full Screen";
+    btn.setAttribute("aria-label", expanded ? "Exit full screen" : "Toggle full screen");
+  }
+
+  function findProfileModal() {
+    return document.getElementById("profileModal")
+        || document.getElementById("employeeProfileModal")
+        || document.getElementById("employeeModal")
+        || document.querySelector(".bd-profile-modal")
+        || document.querySelector(".profile-modal")
+        || document.querySelector("[data-profile-modal]");
+  }
+
+  btn.addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Move profile modal inside the fullscreen element so it stays visible
+        const modal = findProfileModal();
+        if (modal && !target.contains(modal)) {
+          movedModal = { el: modal, parent: modal.parentNode };
+          target.appendChild(modal);
+        }
+        await target.requestFullscreen();
       } else {
-        if (icon) icon.className = "fa-solid fa-expand";
-        btn.title = "View Full Screen";
-        btn.setAttribute("aria-label", "Toggle full screen");
+        await document.exitFullscreen();
       }
-    }
-
-    btn.addEventListener("click", () => {
-      const isExpanded = document.body.classList.toggle("directory-expanded");
-      updateIcon(isExpanded);
+    } catch (err) {
+      console.warn("[fullscreen] API unavailable, falling back to class toggle", err);
+      // Fallback: CSS-based expansion
+      const expanded = document.body.classList.toggle("directory-expanded");
+      setIcon(expanded);
       const scroll = document.getElementById("directoryScroll");
       if (scroll) scroll.scrollTop = 0;
-    });
+    }
+  });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && document.body.classList.contains("directory-expanded")) {
-        document.body.classList.remove("directory-expanded");
-        updateIcon(false);
+  document.addEventListener("fullscreenchange", () => {
+    const expanded = !!document.fullscreenElement;
+    setIcon(expanded);
+
+    if (!expanded) {
+      // Restore modal to its original parent
+      if (movedModal && movedModal.parent) {
+        try { movedModal.parent.appendChild(movedModal.el); } catch (e) {}
+        movedModal = null;
       }
-    });
-  }
+      document.body.classList.remove("directory-expanded");
+    }
+
+    const scroll = document.getElementById("directoryScroll");
+    if (scroll) scroll.scrollTop = 0;
+  });
+
+  // ESC safety-net (class fallback path)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.body.classList.contains("directory-expanded")) {
+      document.body.classList.remove("directory-expanded");
+      setIcon(false);
+    }
+  });
+}
 
   /* ---- Init ---- */
   async function init() {
