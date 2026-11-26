@@ -626,8 +626,12 @@ body[data-view="directory"].directory-expanded .directory-main {
   flex: 1 1 auto !important;
   height: auto !important;
   min-height: 0 !important;
-  width: 95% !important;
-  margin: 14px auto 8px !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Force 4 columns in expanded mode */
